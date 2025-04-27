@@ -1,0 +1,308 @@
+[
+  {
+    "id": "vgk78ku7g",
+    "src": "/images/paintings/008.webp",
+    "alt": "008",
+    "width": 1600,
+    "height": 2553,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "plnl6lyd3",
+    "src": "/images/paintings/010.webp",
+    "alt": "010",
+    "width": 1600,
+    "height": 1502,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "b86a81lc7",
+    "src": "/images/paintings/011.webp",
+    "alt": "011",
+    "width": 1600,
+    "height": 1121,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "rr4lwfruu",
+    "src": "/images/paintings/020.webp",
+    "alt": "020",
+    "width": 1600,
+    "height": 1616,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "273jxaiwq",
+    "src": "/images/paintings/029.webp",
+    "alt": "029",
+    "width": 1600,
+    "height": 992,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "p6ioza9nb",
+    "src": "/images/paintings/030.webp",
+    "alt": "030",
+    "width": 1600,
+    "height": 1955,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "2pz95msmr",
+    "src": "/images/paintings/031.webp",
+    "alt": "031",
+    "width": 1600,
+    "height": 1502,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "hv1jj0va4",
+    "src": "/images/paintings/032.webp",
+    "alt": "032",
+    "width": 1600,
+    "height": 1874,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "dooqdupuk",
+    "src": "/images/paintings/038.webp",
+    "alt": "038",
+    "width": 1600,
+    "height": 1806,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "nc76afirp",
+    "src": "/images/paintings/043.webp",
+    "alt": "043",
+    "width": 1600,
+    "height": 1419,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "uz9a81rkr",
+    "src": "/images/paintings/050.webp",
+    "alt": "050",
+    "width": 1600,
+    "height": 1528,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "aa9ovcrbw",
+    "src": "/images/paintings/060.webp",
+    "alt": "060",
+    "width": 1600,
+    "height": 1955,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "y5s4vy6g6",
+    "src": "/images/paintings/062.webp",
+    "alt": "062",
+    "width": 1600,
+    "height": 1980,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "ohqsvyys3",
+    "src": "/images/paintings/080.webp",
+    "alt": "080",
+    "width": 1600,
+    "height": 1251,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "udw49z1s1",
+    "src": "/images/paintings/083.webp",
+    "alt": "083",
+    "width": 1600,
+    "height": 1636,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "bmo97rt09",
+    "src": "/images/paintings/089.webp",
+    "alt": "089",
+    "width": 1600,
+    "height": 2048,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "p2cifixh8",
+    "src": "/images/paintings/100.webp",
+    "alt": "100",
+    "width": 1600,
+    "height": 2030,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "jw1zyq600",
+    "src": "/images/pencil/1.webp",
+    "alt": "1",
+    "width": 1600,
+    "height": 1121,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "vv7y3jl0w",
+    "src": "/images/pencil/10.webp",
+    "alt": "10",
+    "width": 1600,
+    "height": 1706,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "b6cxyrpr2",
+    "src": "/images/pencil/11.webp",
+    "alt": "11",
+    "width": 1600,
+    "height": 1068,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "z14horzi4",
+    "src": "/images/pencil/2.webp",
+    "alt": "2",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "pqjqd25xm",
+    "src": "/images/pencil/3.webp",
+    "alt": "3",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "dsewnnhlq",
+    "src": "/images/pencil/4.webp",
+    "alt": "4",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "p2yrrrz9k",
+    "src": "/images/pencil/5.webp",
+    "alt": "5",
+    "width": 1600,
+    "height": 900,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "e3mpk4l4y",
+    "src": "/images/pencil/6.webp",
+    "alt": "6",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "80allew3x",
+    "src": "/images/pencil/7.webp",
+    "alt": "7",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "hf4tbvle6",
+    "src": "/images/pencil/8.webp",
+    "alt": "8",
+    "width": 1600,
+    "height": 1000,
+    "weight": 1,
+    "orientation": "landscape"
+  },
+  {
+    "id": "d6mczoona",
+    "src": "/images/pencil/9.webp",
+    "alt": "9",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "vbhb9jjcu",
+    "src": "/images/pencil/eye.webp",
+    "alt": "eye",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "jz1jutph8",
+    "src": "/images/pencil/fists.webp",
+    "alt": "fists",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "2cyygdl4f",
+    "src": "/images/pencil/hnads on hips.webp",
+    "alt": "hnads on hips",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "x2g1stk75",
+    "src": "/images/pencil/pillow.webp",
+    "alt": "pillow",
+    "width": 1600,
+    "height": 1817,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "gea0jdvcb",
+    "src": "/images/pencil/sigh.webp",
+    "alt": "sigh",
+    "width": 1600,
+    "height": 2133,
+    "weight": 1,
+    "orientation": "portrait"
+  },
+  {
+    "id": "ou51trwj7",
+    "src": "/images/pencil/sketches1.webp",
+    "alt": "sketches1",
+    "width": 1600,
+    "height": 1200,
+    "weight": 1,
+    "orientation": "landscape"
+  }
+]
