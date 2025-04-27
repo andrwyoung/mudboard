@@ -8,7 +8,11 @@ import {
   DragMoveEvent,
   DragOverlay,
   DragStartEvent,
+  MouseSensor,
   pointerWithin,
+  TouchSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import Image from "next/image";
@@ -68,7 +72,7 @@ export default function Gallery({
     if (activeId === overId) return;
 
     // find column to drop into
-    let fromColumnIndex = columns.findIndex((col) =>
+    const fromColumnIndex = columns.findIndex((col) =>
       col.some((img) => img.id === activeId)
     );
 
@@ -176,12 +180,27 @@ export default function Gallery({
     }
   }
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 5,
+      },
+    })
+  );
+
   return (
     <DndContext
       collisionDetection={pointerWithin}
       onDragEnd={handleDragEnd}
       onDragStart={handleDragStart}
       onDragMove={handleDragMove}
+      sensors={sensors}
     >
       <div
         className={`flex flex-row gap-6 px-6 ${
@@ -191,7 +210,7 @@ export default function Gallery({
         {columns.map((column, i) => (
           <DroppableColumn key={`col-${i}`} id={`col-${i}`}>
             <SortableContext items={column.map((img) => img.id)}>
-              {column.map((img, j) => (
+              {column.map((img) => (
                 <div key={img.id} data-id={img.id} className="flex flex-col">
                   <SortableImageItem id={img.id}>
                     <div
@@ -204,7 +223,7 @@ export default function Gallery({
                           overId === img.id &&
                           placement === "above" &&
                           activeImage?.id !== img.id
-                            ? "border-t-4 border-secondary"
+                            ? "border-t-4 border-primary"
                             : ""
                         }`}
                       />
@@ -214,9 +233,9 @@ export default function Gallery({
                         width={img.width}
                         height={img.height}
                         className={`
-                          rounded-sm object-cover cursor-pointer shadow-md
+                          rounded-sm object-cover cursor-grab shadow-md
                           transition-all duration-100
-                          hover:scale-101 hover:shadow-xl hover:border-primary hover:border-4 hover:brightness-105 hover:saturate-110
+                          hover:scale-101 hover:shadow-xl hover:outline-primary hover:outline-4 hover:brightness-105 hover:saturate-110
                         `}
                       />
                       <div
@@ -224,7 +243,7 @@ export default function Gallery({
                           overId === img.id &&
                           placement === "below" &&
                           activeImage?.id !== img.id
-                            ? "border-b-4 border-secondary"
+                            ? "border-b-4 border-primary"
                             : ""
                         }`}
                       />

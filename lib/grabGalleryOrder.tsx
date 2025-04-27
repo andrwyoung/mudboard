@@ -8,9 +8,10 @@ export function grabGalleryOrder(galleryData: ImageType[]): GalleryOrder[] {
   const orderPath = path.join(process.cwd(), "app", "../galleryOrder.json"); // adjust if you want it somewhere else
 
   try {
-    return require("../galleryOrder.json");
+    const fileContents = fs.readFileSync(orderPath, "utf-8");
+    return JSON.parse(fileContents) as GalleryOrder[];
   } catch (e) {
-    console.warn("No galleryOrder.json found! Generating default order...");
+    console.warn("No galleryOrder.json found! Generating default order...", e);
 
     const generatedOrder = galleryData
       .filter((img) => {

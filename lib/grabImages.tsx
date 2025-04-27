@@ -1,8 +1,12 @@
 import { GalleryOrder, ImageType } from "@/types/image-type";
 import { grabGalleryOrder } from "./grabGalleryOrder";
+import path from "path";
+import fs from "fs";
 
 export function grabOrderedImages(): ImageType[] {
-  const galleryData = require("../galleryData.json");
+  const galleryPath = path.join(process.cwd(), "galleryData.json");
+  const fileContents = fs.readFileSync(galleryPath, "utf-8");
+  const galleryData = JSON.parse(fileContents);
 
   // grab all the images
   const filtered: ImageType[] = galleryData.filter(
