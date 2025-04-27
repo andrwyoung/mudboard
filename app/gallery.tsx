@@ -1,17 +1,18 @@
 "use client";
-import { SortableImageItem } from "@/components/sortable-wrapper";
+import { DroppableColumn } from "@/components/drag/droppable-wrapper";
+import { SortableImageItem } from "@/components/drag/sortable-wrapper";
 import { ImageType } from "@/types/image-type";
 import {
   DndContext,
   DragEndEvent,
-  DragOverEvent,
+  DragMoveEvent,
   DragOverlay,
   DragStartEvent,
   pointerWithin,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Gallery({
   imgs,
@@ -20,55 +21,69 @@ export default function Gallery({
   imgs: ImageType[];
   cols?: number;
 }) {
-  const [columns, setColumns] = useState<ImageType[][]>([]);
   const [activeImage, setActiveImage] = useState<ImageType | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   const [placement, setPlacement] = useState<"above" | "below">("below");
+  const initialPointerYRef = useRef<number | null>(null);
 
   const [debugMessage, setDebugMessage] = useState("");
 
-  useEffect(() => {
-    // build columns when images arrive
-    const newColumns: ImageType[][] = Array.from({ length: cols }, () => []);
+  const [columns, setColumns] = useState<ImageType[][]>([]);
 
+  // only regenerate "real" columns when backend images change
+  const generatedColumns = useMemo(() => {
+    const newColumns: ImageType[][] = Array.from({ length: cols }, () => []);
     imgs.forEach((img, index) => {
       const colIndex = index % cols;
       newColumns[colIndex].push(img);
     });
-
-    setColumns(newColumns);
+    return newColumns;
   }, [imgs, cols]);
 
+  // update the fake columns with the real ones if reals ones change
+  useEffect(() => {
+    setColumns(generatedColumns);
+  }, [generatedColumns]);
+
+  // SECTION: handling dragging
+  //
+  //
+
   function handleDragEnd(event: DragEndEvent) {
+    document.body.classList.remove("cursor-grabbing");
     setDebugMessage("drag ended");
+
+    setActiveImage(null);
+    initialPointerYRef.current = null; // Reset here!
+    setOverId(null);
+
     const { active, over } = event;
 
     setActiveImage(null);
-    if (!over) {
-      console.log("over is null");
-      return;
-    }
+    if (!over) return;
+
     const activeId = active.id;
     const overId = over.id;
 
-    if (activeId === overId) {
-      console.log("same column. returning");
-      return;
-    }
+    if (activeId === overId) return;
 
     // find column to drop into
     let fromColumnIndex = columns.findIndex((col) =>
       col.some((img) => img.id === activeId)
     );
-    let toColumnIndex = columns.findIndex((col) =>
-      col.some((img) => img.id === overId)
-    );
-    if (fromColumnIndex === -1 || toColumnIndex == -1) {
-      console.log("column index wrong. returning");
-      return;
-    }
 
-    const newColumns = [...columns]; // clone
+    let toColumnIndex = -1;
+    if (String(overId).startsWith("col-")) {
+      toColumnIndex = Number(String(overId).replace("col-", ""));
+    } else {
+      toColumnIndex = columns.findIndex((col) =>
+        col.some((img) => img.id === overId)
+      );
+    }
+    if (fromColumnIndex === -1 || toColumnIndex == -1) return;
+
+    // set up clones so we can mutate it
+    const newColumns = [...columns];
     const fromCol = [...newColumns[fromColumnIndex]];
     const toCol = [...newColumns[toColumnIndex]];
 
@@ -80,11 +95,17 @@ export default function Gallery({
 
     if (fromColumnIndex === toColumnIndex) {
       // Moving within the same column
-      fromCol.splice(overIndex, 0, movingItem);
+      let insertIndex = overIndex;
+      if (insertIndex === -1) {
+        insertIndex = fromCol.length;
+      }
+      fromCol.splice(insertIndex, 0, movingItem);
       newColumns[fromColumnIndex] = fromCol;
     } else {
       // Moving across columns
-      if (overIndex === -1) {
+      if (String(overId).startsWith("col-")) {
+        toCol.push(movingItem);
+      } else if (overIndex === -1) {
         toCol.push(movingItem);
       } else {
         if (placement === "below") {
@@ -113,56 +134,46 @@ export default function Gallery({
   }
 
   function handleDragStart(event: DragStartEvent) {
+    document.body.classList.add("cursor-grabbing");
     setDebugMessage("drag starting");
-    const { active } = event;
+    const { active, activatorEvent } = event;
     const activeImage = columns.flat().find((img) => img.id === active.id);
     if (activeImage) {
       setActiveImage(activeImage);
     }
+
+    if (activatorEvent instanceof MouseEvent) {
+      initialPointerYRef.current = activatorEvent.clientY;
+    } else if (activatorEvent instanceof TouchEvent) {
+      initialPointerYRef.current = activatorEvent.touches[0]?.clientY ?? null;
+    }
   }
 
-  function debounce(func: (...args: any[]) => void, delay: number) {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return (...args: any[]) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func(...args), delay);
-    };
-  }
-  const debouncedHandleDragMove = useCallback(
-    debounce((event: any) => {
-      if (!overId) return;
+  function handleDragMove(event: DragMoveEvent) {
+    const { delta, over } = event;
+    setDebugMessage("drag move");
 
-      const { activatorEvent } = event;
+    if (!over) {
+      setOverId(null);
+      return;
+    }
 
-      let pointerY: number | null = null;
+    if (initialPointerYRef.current !== null) {
+      const currentPointerY = initialPointerYRef.current + delta.y;
 
-      if (activatorEvent instanceof MouseEvent) {
-        pointerY = activatorEvent.clientY;
-      } else if (activatorEvent instanceof TouchEvent) {
-        pointerY = activatorEvent.touches[0]?.clientY ?? null;
-      }
+      const overElement = document.querySelector(`[data-id="${over.id}"]`);
+      if (overElement) {
+        const rect = overElement.getBoundingClientRect();
+        const middleY = rect.top + rect.height / 2;
 
-      if (pointerY !== null) {
-        const overElement = document.querySelector(`[data-id="${overId}"]`);
-        if (overElement) {
-          const rect = overElement.getBoundingClientRect();
-          const middleY = rect.top + rect.height / 2;
-
-          if (pointerY < middleY) {
-            setPlacement("above");
-          } else {
-            setPlacement("below");
-          }
+        if (currentPointerY < middleY) {
+          setPlacement("above");
+        } else {
+          setPlacement("below");
         }
       }
-    }, 40),
-    [overId]
-  );
-
-  function handleDragOver(event: DragOverEvent) {
-    setDebugMessage("drag over");
-    const { over } = event;
-    setOverId(over ? String(over.id) : null);
+      setOverId(String(over.id));
+    }
   }
 
   return (
@@ -170,38 +181,59 @@ export default function Gallery({
       collisionDetection={pointerWithin}
       onDragEnd={handleDragEnd}
       onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragMove={debouncedHandleDragMove}
+      onDragMove={handleDragMove}
     >
-      <div className="flex flex-row gap-6">
+      <div
+        className={`flex flex-row gap-6 px-6 ${
+          activeImage ? "cursor-grabbing" : "cursor-default"
+        }`}
+      >
         {columns.map((column, i) => (
-          <div key={i} className="flex flex-col gap-6 bg-amber-100">
+          <DroppableColumn key={`col-${i}`} id={`col-${i}`}>
             <SortableContext items={column.map((img) => img.id)}>
               {column.map((img, j) => (
-                <div
-                  key={img.id}
-                  data-id={img.id}
-                  className="bg-black flex flex-col"
-                >
-                  {overId === img.id && placement === "above" && (
-                    <div className="bg-secondary h-4 rounded transition-all duration-200 ease-in-out" />
-                  )}
+                <div key={img.id} data-id={img.id} className="flex flex-col">
                   <SortableImageItem id={img.id}>
-                    <Image
-                      src={img.src}
-                      alt={img.alt}
-                      width={img.width}
-                      height={img.height}
-                      className="rounded-md object-cover cursor-pointer"
-                    />
-                    {overId === img.id && placement === "below" && (
-                      <div className="bg-secondary h-4 rounded transition-all duration-200 ease-in-out" />
-                    )}
+                    <div
+                      className={` ${
+                        activeImage?.id === img.id ? "opacity-30" : ""
+                      }`}
+                    >
+                      <div
+                        className={`h-4 transition-all duration-200 ease-in-out ${
+                          overId === img.id &&
+                          placement === "above" &&
+                          activeImage?.id !== img.id
+                            ? "border-t-4 border-secondary"
+                            : ""
+                        }`}
+                      />
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        width={img.width}
+                        height={img.height}
+                        className={`
+                          rounded-sm object-cover cursor-pointer shadow-md
+                          transition-all duration-100
+                          hover:scale-101 hover:shadow-xl hover:border-primary hover:border-4 hover:brightness-105 hover:saturate-110
+                        `}
+                      />
+                      <div
+                        className={`h-4 transition-all duration-200 ease-in-out ${
+                          overId === img.id &&
+                          placement === "below" &&
+                          activeImage?.id !== img.id
+                            ? "border-b-4 border-secondary"
+                            : ""
+                        }`}
+                      />
+                    </div>
                   </SortableImageItem>
                 </div>
               ))}
             </SortableContext>
-          </div>
+          </DroppableColumn>
         ))}
       </div>
       <DragOverlay>
@@ -211,13 +243,15 @@ export default function Gallery({
             alt={activeImage.alt}
             width={activeImage.width}
             height={activeImage.height}
-            className="rounded-md object-cover opacity-80 scale-30 transition-all" // tweak as you like
+            className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform 
+            duration-200 ease-out scale-105 shadow-xl rotate-1"
           />
         ) : null}
       </DragOverlay>
       <div className="absolute top-4 left-4">
         {debugMessage} <br />
-        {placement}
+        {placement} <br />
+        overId: {overId}
       </div>
     </DndContext>
   );

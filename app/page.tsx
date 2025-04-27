@@ -24,7 +24,7 @@ export default function Home() {
       </aside>
 
       {/* Gallery */}
-      <main className="flex-1 overflow-y-scroll p-8 space-y-32">
+      <main className="flex-1 overflow-y-scroll scrollbar-none">
         <Gallery imgs={orderedImages} />
       </main>
     </div>
