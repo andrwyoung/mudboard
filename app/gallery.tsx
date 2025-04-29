@@ -30,6 +30,10 @@ export default function Gallery({
   const [placement, setPlacement] = useState<"above" | "below">("below");
   const initialPointerYRef = useRef<number | null>(null);
 
+  const [selectedImages, setSelectedImages] = useState<
+    Record<string, ImageType>
+  >({});
+
   const [debugMessage, setDebugMessage] = useState("");
 
   const [columns, setColumns] = useState<ImageType[][]>([]);
@@ -48,6 +52,27 @@ export default function Gallery({
   useEffect(() => {
     setColumns(generatedColumns);
   }, [generatedColumns]);
+
+  useEffect(() => {
+    function handleGlobalClick(event: MouseEvent) {
+      const target = event.target as HTMLElement;
+      const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
+
+      if (clickedId) {
+        // Clicked inside an image or an image container
+        console.log("Clicked on image id:", clickedId);
+        return;
+      }
+      // Otherwise clicked somewhere else, clear selections
+      console.log("Clicked elsewhere. Clearing", clickedId);
+      setSelectedImages({});
+    }
+    document.body.addEventListener("click", handleGlobalClick);
+
+    return () => {
+      document.body.removeEventListener("click", handleGlobalClick);
+    };
+  }, []);
 
   // SECTION: handling dragging
   //
@@ -139,6 +164,8 @@ export default function Gallery({
 
   function handleDragStart(event: DragStartEvent) {
     document.body.classList.add("cursor-grabbing");
+    setSelectedImages({});
+
     setDebugMessage("drag starting");
     const { active, activatorEvent } = event;
     const activeImage = columns.flat().find((img) => img.id === active.id);
@@ -180,6 +207,48 @@ export default function Gallery({
     }
   }
 
+  // SECTION handling click
+  function handleImageClick(
+    img: ImageType,
+    event: React.MouseEvent<HTMLImageElement, MouseEvent>
+  ) {
+    if (event.detail === 2) {
+      // DOUBLE CLICK detected!
+      console.log("Double clicked:", img);
+      // TODO: Handle double click behavior here
+      return;
+    }
+    console.log("Single click:", img);
+
+    setSelectedImages((prevSelected) => {
+      const newSelected = { ...prevSelected };
+
+      if (event.metaKey || event.ctrlKey) {
+        // Cmd (Mac) or Ctrl (Windows): Toggle selection
+        if (newSelected[img.id]) {
+          delete newSelected[img.id]; // Deselect
+        } else {
+          newSelected[img.id] = img; // Select
+        }
+        return newSelected;
+      } else {
+        // Regular click: Replace selection with just this image
+        if (newSelected[img.id] && Object.entries(newSelected).length === 1) {
+          return {};
+        }
+        return { [img.id]: img };
+      }
+    });
+  }
+
+  // function handleImageDoubleClick(
+  //   img: ImageType,
+  //   event: React.MouseEvent<HTMLImageElement, MouseEvent>
+  // ) {
+  //   console.log("Double clicked:", img);
+  //   // TODO: Open fullscreen view? Open modal? Focus view? etc.
+  // }
+
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -188,7 +257,7 @@ export default function Gallery({
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 150,
+        delay: 70,
         tolerance: 5,
       },
     })
@@ -203,7 +272,7 @@ export default function Gallery({
       sensors={sensors}
     >
       <div
-        className={`flex flex-row gap-6 px-6 ${
+        className={`flex flex-row gap-4 sm:gap-6 px-2 sm:px-6 ${
           activeImage ? "cursor-grabbing" : "cursor-default"
         }`}
       >
@@ -219,7 +288,7 @@ export default function Gallery({
                       }`}
                     >
                       <div
-                        className={`h-4 transition-all duration-200 ease-in-out ${
+                        className={`h-2 sm:h-4 transition-all duration-200 ease-in-out ${
                           overId === img.id &&
                           placement === "above" &&
                           activeImage?.id !== img.id
@@ -232,14 +301,25 @@ export default function Gallery({
                         alt={img.alt}
                         width={img.width}
                         height={img.height}
+                        onClick={(event) => handleImageClick(img, event)}
+                        // onDoubleClick={(event) =>
+                        //   handleImageDoubleClick(img, event)
+                        // }
                         className={`
-                          rounded-sm object-cover cursor-grab shadow-md
-                          transition-all duration-100
-                          hover:scale-101 hover:shadow-xl hover:outline-primary hover:outline-4 hover:brightness-105 hover:saturate-110
+                          rounded-sm object-cover cursor-pointer shadow-md
+                          transition-all duration-200
+                          hover:scale-101 hover:shadow-xl  hover:brightness-105 hover:saturate-110 hover:opacity-100
+                          ${
+                            Object.keys(selectedImages).length > 0
+                              ? selectedImages[img.id]
+                                ? "outline-4 outline-primary"
+                                : "opacity-80"
+                              : ""
+                          }
                         `}
                       />
                       <div
-                        className={`h-4 transition-all duration-200 ease-in-out ${
+                        className={`h-2 sm:h-4 transition-all duration-200 ease-in-out ${
                           overId === img.id &&
                           placement === "below" &&
                           activeImage?.id !== img.id
