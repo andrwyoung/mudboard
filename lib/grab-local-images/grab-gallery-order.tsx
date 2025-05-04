@@ -25,7 +25,7 @@ export function grabGalleryOrder(galleryData: ImageType[]): GalleryOrder[] {
       .map(
         (img, index) =>
           ({
-            id: img.id,
+            id: img.image_id,
             section: 0,
             order: index * INDEX_MULTIPLIER,
           } as GalleryOrder)

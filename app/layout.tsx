@@ -1,6 +1,23 @@
-import type { Metadata } from "next";
 import "./globals.css";
-import { FontWrapper } from "@/components/font-wrapper";
+import { Barlow, Gantari, Overpass_Mono } from "next/font/google";
+import type { Metadata } from "next";
+
+const barlow = Barlow({
+  variable: "--font-header-barlow",
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+});
+
+const gantari = Gantari({
+  variable: "--font-body-gantari",
+  subsets: ["latin"],
+});
+
+const overpassMono = Overpass_Mono({
+  variable: "--font-overpass-mono",
+  weight: ["400", "600", "700"],
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Jonadrew Art",
@@ -14,7 +31,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <FontWrapper>{children}</FontWrapper>
+      <body
+        className={`${barlow.variable} ${gantari.variable} ${overpassMono.variable} antialiased`}
+      >
+        {children}{" "}
+      </body>
     </html>
   );
 }

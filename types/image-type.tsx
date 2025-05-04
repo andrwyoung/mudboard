@@ -1,11 +1,22 @@
+import { Tables, TablesInsert } from "./supabase";
+
+export type ImageInsert = TablesInsert<"images">;
+export type ImageDownload = Tables<"images">;
+
 export type ImageType = {
-  id: string;
-  src: string;
-  alt: string;
+  image_id: string;
+
+  file_ext: string;
+  original_name: string;
+
   width: number;
   height: number;
-  weight?: number;
-  orientation: string;
+
+  description: string;
+  order_index?: number;
+
+  // defined by me on fetch
+  fileName: string;
 };
 
 export type GalleryOrder = {

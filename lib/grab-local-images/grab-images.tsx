@@ -1,5 +1,5 @@
 import { GalleryOrder, ImageType } from "@/types/image-type";
-import { grabGalleryOrder } from "./grabGalleryOrder";
+import { grabGalleryOrder } from "./grab-gallery-order";
 import path from "path";
 import fs from "fs";
 
@@ -18,7 +18,7 @@ export function grabOrderedImages(): ImageType[] {
   const galleryOrder: GalleryOrder[] = grabGalleryOrder(filtered);
 
   const imageMap: Record<string, ImageType> = Object.fromEntries(
-    filtered.map((img) => [img.id, img])
+    filtered.map((img) => [img.image_id, img])
   );
 
   const orderedImages: ImageType[] = galleryOrder

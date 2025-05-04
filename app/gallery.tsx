@@ -1,13 +1,11 @@
 "use client";
 import { DroppableColumn } from "@/components/drag/droppable-wrapper";
 import { SortableImageItem } from "@/components/drag/sortable-wrapper";
+import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import { ImageType } from "@/types/image-type";
 import {
   DndContext,
-  DragEndEvent,
-  DragMoveEvent,
   DragOverlay,
-  DragStartEvent,
   MouseSensor,
   pointerWithin,
   TouchSensor,
@@ -35,7 +33,6 @@ export default function Gallery({
   >({});
 
   const [debugMessage, setDebugMessage] = useState("");
-
   const [columns, setColumns] = useState<ImageType[][]>([]);
 
   // only regenerate "real" columns when backend images change
@@ -74,180 +71,18 @@ export default function Gallery({
     };
   }, []);
 
-  // SECTION: handling dragging
-  //
-  //
-
-  function handleDragEnd(event: DragEndEvent) {
-    document.body.classList.remove("cursor-grabbing");
-    setDebugMessage("drag ended");
-
-    setActiveImage(null);
-    initialPointerYRef.current = null; // Reset here!
-    setOverId(null);
-
-    const { active, over } = event;
-
-    setActiveImage(null);
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    if (activeId === overId) return;
-
-    // find column to drop into
-    const fromColumnIndex = columns.findIndex((col) =>
-      col.some((img) => img.id === activeId)
-    );
-
-    let toColumnIndex = -1;
-    if (String(overId).startsWith("col-")) {
-      toColumnIndex = Number(String(overId).replace("col-", ""));
-    } else {
-      toColumnIndex = columns.findIndex((col) =>
-        col.some((img) => img.id === overId)
-      );
-    }
-    if (fromColumnIndex === -1 || toColumnIndex == -1) return;
-
-    // set up clones so we can mutate it
-    const newColumns = [...columns];
-    const fromCol = [...newColumns[fromColumnIndex]];
-    const toCol = [...newColumns[toColumnIndex]];
-
-    // find the dragged image
-    const movingItemIndex = fromCol.findIndex((img) => img.id === activeId);
-    const [movingItem] = fromCol.splice(movingItemIndex, 1);
-    // find target index
-    const overIndex = toCol.findIndex((img) => img.id === overId);
-
-    if (fromColumnIndex === toColumnIndex) {
-      // Moving within the same column
-      let insertIndex = overIndex;
-      if (insertIndex === -1) {
-        insertIndex = fromCol.length;
-      }
-      fromCol.splice(insertIndex, 0, movingItem);
-      newColumns[fromColumnIndex] = fromCol;
-    } else {
-      // Moving across columns
-      if (String(overId).startsWith("col-")) {
-        toCol.push(movingItem);
-      } else if (overIndex === -1) {
-        toCol.push(movingItem);
-      } else {
-        if (placement === "below") {
-          toCol.splice(overIndex + 1, 0, movingItem);
-        } else {
-          toCol.splice(overIndex, 0, movingItem);
-        }
-      }
-      newColumns[fromColumnIndex] = fromCol;
-      newColumns[toColumnIndex] = toCol;
-    }
-
-    // update columns
-    setColumns(newColumns);
-
-    console.log(
-      "drag done from col: ",
-      fromCol,
-      "toCol: ",
-      toCol,
-      "fromColumnIndex: ",
-      fromColumnIndex,
-      "toColumnIndex: ",
-      toColumnIndex
-    );
-  }
-
-  function handleDragStart(event: DragStartEvent) {
-    document.body.classList.add("cursor-grabbing");
-    setSelectedImages({});
-
-    setDebugMessage("drag starting");
-    const { active, activatorEvent } = event;
-    const activeImage = columns.flat().find((img) => img.id === active.id);
-    if (activeImage) {
-      setActiveImage(activeImage);
-    }
-
-    if (activatorEvent instanceof MouseEvent) {
-      initialPointerYRef.current = activatorEvent.clientY;
-    } else if (activatorEvent instanceof TouchEvent) {
-      initialPointerYRef.current = activatorEvent.touches[0]?.clientY ?? null;
-    }
-  }
-
-  function handleDragMove(event: DragMoveEvent) {
-    const { delta, over } = event;
-    setDebugMessage("drag move");
-
-    if (!over) {
-      setOverId(null);
-      return;
-    }
-
-    if (initialPointerYRef.current !== null) {
-      const currentPointerY = initialPointerYRef.current + delta.y;
-
-      const overElement = document.querySelector(`[data-id="${over.id}"]`);
-      if (overElement) {
-        const rect = overElement.getBoundingClientRect();
-        const middleY = rect.top + rect.height / 2;
-
-        if (currentPointerY < middleY) {
-          setPlacement("above");
-        } else {
-          setPlacement("below");
-        }
-      }
-      setOverId(String(over.id));
-    }
-  }
-
-  // SECTION handling click
-  function handleImageClick(
-    img: ImageType,
-    event: React.MouseEvent<HTMLImageElement, MouseEvent>
-  ) {
-    if (event.detail === 2) {
-      // DOUBLE CLICK detected!
-      console.log("Double clicked:", img);
-      // TODO: Handle double click behavior here
-      return;
-    }
-    console.log("Single click:", img);
-
-    setSelectedImages((prevSelected) => {
-      const newSelected = { ...prevSelected };
-
-      if (event.metaKey || event.ctrlKey) {
-        // Cmd (Mac) or Ctrl (Windows): Toggle selection
-        if (newSelected[img.id]) {
-          delete newSelected[img.id]; // Deselect
-        } else {
-          newSelected[img.id] = img; // Select
-        }
-        return newSelected;
-      } else {
-        // Regular click: Replace selection with just this image
-        if (newSelected[img.id] && Object.entries(newSelected).length === 1) {
-          return {};
-        }
-        return { [img.id]: img };
-      }
+  // all the drag handlers
+  const { handleDragStart, handleDragMove, handleDragEnd, handleImageClick } =
+    useGalleryHandlers({
+      columns,
+      setColumns,
+      setActiveImage,
+      setOverId,
+      setPlacement,
+      setSelectedImages,
+      setDebugMessage,
+      initialPointerYRef,
     });
-  }
-
-  // function handleImageDoubleClick(
-  //   img: ImageType,
-  //   event: React.MouseEvent<HTMLImageElement, MouseEvent>
-  // ) {
-  //   console.log("Double clicked:", img);
-  //   // TODO: Open fullscreen view? Open modal? Focus view? etc.
-  // }
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -278,27 +113,33 @@ export default function Gallery({
       >
         {columns.map((column, i) => (
           <DroppableColumn key={`col-${i}`} id={`col-${i}`}>
-            <SortableContext items={column.map((img) => img.id)}>
+            <SortableContext items={column.map((img) => img.image_id)}>
               {column.map((img) => (
-                <div key={img.id} data-id={img.id} className="flex flex-col">
-                  <SortableImageItem id={img.id}>
+                <div
+                  key={img.image_id}
+                  data-id={img.image_id}
+                  className="flex flex-col"
+                >
+                  <SortableImageItem id={img.image_id}>
                     <div
                       className={` ${
-                        activeImage?.id === img.id ? "opacity-30" : ""
+                        activeImage?.image_id === img.image_id
+                          ? "opacity-30"
+                          : ""
                       }`}
                     >
                       <div
                         className={`h-2 sm:h-4 transition-all duration-200 ease-in-out ${
-                          overId === img.id &&
+                          overId === img.image_id &&
                           placement === "above" &&
-                          activeImage?.id !== img.id
+                          activeImage?.image_id !== img.image_id
                             ? "border-t-4 border-primary"
                             : ""
                         }`}
                       />
                       <Image
-                        src={img.src}
-                        alt={img.alt}
+                        src={img.fileName}
+                        alt={img.description}
                         width={img.width}
                         height={img.height}
                         onClick={(event) => handleImageClick(img, event)}
@@ -311,18 +152,18 @@ export default function Gallery({
                           hover:scale-101 hover:shadow-xl  hover:brightness-105 hover:saturate-110 hover:opacity-100
                           ${
                             Object.keys(selectedImages).length > 0
-                              ? selectedImages[img.id]
+                              ? selectedImages[img.image_id]
                                 ? "outline-4 outline-primary"
-                                : "opacity-80"
+                                : ""
                               : ""
                           }
                         `}
                       />
                       <div
                         className={`h-2 sm:h-4 transition-all duration-200 ease-in-out ${
-                          overId === img.id &&
+                          overId === img.image_id &&
                           placement === "below" &&
-                          activeImage?.id !== img.id
+                          activeImage?.image_id !== img.image_id
                             ? "border-b-4 border-primary"
                             : ""
                         }`}
@@ -338,8 +179,8 @@ export default function Gallery({
       <DragOverlay>
         {activeImage ? (
           <Image
-            src={activeImage.src}
-            alt={activeImage.alt}
+            src={activeImage.fileName}
+            alt={activeImage.description}
             width={activeImage.width}
             height={activeImage.height}
             className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform 
