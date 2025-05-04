@@ -8,9 +8,9 @@ export async function uploadImageToSupabase(
   const payload: ImageInsert = {
     image_id: newImage.image_id,
     original_name: newImage.original_name,
-    file_ext: newImage.original_name,
+    file_ext: newImage.file_ext,
     width: newImage.width,
-    height: newImage.width,
+    height: newImage.height,
   };
 
   const fileName = `${newImage.image_id}.${newImage.file_ext}`;
