@@ -23,6 +23,10 @@ export default function Gallery({
   imgs: MudboardImage[];
   cols?: number;
 }) {
+  const [erroredImages, setErroredImages] = useState<Record<string, boolean>>(
+    {}
+  );
+
   const [activeImage, setActiveImage] = useState<MudboardImage | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   const [placement, setPlacement] = useState<"above" | "below">("below");
@@ -141,18 +145,28 @@ export default function Gallery({
                             : ""
                         }`}
                       />
-                      <Image
-                        src={img.fileName}
-                        alt={img.description}
-                        width={img.width}
-                        height={img.height}
-                        onClick={(event) => handleImageClick(img, event)}
-                        // onDoubleClick={(event) =>
-                        //   handleImageDoubleClick(img, event)
-                        // }
-                        className={`
+                      {!erroredImages[img.image_id] ? (
+                        <Image
+                          src={img.fileName}
+                          alt={img.description}
+                          width={img.width}
+                          height={img.height}
+                          onClick={(event) => handleImageClick(img, event)}
+                          // onDoubleClick={(event) =>
+                          //   handleImageDoubleClick(img, event)
+                          // }
+                          onError={() => {
+                            console.error(
+                              `Image failed to load: ${img.fileName}`
+                            );
+                            setErroredImages((prev) => ({
+                              ...prev,
+                              [img.image_id]: true,
+                            }));
+                          }}
+                          className={`
                           rounded-sm object-cover cursor-pointer shadow-md
-                          transition-all duration-200
+                          transition-all duration-200 w-full
                           hover:scale-101 hover:shadow-xl  hover:brightness-105 hover:saturate-110 hover:opacity-100
                           ${
                             Object.keys(selectedImages).length > 0
@@ -162,7 +176,21 @@ export default function Gallery({
                               : ""
                           }
                         `}
-                      />
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: "100%",
+                            aspectRatio: `${img.width} / ${img.height}`,
+                          }}
+                          className="bg-zinc-200 border border-zinc-300 rounded-sm shadow-md
+                          flex items-center justify-center relative text-center"
+                        >
+                          <span className="text-zinc-500 text-xs px-2">
+                            {img.description || "Image failed to load"}
+                          </span>
+                        </div>
+                      )}
                       <div
                         className={`h-2 sm:h-4 transition-all duration-200 ease-in-out ${
                           overId === img.image_id &&

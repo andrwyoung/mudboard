@@ -6,9 +6,13 @@ import Sidebar from "./sidebar";
 import { MudboardImage } from "@/types/image-type";
 import { uploadImageToSupabase } from "@/lib/db-actions/upload-image";
 import { fetchSupabaseImages } from "@/lib/db-actions/fetch-db-images";
-import { getImageDimensions } from "@/lib/process-images/get-img-dimensions";
 import { toast } from "sonner";
-import { allowedMimeTypes } from "@/types/settings";
+import {
+  allowedMimeTypes,
+  COMPRESSED_IMAGE_WIDTH,
+  DEFAULT_FILE_EXT,
+} from "@/types/settings";
+import { convertToWebP } from "@/lib/process-images/compress-image";
 
 export default function Home() {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -64,13 +68,12 @@ export default function Home() {
 
         const uploadPromises = Array.from(files).map(async (file) => {
           const image_id = uuidv4();
-          const { width, height } = await getImageDimensions(file);
 
           const match = file.name.match(/^(.*)\.([^.]+)$/);
           const original_name = match ? match[1] : file.name;
-          const file_ext = match ? match[2].toLowerCase() : null;
+          const fileExt = match ? match[2].toLowerCase() : null; // just used to check
 
-          if (!file_ext) {
+          if (!fileExt) {
             throw new Error("Could not determine file extension.");
           }
 
@@ -79,11 +82,24 @@ export default function Home() {
             return;
           }
 
-          const objectUrl = URL.createObjectURL(file);
+          let compressed;
+          try {
+            compressed = await convertToWebP(file, COMPRESSED_IMAGE_WIDTH);
+          } catch (err) {
+            toast.error(
+              "Image conversion failed. Please try a different file."
+            );
+            console.log("Image Conversion failed: ", err);
+            return;
+          }
+          const { file: compressedFile, width, height } = compressed;
+
+          // create an objectURL so we can use it locally
+          const objectUrl = URL.createObjectURL(compressedFile);
 
           const newImage: MudboardImage = {
             image_id,
-            file_ext,
+            file_ext: DEFAULT_FILE_EXT,
             original_name,
             width,
             height,
@@ -96,7 +112,7 @@ export default function Home() {
           setOrderedImages((prev) => [...prev, newImage]);
 
           // return the Promise and then update the image when it's done uploading
-          return uploadImageToSupabase(file, newImage)
+          return uploadImageToSupabase(compressedFile, newImage)
             .then(() => {
               setOrderedImages((prev) =>
                 prev.map((img) =>

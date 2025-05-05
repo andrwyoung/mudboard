@@ -31,5 +31,7 @@ export async function uploadImageToSupabase(
     throw new Error(`DB insert failed: ${insertError.message}`);
   }
 
+  console.log("Uploaded: ", file);
+
   return payload;
 }
