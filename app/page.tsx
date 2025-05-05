@@ -104,7 +104,7 @@ export default function Home() {
 
       {/* Sidebar */}
       <aside
-        className="hidden lg:block w-1/6 min-w-[200px] max-w-[300px]
+        className="hidden lg:block w-1/6 min-w-[200px] max-w-[380px]
       bg-primary"
       >
         <Sidebar />

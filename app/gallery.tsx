@@ -18,7 +18,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Gallery({
   imgs,
-  cols = 3,
+  cols = 8,
 }: {
   imgs: ImageType[];
   cols?: number;
@@ -105,7 +105,7 @@ export default function Gallery({
       sensors={sensors}
     >
       <div
-        className={`flex flex-row gap-4 sm:gap-6 px-2 sm:px-6 ${
+        className={`flex flex-row gap-4 sm:gap-6 px-2 sm:px-12 ${
           activeImage ? "cursor-grabbing" : "cursor-default"
         }`}
       >
@@ -151,7 +151,7 @@ export default function Gallery({
                           ${
                             Object.keys(selectedImages).length > 0
                               ? selectedImages[img.image_id]
-                                ? "outline-6 outline-accent"
+                                ? "outline-6 outline-secondary"
                                 : ""
                               : ""
                           }
