@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Recursive, Gantari, Overpass_Mono } from "next/font/google";
 import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/sonner";
 
 const headerFont = Recursive({
   variable: "--font-header",
@@ -35,7 +36,8 @@ export default function RootLayout({
       <body
         className={`${headerFont.variable} ${bodyFont.variable} ${monoFont.variable} antialiased`}
       >
-        {children}{" "}
+        {children}
+        <Toaster />
       </body>
     </html>
   );

@@ -1,8 +1,8 @@
-import { ImageDownload, ImageType } from "@/types/image-type";
+import { ImageDownload, MudboardImage } from "@/types/image-type";
 import { supabase } from "../supabase";
 import { SUPABASE_OBJECT_URL } from "@/types/constants";
 
-export async function fetchSupabaseImages(): Promise<ImageType[]> {
+export async function fetchSupabaseImages(): Promise<MudboardImage[]> {
   console.log("Fetching images from Supabase DB...");
 
   const { data, error } = await supabase
@@ -15,8 +15,8 @@ export async function fetchSupabaseImages(): Promise<ImageType[]> {
     return [];
   }
 
-  const imagesWithFileName: ImageType[] = (data || []).map(
-    (image: ImageDownload): ImageType => ({
+  const imagesWithFileName: MudboardImage[] = (data || []).map(
+    (image: ImageDownload): MudboardImage => ({
       image_id: image.image_id,
 
       file_ext: image.file_ext,

@@ -1,15 +1,15 @@
 import { useCallback } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
-import { ImageType } from "@/types/image-type";
+import { MudboardImage } from "@/types/image-type";
 
 type UseGalleryHandlersProps = {
-  columns: ImageType[][];
-  setColumns: React.Dispatch<React.SetStateAction<ImageType[][]>>;
-  setActiveImage: (img: ImageType | null) => void;
+  columns: MudboardImage[][];
+  setColumns: React.Dispatch<React.SetStateAction<MudboardImage[][]>>;
+  setActiveImage: (img: MudboardImage | null) => void;
   setOverId: (id: string | null) => void;
   setPlacement: (val: "above" | "below") => void;
   setSelectedImages: React.Dispatch<
-    React.SetStateAction<Record<string, ImageType>>
+    React.SetStateAction<Record<string, MudboardImage>>
   >;
   initialPointerYRef: React.MutableRefObject<number | null>;
 };
@@ -131,7 +131,10 @@ export function useGalleryHandlers({
   );
 
   const handleImageClick = useCallback(
-    (img: ImageType, event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+    (
+      img: MudboardImage,
+      event: React.MouseEvent<HTMLImageElement, MouseEvent>
+    ) => {
       if (event.detail === 2) {
         console.log("Double clicked:", img);
         return;

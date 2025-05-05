@@ -3,15 +3,18 @@ import Gallery from "./gallery";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect, useState } from "react";
 import Sidebar from "./sidebar";
-import { ImageType } from "@/types/image-type";
+import { MudboardImage } from "@/types/image-type";
 import { uploadImageToSupabase } from "@/lib/db-actions/upload-image";
 import { fetchSupabaseImages } from "@/lib/db-actions/fetch-db-images";
 import { getImageDimensions } from "@/lib/process-images/get-img-dimensions";
+import { toast } from "sonner";
+import { allowedMimeTypes } from "@/types/settings";
 
 export default function Home() {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const [orderedImages, setOrderedImages] = useState<ImageType[]>([]);
+  const [orderedImages, setOrderedImages] = useState<MudboardImage[]>([]);
+  const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
 
   useEffect(() => {
     async function loadImages() {
@@ -29,6 +32,11 @@ export default function Home() {
       e.preventDefault();
       dragCounter++;
       setIsDraggingFile(true);
+
+      const items = e.dataTransfer?.items;
+      if (items && items.length > 0) {
+        setDraggedFileCount(items.length);
+      }
     }
 
     function handleDragLeave(e: DragEvent) {
@@ -48,36 +56,71 @@ export default function Home() {
       dragCounter = 0;
       setIsDraggingFile(false);
 
-      const file = e.dataTransfer?.files?.[0];
-      if (file) {
-        const image_id = uuidv4();
-        const { width, height } = await getImageDimensions(file);
+      const files = e.dataTransfer?.files;
+      setDraggedFileCount(null);
 
-        const match = file.name.match(/^(.*)\.([^.]+)$/);
-        const original_name = match ? match[1] : file.name;
-        const file_ext = match ? match[2].toLowerCase() : null;
+      if (files && files.length > 0) {
+        setDraggedFileCount(files.length);
 
-        if (!file_ext) {
-          throw new Error("Could not determine file extension.");
-        }
+        const uploadPromises = Array.from(files).map(async (file) => {
+          const image_id = uuidv4();
+          const { width, height } = await getImageDimensions(file);
 
-        const objectUrl = URL.createObjectURL(file);
+          const match = file.name.match(/^(.*)\.([^.]+)$/);
+          const original_name = match ? match[1] : file.name;
+          const file_ext = match ? match[2].toLowerCase() : null;
 
-        const newImage: ImageType = {
-          image_id,
-          file_ext,
-          original_name,
-          width,
-          height,
-          description: original_name,
-          fileName: objectUrl, // this is just for local
-        };
-        // Show it right away
-        setOrderedImages((prev) => [...prev, newImage]);
+          if (!file_ext) {
+            throw new Error("Could not determine file extension.");
+          }
 
-        uploadImageToSupabase(file, newImage)
-          .then((img) => console.log("Image uploaded:", img))
-          .catch(console.error);
+          if (!allowedMimeTypes.includes(file.type)) {
+            toast.error(`Unsupported file type: ${file.type}`);
+            return;
+          }
+
+          const objectUrl = URL.createObjectURL(file);
+
+          const newImage: MudboardImage = {
+            image_id,
+            file_ext,
+            original_name,
+            width,
+            height,
+            description: original_name,
+
+            fileName: objectUrl, // this is just for local
+            uploadStatus: "uploading",
+          };
+          // add it to gallery immediately
+          setOrderedImages((prev) => [...prev, newImage]);
+
+          // return the Promise and then update the image when it's done uploading
+          return uploadImageToSupabase(file, newImage)
+            .then(() => {
+              setOrderedImages((prev) =>
+                prev.map((img) =>
+                  img.image_id === newImage.image_id
+                    ? { ...img, uploadStatus: "uploaded" }
+                    : img
+                )
+              );
+            })
+            .catch((err) => {
+              console.error(err);
+              setOrderedImages((prev) =>
+                prev.map((img) =>
+                  img.image_id === newImage.image_id
+                    ? { ...img, uploadStatus: "error" }
+                    : img
+                )
+              );
+            });
+        });
+
+        await Promise.all(uploadPromises);
+        toast.success(`Successfully uploaded ${uploadPromises.length} images!`);
+        console.log(`All ${uploadPromises.length} uploads complete!`);
       }
     }
 
@@ -98,7 +141,9 @@ export default function Home() {
     <div className="flex h-screen overflow-hidden relative">
       {isDraggingFile && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center text-white text-2xl">
-          Drop your file!
+          {draggedFileCount
+            ? `Drop ${draggedFileCount} file${draggedFileCount > 1 ? "s" : ""}!`
+            : "Drop your file!"}
         </div>
       )}
 

@@ -1,9 +1,9 @@
 import { supabase } from "../supabase";
-import { ImageInsert, ImageType } from "@/types/image-type";
+import { ImageInsert, MudboardImage } from "@/types/image-type";
 
 export async function uploadImageToSupabase(
   file: File,
-  newImage: ImageType
+  newImage: MudboardImage
 ): Promise<ImageInsert> {
   const payload: ImageInsert = {
     image_id: newImage.image_id,

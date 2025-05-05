@@ -2,7 +2,7 @@
 import { DroppableColumn } from "@/components/drag/droppable-wrapper";
 import { SortableImageItem } from "@/components/drag/sortable-wrapper";
 import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
-import { ImageType } from "@/types/image-type";
+import { MudboardImage } from "@/types/image-type";
 import {
   DndContext,
   DragOverlay,
@@ -20,23 +20,26 @@ export default function Gallery({
   imgs,
   cols = 8,
 }: {
-  imgs: ImageType[];
+  imgs: MudboardImage[];
   cols?: number;
 }) {
-  const [activeImage, setActiveImage] = useState<ImageType | null>(null);
+  const [activeImage, setActiveImage] = useState<MudboardImage | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   const [placement, setPlacement] = useState<"above" | "below">("below");
   const initialPointerYRef = useRef<number | null>(null);
 
   const [selectedImages, setSelectedImages] = useState<
-    Record<string, ImageType>
+    Record<string, MudboardImage>
   >({});
 
-  const [columns, setColumns] = useState<ImageType[][]>([]);
+  const [columns, setColumns] = useState<MudboardImage[][]>([]);
 
   // only regenerate "real" columns when backend images change
   const generatedColumns = useMemo(() => {
-    const newColumns: ImageType[][] = Array.from({ length: cols }, () => []);
+    const newColumns: MudboardImage[][] = Array.from(
+      { length: cols },
+      () => []
+    );
     imgs.forEach((img, index) => {
       const colIndex = index % cols;
       newColumns[colIndex].push(img);
@@ -105,9 +108,12 @@ export default function Gallery({
       sensors={sensors}
     >
       <div
-        className={`flex flex-row gap-4 sm:gap-6 px-2 sm:px-12 ${
+        className={`grid gap-4 sm:gap-6 px-2 sm:px-12 ${
           activeImage ? "cursor-grabbing" : "cursor-default"
         }`}
+        style={{
+          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+        }}
       >
         {columns.map((column, i) => (
           <DroppableColumn key={`col-${i}`} id={`col-${i}`}>

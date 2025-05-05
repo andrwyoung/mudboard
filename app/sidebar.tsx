@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const fontClass = "font-semibold text-xl font-header";
+const fontClass = "font-semibold text-md font-header";
 const refClass =
   "text-accent hover:text-primary-foreground transition-all hover:underline";
 
@@ -26,8 +26,8 @@ export default function Sidebar() {
       <div className="flex flex-col flex-grow justify-center px-10">
         <div className="flex flex-col">
           <h1 className="text-3xl  font-bold">Art Room</h1>
-          <p className="text-lg mb-12 font-semibold">
-            Site's under construction, but uh feel free to drag around some
+          <p className="text-sm mb-12 font-semibold">
+            Site&apos;s under construction, but uh feel free to drag around some
             pictures!
           </p>
           <div className="flex flex-col gap-2">
