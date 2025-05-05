@@ -153,7 +153,7 @@ export default function Gallery({
                           ${
                             Object.keys(selectedImages).length > 0
                               ? selectedImages[img.image_id]
-                                ? "outline-4 outline-primary"
+                                ? "outline-6 outline-accent"
                                 : ""
                               : ""
                           }
@@ -188,11 +188,11 @@ export default function Gallery({
           />
         ) : null}
       </DragOverlay>
-      <div className="absolute top-4 left-4">
+      {/* <div className="absolute top-4 left-4">
         {debugMessage} <br />
         {placement} <br />
         overId: {overId}
-      </div>
+      </div> */}
     </DndContext>
   );
 }

@@ -96,10 +96,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen overflow-hidden relative">
-      <div className="absolute left-12 top-12">
-        Hm {isDraggingFile ? "hey" : "nope"}
-      </div>
-
       {isDraggingFile && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center text-white text-2xl">
           Drop your file!
@@ -108,8 +104,8 @@ export default function Home() {
 
       {/* Sidebar */}
       <aside
-        className="hidden sm:flex w-1/5 min-w-[200px] max-w-[380px] h-full 
-      flex-col items-start justify-center bg-primary pl-4 sm:pl-8 xl:pl-16"
+        className="hidden lg:block w-1/6 min-w-[200px] max-w-[300px]
+      bg-primary"
       >
         <Sidebar />
       </aside>
