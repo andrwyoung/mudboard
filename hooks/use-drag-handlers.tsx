@@ -11,7 +11,6 @@ type UseGalleryHandlersProps = {
   setSelectedImages: React.Dispatch<
     React.SetStateAction<Record<string, ImageType>>
   >;
-  setDebugMessage: (msg: string) => void;
   initialPointerYRef: React.MutableRefObject<number | null>;
 };
 
@@ -22,14 +21,12 @@ export function useGalleryHandlers({
   setOverId,
   setPlacement,
   setSelectedImages,
-  setDebugMessage,
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       document.body.classList.add("cursor-grabbing");
       setSelectedImages({});
-      setDebugMessage("drag starting");
 
       const { active, activatorEvent } = event;
       const activeImage = columns
@@ -50,7 +47,6 @@ export function useGalleryHandlers({
 
   const handleDragMove = useCallback((event: DragMoveEvent) => {
     const { delta, over } = event;
-    setDebugMessage("drag move");
 
     if (!over) {
       setOverId(null);
@@ -74,7 +70,6 @@ export function useGalleryHandlers({
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       document.body.classList.remove("cursor-grabbing");
-      setDebugMessage("drag ended");
 
       setActiveImage(null);
       initialPointerYRef.current = null;

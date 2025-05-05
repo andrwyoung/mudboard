@@ -32,7 +32,6 @@ export default function Gallery({
     Record<string, ImageType>
   >({});
 
-  const [debugMessage, setDebugMessage] = useState("");
   const [columns, setColumns] = useState<ImageType[][]>([]);
 
   // only regenerate "real" columns when backend images change
@@ -80,7 +79,6 @@ export default function Gallery({
       setOverId,
       setPlacement,
       setSelectedImages,
-      setDebugMessage,
       initialPointerYRef,
     });
 
@@ -188,11 +186,6 @@ export default function Gallery({
           />
         ) : null}
       </DragOverlay>
-      {/* <div className="absolute top-4 left-4">
-        {debugMessage} <br />
-        {placement} <br />
-        overId: {overId}
-      </div> */}
     </DndContext>
   );
 }
