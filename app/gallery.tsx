@@ -2,10 +2,10 @@
 import { DroppableColumn } from "@/components/drag/droppable-wrapper";
 import { SortableImageItem } from "@/components/drag/sortable-wrapper";
 import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
-import { MudboardImage } from "@/types/image-type";
+import { BlockRenderer } from "@/lib/blocks/block-helpers";
+import { Block, MudboardImage } from "@/types/image-type";
 import {
   DndContext,
-  DragOverlay,
   MouseSensor,
   pointerWithin,
   TouchSensor,
@@ -13,7 +13,6 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Gallery({
@@ -27,26 +26,28 @@ export default function Gallery({
     {}
   );
 
-  const [activeImage, setActiveImage] = useState<MudboardImage | null>(null);
+  const [draggedImage, setDraggedImage] = useState<Block | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   const [placement, setPlacement] = useState<"above" | "below">("below");
   const initialPointerYRef = useRef<number | null>(null);
 
-  const [selectedImages, setSelectedImages] = useState<
-    Record<string, MudboardImage>
-  >({});
+  console.log(overId, placement);
+  const [selectedImages, setSelectedImages] = useState<Record<string, Block>>(
+    {}
+  );
 
-  const [columns, setColumns] = useState<MudboardImage[][]>([]);
+  const [columns, setColumns] = useState<Block[][]>([]);
 
   // only regenerate "real" columns when backend images change
   const generatedColumns = useMemo(() => {
-    const newColumns: MudboardImage[][] = Array.from(
-      { length: cols },
-      () => []
-    );
+    const newColumns: Block[][] = Array.from({ length: cols }, () => []);
     imgs.forEach((img, index) => {
       const colIndex = index % cols;
-      newColumns[colIndex].push(img);
+      newColumns[colIndex].push({
+        id: img.image_id,
+        type: "image",
+        data: img,
+      });
     });
     return newColumns;
   }, [imgs, cols]);
@@ -78,14 +79,14 @@ export default function Gallery({
   }, []);
 
   // all the drag handlers
-  const { handleDragStart, handleDragMove, handleDragEnd, handleImageClick } =
+  const { handleDragStart, handleDragMove, handleDragEnd, handleItemClick } =
     useGalleryHandlers({
       columns,
       setColumns,
-      setActiveImage,
+      setDraggedBlock: setDraggedImage,
       setOverId,
       setPlacement,
-      setSelectedImages,
+      setSelectedBlocks: setSelectedImages,
       initialPointerYRef,
     });
 
@@ -113,7 +114,7 @@ export default function Gallery({
     >
       <div
         className={`grid gap-4 sm:gap-6 px-2 sm:px-12 ${
-          activeImage ? "cursor-grabbing" : "cursor-default"
+          draggedImage ? "cursor-grabbing" : "cursor-default"
         }`}
         style={{
           gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
@@ -121,84 +122,33 @@ export default function Gallery({
       >
         {columns.map((column, i) => (
           <DroppableColumn key={`col-${i}`} id={`col-${i}`}>
-            <SortableContext items={column.map((img) => img.image_id)}>
-              {column.map((img) => (
+            <SortableContext items={column.map((block) => block.id)}>
+              {column.map((block) => (
                 <div
-                  key={img.image_id}
-                  data-id={img.image_id}
+                  key={block.id}
+                  data-id={block.id}
                   className="flex flex-col"
                 >
-                  <SortableImageItem id={img.image_id}>
+                  <SortableImageItem id={block.id}>
                     <div
-                      className={` ${
-                        activeImage?.image_id === img.image_id
-                          ? "opacity-30"
+                      className={`rounded-sm object-cover transition-all duration-200 cursor-pointer shadow-md ${
+                        draggedImage?.id === block.id ? "opacity-30" : ""
+                      } ${
+                        !!selectedImages[block.id]
+                          ? "outline-6 outline-secondary"
                           : ""
                       }`}
                     >
-                      <div
-                        className={`h-2 sm:h-4 transition-all duration-200 ease-in-out ${
-                          overId === img.image_id &&
-                          placement === "above" &&
-                          activeImage?.image_id !== img.image_id
-                            ? "border-t-4 border-primary"
-                            : ""
-                        }`}
-                      />
-                      {!erroredImages[img.image_id] ? (
-                        <Image
-                          src={img.fileName}
-                          alt={img.description}
-                          width={img.width}
-                          height={img.height}
-                          onClick={(event) => handleImageClick(img, event)}
-                          // onDoubleClick={(event) =>
-                          //   handleImageDoubleClick(img, event)
-                          // }
-                          onError={() => {
-                            console.error(
-                              `Image failed to load: ${img.fileName}`
-                            );
-                            setErroredImages((prev) => ({
-                              ...prev,
-                              [img.image_id]: true,
-                            }));
-                          }}
-                          className={`
-                          rounded-sm object-cover cursor-pointer shadow-md
-                          transition-all duration-200 w-full
-                          hover:scale-101 hover:shadow-xl  hover:brightness-105 hover:saturate-110 hover:opacity-100
-                          ${
-                            Object.keys(selectedImages).length > 0
-                              ? selectedImages[img.image_id]
-                                ? "outline-6 outline-secondary"
-                                : ""
-                              : ""
-                          }
-                        `}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            width: "100%",
-                            aspectRatio: `${img.width} / ${img.height}`,
-                          }}
-                          className="bg-zinc-200 border border-zinc-300 rounded-sm shadow-md
-                          flex items-center justify-center relative text-center"
-                        >
-                          <span className="text-zinc-500 text-xs px-2">
-                            {img.description || "Image failed to load"}
-                          </span>
-                        </div>
-                      )}
-                      <div
-                        className={`h-2 sm:h-4 transition-all duration-200 ease-in-out ${
-                          overId === img.image_id &&
-                          placement === "below" &&
-                          activeImage?.image_id !== img.image_id
-                            ? "border-b-4 border-primary"
-                            : ""
-                        }`}
+                      <BlockRenderer
+                        block={block}
+                        isErrored={erroredImages[block.id]}
+                        onClick={(e) => handleItemClick(block, e)}
+                        onError={() =>
+                          setErroredImages((prev) => ({
+                            ...prev,
+                            [block.id]: true,
+                          }))
+                        }
                       />
                     </div>
                   </SortableImageItem>
@@ -208,7 +158,7 @@ export default function Gallery({
           </DroppableColumn>
         ))}
       </div>
-      <DragOverlay>
+      {/* <DragOverlay>
         {activeImage ? (
           <Image
             src={activeImage.fileName}
@@ -219,7 +169,7 @@ export default function Gallery({
             duration-200 ease-out scale-105 shadow-xl rotate-1"
           />
         ) : null}
-      </DragOverlay>
+      </DragOverlay> */}
     </DndContext>
   );
 }

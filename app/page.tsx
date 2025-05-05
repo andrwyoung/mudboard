@@ -29,6 +29,7 @@ export default function Home() {
     loadImages();
   }, []);
 
+  // handling importing images
   useEffect(() => {
     let dragCounter = 0;
 

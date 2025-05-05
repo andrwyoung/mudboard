@@ -6,6 +6,12 @@ export type ImageDownload = Tables<"images">;
 export type UploadStatus = "pending" | "uploading" | "uploaded" | "error";
 export type FileType = "database" | "blob" | "local";
 
+export type Block = {
+  id: string;
+  type: "image" | "text" | "spacer";
+  data: MudboardImage | TextBlock | SpacerBlock;
+};
+
 export type MudboardImage = {
   image_id: string;
 
@@ -24,6 +30,14 @@ export type MudboardImage = {
   // helper types
   fileType?: FileType;
   uploadStatus?: UploadStatus;
+};
+
+export type TextBlock = {
+  text: string;
+};
+
+export type SpacerBlock = {
+  height: number;
 };
 
 export type GalleryOrder = {

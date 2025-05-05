@@ -1,15 +1,15 @@
 import { useCallback } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
-import { MudboardImage } from "@/types/image-type";
+import { Block, MudboardImage } from "@/types/image-type";
 
 type UseGalleryHandlersProps = {
-  columns: MudboardImage[][];
-  setColumns: React.Dispatch<React.SetStateAction<MudboardImage[][]>>;
-  setActiveImage: (img: MudboardImage | null) => void;
+  columns: Block[][];
+  setColumns: React.Dispatch<React.SetStateAction<Block[][]>>;
+  setDraggedBlock: (img: Block | null) => void;
   setOverId: (id: string | null) => void;
   setPlacement: (val: "above" | "below") => void;
-  setSelectedImages: React.Dispatch<
-    React.SetStateAction<Record<string, MudboardImage>>
+  setSelectedBlocks: React.Dispatch<
+    React.SetStateAction<Record<string, Block>>
   >;
   initialPointerYRef: React.MutableRefObject<number | null>;
 };
@@ -17,23 +17,23 @@ type UseGalleryHandlersProps = {
 export function useGalleryHandlers({
   columns,
   setColumns,
-  setActiveImage,
+  setDraggedBlock,
   setOverId,
   setPlacement,
-  setSelectedImages,
+  setSelectedBlocks,
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       document.body.classList.add("cursor-grabbing");
-      setSelectedImages({});
+      setSelectedBlocks({});
 
       const { active, activatorEvent } = event;
       const activeImage = columns
         .flat()
-        .find((img) => img.image_id === active.id);
+        .find((block) => block.id === active.id);
       if (activeImage) {
-        setActiveImage(activeImage);
+        setDraggedBlock(activeImage);
       }
 
       if (activatorEvent instanceof MouseEvent) {
@@ -58,6 +58,7 @@ export function useGalleryHandlers({
 
       const overElement = document.querySelector(`[data-id="${over.id}"]`);
       if (overElement) {
+        // determine which drag indicator to show
         const rect = overElement.getBoundingClientRect();
         const middleY = rect.top + rect.height / 2;
 
@@ -71,7 +72,7 @@ export function useGalleryHandlers({
     (event: DragEndEvent) => {
       document.body.classList.remove("cursor-grabbing");
 
-      setActiveImage(null);
+      setDraggedBlock(null);
       initialPointerYRef.current = null;
       setOverId(null);
 
@@ -83,81 +84,91 @@ export function useGalleryHandlers({
       if (activeId === overId) return;
 
       const fromColumnIndex = columns.findIndex((col) =>
-        col.some((img) => img.image_id === activeId)
+        col.some((block) => block.id === activeId)
       );
 
+      // where's it being dropped to
+      // extra logic for dropping into columns itself
       let toColumnIndex = -1;
       if (String(overId).startsWith("col-")) {
         toColumnIndex = Number(String(overId).replace("col-", ""));
       } else {
         toColumnIndex = columns.findIndex((col) =>
-          col.some((img) => img.image_id === overId)
+          col.some((block) => block.id === overId)
         );
       }
       if (fromColumnIndex === -1 || toColumnIndex === -1) return;
 
-      const newColumns = [...columns];
-      const fromCol = [...newColumns[fromColumnIndex]];
-      const toCol = [...newColumns[toColumnIndex]];
+      // KEY SECTION: actually updating the columns
+      //
+      // update only the columns that changed
+      setColumns((prev) => {
+        const updated = [...prev];
 
-      const movingItemIndex = fromCol.findIndex(
-        (img) => img.image_id === activeId
-      );
-      const [movingItem] = fromCol.splice(movingItemIndex, 1);
-      const overIndex = toCol.findIndex((img) => img.image_id === overId);
+        const fromCol = [...updated[fromColumnIndex]];
+        const toCol = [...updated[toColumnIndex]];
 
-      if (fromColumnIndex === toColumnIndex) {
-        let insertIndex = overIndex === -1 ? fromCol.length : overIndex;
-        fromCol.splice(insertIndex, 0, movingItem);
-        newColumns[fromColumnIndex] = fromCol;
-      } else {
-        if (String(overId).startsWith("col-") || overIndex === -1) {
-          toCol.push(movingItem);
+        const movingItemIndex = fromCol.findIndex(
+          (block) => block.id === activeId
+        );
+        const [movingItem] = fromCol.splice(movingItemIndex, 1);
+        const overIndex = toCol.findIndex((block) => block.id === overId);
+
+        // if you're dragging into the same column
+        if (fromColumnIndex === toColumnIndex) {
+          let insertIndex = overIndex === -1 ? fromCol.length : overIndex;
+          fromCol.splice(insertIndex, 0, movingItem);
+          updated[fromColumnIndex] = fromCol;
         } else {
-          const place = initialPointerYRef.current ? "below" : "above";
-          toCol.splice(
-            place === "below" ? overIndex + 1 : overIndex,
-            0,
-            movingItem
-          );
-        }
-        newColumns[fromColumnIndex] = fromCol;
-        newColumns[toColumnIndex] = toCol;
-      }
+          // if you're dragging to a column itself, add to the bottom
+          if (String(overId).startsWith("col-") || overIndex === -1) {
+            toCol.push(movingItem);
+          } else {
+            // if you're dragging between 2 objects in a different column
+            const place = initialPointerYRef.current ? "below" : "above";
+            toCol.splice(
+              place === "below" ? overIndex + 1 : overIndex,
+              0,
+              movingItem
+            );
+          }
 
-      setColumns(newColumns);
+          // update the new columns
+          updated[fromColumnIndex] = fromCol;
+          updated[toColumnIndex] = toCol;
+        }
+
+        return updated;
+      });
     },
     [columns]
   );
 
-  const handleImageClick = useCallback(
-    (
-      img: MudboardImage,
-      event: React.MouseEvent<HTMLImageElement, MouseEvent>
-    ) => {
+  const handleItemClick = useCallback(
+    (block: Block, event: React.MouseEvent<Element, MouseEvent>) => {
       if (event.detail === 2) {
-        console.log("Double clicked:", img);
+        console.log("Double clicked:", block);
         return;
       }
 
-      setSelectedImages((prevSelected) => {
+      setSelectedBlocks((prevSelected) => {
         const newSelected = { ...prevSelected };
 
         if (event.metaKey || event.ctrlKey) {
-          if (newSelected[img.image_id]) {
-            delete newSelected[img.image_id];
+          if (newSelected[block.id]) {
+            delete newSelected[block.id];
           } else {
-            newSelected[img.image_id] = img;
+            newSelected[block.id] = block;
           }
           return newSelected;
         } else {
           if (
-            newSelected[img.image_id] &&
+            newSelected[block.id] &&
             Object.entries(newSelected).length === 1
           ) {
             return {};
           }
-          return { [img.image_id]: img };
+          return { [block.id]: block };
         }
       });
     },
@@ -168,6 +179,6 @@ export function useGalleryHandlers({
     handleDragStart,
     handleDragMove,
     handleDragEnd,
-    handleImageClick,
+    handleItemClick,
   };
 }
