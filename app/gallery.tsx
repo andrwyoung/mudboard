@@ -21,6 +21,7 @@ import { DropIndicator } from "@/components/drag/drag-indicator";
 export default function Gallery({ imgs }: { imgs: MudboardImage[] }) {
   const columnCount = useUIStore((s) => s.columnCount);
   const spacingSize = useUIStore((s) => s.spacingSize);
+  const galleySpacingSize = useUIStore((s) => s.galleySpacingSize);
 
   const [erroredImages, setErroredImages] = useState<Record<string, boolean>>(
     {}
@@ -127,6 +128,8 @@ export default function Gallery({ imgs }: { imgs: MudboardImage[] }) {
           draggedImage ? "cursor-grabbing" : "cursor-default"
         }`}
         style={{
+          paddingLeft: galleySpacingSize,
+          paddingRight: galleySpacingSize,
           gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
           gap: spacingSize,
         }}
@@ -134,13 +137,21 @@ export default function Gallery({ imgs }: { imgs: MudboardImage[] }) {
         {columns.map((column, columnIndex) => (
           <DroppableColumn key={`col-${columnIndex}`} id={`col-${columnIndex}`}>
             <SortableContext items={column.map((block) => block.id)}>
+              {/* upper padding */}
+              <DropIndicator
+                id={`drop-${columnIndex}-0`}
+                isActive={overId === `drop-${columnIndex}-0`}
+                padding="above"
+              />
+
               {column.map((block, blockIndex) => (
                 <React.Fragment key={`block-${columnIndex}-${blockIndex}`}>
-                  <DropIndicator
-                    id={`drop-${columnIndex}-${blockIndex}`}
-                    isActive={overId === `drop-${columnIndex}-${blockIndex}`}
-                    height={spacingSize}
-                  />
+                  {blockIndex !== 0 && (
+                    <DropIndicator
+                      id={`drop-${columnIndex}-${blockIndex}`}
+                      isActive={overId === `drop-${columnIndex}-${blockIndex}`}
+                    />
+                  )}
 
                   <div data-id={block.id} className="flex flex-col">
                     <SortableImageItem id={block.id}>
@@ -170,10 +181,11 @@ export default function Gallery({ imgs }: { imgs: MudboardImage[] }) {
                 </React.Fragment>
               ))}
 
-              {/* final drop indicator */}
+              {/* bottom padding */}
               <DropIndicator
                 id={`drop-${columnIndex}-${column.length}`}
                 isActive={overId === `drop-${columnIndex}-${column.length}`}
+                padding="bottom"
               />
             </SortableContext>
           </DroppableColumn>

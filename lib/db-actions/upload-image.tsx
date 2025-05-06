@@ -3,7 +3,9 @@ import { ImageInsert, MudboardImage } from "@/types/image-type";
 
 export async function uploadImageToSupabase(
   file: File,
-  newImage: MudboardImage
+  newImage: MudboardImage,
+  fullImage?: File,
+  thumbnailImage?: File
 ): Promise<ImageInsert> {
   const payload: ImageInsert = {
     image_id: newImage.image_id,
@@ -13,15 +15,22 @@ export async function uploadImageToSupabase(
     height: newImage.height,
   };
 
-  const fileName = `${newImage.image_id}.${newImage.file_ext}`;
+  const folder = newImage.image_id;
 
-  // upload image to storage
-  const { error: uploadError } = await supabase.storage
-    .from("mudboard-photos")
-    .upload(fileName, file);
+  const uploads = [
+    { name: `${folder}/medium.${newImage.file_ext}`, file },
+    { name: `${folder}/full.${newImage.file_ext}`, file: fullImage },
+    { name: `${folder}/thumb.${newImage.file_ext}`, file: thumbnailImage },
+  ];
 
-  if (uploadError) {
-    throw new Error(`Upload failed: ${uploadError.message}`);
+  for (const { name, file } of uploads) {
+    if (!file) continue; // skip if optional (e.g. fullFile might be undefined)
+    const { error } = await supabase.storage
+      .from("mudboard-photos")
+      .upload(name, file);
+    if (error) {
+      throw new Error(`Upload failed for ${name}: ${error.message}`);
+    }
   }
 
   // now insert metadata

@@ -97,50 +97,74 @@ export function useGalleryHandlers({
     (event: DragEndEvent) => {
       document.body.classList.remove("cursor-grabbing");
 
-      console.log("drag ended. overId: ", overId);
-
       setDraggedBlock(null);
       initialPointerYRef.current = null;
 
       const { active } = event;
+      const activeId = active.id.toString();
 
-      const activeId = active.id;
-      if (activeId === overId) return;
-
-      // we always rely on overId to figure out where we drop it
       const dropMatch = String(overId).match(/^drop-(\d+)-(\d+)$/);
       if (!dropMatch) return;
 
       const toColumnIndex = Number(dropMatch[1]);
       const insertIndex = Number(dropMatch[2]);
-
-      const fromColumnIndex = columns.findIndex((col) =>
-        col.some((block) => block.id === activeId)
+      console.log(
+        "toColumnIndex: ",
+        toColumnIndex,
+        " insertIndex: ",
+        insertIndex
       );
-      if (fromColumnIndex === -1 || toColumnIndex === -1) return;
+
+      const fromPos = blockMap.get(activeId);
+      if (!fromPos) return;
+
+      const fromColumnIndex = fromPos.colIndex;
+      const movingItemIndex = fromPos.blockIndex;
+
+      // No movement
+      if (
+        fromColumnIndex === toColumnIndex &&
+        (movingItemIndex === insertIndex || movingItemIndex === insertIndex - 1)
+      ) {
+        setOverId(null);
+        return;
+      }
 
       setColumns((prev) => {
         const updated = [...prev];
         const fromCol = [...updated[fromColumnIndex]];
-        const toCol = [...updated[toColumnIndex]];
 
-        const movingItemIndex = fromCol.findIndex(
-          (block) => block.id === activeId
-        );
-        if (movingItemIndex === -1) return prev;
-
+        // remove the item
         const [movingItem] = fromCol.splice(movingItemIndex, 1);
 
-        toCol.splice(insertIndex, 0, movingItem);
+        // if dragged to same column
+        if (fromColumnIndex === toColumnIndex) {
+          let adjustedInsertIndex = insertIndex;
+
+          // if it's moved downward, then offset the index to account for deletion
+          if (insertIndex > movingItemIndex) {
+            adjustedInsertIndex -= 1;
+          }
+
+          fromCol.splice(adjustedInsertIndex, 0, movingItem);
+          updated[fromColumnIndex] = fromCol;
+          return updated;
+        }
+
+        // different column behavior
+        const toCol = [...updated[toColumnIndex]];
+        const insertAt = Math.min(insertIndex, toCol.length);
+        toCol.splice(insertAt, 0, movingItem);
 
         updated[fromColumnIndex] = fromCol;
         updated[toColumnIndex] = toCol;
 
         return updated;
       });
+
       setOverId(null);
     },
-    [columns, overId]
+    [blockMap, overId, setColumns, setDraggedBlock]
   );
 
   const handleItemClick = useCallback(

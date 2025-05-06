@@ -9,7 +9,9 @@ import { fetchSupabaseImages } from "@/lib/db-actions/fetch-db-images";
 import { toast } from "sonner";
 import {
   allowedMimeTypes,
+  MAX_IMAGE_WIDTH,
   COMPRESSED_IMAGE_WIDTH,
+  COMPRESSED_THUMB_WIDTH,
   DEFAULT_FILE_EXT,
 } from "@/types/upload-settings";
 import { convertToWebP } from "@/lib/process-images/compress-image";
@@ -35,11 +37,11 @@ export default function Home() {
 
     function handleDragEnter(e: DragEvent) {
       e.preventDefault();
-      dragCounter++;
-      setIsDraggingFile(true);
-
       const items = e.dataTransfer?.items;
-      if (items && items.length > 0) {
+
+      if (items && [...items].some((item) => item.kind === "file")) {
+        dragCounter++;
+        setIsDraggingFile(true);
         setDraggedFileCount(items.length);
       }
     }
@@ -83,9 +85,21 @@ export default function Home() {
             return;
           }
 
-          let compressed;
+          let largestImage;
+          let compressedImage;
+          let thumbImage;
           try {
-            compressed = await convertToWebP(file, COMPRESSED_IMAGE_WIDTH);
+            largestImage = await convertToWebP(file, MAX_IMAGE_WIDTH);
+            compressedImage = await convertToWebP(
+              largestImage.file,
+              COMPRESSED_IMAGE_WIDTH,
+              0.6
+            );
+            thumbImage = await convertToWebP(
+              largestImage.file,
+              COMPRESSED_THUMB_WIDTH,
+              0.5
+            );
           } catch (err) {
             toast.error(
               "Image conversion failed. Please try a different file."
@@ -93,10 +107,10 @@ export default function Home() {
             console.log("Image Conversion failed: ", err);
             return;
           }
-          const { file: compressedFile, width, height } = compressed;
+          const { file: compressedFile, width, height } = compressedImage;
 
           // create an objectURL so we can use it locally
-          const objectUrl = URL.createObjectURL(compressedFile);
+          const objectUrl = URL.createObjectURL(largestImage.file);
 
           const newImage: MudboardImage = {
             image_id,
@@ -113,7 +127,13 @@ export default function Home() {
           setOrderedImages((prev) => [...prev, newImage]);
 
           // return the Promise and then update the image when it's done uploading
-          return uploadImageToSupabase(compressedFile, newImage)
+          // note we upload all versions
+          return uploadImageToSupabase(
+            compressedFile,
+            newImage,
+            largestImage.file,
+            thumbImage.file
+          )
             .then(() => {
               setOrderedImages((prev) =>
                 prev.map((img) =>

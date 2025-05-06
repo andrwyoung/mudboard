@@ -1,6 +1,9 @@
+import { MAX_IMAGE_WIDTH } from "@/types/upload-settings";
+
 export async function convertToWebP(
   file: File,
-  maxWidth: number
+  maxWidth: number = MAX_IMAGE_WIDTH,
+  quality: number = 0.8
 ): Promise<{ file: File; width: number; height: number }> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -51,7 +54,7 @@ export async function convertToWebP(
           });
         },
         "image/webp",
-        0.8 // Compression quality (0 = lowest, 1 = highest)
+        quality
       );
     };
 

@@ -28,7 +28,7 @@ export async function fetchSupabaseImages(): Promise<MudboardImage[]> {
       description: image.description ?? image.original_name,
       order_index: image.order_index ?? undefined,
 
-      fileName: `${SUPABASE_OBJECT_URL}/${image.image_id}.${image.file_ext}`,
+      fileName: `${SUPABASE_OBJECT_URL}/${image.image_id}/medium.${image.file_ext}`,
     })
   );
 

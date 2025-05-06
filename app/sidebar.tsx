@@ -58,7 +58,7 @@ export default function Sidebar() {
       </div>
       <div
         className="flex flex-col items-center px-4 py-4 
-      font-mono font-semibold mt-auto text-md pt-12 text-primary-foreground"
+      font-mono font-semibold mt-auto text-xs pt-12 text-primary-foreground"
       >
         &copy; {new Date().getFullYear()} Andrew Yong
       </div>

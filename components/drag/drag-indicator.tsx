@@ -1,30 +1,54 @@
+import { useUIStore } from "@/store/ui-store";
 import { useDroppable } from "@dnd-kit/core";
 
 export function DropIndicator({
   id,
   isActive,
-  height,
   padding,
 }: {
   id: string;
   isActive: boolean;
-  height?: number;
   padding?: "bottom" | "above";
 }) {
+  const spacingSize = useUIStore((s) => s.spacingSize);
+  const galleySpacingSize = useUIStore((s) => s.galleySpacingSize);
+
   const { setNodeRef } = useDroppable({
     id,
   });
+
+  const isPaddingBlock = padding ? true : false;
+  // only apply inline height if it's not a padding block
+  const height = isPaddingBlock ? undefined : spacingSize;
+
+  let positionClass = "top-1/2 -translate-y-1/2";
+  if (padding === "above") {
+    positionClass = ""; // a little down from the top
+  }
+  if (padding === "bottom") {
+    positionClass = ""; // a little up from the bottom
+  }
 
   return (
     <div
       ref={setNodeRef}
       data-id={id}
-      className={`w-full transition-all duration-150 ease-in-out ${
-        isActive || padding ? "bg-primary rounded" : "bg-orange-200"
-      } ${!height ? "flex-1" : ""}`}
+      className={`w-full transition-all duration-150 ease-in-out relative
+       ${padding === "bottom" ? "flex-1" : ""}`}
       style={{
-        height: height ?? undefined, // only apply inline height if it's provided
+        height,
+        minHeight: !height ? galleySpacingSize : undefined,
       }}
-    />
+    >
+      {isActive && (
+        <div
+          className={`absolute left-0 w-full h-1 bg-accent rounded-full shadow ${positionClass}`}
+          style={{
+            top: padding === "bottom" ? spacingSize / 2 : undefined,
+            bottom: padding === "above" ? spacingSize / 2 : undefined,
+          }}
+        />
+      )}
+    </div>
   );
 }
