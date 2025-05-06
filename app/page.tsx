@@ -2,26 +2,26 @@
 import Gallery from "./gallery";
 import { useEffect, useMemo, useState } from "react";
 import Sidebar from "./sidebar";
-import { Block, MudboardImage } from "@/types/image-type";
-import { fetchSupabaseImages } from "@/lib/db-actions/fetch-db-images";
+import { Block } from "@/types/image-type";
+import { fetchSupabaseImages as fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-images";
 import { useImageImport } from "@/hooks/use-import-images";
-import { DEFAULT_COLUMNS, INDEX_MULTIPLIER } from "@/types/constants";
-import { DEFAULT_BOARD_ID } from "@/types/upload-settings";
+import { DEFAULT_COLUMNS } from "@/types/constants";
 
 export default function Home() {
-  const [orderedImages, setOrderedImages] = useState<MudboardImage[]>([]);
+  const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
 
   const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   const [numCols, setNumCols] = useState(DEFAULT_COLUMNS);
   const [columns, setColumns] = useState<Block[][]>([]);
+  console.log(setNumCols);
 
   // load all images on init
   useEffect(() => {
     async function loadImages() {
-      const images = await fetchSupabaseImages();
-      setOrderedImages(images);
+      const blocks = await fetchSupabaseBlocks();
+      setFlatBlocks(blocks);
     }
 
     loadImages();
@@ -30,26 +30,13 @@ export default function Home() {
   // only regenerate "real" columns when backend images change
   const generatedColumns = useMemo(() => {
     const newColumns: Block[][] = Array.from({ length: numCols }, () => []);
-    orderedImages.forEach((img, index) => {
+    flatBlocks.forEach((block, index) => {
       const colIndex = index % numCols;
-      const rowIndex = newColumns[colIndex].length;
 
-      newColumns[colIndex].push({
-        block_id: img.image_id, // not technically correct
-
-        board_id: DEFAULT_BOARD_ID,
-
-        block_type: "image",
-        image_id: img.image_id,
-        data: img,
-
-        col_index: colIndex,
-        row_index: rowIndex * INDEX_MULTIPLIER,
-        deleted: false,
-      });
+      newColumns[colIndex].push(block);
     });
     return newColumns;
-  }, [orderedImages, numCols]);
+  }, [flatBlocks, numCols]);
 
   // update the fake columns with the real ones if reals ones change
   useEffect(() => {

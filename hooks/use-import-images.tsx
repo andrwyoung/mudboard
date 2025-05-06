@@ -120,8 +120,7 @@ export function useImageImport({
             file_ext: DEFAULT_FILE_EXT,
             original_name,
             width,
-            height,
-            description: original_name,
+            caption: original_name,
 
             fileName: objectUrl, // the local file
             uploadStatus: "uploading",
@@ -136,16 +135,19 @@ export function useImageImport({
           );
           const colIndex = findShortestColumn(currentCols);
           const newRowIndex = getNextRowIndex(currentCols[colIndex] ?? []);
+          // TODO: generate order_index
           const newBlock: Block = {
             block_id: newImage.image_id,
             board_id: DEFAULT_BOARD_ID,
 
             block_type: "image",
             data: newImage,
+            height,
 
             col_index: colIndex,
             row_index: newRowIndex,
             deleted: false,
+            order_index: 0,
           };
 
           // add it to gallery immediately
@@ -172,7 +174,7 @@ export function useImageImport({
                       ? {
                           ...block,
                           data: {
-                            ...block.data,
+                            ...(block.data as MudboardImage),
                             uploadStatus: "uploaded",
                           },
                         }
@@ -190,7 +192,7 @@ export function useImageImport({
                       ? {
                           ...block,
                           data: {
-                            ...block.data,
+                            ...(block.data as MudboardImage),
                             uploadStatus: "error",
                           },
                         }

@@ -4,8 +4,14 @@ export type ImageInsert = TablesInsert<"images">;
 export type ImageDownload = Tables<"images">;
 
 export type BlockInsert = TablesInsert<"blocks">;
+export type BlockDownload = Tables<"blocks">;
 
-export type UploadStatus = "pending" | "uploading" | "uploaded" | "error";
+export type UploadStatus =
+  | "pending"
+  | "uploading"
+  | "uploaded"
+  | "error"
+  | "downloaded";
 export type FileType = "database" | "blob" | "local";
 export type BlockType = "image" | "text" | "spacer";
 
@@ -16,10 +22,14 @@ export type Block = {
 
   block_type: BlockType;
   image_id?: string;
-  data: MudboardImage | TextBlock | SpacerBlock;
+  data: MudboardImage | TextBlock | null;
+
+  height: number;
 
   col_index: number;
   row_index: number;
+  order_index: number;
+
   deleted: boolean;
 };
 
@@ -30,10 +40,7 @@ export type MudboardImage = {
   original_name: string;
 
   width: number;
-  height: number;
-
-  description: string;
-  order_index?: number;
+  caption: string;
 
   // defined by me on fetch
   fileName: string;

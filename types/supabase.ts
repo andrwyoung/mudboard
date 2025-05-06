@@ -18,7 +18,9 @@ export type Database = {
           created_at: string
           data: Json | null
           deleted: boolean
+          height: number
           image_id: string | null
+          order_index: number
           row_index: number
           updated_at: string | null
         }
@@ -30,7 +32,9 @@ export type Database = {
           created_at?: string
           data?: Json | null
           deleted?: boolean
+          height: number
           image_id?: string | null
+          order_index?: number
           row_index: number
           updated_at?: string | null
         }
@@ -42,7 +46,9 @@ export type Database = {
           created_at?: string
           data?: Json | null
           deleted?: boolean
+          height?: number
           image_id?: string | null
+          order_index?: number
           row_index?: number
           updated_at?: string | null
         }
@@ -86,38 +92,32 @@ export type Database = {
       }
       images: {
         Row: {
+          caption: string | null
           created_at: string
           deleted: boolean
-          description: string | null
           file_ext: string
-          height: number
           image_id: string
           modified_at: string | null
-          order_index: number | null
           original_name: string
           width: number
         }
         Insert: {
+          caption?: string | null
           created_at?: string
           deleted?: boolean
-          description?: string | null
           file_ext: string
-          height: number
           image_id?: string
           modified_at?: string | null
-          order_index?: number | null
           original_name: string
           width: number
         }
         Update: {
+          caption?: string | null
           created_at?: string
           deleted?: boolean
-          description?: string | null
           file_ext?: string
-          height?: number
           image_id?: string
           modified_at?: string | null
-          order_index?: number | null
           original_name?: string
           width?: number
         }

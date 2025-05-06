@@ -17,6 +17,7 @@ export function BlockRenderer({
       return (
         <ImageBlock
           img={block.data as MudboardImage}
+          height={block.height}
           isErrored={isErrored}
           onClick={onClick}
           onError={onError}

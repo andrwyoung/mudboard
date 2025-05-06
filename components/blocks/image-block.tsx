@@ -4,11 +4,13 @@ import Image from "next/image";
 
 export function ImageBlock({
   img,
+  height,
   isErrored = false,
   onClick,
   onError,
 }: {
   img: MudboardImage;
+  height: number;
   isErrored?: boolean;
   onClick?: (e: React.MouseEvent<HTMLImageElement>) => void;
   onError?: () => void;
@@ -18,9 +20,9 @@ export function ImageBlock({
       {!isErrored ? (
         <Image
           src={img.fileName}
-          alt={img.description}
+          alt={img.caption}
           width={img.width}
-          height={img.height}
+          height={height}
           onClick={onClick}
           onError={onError}
           className={`rounded-sm
@@ -30,14 +32,14 @@ export function ImageBlock({
         <div
           style={{
             width: "100%",
-            aspectRatio: `${img.width} / ${img.height}`,
+            aspectRatio: `${img.width} / ${height}`,
           }}
           className="bg-zinc-200 border border-zinc-300 rounded-sm shadow-md
           flex items-center justify-center relative text-center"
           onClick={onClick}
         >
           <span className="text-zinc-500 text-xs px-2">
-            {img.description || "Image failed to load"}
+            {img.caption || "Image failed to load"}
           </span>
         </div>
       )}
