@@ -9,9 +9,85 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      blocks: {
+        Row: {
+          block_id: string
+          block_type: string
+          board_id: string
+          col_index: number
+          created_at: string
+          data: Json | null
+          deleted: boolean
+          image_id: string | null
+          row_index: number
+          updated_at: string | null
+        }
+        Insert: {
+          block_id?: string
+          block_type: string
+          board_id: string
+          col_index: number
+          created_at?: string
+          data?: Json | null
+          deleted?: boolean
+          image_id?: string | null
+          row_index: number
+          updated_at?: string | null
+        }
+        Update: {
+          block_id?: string
+          block_type?: string
+          board_id?: string
+          col_index?: number
+          created_at?: string
+          data?: Json | null
+          deleted?: boolean
+          image_id?: string | null
+          row_index?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocks_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "board"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "blocks_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "images"
+            referencedColumns: ["image_id"]
+          },
+        ]
+      }
+      board: {
+        Row: {
+          board_id: string
+          created_at: string
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          board_id?: string
+          created_at?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          board_id?: string
+          created_at?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       images: {
         Row: {
           created_at: string
+          deleted: boolean
           description: string | null
           file_ext: string
           height: number
@@ -23,6 +99,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deleted?: boolean
           description?: string | null
           file_ext: string
           height: number
@@ -34,6 +111,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deleted?: boolean
           description?: string | null
           file_ext?: string
           height?: number

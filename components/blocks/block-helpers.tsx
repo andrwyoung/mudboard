@@ -12,7 +12,7 @@ export function BlockRenderer({
   onClick?: (e: React.MouseEvent) => void;
   onError?: () => void;
 }) {
-  switch (block.type) {
+  switch (block.block_type) {
     case "image":
       return (
         <ImageBlock

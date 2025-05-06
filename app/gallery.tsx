@@ -4,7 +4,7 @@ import { SortableImageItem } from "@/components/drag/sortable-wrapper";
 import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import { BlockRenderer } from "@/components/blocks/block-helpers";
 import { useUIStore } from "@/store/ui-store";
-import { Block, MudboardImage } from "@/types/image-type";
+import { Block } from "@/types/image-type";
 import {
   DndContext,
   DragOverlay,
@@ -15,10 +15,18 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DropIndicator } from "@/components/drag/drag-indicator";
 
-export default function Gallery({ imgs }: { imgs: MudboardImage[] }) {
+export default function Gallery({
+  columns,
+  setColumns,
+  blockMap,
+}: {
+  columns: Block[][];
+  setColumns: React.Dispatch<React.SetStateAction<Block[][]>>;
+  blockMap: Map<string, { colIndex: number; blockIndex: number }>;
+}) {
   const columnCount = useUIStore((s) => s.columnCount);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const galleySpacingSize = useUIStore((s) => s.galleySpacingSize);
@@ -35,38 +43,7 @@ export default function Gallery({ imgs }: { imgs: MudboardImage[] }) {
     {}
   );
 
-  const [columns, setColumns] = useState<Block[][]>([]);
-
-  // only regenerate "real" columns when backend images change
-  const generatedColumns = useMemo(() => {
-    const newColumns: Block[][] = Array.from({ length: columnCount }, () => []);
-    imgs.forEach((img, index) => {
-      const colIndex = index % columnCount;
-      newColumns[colIndex].push({
-        id: img.image_id,
-        type: "image",
-        data: img,
-      });
-    });
-    return newColumns;
-  }, [imgs, columnCount]);
-
-  // update the fake columns with the real ones if reals ones change
-  useEffect(() => {
-    setColumns(generatedColumns);
-  }, [generatedColumns]);
-
-  // save the block order
-  const blockMap = useMemo(() => {
-    const map = new Map<string, { colIndex: number; blockIndex: number }>();
-    columns.forEach((col, colIndex) => {
-      col.forEach((block, blockIndex) => {
-        map.set(block.id, { colIndex, blockIndex });
-      });
-    });
-    return map;
-  }, [columns]);
-
+  // listen for clicking elsewhere (to deselect)
   useEffect(() => {
     function handleGlobalClick(event: MouseEvent) {
       const target = event.target as HTMLElement;
@@ -136,7 +113,7 @@ export default function Gallery({ imgs }: { imgs: MudboardImage[] }) {
       >
         {columns.map((column, columnIndex) => (
           <DroppableColumn key={`col-${columnIndex}`} id={`col-${columnIndex}`}>
-            <SortableContext items={column.map((block) => block.id)}>
+            <SortableContext items={column.map((block) => block.block_id)}>
               {/* upper padding */}
               <DropIndicator
                 id={`drop-${columnIndex}-0`}
@@ -153,25 +130,29 @@ export default function Gallery({ imgs }: { imgs: MudboardImage[] }) {
                     />
                   )}
 
-                  <div data-id={block.id} className="flex flex-col">
-                    <SortableImageItem id={block.id}>
+                  <div data-id={block.block_id} className="flex flex-col">
+                    <SortableImageItem id={block.block_id}>
                       <div
-                        className={`rounded-sm object-cover transition-all duration-200 cursor-pointer shadow-md ${
-                          draggedImage?.id === block.id ? "opacity-30" : ""
-                        } ${
-                          !!selectedImages[block.id]
-                            ? "outline-6 outline-secondary"
+                        className={`rounded-sm object-cover transition-all duration-200 cursor-pointer shadow-md 
+                          hover:scale-101 hover:shadow-xl hover:brightness-105 hover:saturate-110 hover:opacity-100
+                          ${
+                            draggedImage?.block_id === block.block_id
+                              ? "opacity-30"
+                              : ""
+                          } ${
+                          !!selectedImages[block.block_id]
+                            ? "outline-4 outline-secondary"
                             : ""
                         }`}
                       >
                         <BlockRenderer
                           block={block}
-                          isErrored={erroredImages[block.id]}
+                          isErrored={erroredImages[block.block_id]}
                           onClick={(e) => handleItemClick(block, e)}
                           onError={() =>
                             setErroredImages((prev) => ({
                               ...prev,
-                              [block.id]: true,
+                              [block.block_id]: true,
                             }))
                           }
                         />

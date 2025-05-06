@@ -23,10 +23,7 @@ export function ImageBlock({
           height={img.height}
           onClick={onClick}
           onError={onError}
-          className={`
-          rounded-sm 
-          transition-all duration-200 w-full
-          hover:scale-101 hover:shadow-xl  hover:brightness-105 hover:saturate-110 hover:opacity-100
+          className={`rounded-sm
         `}
         />
       ) : (

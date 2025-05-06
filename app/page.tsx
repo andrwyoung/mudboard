@@ -1,27 +1,25 @@
 "use client";
 import Gallery from "./gallery";
-import { v4 as uuidv4 } from "uuid";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Sidebar from "./sidebar";
-import { MudboardImage } from "@/types/image-type";
-import { uploadImageToSupabase } from "@/lib/db-actions/upload-image";
+import { Block, MudboardImage } from "@/types/image-type";
 import { fetchSupabaseImages } from "@/lib/db-actions/fetch-db-images";
-import { toast } from "sonner";
-import {
-  allowedMimeTypes,
-  MAX_IMAGE_WIDTH,
-  COMPRESSED_IMAGE_WIDTH,
-  COMPRESSED_THUMB_WIDTH,
-  DEFAULT_FILE_EXT,
-} from "@/types/upload-settings";
-import { convertToWebP } from "@/lib/process-images/compress-image";
+import { useImageImport } from "@/hooks/use-import-images";
+import { DEFAULT_COLUMNS, INDEX_MULTIPLIER } from "@/types/constants";
+import { DEFAULT_BOARD_ID } from "@/types/upload-settings";
 
 export default function Home() {
+  const [orderedImages, setOrderedImages] = useState<MudboardImage[]>([]);
+
+  const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const [orderedImages, setOrderedImages] = useState<MudboardImage[]>([]);
-  const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
+  const [numCols, setNumCols] = useState(DEFAULT_COLUMNS);
+  const [columns, setColumns] = useState<Block[][]>([]);
 
+  setNumCols(DEFAULT_COLUMNS);
+
+  // load all images on init
   useEffect(() => {
     async function loadImages() {
       const images = await fetchSupabaseImages();
@@ -31,148 +29,55 @@ export default function Home() {
     loadImages();
   }, []);
 
-  // handling importing images
+  // only regenerate "real" columns when backend images change
+  const generatedColumns = useMemo(() => {
+    const newColumns: Block[][] = Array.from({ length: numCols }, () => []);
+    orderedImages.forEach((img, index) => {
+      const colIndex = index % numCols;
+      const rowIndex = newColumns[colIndex].length;
+
+      newColumns[colIndex].push({
+        block_id: img.image_id, // not technically correct
+
+        board_id: DEFAULT_BOARD_ID,
+
+        block_type: "image",
+        image_id: img.image_id,
+        data: img,
+
+        col_index: colIndex,
+        row_index: rowIndex * INDEX_MULTIPLIER,
+        deleted: false,
+      });
+    });
+    return newColumns;
+  }, [orderedImages, numCols]);
+
+  // update the fake columns with the real ones if reals ones change
   useEffect(() => {
-    let dragCounter = 0;
+    setColumns(generatedColumns);
+  }, [generatedColumns]);
 
-    function handleDragEnter(e: DragEvent) {
-      e.preventDefault();
-      const items = e.dataTransfer?.items;
+  // save the block order
+  const blockMap = useMemo(() => {
+    const map = new Map<string, { colIndex: number; blockIndex: number }>();
+    columns.forEach((col, colIndex) => {
+      col.forEach((block, blockIndex) => {
+        if (!block.deleted) {
+          map.set(block.block_id, { colIndex, blockIndex });
+        }
+      });
+    });
+    return map;
+  }, [columns]);
 
-      if (items && [...items].some((item) => item.kind === "file")) {
-        dragCounter++;
-        setIsDraggingFile(true);
-        setDraggedFileCount(items.length);
-      }
-    }
-
-    function handleDragLeave(e: DragEvent) {
-      e.preventDefault();
-      dragCounter--;
-      if (dragCounter === 0) {
-        setIsDraggingFile(false);
-      }
-    }
-
-    function handleDragOver(e: DragEvent) {
-      e.preventDefault();
-    }
-
-    async function handleDrop(e: DragEvent) {
-      e.preventDefault();
-      dragCounter = 0;
-      setIsDraggingFile(false);
-
-      const files = e.dataTransfer?.files;
-      setDraggedFileCount(null);
-
-      if (files && files.length > 0) {
-        setDraggedFileCount(files.length);
-
-        const uploadPromises = Array.from(files).map(async (file) => {
-          const image_id = uuidv4();
-
-          const match = file.name.match(/^(.*)\.([^.]+)$/);
-          const original_name = match ? match[1] : file.name;
-          const fileExt = match ? match[2].toLowerCase() : null; // just used to check
-
-          if (!fileExt) {
-            throw new Error("Could not determine file extension.");
-          }
-
-          if (!allowedMimeTypes.includes(file.type)) {
-            toast.error(`Unsupported file type: ${file.type}`);
-            return;
-          }
-
-          let largestImage;
-          let compressedImage;
-          let thumbImage;
-          try {
-            largestImage = await convertToWebP(file, MAX_IMAGE_WIDTH);
-            compressedImage = await convertToWebP(
-              largestImage.file,
-              COMPRESSED_IMAGE_WIDTH,
-              0.6
-            );
-            thumbImage = await convertToWebP(
-              largestImage.file,
-              COMPRESSED_THUMB_WIDTH,
-              0.5
-            );
-          } catch (err) {
-            toast.error(
-              "Image conversion failed. Please try a different file."
-            );
-            console.log("Image Conversion failed: ", err);
-            return;
-          }
-          const { file: compressedFile, width, height } = compressedImage;
-
-          // create an objectURL so we can use it locally
-          const objectUrl = URL.createObjectURL(largestImage.file);
-
-          const newImage: MudboardImage = {
-            image_id,
-            file_ext: DEFAULT_FILE_EXT,
-            original_name,
-            width,
-            height,
-            description: original_name,
-
-            fileName: objectUrl, // this is just for local
-            uploadStatus: "uploading",
-          };
-          // add it to gallery immediately
-          setOrderedImages((prev) => [...prev, newImage]);
-
-          // return the Promise and then update the image when it's done uploading
-          // note we upload all versions
-          return uploadImageToSupabase(
-            compressedFile,
-            newImage,
-            largestImage.file,
-            thumbImage.file
-          )
-            .then(() => {
-              setOrderedImages((prev) =>
-                prev.map((img) =>
-                  img.image_id === newImage.image_id
-                    ? { ...img, uploadStatus: "uploaded" }
-                    : img
-                )
-              );
-            })
-            .catch((err) => {
-              console.error(err);
-              setOrderedImages((prev) =>
-                prev.map((img) =>
-                  img.image_id === newImage.image_id
-                    ? { ...img, uploadStatus: "error" }
-                    : img
-                )
-              );
-            });
-        });
-
-        await Promise.all(uploadPromises);
-        toast.success(`Successfully uploaded ${uploadPromises.length} images!`);
-        console.log(`All ${uploadPromises.length} uploads complete!`);
-      }
-    }
-
-    window.addEventListener("dragenter", handleDragEnter);
-    window.addEventListener("dragover", handleDragOver);
-    window.addEventListener("drop", handleDrop);
-    window.addEventListener("dragleave", handleDragLeave);
-
-    return () => {
-      window.removeEventListener("dragenter", handleDragEnter);
-      window.removeEventListener("dragover", handleDragOver);
-      window.removeEventListener("drop", handleDrop);
-      window.removeEventListener("dragleave", handleDragLeave);
-    };
-  }, []);
+  // handling importing images
+  useImageImport({
+    columns,
+    setColumns,
+    setIsDragging: setIsDraggingFile,
+    setDraggedFileCount,
+  });
 
   return (
     <div className="flex h-screen overflow-hidden relative">
@@ -194,7 +99,11 @@ export default function Home() {
 
       {/* Gallery */}
       <main className="flex-1 overflow-y-scroll scrollbar-none">
-        <Gallery imgs={orderedImages} />
+        <Gallery
+          columns={columns}
+          setColumns={setColumns}
+          blockMap={blockMap}
+        />
       </main>
     </div>
   );

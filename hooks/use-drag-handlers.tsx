@@ -33,7 +33,7 @@ export function useGalleryHandlers({
       const { active, activatorEvent } = event;
       const activeImage = columns
         .flat()
-        .find((block) => block.id === active.id);
+        .find((block) => block.block_id === active.id);
       if (activeImage) {
         console.log("activeImage: ", activeImage);
         setDraggedBlock(activeImage);
@@ -178,20 +178,20 @@ export function useGalleryHandlers({
         const newSelected = { ...prevSelected };
 
         if (event.metaKey || event.ctrlKey) {
-          if (newSelected[block.id]) {
-            delete newSelected[block.id];
+          if (newSelected[block.block_id]) {
+            delete newSelected[block.block_id];
           } else {
-            newSelected[block.id] = block;
+            newSelected[block.block_id] = block;
           }
           return newSelected;
         } else {
           if (
-            newSelected[block.id] &&
+            newSelected[block.block_id] &&
             Object.entries(newSelected).length === 1
           ) {
             return {};
           }
-          return { [block.id]: block };
+          return { [block.block_id]: block };
         }
       });
     },
