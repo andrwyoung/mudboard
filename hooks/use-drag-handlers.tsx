@@ -12,7 +12,8 @@ type UseGalleryHandlersProps = {
   setSelectedBlocks: React.Dispatch<
     React.SetStateAction<Record<string, Block>>
   >;
-  initialPointerYRef: React.MutableRefObject<number | null>;
+  initialPointerYRef: React.RefObject<number | null>;
+  layoutDirtyRef: React.RefObject<boolean>;
 };
 
 export function useGalleryHandlers({
@@ -24,6 +25,7 @@ export function useGalleryHandlers({
   setOverId,
   setSelectedBlocks,
   initialPointerYRef,
+  layoutDirtyRef,
 }: UseGalleryHandlersProps) {
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
@@ -162,6 +164,7 @@ export function useGalleryHandlers({
         return updated;
       });
 
+      layoutDirtyRef.current = true; // trigger a sync
       setOverId(null);
     },
     [blockMap, overId, setColumns, setDraggedBlock]

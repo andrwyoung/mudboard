@@ -1,6 +1,6 @@
 import { supabase } from "../supabase";
 import {
-  Block,
+  BlockDownload,
   BlockInsert,
   ImageInsert,
   MudboardImage,
@@ -8,11 +8,11 @@ import {
 
 export async function uploadImageToSupabase(
   file: File,
-  block: Block,
+  block: BlockInsert,
   newImage: MudboardImage,
   fullImage?: File,
   thumbnailImage?: File
-): Promise<ImageInsert> {
+): Promise<string> {
   //
   // STEP 1
   // first upload the images to storage
@@ -58,30 +58,17 @@ export async function uploadImageToSupabase(
   // STEP 3:
   // upload the block
   // note we're just inserting everything but data
-  const {
-    block_id,
-    board_id,
-    block_type,
-    height,
-    col_index,
-    row_index,
-    order_index,
-    deleted,
-  } = block;
+
   const blockPayload: BlockInsert = {
-    block_id,
-    board_id,
-    block_type,
-    height,
-    image_id: newImage.image_id,
-    col_index,
-    row_index,
-    order_index,
-    deleted,
+    ...block,
+    image_id: image_id,
   };
-  const { error: blockInsertError } = await supabase
+
+  const { data, error: blockInsertError } = await supabase
     .from("blocks")
-    .insert(blockPayload);
+    .insert(blockPayload)
+    .select()
+    .single();
 
   if (blockInsertError) {
     throw new Error(`DB insert failed: ${blockInsertError.message}`);
@@ -89,5 +76,7 @@ export async function uploadImageToSupabase(
 
   console.log("Uploaded: ", file);
 
-  return payload;
+  // return the database's block_id so we can keep it around
+  const databaseBlock = data as BlockDownload;
+  return databaseBlock.block_id;
 }

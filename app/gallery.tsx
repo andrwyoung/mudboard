@@ -22,10 +22,12 @@ export default function Gallery({
   columns,
   setColumns,
   blockMap,
+  layoutDirtyRef,
 }: {
   columns: Block[][];
   setColumns: React.Dispatch<React.SetStateAction<Block[][]>>;
   blockMap: Map<string, { colIndex: number; blockIndex: number }>;
+  layoutDirtyRef: React.RefObject<boolean>;
 }) {
   const columnCount = useUIStore((s) => s.columnCount);
   const spacingSize = useUIStore((s) => s.spacingSize);
@@ -76,6 +78,7 @@ export default function Gallery({
       setOverId,
       setSelectedBlocks,
       initialPointerYRef,
+      layoutDirtyRef,
     });
 
   const sensors = useSensors(

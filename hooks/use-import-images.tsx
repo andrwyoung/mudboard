@@ -11,22 +11,31 @@ import {
   DEFAULT_FILE_EXT,
   DEFAULT_BOARD_ID,
 } from "@/types/upload-settings";
-import { Block, BlockType, MudboardImage } from "@/types/image-type";
+import {
+  Block,
+  BlockDownload,
+  BlockInsert,
+  BlockType,
+  MudboardImage,
+} from "@/types/image-type";
 import {
   findShortestColumn,
   getNextRowIndex,
 } from "@/lib/column-helpers/column-helpers";
+import { supabase } from "@/lib/supabase";
 
 export function useImageImport({
   columns,
   setColumns,
   setIsDragging,
   setDraggedFileCount,
+  layoutDirtyRef,
 }: {
   columns: Block[][];
   setColumns: React.Dispatch<React.SetStateAction<Block[][]>>;
   setIsDragging: (isDragging: boolean) => void;
   setDraggedFileCount: (count: number | null) => void;
+  layoutDirtyRef: React.RefObject<boolean>;
 }) {
   const columnsRef = useRef(columns);
   useEffect(() => {
@@ -89,7 +98,9 @@ export function useImageImport({
             return;
           }
 
-          // compressing all the images
+          // SECTION: image compression
+          //
+
           let largestImage;
           let compressedImage;
           let thumbImage;
@@ -114,6 +125,9 @@ export function useImageImport({
           }
           const { file: compressedFile, width, height } = compressedImage;
 
+          // SECTION: Putting it all together
+          //
+
           // create an objectURL so we can use it locally
           const objectUrl = URL.createObjectURL(largestImage.file);
 
@@ -128,19 +142,31 @@ export function useImageImport({
             uploadStatus: "uploading",
           };
 
+          // SECTION: updating block
+          //
+
+          const tempBlockId = `temp-${uuidv4()}`;
+          const incompleteBlock = {
+            board_id: DEFAULT_BOARD_ID,
+            block_type: "image" as BlockType,
+            height,
+
+            deleted: false,
+          };
+
+          // here we add it to local layout so we can immediately interact
           setColumns((prevCols) => {
             const colIndex = findShortestColumn(prevCols);
-            const newRowIndex = getNextRowIndex(prevCols[colIndex] ?? []);
+            const rowIndex = getNextRowIndex(prevCols[colIndex] ?? []);
 
-            const newBlock = {
-              block_id: newImage.image_id,
-              board_id: DEFAULT_BOARD_ID,
-              block_type: "image" as BlockType,
+            const newBlock: Block = {
+              block_id: tempBlockId,
+
+              ...incompleteBlock,
               data: newImage,
-              height,
+
               col_index: colIndex,
-              row_index: newRowIndex,
-              deleted: false,
+              row_index: rowIndex,
               order_index: 0,
             };
 
@@ -149,26 +175,23 @@ export function useImageImport({
             return newCols;
           });
 
-          // NOTE: this section optimistically orders it
-          // we can't get the real order yet since we prioritize async uploads
-          // but we count on the norm syncing to fix it soon
+          // best effort block
+          // optimistically generate order and columns
           const cols = columnsRef.current;
-          const colIndex = findShortestColumn(cols);
-          const newRowIndex = getNextRowIndex(cols[colIndex] ?? []);
-          const bestEffortBlock = {
-            block_id: newImage.image_id,
-            board_id: DEFAULT_BOARD_ID,
-            block_type: "image" as BlockType,
-            data: newImage,
-            height,
-            col_index: colIndex,
-            row_index: newRowIndex,
-            deleted: false,
+          const optimisticColIndex = findShortestColumn(cols);
+          const optimisticRowIndex = getNextRowIndex(
+            cols[optimisticColIndex] ?? []
+          );
+          const bestEffortBlock: BlockInsert = {
+            ...incompleteBlock,
+
+            col_index: optimisticColIndex,
+            row_index: optimisticRowIndex,
             order_index: 0,
           };
 
-          // here we actually upload everything into the database
-          // note we upload all versions
+          // KEY SECTION: here we actually upload everything to db
+          //
           return uploadImageToSupabase(
             compressedFile,
             bestEffortBlock,
@@ -176,14 +199,15 @@ export function useImageImport({
             largestImage.file,
             thumbImage.file
           )
-            .then(() => {
+            .then((block_id) => {
               successfulUploads++;
               setColumns((prevCols) =>
                 prevCols.map((col) =>
                   col.map((block) =>
-                    block.block_id === newImage.image_id
+                    block.block_id === tempBlockId
                       ? {
                           ...block,
+                          block_id: block_id, // NOTE: we grab set real block_id
                           data: {
                             ...(block.data as MudboardImage),
                             uploadStatus: "uploaded",
@@ -216,6 +240,8 @@ export function useImageImport({
         });
 
         await Promise.all(uploadPromises);
+        // we may have incorrect versions of the order, so trigger a sync
+        layoutDirtyRef.current = true;
         toast.success(
           `Successfully uploaded ${successfulUploads} of ${uploadPromises.length} images!`
         );

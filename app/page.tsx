@@ -1,11 +1,13 @@
 "use client";
 import Gallery from "./gallery";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "./sidebar";
 import { Block } from "@/types/image-type";
 import { fetchSupabaseImages as fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-images";
 import { useImageImport } from "@/hooks/use-import-images";
 import { DEFAULT_COLUMNS } from "@/types/constants";
+import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
+import { DEFAULT_BOARD_ID } from "@/types/upload-settings";
 
 export default function Home() {
   const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
@@ -16,6 +18,11 @@ export default function Home() {
   const [numCols, setNumCols] = useState(DEFAULT_COLUMNS);
   const [columns, setColumns] = useState<Block[][]>([]);
   console.log(setNumCols);
+
+  const layoutDirtyRef = useRef(false);
+
+  // SECTION: Getting all the initial images
+  //
 
   // load all images on init
   useEffect(() => {
@@ -30,11 +37,17 @@ export default function Home() {
   // only regenerate "real" columns when backend images change
   const generatedColumns = useMemo(() => {
     const newColumns: Block[][] = Array.from({ length: numCols }, () => []);
-    flatBlocks.forEach((block, index) => {
-      const colIndex = index % numCols;
 
-      newColumns[colIndex].push(block);
+    flatBlocks.forEach((block) => {
+      const col = Math.min(block.col_index ?? 0, numCols - 1);
+      newColumns[col]?.push(block);
     });
+
+    // Sort each column by row_index — keep duplicates together
+    newColumns.forEach((col) =>
+      col.sort((a, b) => (a.row_index ?? 0) - (b.row_index ?? 0))
+    );
+
     return newColumns;
   }, [flatBlocks, numCols]);
 
@@ -42,6 +55,21 @@ export default function Home() {
   useEffect(() => {
     setColumns(generatedColumns);
   }, [generatedColumns]);
+
+  // SECTION: Everything to do with block order
+  //
+
+  // syncing order to database
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (layoutDirtyRef.current) {
+        syncOrderToSupabase(columns, DEFAULT_BOARD_ID); // pass in current layout
+        layoutDirtyRef.current = false;
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [columns]);
 
   // save the block order
   const blockMap = useMemo(() => {
@@ -58,12 +86,16 @@ export default function Home() {
     return map;
   }, [columns]);
 
+  // SECTION: When you drag and drop and image
+  //
+
   // handling importing images
   useImageImport({
     columns,
     setColumns,
     setIsDragging: setIsDraggingFile,
     setDraggedFileCount,
+    layoutDirtyRef,
   });
 
   return (
@@ -90,6 +122,7 @@ export default function Home() {
           columns={columns}
           setColumns={setColumns}
           blockMap={blockMap}
+          layoutDirtyRef={layoutDirtyRef}
         />
       </main>
     </div>

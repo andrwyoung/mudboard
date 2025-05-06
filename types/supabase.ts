@@ -28,14 +28,14 @@ export type Database = {
           block_id?: string
           block_type: string
           board_id: string
-          col_index: number
+          col_index?: number
           created_at?: string
           data?: Json | null
           deleted?: boolean
           height: number
           image_id?: string | null
           order_index?: number
-          row_index: number
+          row_index?: number
           updated_at?: string | null
         }
         Update: {
