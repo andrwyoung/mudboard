@@ -18,10 +18,9 @@ export async function fetchSupabaseImages(): Promise<Block[]> {
     image:images (
       image_id,
       width,
-      height,
       file_ext,
       original_name,
-      description
+      caption
     )
   `
     )

@@ -11,7 +11,7 @@ import {
   DEFAULT_FILE_EXT,
   DEFAULT_BOARD_ID,
 } from "@/types/upload-settings";
-import { Block, MudboardImage } from "@/types/image-type";
+import { Block, BlockType, MudboardImage } from "@/types/image-type";
 import {
   findShortestColumn,
   getNextRowIndex,
@@ -63,6 +63,8 @@ export function useImageImport({
     async function handleDrop(e: DragEvent) {
       e.preventDefault();
       dragCounter = 0;
+      let successfulUploads = 0;
+      let failedUploads = 0;
       setIsDragging(false);
 
       const files = e.dataTransfer?.files;
@@ -126,47 +128,56 @@ export function useImageImport({
             uploadStatus: "uploading",
           };
 
-          // figuring out block stuff
-          const currentCols = columnsRef.current;
+          setColumns((prevCols) => {
+            const colIndex = findShortestColumn(prevCols);
+            const newRowIndex = getNextRowIndex(prevCols[colIndex] ?? []);
 
-          console.log(
-            "Current columns:",
-            columnsRef.current.map((col) => col?.length)
-          );
-          const colIndex = findShortestColumn(currentCols);
-          const newRowIndex = getNextRowIndex(currentCols[colIndex] ?? []);
-          // TODO: generate order_index
-          const newBlock: Block = {
+            const newBlock = {
+              block_id: newImage.image_id,
+              board_id: DEFAULT_BOARD_ID,
+              block_type: "image" as BlockType,
+              data: newImage,
+              height,
+              col_index: colIndex,
+              row_index: newRowIndex,
+              deleted: false,
+              order_index: 0,
+            };
+
+            const newCols = [...prevCols];
+            newCols[colIndex] = [...newCols[colIndex], newBlock];
+            return newCols;
+          });
+
+          // NOTE: this section optimistically orders it
+          // we can't get the real order yet since we prioritize async uploads
+          // but we count on the norm syncing to fix it soon
+          const cols = columnsRef.current;
+          const colIndex = findShortestColumn(cols);
+          const newRowIndex = getNextRowIndex(cols[colIndex] ?? []);
+          const bestEffortBlock = {
             block_id: newImage.image_id,
             board_id: DEFAULT_BOARD_ID,
-
-            block_type: "image",
+            block_type: "image" as BlockType,
             data: newImage,
             height,
-
             col_index: colIndex,
             row_index: newRowIndex,
             deleted: false,
             order_index: 0,
           };
 
-          // add it to gallery immediately
-          setColumns((prevCols) => {
-            const newCols = [...prevCols];
-            newCols[colIndex] = [...newCols[colIndex], newBlock];
-            return newCols;
-          });
-
           // here we actually upload everything into the database
           // note we upload all versions
           return uploadImageToSupabase(
             compressedFile,
-            newBlock,
+            bestEffortBlock,
             newImage,
             largestImage.file,
             thumbImage.file
           )
             .then(() => {
+              successfulUploads++;
               setColumns((prevCols) =>
                 prevCols.map((col) =>
                   col.map((block) =>
@@ -185,6 +196,7 @@ export function useImageImport({
             })
             .catch((err) => {
               console.error(err);
+              failedUploads++;
               setColumns((prevCols) =>
                 prevCols.map((col) =>
                   col.map((block) =>
@@ -204,7 +216,9 @@ export function useImageImport({
         });
 
         await Promise.all(uploadPromises);
-        toast.success(`Successfully uploaded ${uploadPromises.length} images!`);
+        toast.success(
+          `Successfully uploaded ${successfulUploads} of ${uploadPromises.length} images!`
+        );
         console.log(`All ${uploadPromises.length} uploads complete!`);
       }
     }
