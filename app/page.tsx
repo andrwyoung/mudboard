@@ -11,7 +11,7 @@ import {
   allowedMimeTypes,
   COMPRESSED_IMAGE_WIDTH,
   DEFAULT_FILE_EXT,
-} from "@/types/settings";
+} from "@/types/upload-settings";
 import { convertToWebP } from "@/lib/process-images/compress-image";
 
 export default function Home() {

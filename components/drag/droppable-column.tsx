@@ -16,7 +16,7 @@ export function DroppableColumn({
       ref={setNodeRef}
       data-id={id}
       className={`flex flex-col transition-colors py-8 ${
-        isOver ? "outline-2 outline-secondary" : "bg-transparent"
+        isOver ? "outline-2 outline-secondary" : "bg-red-200"
       }`}
     >
       {children}

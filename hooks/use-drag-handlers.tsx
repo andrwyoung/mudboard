@@ -1,13 +1,14 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block, MudboardImage } from "@/types/image-type";
 
 type UseGalleryHandlersProps = {
   columns: Block[][];
+  blockMap: Map<string, { colIndex: number; blockIndex: number }>;
   setColumns: React.Dispatch<React.SetStateAction<Block[][]>>;
   setDraggedBlock: (img: Block | null) => void;
+  overId: string | null;
   setOverId: (id: string | null) => void;
-  setPlacement: (val: "above" | "below") => void;
   setSelectedBlocks: React.Dispatch<
     React.SetStateAction<Record<string, Block>>
   >;
@@ -16,10 +17,11 @@ type UseGalleryHandlersProps = {
 
 export function useGalleryHandlers({
   columns,
+  blockMap,
   setColumns,
   setDraggedBlock,
+  overId,
   setOverId,
-  setPlacement,
   setSelectedBlocks,
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
@@ -33,6 +35,7 @@ export function useGalleryHandlers({
         .flat()
         .find((block) => block.id === active.id);
       if (activeImage) {
+        console.log("activeImage: ", activeImage);
         setDraggedBlock(activeImage);
       }
 
@@ -45,103 +48,99 @@ export function useGalleryHandlers({
     [columns]
   );
 
-  const handleDragMove = useCallback((event: DragMoveEvent) => {
-    const { delta, over } = event;
+  const handleDragMove = useCallback(
+    (event: DragMoveEvent) => {
+      const { delta, over } = event;
 
-    if (!over) {
-      setOverId(null);
-      return;
-    }
-
-    if (initialPointerYRef.current !== null) {
-      const currentPointerY = initialPointerYRef.current + delta.y;
-
-      const overElement = document.querySelector(`[data-id="${over.id}"]`);
-      if (overElement) {
-        // determine which drag indicator to show
-        const rect = overElement.getBoundingClientRect();
-        const middleY = rect.top + rect.height / 2;
-
-        setPlacement(currentPointerY < middleY ? "above" : "below");
+      if (!over) {
+        setOverId(null);
+        return;
       }
-      setOverId(String(over.id));
-    }
-  }, []);
+
+      if (initialPointerYRef.current !== null) {
+        const currentPointerY = initialPointerYRef.current + delta.y;
+
+        const overIdStr = String(over.id);
+
+        const overElement = document.querySelector(`[data-id="${over.id}"]`);
+        // console.log("over: ", overIdStr);
+        if (overElement) {
+          // determine which drag indicator to show
+
+          // look up position
+          const pos = blockMap.get(String(over.id));
+          if (pos && overElement) {
+            const { colIndex, blockIndex } = pos;
+
+            const rect = overElement.getBoundingClientRect();
+            const middleY = rect.top + rect.height / 2;
+            const currentPointerY = initialPointerYRef.current + delta.y;
+
+            const dropId =
+              currentPointerY < middleY
+                ? `drop-${colIndex}-${blockIndex}`
+                : `drop-${colIndex}-${blockIndex + 1}`;
+
+            setOverId(dropId);
+            return;
+          }
+
+          // fallback
+          setOverId(String(over.id));
+        }
+      }
+    },
+    [blockMap]
+  );
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       document.body.classList.remove("cursor-grabbing");
 
+      console.log("drag ended. overId: ", overId);
+
       setDraggedBlock(null);
       initialPointerYRef.current = null;
-      setOverId(null);
 
-      const { active, over } = event;
-      if (!over) return;
+      const { active } = event;
 
       const activeId = active.id;
-      const overId = over.id;
       if (activeId === overId) return;
+
+      // we always rely on overId to figure out where we drop it
+      const dropMatch = String(overId).match(/^drop-(\d+)-(\d+)$/);
+      if (!dropMatch) return;
+
+      const toColumnIndex = Number(dropMatch[1]);
+      const insertIndex = Number(dropMatch[2]);
 
       const fromColumnIndex = columns.findIndex((col) =>
         col.some((block) => block.id === activeId)
       );
-
-      // where's it being dropped to
-      // extra logic for dropping into columns itself
-      let toColumnIndex = -1;
-      if (String(overId).startsWith("col-")) {
-        toColumnIndex = Number(String(overId).replace("col-", ""));
-      } else {
-        toColumnIndex = columns.findIndex((col) =>
-          col.some((block) => block.id === overId)
-        );
-      }
       if (fromColumnIndex === -1 || toColumnIndex === -1) return;
 
-      // KEY SECTION: actually updating the columns
-      //
-      // update only the columns that changed
       setColumns((prev) => {
         const updated = [...prev];
-
         const fromCol = [...updated[fromColumnIndex]];
         const toCol = [...updated[toColumnIndex]];
 
         const movingItemIndex = fromCol.findIndex(
           (block) => block.id === activeId
         );
+        if (movingItemIndex === -1) return prev;
+
         const [movingItem] = fromCol.splice(movingItemIndex, 1);
-        const overIndex = toCol.findIndex((block) => block.id === overId);
 
-        // if you're dragging into the same column
-        if (fromColumnIndex === toColumnIndex) {
-          let insertIndex = overIndex === -1 ? fromCol.length : overIndex;
-          fromCol.splice(insertIndex, 0, movingItem);
-          updated[fromColumnIndex] = fromCol;
-        } else {
-          // if you're dragging to a column itself, add to the bottom
-          if (String(overId).startsWith("col-") || overIndex === -1) {
-            toCol.push(movingItem);
-          } else {
-            // if you're dragging between 2 objects in a different column
-            const place = initialPointerYRef.current ? "below" : "above";
-            toCol.splice(
-              place === "below" ? overIndex + 1 : overIndex,
-              0,
-              movingItem
-            );
-          }
+        toCol.splice(insertIndex, 0, movingItem);
 
-          // update the new columns
-          updated[fromColumnIndex] = fromCol;
-          updated[toColumnIndex] = toCol;
-        }
+        updated[fromColumnIndex] = fromCol;
+        updated[toColumnIndex] = toCol;
 
         return updated;
       });
+      setOverId(null);
     },
-    [columns]
+    [columns, overId]
   );
 
   const handleItemClick = useCallback(

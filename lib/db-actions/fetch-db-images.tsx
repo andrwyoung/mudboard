@@ -1,6 +1,6 @@
 import { ImageDownload, MudboardImage } from "@/types/image-type";
 import { supabase } from "../supabase";
-import { SUPABASE_OBJECT_URL } from "@/types/constants";
+import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
 
 export async function fetchSupabaseImages(): Promise<MudboardImage[]> {
   console.log("Fetching images from Supabase DB...");

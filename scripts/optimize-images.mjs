@@ -1,3 +1,5 @@
+// DEPRECATED: for local optimization
+
 import fs from "fs/promises";
 import sharp from "sharp";
 import path from "path";

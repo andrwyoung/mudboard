@@ -1,3 +1,5 @@
+export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
+
 export const COMPRESSED_IMAGE_WIDTH = 1600;
 export const DEFAULT_FILE_EXT = "webp";
 

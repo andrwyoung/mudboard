@@ -1,2 +1,6 @@
 export const INDEX_MULTIPLIER = 10
-export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
+
+
+// UI variables
+export const DEFAULT_COLUMNS = 8
+export const DEFAULT_SPACING = 8
