@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { convertToWebP } from "@/lib/process-images/compress-image";
 import { toast } from "sonner";
@@ -28,6 +28,11 @@ export function useImageImport({
   setIsDragging: (isDragging: boolean) => void;
   setDraggedFileCount: (count: number | null) => void;
 }) {
+  const columnsRef = useRef(columns);
+  useEffect(() => {
+    columnsRef.current = columns;
+  }, [columns]);
+
   // handling importing images
   useEffect(() => {
     let dragCounter = 0;
@@ -123,9 +128,14 @@ export function useImageImport({
           };
 
           // figuring out block stuff
-          const colIndex = findShortestColumn(columns);
-          console.log("colIndex: ", colIndex, "columns: ", columns);
-          const newRowIndex = getNextRowIndex(columns[colIndex]);
+          const currentCols = columnsRef.current;
+
+          console.log(
+            "Current columns:",
+            columnsRef.current.map((col) => col?.length)
+          );
+          const colIndex = findShortestColumn(currentCols);
+          const newRowIndex = getNextRowIndex(currentCols[colIndex] ?? []);
           const newBlock: Block = {
             block_id: newImage.image_id,
             board_id: DEFAULT_BOARD_ID,
@@ -208,5 +218,5 @@ export function useImageImport({
       window.removeEventListener("drop", handleDrop);
       window.removeEventListener("dragleave", handleDragLeave);
     };
-  }, [columns]);
+  }, []);
 }

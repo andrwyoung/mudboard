@@ -36,6 +36,8 @@ export async function uploadImageToSupabase(
   //
   // STEP 2:
   // now insert metadata
+  // note we're inserting everything except our user created fields:
+  // fileName and uploadStatus
   const { image_id, file_ext, original_name, width, height, description } =
     newImage;
 
@@ -56,8 +58,19 @@ export async function uploadImageToSupabase(
 
   //
   // STEP 3:
-  // now create the block so we can access it
-  const blockPayload: BlockInsert = { ...block };
+  // upload the block
+  // note we're just inserting everything but data
+  const { block_id, board_id, block_type, col_index, row_index, deleted } =
+    block;
+  const blockPayload: BlockInsert = {
+    block_id,
+    board_id,
+    block_type,
+    image_id: newImage.image_id,
+    col_index,
+    row_index,
+    deleted,
+  };
   const { error: blockInsertError } = await supabase
     .from("blocks")
     .insert(blockPayload);

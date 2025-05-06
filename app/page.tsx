@@ -17,8 +17,6 @@ export default function Home() {
   const [numCols, setNumCols] = useState(DEFAULT_COLUMNS);
   const [columns, setColumns] = useState<Block[][]>([]);
 
-  setNumCols(DEFAULT_COLUMNS);
-
   // load all images on init
   useEffect(() => {
     async function loadImages() {
@@ -60,6 +58,8 @@ export default function Home() {
 
   // save the block order
   const blockMap = useMemo(() => {
+    console.log("colums just updated. changing blockmap. cols: ", columns);
+
     const map = new Map<string, { colIndex: number; blockIndex: number }>();
     columns.forEach((col, colIndex) => {
       col.forEach((block, blockIndex) => {
