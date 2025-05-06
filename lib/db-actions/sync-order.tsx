@@ -12,7 +12,6 @@ export async function syncOrderToSupabase(
       if (!block.block_id.startsWith("temp-")) {
         updates.push({
           block_id: block.block_id,
-          board_id: block.board_id,
           col_index: colIndex,
           row_index: rowIndex,
           order_index: updates.length, // linear visual order if still needed
@@ -24,7 +23,7 @@ export async function syncOrderToSupabase(
   console.log("Syncing block order to Supabase via update:", updates);
 
   const updatePromises = updates.map(
-    ({ block_id, board_id, order_index, col_index, row_index }) =>
+    ({ block_id, order_index, col_index, row_index }) =>
       supabase
         .from("blocks")
         .update({ order_index, col_index, row_index })

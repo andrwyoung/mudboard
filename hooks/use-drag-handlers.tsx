@@ -1,11 +1,12 @@
 import { useCallback, useState } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block, MudboardImage } from "@/types/image-type";
+import { useLayoutStore } from "@/store/layout-store";
 
 type UseGalleryHandlersProps = {
   columns: Block[][];
   blockMap: Map<string, { colIndex: number; blockIndex: number }>;
-  setColumns: React.Dispatch<React.SetStateAction<Block[][]>>;
+  updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   setDraggedBlock: (img: Block | null) => void;
   overId: string | null;
   setOverId: (id: string | null) => void;
@@ -13,19 +14,17 @@ type UseGalleryHandlersProps = {
     React.SetStateAction<Record<string, Block>>
   >;
   initialPointerYRef: React.RefObject<number | null>;
-  layoutDirtyRef: React.RefObject<boolean>;
 };
 
 export function useGalleryHandlers({
   columns,
   blockMap,
-  setColumns,
+  updateColumns,
   setDraggedBlock,
   overId,
   setOverId,
   setSelectedBlocks,
   initialPointerYRef,
-  layoutDirtyRef,
 }: UseGalleryHandlersProps) {
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
@@ -132,7 +131,7 @@ export function useGalleryHandlers({
         return;
       }
 
-      setColumns((prev) => {
+      updateColumns((prev) => {
         const updated = [...prev];
         const fromCol = [...updated[fromColumnIndex]];
 
@@ -164,10 +163,9 @@ export function useGalleryHandlers({
         return updated;
       });
 
-      layoutDirtyRef.current = true; // trigger a sync
       setOverId(null);
     },
-    [blockMap, overId, setColumns, setDraggedBlock]
+    [blockMap, overId, updateColumns, setDraggedBlock]
   );
 
   const handleItemClick = useCallback(

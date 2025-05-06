@@ -13,7 +13,6 @@ import {
 } from "@/types/upload-settings";
 import {
   Block,
-  BlockDownload,
   BlockInsert,
   BlockType,
   MudboardImage,
@@ -22,20 +21,17 @@ import {
   findShortestColumn,
   getNextRowIndex,
 } from "@/lib/column-helpers/column-helpers";
-import { supabase } from "@/lib/supabase";
 
 export function useImageImport({
   columns,
-  setColumns,
+  updateColumns,
   setIsDragging,
   setDraggedFileCount,
-  layoutDirtyRef,
 }: {
   columns: Block[][];
-  setColumns: React.Dispatch<React.SetStateAction<Block[][]>>;
+  updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   setIsDragging: (isDragging: boolean) => void;
   setDraggedFileCount: (count: number | null) => void;
-  layoutDirtyRef: React.RefObject<boolean>;
 }) {
   const columnsRef = useRef(columns);
   useEffect(() => {
@@ -155,7 +151,7 @@ export function useImageImport({
           };
 
           // here we add it to local layout so we can immediately interact
-          setColumns((prevCols) => {
+          updateColumns((prevCols) => {
             const colIndex = findShortestColumn(prevCols);
             const rowIndex = getNextRowIndex(prevCols[colIndex] ?? []);
 
@@ -201,7 +197,7 @@ export function useImageImport({
           )
             .then((block_id) => {
               successfulUploads++;
-              setColumns((prevCols) =>
+              updateColumns((prevCols) =>
                 prevCols.map((col) =>
                   col.map((block) =>
                     block.block_id === tempBlockId
@@ -221,7 +217,7 @@ export function useImageImport({
             .catch((err) => {
               console.error(err);
               failedUploads++;
-              setColumns((prevCols) =>
+              updateColumns((prevCols) =>
                 prevCols.map((col) =>
                   col.map((block) =>
                     block.block_id === newImage.image_id
@@ -241,7 +237,6 @@ export function useImageImport({
 
         await Promise.all(uploadPromises);
         // we may have incorrect versions of the order, so trigger a sync
-        layoutDirtyRef.current = true;
         toast.success(
           `Successfully uploaded ${successfulUploads} of ${uploadPromises.length} images!`
         );

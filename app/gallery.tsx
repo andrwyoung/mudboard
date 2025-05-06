@@ -20,14 +20,12 @@ import { DropIndicator } from "@/components/drag/drag-indicator";
 
 export default function Gallery({
   columns,
-  setColumns,
+  updateColumns,
   blockMap,
-  layoutDirtyRef,
 }: {
   columns: Block[][];
-  setColumns: React.Dispatch<React.SetStateAction<Block[][]>>;
+  updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   blockMap: Map<string, { colIndex: number; blockIndex: number }>;
-  layoutDirtyRef: React.RefObject<boolean>;
 }) {
   const columnCount = useUIStore((s) => s.columnCount);
   const spacingSize = useUIStore((s) => s.spacingSize);
@@ -44,6 +42,40 @@ export default function Gallery({
   const [selectedImages, setSelectedBlocks] = useState<Record<string, Block>>(
     {}
   );
+
+  //
+  // SECTION: keyboard controls
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      // Delete key
+      if (e.key === "Backspace" || e.key === "Delete") {
+        Object.values(selectedImages).forEach((block) => {
+          updateColumns((prevCols) =>
+            prevCols.map((col) =>
+              col.filter((b) => b.block_id !== block.block_id)
+            )
+          );
+          // Optionally: also sync soft-delete to DB here
+        });
+      }
+
+      // Example: Deselect with Escape
+      if (e.key === "Escape") {
+        setSelectedBlocks({});
+      }
+
+      // Add more keys (Arrow keys for movement, etc.) as needed
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedImages, updateColumns]);
+
+  //
+  // SECTION: click and drag behavior
+  //
+  //
 
   // listen for clicking elsewhere (to deselect)
   useEffect(() => {
@@ -72,13 +104,12 @@ export default function Gallery({
     useGalleryHandlers({
       columns,
       blockMap,
-      setColumns,
+      updateColumns,
       setDraggedBlock,
       overId,
       setOverId,
       setSelectedBlocks,
       initialPointerYRef,
-      layoutDirtyRef,
     });
 
   const sensors = useSensors(
