@@ -19,10 +19,12 @@ export function ImageBlock({
   img,
   height,
   shouldEagerLoad,
+  columnWidth,
 }: {
   img: MudboardImage;
   height: number;
   shouldEagerLoad: boolean;
+  columnWidth: number;
 }) {
   const showBlurImg = useLayoutStore((s) => s.showBlurImg);
   const prettyMode = useLayoutStore((s) => s.showBlurImg);
@@ -30,7 +32,6 @@ export function ImageBlock({
   const [loaded, setLoaded] = useState(false);
 
   const [isErrored, setIsErrored] = useState(false);
-
   const isBlurred = (!loaded || showBlurImg) && prettyMode;
 
   function getFileName(): string {
@@ -47,6 +48,9 @@ export function ImageBlock({
 
     return getImageUrl(img.image_id, img.file_ext, size);
   }
+
+  const aspectRatio = height / img.width;
+  const calculatedHeight = Math.round(columnWidth * aspectRatio);
 
   return (
     <>
@@ -78,8 +82,8 @@ export function ImageBlock({
           <Image
             src={getFileName()}
             alt={img.caption}
-            width={img.width}
-            height={height}
+            width={columnWidth}
+            height={calculatedHeight}
             onError={() => setIsErrored(true)}
             onLoad={() => setLoaded(true)}
             className={`rounded-sm w-full h-full ${

@@ -12,6 +12,12 @@ export const DEFAULT_FILE_EXT = "webp";
 
 export type imageNames = "thumb" | "medium" | "full";
 
+export const IMAGE_WIDTH_MAP: Record<imageNames, number> = {
+  thumb: COMPRESSED_THUMB_WIDTH,
+  medium: COMPRESSED_IMAGE_WIDTH,
+  full: MAX_IMAGE_WIDTH,
+};
+
 export const allowedMimeTypes = [
     "image/jpeg",
     "image/png",

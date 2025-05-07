@@ -1,12 +1,11 @@
 import { memo } from "react";
 import { SortableContext } from "@dnd-kit/sortable";
-import { MemoizedImageBlock } from "@/components/blocks/memoized-block";
+import { MemoizedBlock } from "@/components/blocks/memoized-block";
 import { Block, isBlockWithWidth } from "@/types/image-type";
 import React from "react";
 import { MemoizedDropIndicator } from "@/components/drag/drag-indicator";
 import { useUIStore } from "@/store/ui-store";
 import { IMAGE_OVERSCAN_SIZE, OVERSCAN_SIZE } from "@/types/upload-settings";
-import { useLayoutStore } from "@/store/layout-store";
 
 // virtualization
 function getBlockLayout(
@@ -65,8 +64,6 @@ function ColumnComponent({
   const overscan = OVERSCAN_SIZE;
   const viewportHeight = window.innerHeight;
 
-  const prettyMode = useLayoutStore((s) => s.prettyMode);
-
   const { items, totalHeight } = getBlockLayout(
     column,
     spacingSize,
@@ -80,6 +77,14 @@ function ColumnComponent({
       top < scrollY + viewportHeight + overscan
     );
   });
+
+  const visibleIndicators = items
+    .map(({ top }, index) => ({ top, index }))
+    .filter(({ top }) => {
+      return (
+        top > scrollY - overscan && top < scrollY + viewportHeight + overscan
+      );
+    });
 
   return (
     <div style={{ height: totalHeight, position: "relative" }}>
@@ -97,33 +102,20 @@ function ColumnComponent({
         />
 
         {/* Drop indicators between blocks */}
-        {items.map(({ top, height }, index) => (
-          <>
-            {index !== 0 ? (
-              <MemoizedDropIndicator
-                key={`drop-${columnIndex}-${index}`}
-                id={`drop-${columnIndex}-${index}`}
-                isActive={overId === `drop-${columnIndex}-${index}`}
-                style={{
-                  position: "absolute",
-                  top,
-                  width: "100%",
-                }}
-              />
-            ) : null}
-            {prettyMode && (
-              <div
-                className="border-2 bg-grey-light rounded-sm"
-                style={{
-                  position: "absolute",
-                  top: top + spacingSize,
-                  height,
-                  width: "100%",
-                }}
-              ></div>
-            )}
-          </>
-        ))}
+        {visibleIndicators.map(({ top, index }) =>
+          index !== 0 ? (
+            <MemoizedDropIndicator
+              key={`drop-${columnIndex}-${index}`}
+              id={`drop-${columnIndex}-${index}`}
+              isActive={overId === `drop-${columnIndex}-${index}`}
+              style={{
+                position: "absolute",
+                top,
+                width: "100%",
+              }}
+            />
+          ) : null
+        )}
 
         {/* Drop zone at the end */}
         <MemoizedDropIndicator
@@ -152,12 +144,13 @@ function ColumnComponent({
                 width: "100%",
               }}
             >
-              <MemoizedImageBlock
+              <MemoizedBlock
                 block={block}
                 isSelected={!!selectedBlocks[block.block_id]}
                 isDragging={draggedImage?.block_id === block.block_id}
                 onClick={(e) => handleItemClick(block, e)}
                 shouldEagerLoad={shouldEagerLoad}
+                columnWidth={columnWidth}
               />
             </div>
           );

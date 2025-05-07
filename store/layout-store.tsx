@@ -18,6 +18,6 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
   showBlurImg: false,
   setShowBlurImg: (d) => set({ showBlurImg: d }),
 
-  prettyMode: false,
+  prettyMode: true,
   setPrettyMode: (d) => set({ prettyMode: d }),
 }));
