@@ -20,7 +20,8 @@ export async function fetchSupabaseBlocks(): Promise<Block[]> {
       width,
       file_ext,
       original_name,
-      caption
+      caption,
+      blurhash
     )
   `
     )
