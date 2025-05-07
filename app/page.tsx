@@ -9,6 +9,8 @@ import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
 import { DEFAULT_BOARD_ID } from "@/types/upload-settings";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
+import { useDebouncedValue } from "@/hooks/use-debounce";
+import { DEFAULT_COLUMNS } from "@/types/constants";
 
 export default function Home() {
   const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
@@ -21,6 +23,9 @@ export default function Home() {
   const [columns, setColumns] = useState<Block[][]>([]);
 
   const setShowBlurImg = useLayoutStore((s) => s.setShowBlurImg);
+  const [sliderVal, setSliderVal] = useState(DEFAULT_COLUMNS);
+  const [fadeGallery, setFadeGallery] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
 
   // helper function (so I don't forget setting layout dirty)
   const updateColumns = (fn: (prev: Block[][]) => Block[][]) => {
@@ -50,7 +55,7 @@ export default function Home() {
     );
 
     const useSavedOrder =
-      maxSavedCol >= numCols || flatBlocks.some((b) => b.col_index == null);
+      maxSavedCol !== numCols || flatBlocks.some((b) => b.col_index == null);
 
     if (useSavedOrder) {
       // layout blocks by order_index (top to bottom)
@@ -94,7 +99,7 @@ export default function Home() {
         syncOrderToSupabase(columns, DEFAULT_BOARD_ID, spacingSize); // pass in current layout
         useLayoutStore.getState().setLayoutDirty(false);
       }
-    }, 1000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [columns, spacingSize]);
@@ -137,7 +142,7 @@ export default function Home() {
       timeout = setTimeout(() => {
         setShowBlurImg(false);
         console.log("unblurring image (resize ended)");
-      }, 300); // adjust this delay if needed
+      }, 400); // adjust this delay if needed
     };
 
     window.addEventListener("resize", handleResize);
@@ -163,16 +168,41 @@ export default function Home() {
         className="hidden lg:block w-1/6 min-w-[200px] max-w-[380px]
       bg-primary"
       >
-        <Sidebar />
+        <Sidebar
+          sliderVal={sliderVal}
+          setSliderVal={setSliderVal}
+          fadeGallery={fadeGallery}
+          setFadeGallery={setFadeGallery}
+          showLoading={showLoading}
+          setShowLoading={setShowLoading}
+        />
       </aside>
 
       {/* Gallery */}
       <main className="flex-1 overflow-y-scroll scrollbar-none">
-        <Gallery
-          columns={columns}
-          updateColumns={updateColumns}
-          blockMap={blockMap}
-        />
+        <div
+          className={`absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 
+            transition-opacity duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
+            pointer-events-none ${
+              fadeGallery ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+        >
+          {showLoading ? "Loading" : `${sliderVal} Columns`}
+        </div>
+
+        <div
+          className={`transition-opacity ${
+            fadeGallery
+              ? "duration-200 opacity-0 pointer-events-none"
+              : "duration-500 opacity-100"
+          }`}
+        >
+          <Gallery
+            columns={columns}
+            updateColumns={updateColumns}
+            blockMap={blockMap}
+          />
+        </div>
       </main>
     </div>
   );

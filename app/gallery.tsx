@@ -5,7 +5,9 @@ import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import { BlockRenderer } from "@/components/blocks/block-helpers";
 import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/image-type";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { Flipper, Flipped } from "react-flip-toolkit";
+import Image from "next/image";
 import {
   DndContext,
   DragOverlay,
@@ -42,7 +44,7 @@ export default function Gallery({
   const [overId, setOverId] = useState<string | null>(null);
   const initialPointerYRef = useRef<number | null>(null);
 
-  const [selectedImages, setSelectedBlocks] = useState<Record<string, Block>>(
+  const [selectedBlocks, setSelectedBlocks] = useState<Record<string, Block>>(
     {}
   );
 
@@ -53,7 +55,7 @@ export default function Gallery({
     function handleKeyDown(e: KeyboardEvent) {
       // deleting image
       if (e.key === "Backspace" || e.key === "Delete") {
-        const blocksToDelete = Object.values(selectedImages);
+        const blocksToDelete = Object.values(selectedBlocks);
         if (blocksToDelete.length > 0) {
           const deletedIds = blocksToDelete.map((b) => b.block_id);
 
@@ -83,7 +85,7 @@ export default function Gallery({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImages, updateColumns]);
+  }, [selectedBlocks, updateColumns]);
 
   //
   // SECTION: click and drag behavior
@@ -128,7 +130,7 @@ export default function Gallery({
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 5,
       },
     }),
     useSensor(TouchSensor, {
@@ -167,7 +169,6 @@ export default function Gallery({
                 isActive={overId === `drop-${columnIndex}-0`}
                 padding="above"
               />
-
               {column.map((block, blockIndex) => (
                 <React.Fragment key={`block-${columnIndex}-${blockIndex}`}>
                   {blockIndex !== 0 && (
@@ -178,46 +179,38 @@ export default function Gallery({
                   )}
 
                   <div data-id={block.block_id} className="flex flex-col">
-                    <SortableImageItem id={block.block_id}>
-                      <motion.div
-                        layout
-                        transition={{
-                          type: "spring",
-                          stiffness: 500,
-                          damping: 40,
-                        }}
-                      >
-                        <div
-                          className={`rounded-sm object-cover transition-all duration-200 cursor-pointer shadow-md 
+                    <div
+                      className={`rounded-sm object-cover transition-all duration-200 cursor-pointer shadow-md 
                           hover:scale-101 hover:shadow-xl hover:brightness-105 hover:saturate-110 hover:opacity-100
-                          relative
+                          relative bg-background
                           ${
                             draggedImage?.block_id === block.block_id
                               ? "opacity-30"
                               : ""
                           } ${
-                            !!selectedImages[block.block_id]
-                              ? "outline-4 outline-secondary"
-                              : ""
-                          }`}
-                        >
-                          <h1 className="absolute text-sm top-2 right-2 text-slate-600">
-                            {block.order_index}
-                          </h1>
-                          <BlockRenderer
-                            block={block}
-                            isErrored={erroredImages[block.block_id]}
-                            onClick={(e) => handleItemClick(block, e)}
-                            onError={() =>
-                              setErroredImages((prev) => ({
-                                ...prev,
-                                [block.block_id]: true,
-                              }))
-                            }
-                          />
-                        </div>
-                      </motion.div>
-                    </SortableImageItem>
+                        !!selectedBlocks[block.block_id]
+                          ? "outline-4 outline-secondary"
+                          : ""
+                      }`}
+                      onClick={(e) => handleItemClick(block, e)}
+                    >
+                      <SortableImageItem id={block.block_id}>
+                        <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10">
+                          {block.order_index}
+                        </h1>
+
+                        <BlockRenderer
+                          block={block}
+                          isErrored={erroredImages[block.block_id]}
+                          onError={() =>
+                            setErroredImages((prev) => ({
+                              ...prev,
+                              [block.block_id]: true,
+                            }))
+                          }
+                        />
+                      </SortableImageItem>
+                    </div>
                   </div>
                 </React.Fragment>
               ))}
@@ -233,19 +226,19 @@ export default function Gallery({
         ))}
       </div>
       <DragOverlay>
-        {draggedImage ? (
-          <div className="h-16 w-16  opacity-20 flex flex-row bg-red-500">
-            Hey
-          </div>
-        ) : // <Image
-        //   src={activeImage.fileName}
-        //   alt={activeImage.description}
-        //   width={activeImage.width}
-        //   height={activeImage.height}
-        //   className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
-        //   duration-200 ease-out scale-105 shadow-xl rotate-1"
-        // />
-        null}
+        {draggedImage &&
+          draggedImage.block_type === "image" &&
+          draggedImage.data &&
+          "fileName" in draggedImage.data && (
+            <Image
+              src={draggedImage.data.fileName}
+              alt={draggedImage.data.caption}
+              width={draggedImage.data.width}
+              height={draggedImage.height}
+              className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
+        duration-200 ease-out scale-105 shadow-xl rotate-1"
+            />
+          )}
       </DragOverlay>
       <div>{overId}</div>
     </DndContext>

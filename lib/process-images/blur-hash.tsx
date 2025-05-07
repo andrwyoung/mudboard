@@ -13,5 +13,5 @@ export async function generateBlurhashFromImage(
   ctx.drawImage(img, 0, 0, img.width, img.height);
 
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  return encode(imageData.data, imageData.width, imageData.height, 4, 3); // you can tweak components (4x3 is solid)
+  return encode(imageData.data, imageData.width, imageData.height, 6, 5); // you can tweak components (4x3 is solid)
 }

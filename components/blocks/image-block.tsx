@@ -39,9 +39,13 @@ export function ImageBlock({
         >
           {img.blurhash && (
             <div
-              className={`absolute inset-0 transition-opacity duration-500 ${
-                !loaded || showBlurImg ? "opacity-100" : "opacity-0"
-              }`}
+              className="absolute inset-0"
+              style={{
+                opacity: !loaded || showBlurImg ? 1 : 0,
+                transition: `opacity ${
+                  !loaded || showBlurImg ? "0s ease-out" : "0.2s ease-in"
+                }`,
+              }}
             >
               <Blurhash
                 hash={img.blurhash}
@@ -61,8 +65,9 @@ export function ImageBlock({
             onClick={onClick}
             onError={onError}
             onLoadingComplete={() => setLoaded(true)}
-            style={{ visibility: showBlurImg ? "hidden" : "visible" }}
-            className="rounded-sm w-full h-full object-cover"
+            className={`rounded-sm w-full h-full ${
+              showBlurImg ? "hidden" : "visible"
+            }`}
           />
         </div>
       ) : (

@@ -1,12 +1,41 @@
+import { Slider } from "@/components/ui/slider";
+import { useDebouncedValue } from "@/hooks/use-debounce";
+import { useLayoutStore } from "@/store/layout-store";
+import { useUIStore } from "@/store/ui-store";
+import { DEFAULT_COLUMNS, MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const fontClass = "font-semibold text-md font-header";
 const refClass =
   "text-accent hover:text-primary-foreground transition-all hover:underline";
 
-export default function Sidebar() {
+export default function Sidebar({
+  sliderVal,
+  setSliderVal,
+  fadeGallery,
+  setFadeGallery,
+  showLoading,
+  setShowLoading,
+}: {
+  sliderVal: number;
+  setSliderVal: (e: number) => void;
+  fadeGallery: boolean;
+  setFadeGallery: (e: boolean) => void;
+  showLoading: boolean;
+  setShowLoading: (e: boolean) => void;
+}) {
+  const setShowBlurImg = useLayoutStore((s) => s.setShowBlurImg);
+  const setNumCols = useUIStore((s) => s.setNumCols);
+  const numCols = useUIStore((s) => s.numCols);
+
+  const [debouncedNumCols, setDebouncedNumCols] = useState(DEFAULT_COLUMNS);
+
+  useEffect(() => {
+    setTimeout(() => {}, 200);
+  }, [debouncedNumCols]);
+
   return (
     <div className="flex flex-col h-full w-full relative">
       <div className="flex justify-center py-8 px-4 ">
@@ -23,7 +52,7 @@ export default function Sidebar() {
           />
         </Link>
       </div>
-      <div className="flex flex-col flex-grow justify-center px-10">
+      <div className="flex flex-col flex-grow justify-center px-10 gap-24">
         <div className="flex flex-col">
           <h1 className="text-3xl  font-bold">Art Room</h1>
           <p className="text-sm mb-12 font-semibold">
@@ -54,6 +83,32 @@ export default function Sidebar() {
               </a>
             </p>
           </div>
+        </div>
+        <div
+          onPointerDown={() => {
+            setShowLoading(false);
+            setShowBlurImg(true);
+            setFadeGallery(true);
+          }}
+          onPointerUp={() => {
+            // setFadeGallery(false);
+            setShowLoading(true);
+            setTimeout(() => {
+              setNumCols(sliderVal);
+              setFadeGallery(false);
+              setTimeout(() => {
+                setShowBlurImg(false);
+              }, 400);
+            }, 300); // small delay to let layout commit — tweak as needed
+          }}
+        >
+          <Slider
+            defaultValue={[sliderVal]}
+            min={MIN_COLUMNS}
+            max={MAX_COLUMNS}
+            onValueChange={(val) => setSliderVal(val[0])}
+            orientation="vertical"
+          />
         </div>
       </div>
       <div

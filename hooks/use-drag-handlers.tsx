@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block, MudboardImage } from "@/types/image-type";
 import { useLayoutStore } from "@/store/layout-store";
@@ -26,18 +26,22 @@ export function useGalleryHandlers({
   setSelectedBlocks,
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
+  // caching for handleDragMove
+  const lastOverRef = useRef<string | number | null>(null);
+  const cachedOverElement = useRef<HTMLElement | null>(null);
+
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       document.body.classList.add("cursor-grabbing");
       setSelectedBlocks({});
 
       const { active, activatorEvent } = event;
-      const activeImage = columns
-        .flat()
-        .find((block) => block.block_id === active.id);
-      if (activeImage) {
-        console.log("activeImage: ", activeImage);
-        setDraggedBlock(activeImage);
+      const pos = blockMap.get(active.id.toString());
+      if (pos) {
+        const activeImage = columns[pos.colIndex]?.[pos.blockIndex];
+        if (activeImage) {
+          setDraggedBlock(activeImage);
+        }
       }
 
       if (activatorEvent instanceof MouseEvent) {
@@ -59,12 +63,19 @@ export function useGalleryHandlers({
       }
 
       if (initialPointerYRef.current !== null) {
-        const currentPointerY = initialPointerYRef.current + delta.y;
+        // SECTION small cache. store the last overElement
 
-        const overIdStr = String(over.id);
+        let overElement: HTMLElement | null = null;
+        if (lastOverRef.current === over.id && cachedOverElement.current) {
+          overElement = cachedOverElement.current;
+        } else {
+          overElement = document.querySelector(
+            `[data-id="${over.id}"]`
+          ) as HTMLElement | null;
+          cachedOverElement.current = overElement;
+          lastOverRef.current = over.id;
+        }
 
-        const overElement = document.querySelector(`[data-id="${over.id}"]`);
-        // console.log("over: ", overIdStr);
         if (overElement) {
           // determine which drag indicator to show
 
@@ -132,11 +143,8 @@ export function useGalleryHandlers({
       }
 
       updateColumns((prev) => {
-        const updated = [...prev];
-        const fromCol = [...updated[fromColumnIndex]];
-
-        // remove the item
-        const [movingItem] = fromCol.splice(movingItemIndex, 1);
+        const fromCol = [...prev[fromColumnIndex]];
+        const [movingItem] = fromCol.splice(movingItemIndex, 1); // remove the item
 
         // if dragged to same column
         if (fromColumnIndex === toColumnIndex) {
@@ -148,19 +156,21 @@ export function useGalleryHandlers({
           }
 
           fromCol.splice(adjustedInsertIndex, 0, movingItem);
-          updated[fromColumnIndex] = fromCol;
-          return updated;
+
+          // return the new array only with modified column changed
+          return prev.map((col, i) => (i === fromColumnIndex ? fromCol : col));
         }
 
         // different column behavior
-        const toCol = [...updated[toColumnIndex]];
+        const toCol = [...prev[toColumnIndex]];
         const insertAt = Math.min(insertIndex, toCol.length);
         toCol.splice(insertAt, 0, movingItem);
 
-        updated[fromColumnIndex] = fromCol;
-        updated[toColumnIndex] = toCol;
-
-        return updated;
+        return prev.map((col, i) => {
+          if (i === fromColumnIndex) return fromCol;
+          if (i === toColumnIndex) return toCol;
+          return col;
+        });
       });
 
       setOverId(null);
@@ -174,6 +184,8 @@ export function useGalleryHandlers({
         console.log("Double clicked:", block);
         return;
       }
+
+      console.log("Clicked? ", event, block);
 
       setSelectedBlocks((prevSelected) => {
         const newSelected = { ...prevSelected };
