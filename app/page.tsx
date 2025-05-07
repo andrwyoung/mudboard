@@ -14,8 +14,12 @@ import { DEFAULT_COLUMNS } from "@/types/constants";
 export default function Home() {
   const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
 
+  // when dragging new images from local computer
   const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
+
+  // when dragging blocks
+  const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
 
   const spacingSize = useUIStore((s) => s.spacingSize);
   const numCols = useUIStore((s) => s.numCols);
@@ -129,7 +133,9 @@ export default function Home() {
     setDraggedFileCount,
   });
 
-  // SECTION: Screen resizing
+  // SECTION: Things to do with blurirng
+  //
+  //
   useEffect(() => {
     let timeout: NodeJS.Timeout | null = null;
 
@@ -151,6 +157,32 @@ export default function Home() {
       if (timeout) clearTimeout(timeout);
     };
   }, [setShowBlurImg]);
+
+  // if you're scrolling using an image, then blur everything
+  useEffect(() => {
+    if (!draggedBlock) return;
+
+    let timeout: NodeJS.Timeout | null = null;
+
+    const handleScroll = () => {
+      setShowBlurImg(true);
+
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setShowBlurImg(false);
+      }, 300); // adjust this delay to match "scroll stop" detection
+    };
+
+    const mainScrollEl = document.querySelector("main"); // adjust if needed
+    if (!mainScrollEl) return;
+
+    mainScrollEl.addEventListener("scroll", handleScroll);
+
+    return () => {
+      mainScrollEl.removeEventListener("scroll", handleScroll);
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [draggedBlock, setShowBlurImg]);
 
   return (
     <div className="flex h-screen overflow-hidden relative">
@@ -198,6 +230,8 @@ export default function Home() {
             columns={columns}
             updateColumns={updateColumns}
             blockMap={blockMap}
+            draggedBlock={draggedBlock}
+            setDraggedBlock={setDraggedBlock}
           />
         </div>
       </main>

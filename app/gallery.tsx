@@ -22,16 +22,19 @@ export default function Gallery({
   columns,
   updateColumns,
   blockMap,
+  draggedBlock,
+  setDraggedBlock,
 }: {
   columns: Block[][];
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   blockMap: Map<string, { colIndex: number; blockIndex: number }>;
+  draggedBlock: Block | null;
+  setDraggedBlock: (b: Block | null) => void;
 }) {
   const columnCount = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const galleySpacingSize = useUIStore((s) => s.galleySpacingSize);
 
-  const [draggedImage, setDraggedBlock] = useState<Block | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   const initialPointerYRef = useRef<number | null>(null);
 
@@ -142,7 +145,7 @@ export default function Gallery({
     >
       <div
         className={`grid px-2 sm:px-12 h-full ${
-          draggedImage ? "cursor-grabbing" : "cursor-default"
+          draggedBlock ? "cursor-grabbing" : "cursor-default"
         }`}
         style={{
           paddingLeft: galleySpacingSize,
@@ -157,7 +160,7 @@ export default function Gallery({
               column={column}
               columnIndex={columnIndex}
               overId={overId}
-              draggedImage={draggedImage}
+              draggedImage={draggedBlock}
               selectedBlocks={selectedBlocks}
               handleItemClick={handleItemClick}
             />
@@ -165,15 +168,15 @@ export default function Gallery({
         ))}
       </div>
       <DragOverlay>
-        {draggedImage &&
-          draggedImage.block_type === "image" &&
-          draggedImage.data &&
-          "fileName" in draggedImage.data && (
+        {draggedBlock &&
+          draggedBlock.block_type === "image" &&
+          draggedBlock.data &&
+          "fileName" in draggedBlock.data && (
             <Image
-              src={draggedImage.data.fileName}
-              alt={draggedImage.data.caption}
-              width={draggedImage.data.width}
-              height={draggedImage.height}
+              src={draggedBlock.data.fileName}
+              alt={draggedBlock.data.caption}
+              width={draggedBlock.data.width}
+              height={draggedBlock.height}
               className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
         duration-200 ease-out scale-105 shadow-xl rotate-1"
             />

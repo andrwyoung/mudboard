@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block } from "@/types/image-type";
 
@@ -27,6 +27,11 @@ export function useGalleryHandlers({
 }: UseGalleryHandlersProps) {
   // caching for handleDragMove
   const blockRectsRef = useRef<Map<string, DOMRect>>(new Map());
+  const overIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    overIdRef.current = overId;
+  }, [overId]);
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
@@ -86,11 +91,11 @@ export function useGalleryHandlers({
           ? `drop-${pos.colIndex}-${pos.blockIndex}`
           : `drop-${pos.colIndex}-${pos.blockIndex + 1}`;
 
-      if (dropId !== overId) {
+      if (dropId !== overIdRef.current) {
         setOverId(dropId);
       }
     },
-    [blockMap, overId, setOverId]
+    [blockMap, setOverId]
   );
 
   const handleDragEnd = useCallback(
