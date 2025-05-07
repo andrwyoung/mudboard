@@ -18,15 +18,20 @@ export function getImageUrl(
 export function ImageBlock({
   img,
   height,
+  shouldEagerLoad,
 }: {
   img: MudboardImage;
   height: number;
+  shouldEagerLoad: boolean;
 }) {
   const showBlurImg = useLayoutStore((s) => s.showBlurImg);
+  const prettyMode = useLayoutStore((s) => s.showBlurImg);
   const numCols = useUIStore((s) => s.numCols);
   const [loaded, setLoaded] = useState(false);
 
   const [isErrored, setIsErrored] = useState(false);
+
+  const isBlurred = (!loaded || showBlurImg) && prettyMode;
 
   function getFileName(): string {
     if (img.fileType !== "database") {
@@ -34,9 +39,9 @@ export function ImageBlock({
     }
 
     let size: imageNames = "full";
-    if (numCols > 5) {
+    if (numCols > 6) {
       size = "thumb";
-    } else if (numCols > 3) {
+    } else if (numCols > 2) {
       size = "medium";
     }
 
@@ -54,9 +59,9 @@ export function ImageBlock({
             <div
               className="absolute inset-0"
               style={{
-                opacity: !loaded || showBlurImg ? 1 : 0,
+                opacity: isBlurred ? 1 : 0,
                 transition: `opacity ${
-                  !loaded || showBlurImg ? "0s ease-out" : "0.2s ease-in"
+                  isBlurred ? "0s ease-out" : "0.2s ease-in"
                 }`,
               }}
             >
@@ -78,8 +83,9 @@ export function ImageBlock({
             onError={() => setIsErrored(true)}
             onLoad={() => setLoaded(true)}
             className={`rounded-sm w-full h-full ${
-              showBlurImg ? "hidden" : "visible"
+              showBlurImg && prettyMode ? "hidden" : "visible"
             }`}
+            loading={shouldEagerLoad ? "eager" : "lazy"}
           />
         </div>
       ) : (

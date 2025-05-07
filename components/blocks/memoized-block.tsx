@@ -8,11 +8,13 @@ function ImageBlockComponent({
   isSelected,
   isDragging,
   onClick,
+  shouldEagerLoad,
 }: {
   block: Block;
   isSelected: boolean;
   isDragging: boolean;
   onClick: (e: React.MouseEvent) => void;
+  shouldEagerLoad: boolean;
 }) {
   return (
     <div data-id={block.block_id} className="flex flex-col">
@@ -29,7 +31,7 @@ function ImageBlockComponent({
             {block.order_index}
           </h1>
 
-          <BlockChooser block={block} />
+          <BlockChooser block={block} shouldEagerLoad={shouldEagerLoad} />
         </SortableImageItem>
       </div>
     </div>

@@ -36,7 +36,7 @@ function DropIndicator({
     <div
       ref={setNodeRef}
       data-id={id}
-      className={`w-full transition-all duration-150 ease-in-out relative
+      className={`w-full z-15 transition-all duration-150 ease-in-out relative
        ${padding === "bottom" ? "flex-1" : ""}`}
       style={{
         ...style,

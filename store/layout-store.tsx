@@ -6,6 +6,9 @@ type LayoutStore = {
 
   showBlurImg: boolean;
   setShowBlurImg: (d: boolean) => void;
+
+  prettyMode: boolean;
+  setPrettyMode: (d: boolean) => void;
 };
 
 export const useLayoutStore = create<LayoutStore>((set) => ({
@@ -14,4 +17,7 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
 
   showBlurImg: false,
   setShowBlurImg: (d) => set({ showBlurImg: d }),
+
+  prettyMode: false,
+  setPrettyMode: (d) => set({ prettyMode: d }),
 }));
