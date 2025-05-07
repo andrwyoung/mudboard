@@ -1,7 +1,8 @@
 import { useUIStore } from "@/store/ui-store";
 import { useDroppable } from "@dnd-kit/core";
+import React from "react";
 
-export function DropIndicator({
+function DropIndicator({
   id,
   isActive,
   padding,
@@ -52,3 +53,5 @@ export function DropIndicator({
     </div>
   );
 }
+
+export const MemoizedDropIndicator = React.memo(DropIndicator);

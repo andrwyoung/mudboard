@@ -17,18 +17,14 @@ export function getImageUrl(
 export function ImageBlock({
   img,
   height,
-  isErrored = false,
-  onClick,
-  onError,
 }: {
   img: MudboardImage;
   height: number;
-  isErrored?: boolean;
-  onClick?: (e: React.MouseEvent<HTMLImageElement>) => void;
-  onError?: () => void;
 }) {
   const showBlurImg = useLayoutStore((s) => s.showBlurImg);
   const [loaded, setLoaded] = useState(false);
+
+  const [isErrored, setIsErrored] = useState(false);
 
   return (
     <>
@@ -62,8 +58,7 @@ export function ImageBlock({
             alt={img.caption}
             width={img.width}
             height={height}
-            onClick={onClick}
-            onError={onError}
+            onError={() => setIsErrored(true)}
             onLoadingComplete={() => setLoaded(true)}
             className={`rounded-sm w-full h-full ${
               showBlurImg ? "hidden" : "visible"
@@ -78,7 +73,6 @@ export function ImageBlock({
           }}
           className="bg-zinc-200 border border-zinc-300 rounded-sm shadow-md
           flex items-center justify-center relative text-center"
-          onClick={onClick}
         >
           <span className="text-zinc-500 text-xs px-2">
             {img.caption || "Image failed to load"}

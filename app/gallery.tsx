@@ -1,12 +1,8 @@
 "use client";
 import { DroppableColumn } from "@/components/drag/droppable-column";
-import { SortableImageItem } from "@/components/drag/sortable-wrapper";
 import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
-import { BlockRenderer } from "@/components/blocks/block-helpers";
 import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/image-type";
-import { AnimatePresence, motion } from "framer-motion";
-import { Flipper, Flipped } from "react-flip-toolkit";
 import Image from "next/image";
 import {
   DndContext,
@@ -17,11 +13,10 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
 import React, { useEffect, useRef, useState } from "react";
-import { DropIndicator } from "@/components/drag/drag-indicator";
 import { toast } from "sonner";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
+import { MemoizedDroppableColumn } from "./columns";
 
 export default function Gallery({
   columns,
@@ -35,10 +30,6 @@ export default function Gallery({
   const columnCount = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const galleySpacingSize = useUIStore((s) => s.galleySpacingSize);
-
-  const [erroredImages, setErroredImages] = useState<Record<string, boolean>>(
-    {}
-  );
 
   const [draggedImage, setDraggedBlock] = useState<Block | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
@@ -162,66 +153,14 @@ export default function Gallery({
       >
         {columns.map((column, columnIndex) => (
           <DroppableColumn key={`col-${columnIndex}`} id={`col-${columnIndex}`}>
-            <SortableContext items={column.map((block) => block.block_id)}>
-              {/* upper padding */}
-              <DropIndicator
-                id={`drop-${columnIndex}-0`}
-                isActive={overId === `drop-${columnIndex}-0`}
-                padding="above"
-              />
-              {column.map((block, blockIndex) => (
-                <React.Fragment key={`block-${columnIndex}-${blockIndex}`}>
-                  {blockIndex !== 0 && (
-                    <DropIndicator
-                      id={`drop-${columnIndex}-${blockIndex}`}
-                      isActive={overId === `drop-${columnIndex}-${blockIndex}`}
-                    />
-                  )}
-
-                  <div data-id={block.block_id} className="flex flex-col">
-                    <div
-                      className={`rounded-sm object-cover transition-all duration-200 cursor-pointer shadow-md 
-                          hover:scale-101 hover:shadow-xl hover:brightness-105 hover:saturate-110 hover:opacity-100
-                          relative bg-background
-                          ${
-                            draggedImage?.block_id === block.block_id
-                              ? "opacity-30"
-                              : ""
-                          } ${
-                        !!selectedBlocks[block.block_id]
-                          ? "outline-4 outline-secondary"
-                          : ""
-                      }`}
-                      onClick={(e) => handleItemClick(block, e)}
-                    >
-                      <SortableImageItem id={block.block_id}>
-                        <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10">
-                          {block.order_index}
-                        </h1>
-
-                        <BlockRenderer
-                          block={block}
-                          isErrored={erroredImages[block.block_id]}
-                          onError={() =>
-                            setErroredImages((prev) => ({
-                              ...prev,
-                              [block.block_id]: true,
-                            }))
-                          }
-                        />
-                      </SortableImageItem>
-                    </div>
-                  </div>
-                </React.Fragment>
-              ))}
-
-              {/* bottom padding */}
-              <DropIndicator
-                id={`drop-${columnIndex}-${column.length}`}
-                isActive={overId === `drop-${columnIndex}-${column.length}`}
-                padding="bottom"
-              />
-            </SortableContext>
+            <MemoizedDroppableColumn
+              column={column}
+              columnIndex={columnIndex}
+              overId={overId}
+              draggedImage={draggedImage}
+              selectedBlocks={selectedBlocks}
+              handleItemClick={handleItemClick}
+            />
           </DroppableColumn>
         ))}
       </div>

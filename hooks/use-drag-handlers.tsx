@@ -1,7 +1,6 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
-import { Block, MudboardImage } from "@/types/image-type";
-import { useLayoutStore } from "@/store/layout-store";
+import { Block } from "@/types/image-type";
 
 type UseGalleryHandlersProps = {
   columns: Block[][];
@@ -27,13 +26,21 @@ export function useGalleryHandlers({
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
   // caching for handleDragMove
-  const lastOverRef = useRef<string | number | null>(null);
-  const cachedOverElement = useRef<HTMLElement | null>(null);
+  const blockRectsRef = useRef<Map<string, DOMRect>>(new Map());
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       document.body.classList.add("cursor-grabbing");
       setSelectedBlocks({});
+
+      // cache blockRefs map so move doesn't have to recompute
+      blockRectsRef.current = new Map();
+      document.querySelectorAll<HTMLElement>("[data-id]").forEach((el) => {
+        const id = el.dataset.id;
+        if (id) {
+          blockRectsRef.current.set(id, el.getBoundingClientRect());
+        }
+      });
 
       const { active, activatorEvent } = event;
       const pos = blockMap.get(active.id.toString());
@@ -62,47 +69,28 @@ export function useGalleryHandlers({
         return;
       }
 
-      if (initialPointerYRef.current !== null) {
-        // SECTION small cache. store the last overElement
+      const rect = blockRectsRef.current.get(over.id.toString());
+      if (!rect) return;
 
-        let overElement: HTMLElement | null = null;
-        if (lastOverRef.current === over.id && cachedOverElement.current) {
-          overElement = cachedOverElement.current;
-        } else {
-          overElement = document.querySelector(
-            `[data-id="${over.id}"]`
-          ) as HTMLElement | null;
-          cachedOverElement.current = overElement;
-          lastOverRef.current = over.id;
-        }
+      const pos = blockMap.get(String(over.id));
+      if (!pos) return;
 
-        if (overElement) {
-          // determine which drag indicator to show
+      const startY = initialPointerYRef.current;
+      if (startY == null) return;
 
-          // look up position
-          const pos = blockMap.get(String(over.id));
-          if (pos && overElement) {
-            const { colIndex, blockIndex } = pos;
+      const currentPointerY = startY + delta.y;
+      const middleY = rect.top + rect.height / 2;
 
-            const rect = overElement.getBoundingClientRect();
-            const middleY = rect.top + rect.height / 2;
-            const currentPointerY = initialPointerYRef.current + delta.y;
+      const dropId =
+        currentPointerY < middleY
+          ? `drop-${pos.colIndex}-${pos.blockIndex}`
+          : `drop-${pos.colIndex}-${pos.blockIndex + 1}`;
 
-            const dropId =
-              currentPointerY < middleY
-                ? `drop-${colIndex}-${blockIndex}`
-                : `drop-${colIndex}-${blockIndex + 1}`;
-
-            setOverId(dropId);
-            return;
-          }
-
-          // fallback
-          setOverId(String(over.id));
-        }
+      if (dropId !== overId) {
+        setOverId(dropId);
       }
     },
-    [blockMap]
+    [blockMap, overId, setOverId]
   );
 
   const handleDragEnd = useCallback(

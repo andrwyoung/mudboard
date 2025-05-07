@@ -1,27 +1,11 @@
 import { Block, MudboardImage } from "@/types/image-type";
 import { ImageBlock } from "./image-block";
 
-export function BlockRenderer({
-  block,
-  isErrored,
-  onClick,
-  onError,
-}: {
-  block: Block;
-  isErrored?: boolean;
-  onClick?: (e: React.MouseEvent) => void;
-  onError?: () => void;
-}) {
+export function BlockChooser({ block }: { block: Block }) {
   switch (block.block_type) {
     case "image":
       return (
-        <ImageBlock
-          img={block.data as MudboardImage}
-          height={block.height}
-          isErrored={isErrored}
-          onClick={onClick}
-          onError={onError}
-        />
+        <ImageBlock img={block.data as MudboardImage} height={block.height} />
       );
     case "text":
       return <div className="p-2 text-zinc-600 italic">[Text block]</div>; // placeholder

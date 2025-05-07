@@ -1,11 +1,10 @@
 import { Slider } from "@/components/ui/slider";
-import { useDebouncedValue } from "@/hooks/use-debounce";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
-import { DEFAULT_COLUMNS, MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
+import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 const fontClass = "font-semibold text-md font-header";
 const refClass =
@@ -14,27 +13,16 @@ const refClass =
 export default function Sidebar({
   sliderVal,
   setSliderVal,
-  fadeGallery,
   setFadeGallery,
-  showLoading,
   setShowLoading,
 }: {
   sliderVal: number;
   setSliderVal: (e: number) => void;
-  fadeGallery: boolean;
   setFadeGallery: (e: boolean) => void;
-  showLoading: boolean;
   setShowLoading: (e: boolean) => void;
 }) {
   const setShowBlurImg = useLayoutStore((s) => s.setShowBlurImg);
   const setNumCols = useUIStore((s) => s.setNumCols);
-  const numCols = useUIStore((s) => s.numCols);
-
-  const [debouncedNumCols, setDebouncedNumCols] = useState(DEFAULT_COLUMNS);
-
-  useEffect(() => {
-    setTimeout(() => {}, 200);
-  }, [debouncedNumCols]);
 
   return (
     <div className="flex flex-col h-full w-full relative">

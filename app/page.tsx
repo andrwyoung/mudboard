@@ -9,7 +9,6 @@ import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
 import { DEFAULT_BOARD_ID } from "@/types/upload-settings";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
-import { useDebouncedValue } from "@/hooks/use-debounce";
 import { DEFAULT_COLUMNS } from "@/types/constants";
 
 export default function Home() {
@@ -171,9 +170,7 @@ export default function Home() {
         <Sidebar
           sliderVal={sliderVal}
           setSliderVal={setSliderVal}
-          fadeGallery={fadeGallery}
           setFadeGallery={setFadeGallery}
-          showLoading={showLoading}
           setShowLoading={setShowLoading}
         />
       </aside>
