@@ -1,6 +1,9 @@
 import { useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { convertToWebP } from "@/lib/process-images/compress-image";
+import {
+  CompressedImage,
+  convertToWebP,
+} from "@/lib/process-images/compress-image";
 import { toast } from "sonner";
 import { uploadImageToSupabase } from "@/lib/db-actions/upload-image";
 import {
@@ -10,6 +13,9 @@ import {
   COMPRESSED_THUMB_WIDTH,
   DEFAULT_FILE_EXT,
   DEFAULT_BOARD_ID,
+  imageNames,
+  UPLOAD_THREADS,
+  COMPRESSION_THREADS,
 } from "@/types/upload-settings";
 import {
   Block,
@@ -21,20 +27,36 @@ import {
   findShortestColumn,
   getNextRowIndex,
 } from "@/lib/columns/column-helpers";
-import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
 import { generateBlurhashFromImage } from "@/lib/process-images/blur-hash";
+import { runWithConcurrency } from "@/lib/concurrency-helper";
+
+type PreparedImage = {
+  image_id: string;
+  original_name: string;
+  fileExt: string;
+
+  variants: Record<imageNames, CompressedImage>;
+  blurhash?: string;
+
+  objectUrl: string;
+  newImage: MudboardImage;
+  bestEffortBlock: BlockInsert;
+  tempBlockId: string;
+};
 
 export function useImageImport({
   columns,
   updateColumns,
   setIsDragging,
   setDraggedFileCount,
+  setUploading,
 }: {
   columns: Block[][];
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   setIsDragging: (isDragging: boolean) => void;
   setDraggedFileCount: (count: number | null) => void;
+  setUploading: (e: boolean) => void;
 }) {
   const spacingSize = useUIStore((s) => s.spacingSize);
 
@@ -83,18 +105,17 @@ export function useImageImport({
       if (files && files.length > 0) {
         setDraggedFileCount(files.length);
 
-        const uploadPromises = Array.from(files).map(async (file) => {
+        console.time("🗜️ Compression phase");
+        setUploading(true);
+
+        const compressionTasks = Array.from(files).map((file) => async () => {
           const image_id = uuidv4();
 
           const match = file.name.match(/^(.*)\.([^.]+)$/);
           const original_name = match ? match[1] : file.name;
           const fileExt = match ? match[2].toLowerCase() : null; // just used to check
 
-          if (!fileExt) {
-            throw new Error("Could not determine file extension.");
-          }
-
-          if (!allowedMimeTypes.includes(file.type)) {
+          if (!fileExt || !allowedMimeTypes.includes(file.type)) {
             toast.error(`Unsupported file type: ${file.type}`);
             return;
           }
@@ -102,21 +123,9 @@ export function useImageImport({
           // SECTION: image compression
           //
 
-          let largestImage;
-          let compressedImage;
-          let thumbImage;
+          let variants: Record<imageNames, CompressedImage>;
           try {
-            largestImage = await convertToWebP(file, MAX_IMAGE_WIDTH);
-            compressedImage = await convertToWebP(
-              largestImage.file,
-              COMPRESSED_IMAGE_WIDTH,
-              0.6
-            );
-            thumbImage = await convertToWebP(
-              largestImage.file,
-              COMPRESSED_THUMB_WIDTH,
-              0.5
-            );
+            variants = await convertToWebP(file);
           } catch (err) {
             toast.error(
               "Image conversion failed. Please try a different file."
@@ -124,22 +133,15 @@ export function useImageImport({
             console.log("Image Conversion failed: ", err);
             return;
           }
-          const { file: compressedFile, width, height } = compressedImage;
 
-          // create an objectURL so we can use it locally
-          const objectUrl = URL.createObjectURL(largestImage.file);
-
-          // SECTION: Generate blurhash
           let blurhash: string | undefined;
           try {
             const thumbImg = new Image();
-            thumbImg.src = URL.createObjectURL(thumbImage.file);
-
+            thumbImg.src = URL.createObjectURL(variants.thumb.file);
             await new Promise((resolve, reject) => {
               thumbImg.onload = resolve;
               thumbImg.onerror = reject;
             });
-
             blurhash = await generateBlurhashFromImage(thumbImg);
           } catch (err) {
             console.warn("Failed to generate blurhash", err);
@@ -148,21 +150,21 @@ export function useImageImport({
           // SECTION: Putting it all together
           //
 
+          const objectUrl = URL.createObjectURL(variants.full.file);
+          const { width, height } = variants.medium;
+
           const newImage: MudboardImage = {
             image_id,
             file_ext: DEFAULT_FILE_EXT,
             original_name,
-            width,
             caption: original_name,
+            width,
             blurhash,
 
             fileName: objectUrl, // the local file
             fileType: "blob",
             uploadStatus: "uploading",
           };
-
-          // SECTION: updating block
-          //
 
           const tempBlockId = `temp-${uuidv4()}`;
           const incompleteBlock = {
@@ -213,61 +215,94 @@ export function useImageImport({
             order_index: 0,
           };
 
-          // KEY SECTION: here we actually upload everything to db
-          //
-          return uploadImageToSupabase(
-            compressedFile,
-            bestEffortBlock,
+          return {
+            image_id,
+            original_name,
+            fileExt,
+            variants,
+            blurhash,
+            objectUrl,
             newImage,
-            largestImage.file,
-            thumbImage.file
-          )
-            .then((block_id) => {
-              successfulUploads++;
-              updateColumns((prevCols) =>
-                prevCols.map((col) =>
-                  col.map((block) =>
-                    block.block_id === tempBlockId
-                      ? {
-                          ...block,
-                          block_id: block_id, // NOTE: we grab set real block_id
-                          data: {
-                            ...(block.data as MudboardImage),
-                            uploadStatus: "uploaded",
-                          },
-                        }
-                      : block
-                  )
-                )
-              );
-            })
-            .catch((err) => {
-              console.error(err);
-              failedUploads++;
-              updateColumns((prevCols) =>
-                prevCols.map((col) =>
-                  col.map((block) =>
-                    block.block_id === newImage.image_id
-                      ? {
-                          ...block,
-                          data: {
-                            ...(block.data as MudboardImage),
-                            uploadStatus: "error",
-                          },
-                        }
-                      : block
-                  )
-                )
-              );
-            });
+            bestEffortBlock,
+            tempBlockId,
+          };
         });
 
-        await Promise.all(uploadPromises);
+        const preparedImages = await runWithConcurrency<
+          PreparedImage | undefined
+        >(compressionTasks, COMPRESSION_THREADS);
+
+        console.timeEnd("🗜️ Compression phase");
+        console.time("📤 Upload phase");
+
+        //
+        // KEY SECTION: here we actually upload everything to db
+        //
+        //
+
+        const filteredImages = preparedImages.filter(
+          (img): img is PreparedImage => Boolean(img)
+        );
+        await runWithConcurrency(
+          filteredImages.map(
+            (img) => () =>
+              uploadImageToSupabase(
+                img.variants.medium.file,
+                img.bestEffortBlock,
+                img.newImage,
+                img.variants.full.file,
+                img.variants.thumb.file
+              )
+                .then((block_id) => {
+                  successfulUploads++;
+                  updateColumns((prevCols) =>
+                    prevCols.map((col) =>
+                      col.map((block) =>
+                        block.block_id === img.tempBlockId
+                          ? {
+                              ...block,
+                              block_id: block_id, // NOTE: we grab set real block_id
+                              data: {
+                                ...(block.data as MudboardImage),
+                                uploadStatus: "uploaded",
+                              },
+                            }
+                          : block
+                      )
+                    )
+                  );
+                })
+                .catch((err) => {
+                  console.error(err);
+                  failedUploads++;
+                  updateColumns((prevCols) =>
+                    prevCols.map((col) =>
+                      col.map((block) =>
+                        block.block_id === img.image_id
+                          ? {
+                              ...block,
+                              data: {
+                                ...(block.data as MudboardImage),
+                                uploadStatus: "error",
+                              },
+                            }
+                          : block
+                      )
+                    )
+                  );
+                })
+          ),
+          UPLOAD_THREADS
+        );
+
+        console.timeEnd("📤 Upload phase");
+        setUploading(false);
+
         // we may have incorrect versions of the order, so trigger a sync
         toast.success(
-          `Successfully uploaded ${successfulUploads} of ${uploadPromises.length} images!`
+          `Successfully uploaded ${successfulUploads} of ${preparedImages.length} images!`
         );
-        console.log(`All ${uploadPromises.length} uploads complete!`);
+        console.log(`All ${preparedImages.length} uploads complete!`);
       }
     }
 

@@ -32,7 +32,7 @@ export function ImageBlock({
   const [loaded, setLoaded] = useState(false);
 
   const [isErrored, setIsErrored] = useState(false);
-  const isBlurred = (!loaded || showBlurImg) && prettyMode;
+  const isBlurred = !loaded || showBlurImg;
 
   function getFileName(): string {
     if (img.fileType !== "database") {
@@ -59,7 +59,7 @@ export function ImageBlock({
           style={{ aspectRatio: `${img.width} / ${height}`, width: "100%" }}
           className="relative rounded-sm overflow-hidden"
         >
-          {img.blurhash && (
+          {img.blurhash && prettyMode && (
             <div
               className="absolute inset-0"
               style={{

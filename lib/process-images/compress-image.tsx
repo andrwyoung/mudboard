@@ -1,10 +1,14 @@
-import { MAX_IMAGE_WIDTH } from "@/types/upload-settings";
+import { IMAGE_VARIANT_MAP, imageNames } from "@/types/upload-settings";
+
+export type CompressedImage = {
+  file: File;
+  width: number;
+  height: number;
+};
 
 export async function convertToWebP(
-  file: File,
-  maxWidth: number = MAX_IMAGE_WIDTH,
-  quality: number = 0.8
-): Promise<{ file: File; width: number; height: number }> {
+  file: File
+): Promise<Record<imageNames, CompressedImage>> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const reader = new FileReader();
@@ -13,53 +17,51 @@ export async function convertToWebP(
       img.src = reader.result as string;
     };
 
-    img.onerror = () => {
-      reject(new Error("Image failed to load"));
-    };
+    img.onerror = () => reject(new Error("Image failed to load"));
+    reader.onerror = () => reject(new Error("Failed to read file"));
 
     img.onload = () => {
-      const scaleFactor = Math.min(1, maxWidth / img.width);
-      const width = Math.round(img.width * scaleFactor);
-      const height = Math.round(img.height * scaleFactor);
-
+      const variants: Partial<Record<imageNames, CompressedImage>> = {};
       const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-
       const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        return reject(new Error("Failed to get canvas context"));
-      }
+      if (!ctx) return reject(new Error("No canvas context"));
 
-      ctx.drawImage(img, 0, 0, width, height);
+      const processSize = (name: imageNames): Promise<void> => {
+        return new Promise((res, rej) => {
+          const { width: maxWidth, quality } = IMAGE_VARIANT_MAP[name];
+          const scale = Math.min(1, maxWidth / img.width);
+          const width = Math.round(img.width * scale);
+          const height = Math.round(img.height * scale);
 
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            return reject(new Error("Canvas conversion to WebP failed"));
-          }
+          canvas.width = width;
+          canvas.height = height;
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
 
-          const webpFile = new File(
-            [blob],
-            file.name.replace(/\.[^.]+$/, ".webp"),
-            {
-              type: "image/webp",
-            }
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) return rej(new Error("Canvas toBlob failed"));
+              const webpFile = new File(
+                [blob],
+                file.name.replace(/\.[^.]+$/, ".webp"),
+                { type: "image/webp" }
+              );
+              variants[name] = { file: webpFile, width, height };
+              res();
+            },
+            "image/webp",
+            quality
           );
+        });
+      };
 
-          resolve({
-            file: webpFile,
-            width,
-            height,
-          });
-        },
-        "image/webp",
-        quality
-      );
-    };
-
-    reader.onerror = () => {
-      reject(new Error("Failed to read file as data URL"));
+      Promise.all(
+        (Object.keys(IMAGE_VARIANT_MAP) as imageNames[]).map((name) =>
+          processSize(name)
+        )
+      )
+        .then(() => resolve(variants as Record<imageNames, CompressedImage>))
+        .catch(reject);
     };
 
     reader.readAsDataURL(file);
