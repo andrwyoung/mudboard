@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
         hostname: 'wfdkjamusyofrhbcjtba.supabase.co',
         pathname: '/**',
       },
+      
     ],
   },
 };

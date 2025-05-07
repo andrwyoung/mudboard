@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Blurhash } from "react-blurhash";
 
-import { imageNames, SUPABASE_OBJECT_URL } from "@/types/upload-settings";
+import {
+  IMAGE_VARIANT_MAP,
+  imageNames,
+  SUPABASE_OBJECT_URL,
+} from "@/types/upload-settings";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
 
@@ -19,7 +23,6 @@ export function ImageBlock({
   img,
   height,
   shouldEagerLoad,
-  columnWidth,
 }: {
   img: MudboardImage;
   height: number;
@@ -27,30 +30,25 @@ export function ImageBlock({
   columnWidth: number;
 }) {
   const showBlurImg = useLayoutStore((s) => s.showBlurImg);
-  const prettyMode = useLayoutStore((s) => s.showBlurImg);
   const numCols = useUIStore((s) => s.numCols);
   const [loaded, setLoaded] = useState(false);
 
   const [isErrored, setIsErrored] = useState(false);
   const isBlurred = !loaded || showBlurImg;
 
-  function getFileName(): string {
-    if (img.fileType !== "database") {
-      return img.fileName;
-    }
+  let size: imageNames = "medium";
+  if (numCols > 6) size = "thumb";
+  else if (numCols < 4) size = "full";
 
-    let size: imageNames = "full";
-    if (numCols > 6) {
-      size = "thumb";
-    } else if (numCols > 2) {
-      size = "medium";
-    }
-
-    return getImageUrl(img.image_id, img.file_ext, size);
-  }
-
+  const variant = IMAGE_VARIANT_MAP[size];
   const aspectRatio = height / img.width;
-  const calculatedHeight = Math.round(columnWidth * aspectRatio);
+  const realWidth = variant.width;
+  const realHeight = Math.round(realWidth * aspectRatio);
+
+  const fileName =
+    img.fileType !== "database"
+      ? img.fileName
+      : getImageUrl(img.image_id, img.file_ext, size);
 
   return (
     <>
@@ -59,7 +57,7 @@ export function ImageBlock({
           style={{ aspectRatio: `${img.width} / ${height}`, width: "100%" }}
           className="relative rounded-sm overflow-hidden"
         >
-          {img.blurhash && prettyMode && (
+          {img.blurhash && (
             <div
               className="absolute inset-0"
               style={{
@@ -80,14 +78,14 @@ export function ImageBlock({
           )}
 
           <Image
-            src={getFileName()}
+            src={fileName}
             alt={img.caption}
-            width={columnWidth}
-            height={calculatedHeight}
+            width={realWidth}
+            height={realHeight}
             onError={() => setIsErrored(true)}
             onLoad={() => setLoaded(true)}
             className={`rounded-sm w-full h-full ${
-              showBlurImg && !prettyMode ? "hidden" : "visible"
+              showBlurImg ? "hidden" : "visible"
             }`}
             loading={shouldEagerLoad ? "eager" : "lazy"}
           />
