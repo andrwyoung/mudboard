@@ -3,13 +3,14 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Blurhash } from "react-blurhash";
 
-import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
+import { imageNames, SUPABASE_OBJECT_URL } from "@/types/upload-settings";
 import { useLayoutStore } from "@/store/layout-store";
+import { useUIStore } from "@/store/ui-store";
 
 export function getImageUrl(
   image_id: string,
   file_ext: string,
-  size: "medium" | "thumb" | "full" = "medium"
+  size: imageNames
 ): string {
   return `${SUPABASE_OBJECT_URL}/${image_id}/${size}.${file_ext}`;
 }
@@ -22,9 +23,25 @@ export function ImageBlock({
   height: number;
 }) {
   const showBlurImg = useLayoutStore((s) => s.showBlurImg);
+  const numCols = useUIStore((s) => s.numCols);
   const [loaded, setLoaded] = useState(false);
 
   const [isErrored, setIsErrored] = useState(false);
+
+  function getFileName(): string {
+    if (img.fileType !== "database") {
+      return img.fileName;
+    }
+
+    let size: imageNames = "full";
+    if (numCols > 5) {
+      size = "thumb";
+    } else if (numCols > 3) {
+      size = "medium";
+    }
+
+    return getImageUrl(img.image_id, img.file_ext, size);
+  }
 
   return (
     <>
@@ -54,12 +71,12 @@ export function ImageBlock({
           )}
 
           <Image
-            src={img.fileName}
+            src={getFileName()}
             alt={img.caption}
             width={img.width}
             height={height}
             onError={() => setIsErrored(true)}
-            onLoadingComplete={() => setLoaded(true)}
+            onLoad={() => setLoaded(true)}
             className={`rounded-sm w-full h-full ${
               showBlurImg ? "hidden" : "visible"
             }`}

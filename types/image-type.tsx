@@ -65,3 +65,12 @@ export type GalleryOrder = {
   section: number;
   order: number;
 };
+
+export function isBlockWithWidth(data: unknown): data is { width: number } {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "width" in data &&
+    typeof (data as any).width === "number"
+  );
+}

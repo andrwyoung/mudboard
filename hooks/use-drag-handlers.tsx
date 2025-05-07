@@ -173,11 +173,6 @@ export function useGalleryHandlers({
 
   const handleItemClick = useCallback(
     (block: Block, event: React.MouseEvent<Element, MouseEvent>) => {
-      if (event.detail === 2) {
-        console.log("Double clicked:", block);
-        return;
-      }
-
       console.log("Clicked? ", event, block);
 
       setSelectedBlocks((prevSelected) => {

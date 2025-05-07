@@ -157,6 +157,7 @@ export function useImageImport({
             blurhash,
 
             fileName: objectUrl, // the local file
+            fileType: "blob",
             uploadStatus: "uploading",
           };
 

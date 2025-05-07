@@ -1,6 +1,6 @@
 "use client";
 import Gallery from "./gallery";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "./sidebar";
 import { Block } from "@/types/image-type";
 import { fetchSupabaseBlocks as fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
@@ -30,6 +30,13 @@ export default function Home() {
   const [fadeGallery, setFadeGallery] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
 
+  const [scrollY, setScrollY] = useState(0);
+
+  // virtualization
+  const mainRef = useRef<HTMLDivElement | null>(null);
+  const [sidebarWidth, setSidebarWidth] = useState(0);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+
   // helper function (so I don't forget setting layout dirty)
   const updateColumns = (fn: (prev: Block[][]) => Block[][]) => {
     useLayoutStore.getState().setLayoutDirty(true);
@@ -50,6 +57,13 @@ export default function Home() {
   }, []);
 
   const generatedColumns = useMemo(() => {
+    // PERF testers
+    const label = "generatedColumns";
+    if (process.env.NODE_ENV === "development") {
+      performance.mark(`${label}-start`);
+      console.time(label);
+    }
+
     const newColumns: Block[][] = Array.from({ length: numCols }, () => []);
 
     const maxSavedCol = flatBlocks.reduce(
@@ -82,6 +96,13 @@ export default function Home() {
       );
     }
 
+    // PERF testers
+    if (process.env.NODE_ENV === "development") {
+      performance.mark(`${label}-end`);
+      performance.measure(label, `${label}-start`, `${label}-end`);
+      console.timeEnd(label);
+    }
+
     return newColumns;
   }, [flatBlocks, numCols]);
 
@@ -109,7 +130,7 @@ export default function Home() {
 
   // save the block order
   const blockMap = useMemo(() => {
-    console.log("colums just updated. changing blockmap. cols: ", columns);
+    // console.log("colums just updated. changing blockmap. cols: ", columns);
 
     const map = new Map<string, { colIndex: number; blockIndex: number }>();
     columns.forEach((col, colIndex) => {
@@ -158,31 +179,66 @@ export default function Home() {
     };
   }, [setShowBlurImg]);
 
-  // if you're scrolling using an image, then blur everything
+  // SECTION: scroll behavior
+  //
+  //
+
   useEffect(() => {
-    if (!draggedBlock) return;
+    const el = mainRef.current;
+    if (!el) return;
 
-    let timeout: NodeJS.Timeout | null = null;
-
-    const handleScroll = () => {
-      setShowBlurImg(true);
-
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        setShowBlurImg(false);
-      }, 300); // adjust this delay to match "scroll stop" detection
+    const onScroll = () => {
+      setScrollY(el.scrollTop);
     };
 
-    const mainScrollEl = document.querySelector("main"); // adjust if needed
-    if (!mainScrollEl) return;
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
-    mainScrollEl.addEventListener("scroll", handleScroll);
+  // SECTION: measuring and stuff
+  useEffect(() => {
+    if (!sidebarRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setSidebarWidth(width);
+        console.log("sidebar remeasuring. width: ", width);
+      }
+    });
+
+    observer.observe(sidebarRef.current);
 
     return () => {
-      mainScrollEl.removeEventListener("scroll", handleScroll);
-      if (timeout) clearTimeout(timeout);
+      observer.disconnect();
     };
-  }, [draggedBlock, setShowBlurImg]);
+  }, []);
+
+  // // if you're scrolling using an image, then blur everything
+  // useEffect(() => {
+  //   if (!draggedBlock) return;
+
+  //   let timeout: NodeJS.Timeout | null = null;
+
+  //   const handleScroll = () => {
+  //     setShowBlurImg(true);
+
+  //     if (timeout) clearTimeout(timeout);
+  //     timeout = setTimeout(() => {
+  //       setShowBlurImg(false);
+  //     }, 300); // adjust this delay to match "scroll stop" detection
+  //   };
+
+  //   const mainScrollEl = document.querySelector("main"); // adjust if needed
+  //   if (!mainScrollEl) return;
+
+  //   mainScrollEl.addEventListener("scroll", handleScroll);
+
+  //   return () => {
+  //     mainScrollEl.removeEventListener("scroll", handleScroll);
+  //     if (timeout) clearTimeout(timeout);
+  //   };
+  // }, [draggedBlock, setShowBlurImg]);
 
   return (
     <div className="flex h-screen overflow-hidden relative">
@@ -196,8 +252,9 @@ export default function Home() {
 
       {/* Sidebar */}
       <aside
-        className="hidden lg:block w-1/6 min-w-[200px] max-w-[380px]
+        className="hidden lg:block w-1/6 min-w-[200px] max-w-[350px]
       bg-primary"
+        ref={sidebarRef}
       >
         <Sidebar
           sliderVal={sliderVal}
@@ -208,7 +265,7 @@ export default function Home() {
       </aside>
 
       {/* Gallery */}
-      <main className="flex-1 overflow-y-scroll scrollbar-none">
+      <main ref={mainRef} className="flex-1 overflow-y-scroll scrollbar-none">
         <div
           className={`absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 
             transition-opacity duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
@@ -232,6 +289,8 @@ export default function Home() {
             blockMap={blockMap}
             draggedBlock={draggedBlock}
             setDraggedBlock={setDraggedBlock}
+            sidebarWidth={sidebarWidth}
+            scrollY={scrollY}
           />
         </div>
       </main>

@@ -2,10 +2,14 @@ export const DEFAULT_BOARD_ID = "b92fe04b-01cd-4806-a1d3-9e108b9902e3"
 
 export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
 
+export const OVERSCAN_SIZE = 1000;
+
 export const MAX_IMAGE_WIDTH = 1600;
 export const COMPRESSED_IMAGE_WIDTH = 600;
 export const COMPRESSED_THUMB_WIDTH = 300;
 export const DEFAULT_FILE_EXT = "webp";
+
+export type imageNames = "thumb" | "medium" | "full";
 
 export const allowedMimeTypes = [
     "image/jpeg",

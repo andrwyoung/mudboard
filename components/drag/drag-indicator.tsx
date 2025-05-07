@@ -6,13 +6,15 @@ function DropIndicator({
   id,
   isActive,
   padding,
+  style,
 }: {
   id: string;
   isActive: boolean;
   padding?: "bottom" | "above";
+  style?: React.CSSProperties;
 }) {
   const spacingSize = useUIStore((s) => s.spacingSize);
-  const galleySpacingSize = useUIStore((s) => s.galleySpacingSize);
+  const galleySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
   const { setNodeRef } = useDroppable({
     id,
@@ -37,6 +39,7 @@ function DropIndicator({
       className={`w-full transition-all duration-150 ease-in-out relative
        ${padding === "bottom" ? "flex-1" : ""}`}
       style={{
+        ...style,
         height,
         minHeight: !height ? galleySpacingSize : undefined,
       }}

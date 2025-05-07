@@ -13,7 +13,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { MemoizedDroppableColumn } from "./columns";
@@ -24,16 +24,20 @@ export default function Gallery({
   blockMap,
   draggedBlock,
   setDraggedBlock,
+  sidebarWidth,
+  scrollY,
 }: {
   columns: Block[][];
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   blockMap: Map<string, { colIndex: number; blockIndex: number }>;
   draggedBlock: Block | null;
   setDraggedBlock: (b: Block | null) => void;
+  sidebarWidth: number;
+  scrollY: number;
 }) {
-  const columnCount = useUIStore((s) => s.numCols);
+  const numCols = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
-  const galleySpacingSize = useUIStore((s) => s.galleySpacingSize);
+  const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
   const [overId, setOverId] = useState<string | null>(null);
   const initialPointerYRef = useRef<number | null>(null);
@@ -41,6 +45,28 @@ export default function Gallery({
   const [selectedBlocks, setSelectedBlocks] = useState<Record<string, Block>>(
     {}
   );
+
+  // column width
+  const columnWidth = useMemo(() => {
+    if (typeof window === "undefined") return 0;
+
+    const totalGapSpacing = spacingSize * (numCols - 1);
+    const totalSidePadding = gallerySpacingSize * 2;
+
+    const availableWidth =
+      window.innerWidth - totalGapSpacing - totalSidePadding - sidebarWidth;
+    const width = availableWidth / numCols;
+
+    console.log(
+      "column width is around: ",
+      width,
+      "window size: ",
+      window.innerWidth,
+      "sidebar size: ",
+      sidebarWidth
+    );
+    return width;
+  }, [spacingSize, gallerySpacingSize, numCols, sidebarWidth]);
 
   //
   // SECTION: keyboard controls
@@ -144,13 +170,13 @@ export default function Gallery({
       sensors={sensors}
     >
       <div
-        className={`grid px-2 sm:px-12 h-full ${
+        className={`grid h-full ${
           draggedBlock ? "cursor-grabbing" : "cursor-default"
         }`}
         style={{
-          paddingLeft: galleySpacingSize,
-          paddingRight: galleySpacingSize,
-          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+          paddingLeft: gallerySpacingSize,
+          paddingRight: gallerySpacingSize,
+          gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
           gap: spacingSize,
         }}
       >
@@ -158,11 +184,13 @@ export default function Gallery({
           <DroppableColumn key={`col-${columnIndex}`} id={`col-${columnIndex}`}>
             <MemoizedDroppableColumn
               column={column}
+              columnWidth={columnWidth}
               columnIndex={columnIndex}
               overId={overId}
               draggedImage={draggedBlock}
               selectedBlocks={selectedBlocks}
               handleItemClick={handleItemClick}
+              scrollY={scrollY}
             />
           </DroppableColumn>
         ))}
