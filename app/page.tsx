@@ -20,6 +20,8 @@ export default function Home() {
   const numCols = useUIStore((s) => s.numCols);
   const [columns, setColumns] = useState<Block[][]>([]);
 
+  const setShowBlurImg = useLayoutStore((s) => s.setShowBlurImg);
+
   // helper function (so I don't forget setting layout dirty)
   const updateColumns = (fn: (prev: Block[][]) => Block[][]) => {
     useLayoutStore.getState().setLayoutDirty(true);
@@ -122,6 +124,29 @@ export default function Home() {
     setIsDragging: setIsDraggingFile,
     setDraggedFileCount,
   });
+
+  // SECTION: Screen resizing
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | null = null;
+
+    const handleResize = () => {
+      setShowBlurImg(true);
+      console.log("blurring image (resizing)");
+
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setShowBlurImg(false);
+        console.log("unblurring image (resize ended)");
+      }, 300); // adjust this delay if needed
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [setShowBlurImg]);
 
   return (
     <div className="flex h-screen overflow-hidden relative">

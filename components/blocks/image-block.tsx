@@ -1,9 +1,10 @@
 import { MudboardImage } from "@/types/image-type";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Blurhash } from "react-blurhash";
 
 import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
+import { useLayoutStore } from "@/store/layout-store";
 
 export function getImageUrl(
   image_id: string,
@@ -26,26 +27,32 @@ export function ImageBlock({
   onClick?: (e: React.MouseEvent<HTMLImageElement>) => void;
   onError?: () => void;
 }) {
+  const showBlurImg = useLayoutStore((s) => s.showBlurImg);
+  const [loaded, setLoaded] = useState(false);
+
   return (
     <>
       {!isErrored ? (
-        true && img.blurhash ? (
-          <div
-            style={{
-              aspectRatio: `${img.width} / ${height}`,
-              width: "100%",
-            }}
-            className="rounded-sm overflow-hidden"
-          >
-            <Blurhash
-              hash={img.blurhash}
-              punch={1}
-              width="100%" // This does nothing!
-              height="100%" // This does nothing!
-              style={{ width: "100%", height: "100%", display: "block" }}
-            />
-          </div>
-        ) : (
+        <div
+          style={{ aspectRatio: `${img.width} / ${height}`, width: "100%" }}
+          className="relative rounded-sm overflow-hidden"
+        >
+          {img.blurhash && (
+            <div
+              className={`absolute inset-0 transition-opacity duration-500 ${
+                !loaded || showBlurImg ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <Blurhash
+                hash={img.blurhash}
+                punch={1}
+                width="100%"
+                height="100%"
+                style={{ width: "100%", height: "100%", display: "block" }}
+              />
+            </div>
+          )}
+
           <Image
             src={img.fileName}
             alt={img.caption}
@@ -53,10 +60,11 @@ export function ImageBlock({
             height={height}
             onClick={onClick}
             onError={onError}
-            className={`rounded-sm`}
-            placeholder="empty" // we're doing custom placeholder now
+            onLoadingComplete={() => setLoaded(true)}
+            style={{ visibility: showBlurImg ? "hidden" : "visible" }}
+            className="rounded-sm w-full h-full object-cover"
           />
-        )
+        </div>
       ) : (
         <div
           style={{
