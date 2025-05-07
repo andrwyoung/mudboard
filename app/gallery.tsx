@@ -5,6 +5,7 @@ import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import { BlockRenderer } from "@/components/blocks/block-helpers";
 import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/image-type";
+import { motion } from "framer-motion";
 import {
   DndContext,
   DragOverlay,
@@ -17,6 +18,8 @@ import {
 import { SortableContext } from "@dnd-kit/sortable";
 import React, { useEffect, useRef, useState } from "react";
 import { DropIndicator } from "@/components/drag/drag-indicator";
+import { toast } from "sonner";
+import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 
 export default function Gallery({
   columns,
@@ -27,7 +30,7 @@ export default function Gallery({
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   blockMap: Map<string, { colIndex: number; blockIndex: number }>;
 }) {
-  const columnCount = useUIStore((s) => s.columnCount);
+  const columnCount = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const galleySpacingSize = useUIStore((s) => s.galleySpacingSize);
 
@@ -48,19 +51,29 @@ export default function Gallery({
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      // Delete key
+      // deleting image
       if (e.key === "Backspace" || e.key === "Delete") {
-        Object.values(selectedImages).forEach((block) => {
+        const blocksToDelete = Object.values(selectedImages);
+        if (blocksToDelete.length > 0) {
+          const deletedIds = blocksToDelete.map((b) => b.block_id);
+
           updateColumns((prevCols) =>
             prevCols.map((col) =>
-              col.filter((b) => b.block_id !== block.block_id)
+              col.filter((b) => !deletedIds.includes(b.block_id))
             )
           );
-          // Optionally: also sync soft-delete to DB here
-        });
+
+          softDeleteBlocks(deletedIds); // send to db
+
+          toast.success(
+            `Deleted ${blocksToDelete.length} block${
+              blocksToDelete.length > 1 ? "s" : ""
+            }`
+          );
+        }
       }
 
-      // Example: Deselect with Escape
+      // deselect with escape
       if (e.key === "Escape") {
         setSelectedBlocks({});
       }
@@ -166,31 +179,44 @@ export default function Gallery({
 
                   <div data-id={block.block_id} className="flex flex-col">
                     <SortableImageItem id={block.block_id}>
-                      <div
-                        className={`rounded-sm object-cover transition-all duration-200 cursor-pointer shadow-md 
+                      <motion.div
+                        layout
+                        transition={{
+                          type: "spring",
+                          stiffness: 500,
+                          damping: 40,
+                        }}
+                      >
+                        <div
+                          className={`rounded-sm object-cover transition-all duration-200 cursor-pointer shadow-md 
                           hover:scale-101 hover:shadow-xl hover:brightness-105 hover:saturate-110 hover:opacity-100
+                          relative
                           ${
                             draggedImage?.block_id === block.block_id
                               ? "opacity-30"
                               : ""
                           } ${
-                          !!selectedImages[block.block_id]
-                            ? "outline-4 outline-secondary"
-                            : ""
-                        }`}
-                      >
-                        <BlockRenderer
-                          block={block}
-                          isErrored={erroredImages[block.block_id]}
-                          onClick={(e) => handleItemClick(block, e)}
-                          onError={() =>
-                            setErroredImages((prev) => ({
-                              ...prev,
-                              [block.block_id]: true,
-                            }))
-                          }
-                        />
-                      </div>
+                            !!selectedImages[block.block_id]
+                              ? "outline-4 outline-secondary"
+                              : ""
+                          }`}
+                        >
+                          <h1 className="absolute text-sm top-2 right-2 text-slate-600">
+                            {block.order_index}
+                          </h1>
+                          <BlockRenderer
+                            block={block}
+                            isErrored={erroredImages[block.block_id]}
+                            onClick={(e) => handleItemClick(block, e)}
+                            onError={() =>
+                              setErroredImages((prev) => ({
+                                ...prev,
+                                [block.block_id]: true,
+                              }))
+                            }
+                          />
+                        </div>
+                      </motion.div>
                     </SortableImageItem>
                   </div>
                 </React.Fragment>

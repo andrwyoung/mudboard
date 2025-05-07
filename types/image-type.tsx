@@ -42,6 +42,8 @@ export type MudboardImage = {
   width: number;
   caption: string;
 
+  blurhash?: string;
+
   // defined by me on fetch
   fileName: string;
 

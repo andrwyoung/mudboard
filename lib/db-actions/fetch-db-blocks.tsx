@@ -7,7 +7,7 @@ import {
 import { supabase } from "../supabase";
 import { DEFAULT_BOARD_ID, SUPABASE_OBJECT_URL } from "@/types/upload-settings";
 
-export async function fetchSupabaseImages(): Promise<Block[]> {
+export async function fetchSupabaseBlocks(): Promise<Block[]> {
   console.log("Fetching images from Supabase DB...");
 
   const { data: blocks, error } = await supabase
@@ -25,6 +25,7 @@ export async function fetchSupabaseImages(): Promise<Block[]> {
   `
     )
     .eq("board_id", DEFAULT_BOARD_ID)
+    .eq("deleted", false) // don't serve deleted blocks
     .order("col_index", { ascending: true })
     .order("row_index", { ascending: true });
 
@@ -73,6 +74,7 @@ export async function fetchSupabaseImages(): Promise<Block[]> {
 
             width: image.width,
             caption: image.caption ?? image.original_name,
+            blurhash: image.blurhash ?? undefined,
 
             // defined by me
             fileName: `${SUPABASE_OBJECT_URL}/${image.image_id}/medium.${image.file_ext}`,

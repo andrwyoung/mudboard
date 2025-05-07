@@ -92,6 +92,7 @@ export type Database = {
       }
       images: {
         Row: {
+          blurhash: string | null
           caption: string | null
           created_at: string
           deleted: boolean
@@ -102,6 +103,7 @@ export type Database = {
           width: number
         }
         Insert: {
+          blurhash?: string | null
           caption?: string | null
           created_at?: string
           deleted?: boolean
@@ -112,6 +114,7 @@ export type Database = {
           width: number
         }
         Update: {
+          blurhash?: string | null
           caption?: string | null
           created_at?: string
           deleted?: boolean
@@ -128,7 +131,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_block_order: {
+        Args: { blocks: Json; board: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

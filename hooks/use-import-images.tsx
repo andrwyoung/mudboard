@@ -20,7 +20,10 @@ import {
 import {
   findShortestColumn,
   getNextRowIndex,
-} from "@/lib/column-helpers/column-helpers";
+} from "@/lib/columns/column-helpers";
+import { useLayoutStore } from "@/store/layout-store";
+import { useUIStore } from "@/store/ui-store";
+import { generateBlurhashFromImage } from "@/lib/process-images/blur-hash";
 
 export function useImageImport({
   columns,
@@ -33,6 +36,8 @@ export function useImageImport({
   setIsDragging: (isDragging: boolean) => void;
   setDraggedFileCount: (count: number | null) => void;
 }) {
+  const spacingSize = useUIStore((s) => s.spacingSize);
+
   const columnsRef = useRef(columns);
   useEffect(() => {
     columnsRef.current = columns;
@@ -121,11 +126,27 @@ export function useImageImport({
           }
           const { file: compressedFile, width, height } = compressedImage;
 
-          // SECTION: Putting it all together
-          //
-
           // create an objectURL so we can use it locally
           const objectUrl = URL.createObjectURL(largestImage.file);
+
+          // SECTION: Generate blurhash
+          let blurhash: string | undefined;
+          try {
+            const thumbImg = new Image();
+            thumbImg.src = URL.createObjectURL(thumbImage.file);
+
+            await new Promise((resolve, reject) => {
+              thumbImg.onload = resolve;
+              thumbImg.onerror = reject;
+            });
+
+            blurhash = await generateBlurhashFromImage(thumbImg);
+          } catch (err) {
+            console.warn("Failed to generate blurhash", err);
+          }
+
+          // SECTION: Putting it all together
+          //
 
           const newImage: MudboardImage = {
             image_id,
@@ -133,6 +154,7 @@ export function useImageImport({
             original_name,
             width,
             caption: original_name,
+            blurhash,
 
             fileName: objectUrl, // the local file
             uploadStatus: "uploading",
@@ -152,8 +174,11 @@ export function useImageImport({
 
           // here we add it to local layout so we can immediately interact
           updateColumns((prevCols) => {
-            const colIndex = findShortestColumn(prevCols);
-            const rowIndex = getNextRowIndex(prevCols[colIndex] ?? []);
+            const colIndex = findShortestColumn(prevCols, spacingSize);
+            const rowIndex = getNextRowIndex(
+              prevCols[colIndex] ?? [],
+              spacingSize
+            );
 
             const newBlock: Block = {
               block_id: tempBlockId,
@@ -174,9 +199,10 @@ export function useImageImport({
           // best effort block
           // optimistically generate order and columns
           const cols = columnsRef.current;
-          const optimisticColIndex = findShortestColumn(cols);
+          const optimisticColIndex = findShortestColumn(cols, spacingSize);
           const optimisticRowIndex = getNextRowIndex(
-            cols[optimisticColIndex] ?? []
+            cols[optimisticColIndex] ?? [],
+            spacingSize
           );
           const bestEffortBlock: BlockInsert = {
             ...incompleteBlock,

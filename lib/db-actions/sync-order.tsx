@@ -1,24 +1,21 @@
 import { Block, BlockInsert } from "@/types/image-type";
 import { supabase } from "../supabase";
+import { getVisuallySortedBlocksWithPasses } from "../columns/visual-sorting";
 
 export async function syncOrderToSupabase(
   columns: Block[][],
-  board_id: string
+  board_id: string,
+  spacingSize: number
 ) {
-  // first build out the order
-  const updates: Partial<BlockInsert>[] = [];
-  columns.forEach((column, colIndex) => {
-    column.forEach((block, rowIndex) => {
-      if (!block.block_id.startsWith("temp-")) {
-        updates.push({
-          block_id: block.block_id,
-          col_index: colIndex,
-          row_index: rowIndex,
-          order_index: updates.length, // linear visual order if still needed
-        });
-      }
-    });
-  });
+  const sortedBlocks = getVisuallySortedBlocksWithPasses(columns, spacingSize);
+  const updates: Partial<BlockInsert>[] = sortedBlocks
+    .filter(({ block }) => !block.block_id.startsWith("temp-"))
+    .map(({ block, colIndex, rowIndex, order_index }) => ({
+      block_id: block.block_id,
+      col_index: colIndex,
+      row_index: rowIndex,
+      order_index,
+    }));
 
   console.log("Syncing block order to Supabase via update:", updates);
 

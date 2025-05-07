@@ -3,12 +3,12 @@ import Gallery from "./gallery";
 import { useEffect, useMemo, useState } from "react";
 import Sidebar from "./sidebar";
 import { Block } from "@/types/image-type";
-import { fetchSupabaseImages as fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-images";
+import { fetchSupabaseBlocks as fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import { useImageImport } from "@/hooks/use-import-images";
-import { DEFAULT_COLUMNS } from "@/types/constants";
 import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
 import { DEFAULT_BOARD_ID } from "@/types/upload-settings";
 import { useLayoutStore } from "@/store/layout-store";
+import { useUIStore } from "@/store/ui-store";
 
 export default function Home() {
   const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
@@ -16,9 +16,9 @@ export default function Home() {
   const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const [numCols, setNumCols] = useState(DEFAULT_COLUMNS);
+  const spacingSize = useUIStore((s) => s.spacingSize);
+  const numCols = useUIStore((s) => s.numCols);
   const [columns, setColumns] = useState<Block[][]>([]);
-  console.log(setNumCols);
 
   // helper function (so I don't forget setting layout dirty)
   const updateColumns = (fn: (prev: Block[][]) => Block[][]) => {
@@ -39,18 +39,38 @@ export default function Home() {
     loadImages();
   }, []);
 
-  // generate the columns. sort by row and column index
   const generatedColumns = useMemo(() => {
     const newColumns: Block[][] = Array.from({ length: numCols }, () => []);
 
-    flatBlocks.forEach((block) => {
-      const col = Math.min(block.col_index ?? 0, numCols - 1);
-      newColumns[col]?.push(block);
-    });
-
-    newColumns.forEach((col) =>
-      col.sort((a, b) => (a.row_index ?? 0) - (b.row_index ?? 0))
+    const maxSavedCol = flatBlocks.reduce(
+      (max, b) => Math.max(max, b.col_index ?? 0),
+      0
     );
+
+    const useSavedOrder =
+      maxSavedCol >= numCols || flatBlocks.some((b) => b.col_index == null);
+
+    if (useSavedOrder) {
+      // layout blocks by order_index (top to bottom)
+      const sorted = [...flatBlocks].sort(
+        (a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)
+      );
+
+      sorted.forEach((block, i) => {
+        const col = i % numCols;
+        newColumns[col].push(block);
+      });
+    } else {
+      // use saved col_index and row_index
+      flatBlocks.forEach((block) => {
+        const col = Math.min(block.col_index ?? 0, numCols - 1);
+        newColumns[col].push(block);
+      });
+
+      newColumns.forEach((col) =>
+        col.sort((a, b) => (a.row_index ?? 0) - (b.row_index ?? 0))
+      );
+    }
 
     return newColumns;
   }, [flatBlocks, numCols]);
@@ -65,17 +85,17 @@ export default function Home() {
   // SECTION: Everything to do with block order
   //
 
-  // syncing order to database
+  // syncing block order to database
   useEffect(() => {
     const interval = setInterval(() => {
       if (useLayoutStore.getState().layoutDirty) {
-        syncOrderToSupabase(columns, DEFAULT_BOARD_ID); // pass in current layout
+        syncOrderToSupabase(columns, DEFAULT_BOARD_ID, spacingSize); // pass in current layout
         useLayoutStore.getState().setLayoutDirty(false);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [columns]);
+  }, [columns, spacingSize]);
 
   // save the block order
   const blockMap = useMemo(() => {

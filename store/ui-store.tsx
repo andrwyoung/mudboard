@@ -6,21 +6,21 @@ import {
 import { create } from "zustand";
 
 type UIStore = {
-  columnCount: number;
+  numCols: number;
   spacingSize: number;
   galleySpacingSize: number;
 
-  setColumnCount: (cols: number) => void;
+  setNumCols: (cols: number) => void;
   setSpacingSize: (spacing: number) => void;
   setGalleySpacingSize: (spacing: number) => void;
 };
 
 export const useUIStore = create<UIStore>((set) => ({
-  columnCount: DEFAULT_COLUMNS,
+  numCols: DEFAULT_COLUMNS,
   spacingSize: DEFAULT_SPACING,
   galleySpacingSize: DEFAULT_GALLERY_SPACING,
 
-  setColumnCount: (cols) => set({ columnCount: cols }),
+  setNumCols: (cols) => set({ numCols: cols }),
   setSpacingSize: (spacing) => set({ spacingSize: spacing }),
   setGalleySpacingSize: (spacing) => set({ galleySpacingSize: spacing }),
 }));
