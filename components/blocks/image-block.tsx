@@ -87,7 +87,7 @@ export function ImageBlock({
             onError={() => setIsErrored(true)}
             onLoad={() => setLoaded(true)}
             className={`rounded-sm w-full h-full ${
-              showBlurImg && prettyMode ? "hidden" : "visible"
+              showBlurImg && !prettyMode ? "hidden" : "visible"
             }`}
             loading={shouldEagerLoad ? "eager" : "lazy"}
           />
