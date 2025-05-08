@@ -50,13 +50,13 @@ export function useImageImport({
   updateColumns,
   setIsDragging,
   setDraggedFileCount,
-  setUploading,
+  setIsUploading,
 }: {
   columns: Block[][];
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   setIsDragging: (isDragging: boolean) => void;
   setDraggedFileCount: (count: number | null) => void;
-  setUploading: (e: boolean) => void;
+  setIsUploading: (e: boolean) => void;
 }) {
   const spacingSize = useUIStore((s) => s.spacingSize);
 
@@ -106,7 +106,7 @@ export function useImageImport({
         setDraggedFileCount(files.length);
 
         console.time("🗜️ Compression phase");
-        setUploading(true);
+        setIsUploading(true);
 
         const compressionTasks = Array.from(files).map((file) => async () => {
           const image_id = uuidv4();
@@ -296,7 +296,7 @@ export function useImageImport({
         );
 
         console.timeEnd("📤 Upload phase");
-        setUploading(false);
+        setIsUploading(false);
 
         // we may have incorrect versions of the order, so trigger a sync
         toast.success(

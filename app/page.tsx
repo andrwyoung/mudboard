@@ -17,6 +17,8 @@ export default function Home() {
   // when dragging new images from local computer
   const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  console.log(isUploading);
 
   // when dragging blocks
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
@@ -152,6 +154,7 @@ export default function Home() {
     updateColumns,
     setIsDragging: setIsDraggingFile,
     setDraggedFileCount,
+    setIsUploading,
   });
 
   // SECTION: Things to do with blurirng

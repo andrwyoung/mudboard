@@ -42,10 +42,12 @@ export default function Sidebar({
       </div>
       <div className="flex flex-col flex-grow justify-center px-10 gap-24">
         <div className="flex flex-col">
-          <h1 className="text-3xl  font-bold">Art Room</h1>
-          <p className="text-sm mb-12 font-semibold">
-            Site&apos;s under construction, but uh feel free to drag around some
-            pictures!
+          <h1 className="text-3xl  font-bold mb-4">
+            Site Under Construction ...But:
+          </h1>
+          <p className="text-sm mb-12 font-semibold leading-relaxed">
+            - You can drag and drop images.
+            <br />- Use that big slider <br />- Enjoy paintings + PCT photos
           </p>
           <div className="flex flex-col gap-2">
             <p className={`${fontClass}`}>
