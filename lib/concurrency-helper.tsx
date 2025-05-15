@@ -1,3 +1,5 @@
+// used for multithread uploading and compressing files
+
 export async function runWithConcurrency<T>(
   tasks: (() => Promise<T>)[],
   concurrency: number

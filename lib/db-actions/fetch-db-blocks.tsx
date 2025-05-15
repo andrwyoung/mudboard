@@ -5,9 +5,9 @@ import {
   ImageDownload,
 } from "@/types/image-type";
 import { supabase } from "../supabase";
-import { DEFAULT_BOARD_ID, SUPABASE_OBJECT_URL } from "@/types/upload-settings";
+import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
 
-export async function fetchSupabaseBlocks(): Promise<Block[]> {
+export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
   console.log("Fetching images from Supabase DB...");
 
   const { data: blocks, error } = await supabase
@@ -25,7 +25,7 @@ export async function fetchSupabaseBlocks(): Promise<Block[]> {
     )
   `
     )
-    .eq("board_id", DEFAULT_BOARD_ID)
+    .eq("board_id", boardId)
     .eq("deleted", false) // don't serve deleted blocks
     .order("col_index", { ascending: true })
     .order("row_index", { ascending: true });

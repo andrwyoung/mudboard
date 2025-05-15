@@ -8,11 +8,7 @@ import { toast } from "sonner";
 import { uploadImageToSupabase } from "@/lib/db-actions/upload-image";
 import {
   allowedMimeTypes,
-  MAX_IMAGE_WIDTH,
-  COMPRESSED_IMAGE_WIDTH,
-  COMPRESSED_THUMB_WIDTH,
   DEFAULT_FILE_EXT,
-  DEFAULT_BOARD_ID,
   imageNames,
   UPLOAD_THREADS,
   COMPRESSION_THREADS,
@@ -46,12 +42,14 @@ type PreparedImage = {
 };
 
 export function useImageImport({
+  boardId,
   columns,
   updateColumns,
   setIsDragging,
   setDraggedFileCount,
   setIsUploading,
 }: {
+  boardId: string;
   columns: Block[][];
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   setIsDragging: (isDragging: boolean) => void;
@@ -168,7 +166,7 @@ export function useImageImport({
 
           const tempBlockId = `temp-${uuidv4()}`;
           const incompleteBlock = {
-            board_id: DEFAULT_BOARD_ID,
+            board_id: boardId,
             block_type: "image" as BlockType,
             height,
 
