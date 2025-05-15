@@ -1,17 +1,22 @@
-import { Block } from "@/types/block-types";
+import { SectionColumns } from "@/types/board-types";
 
 export function createBlockMap(
-  columns: Block[][]
-): Map<string, { colIndex: number; blockIndex: number }> {
-  const map = new Map<string, { colIndex: number; blockIndex: number }>();
+  sectionColumns: SectionColumns
+): Map<string, { sectionId: string; colIndex: number; blockIndex: number }> {
+  const map = new Map<
+    string,
+    { sectionId: string; colIndex: number; blockIndex: number }
+  >();
 
-  columns.forEach((col, colIndex) => {
-    col.forEach((block, blockIndex) => {
-      if (!block.deleted) {
-        map.set(block.block_id, { colIndex, blockIndex });
-      }
+  for (const [sectionId, columns] of Object.entries(sectionColumns)) {
+    columns.forEach((col, colIndex) => {
+      col.forEach((block, blockIndex) => {
+        if (!block.deleted) {
+          map.set(block.block_id, { sectionId, colIndex, blockIndex });
+        }
+      });
     });
-  });
+  }
 
   return map;
 }

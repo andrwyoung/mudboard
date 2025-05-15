@@ -1,14 +1,50 @@
 import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
-import { Block } from "@/types/block-types";
+import { Block, Section } from "@/types/block-types";
+import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
+import { updateBlockSectionId } from "@/lib/db-actions/update-block-section";
+import { toast } from "sonner";
+import { SectionColumns } from "@/types/board-types";
+import { findShortestColumn } from "@/lib/columns/column-helpers";
+import { useUIStore } from "@/store/ui-store";
+
+export function getMovingItem(
+  activeId: string,
+  blockMap: Map<
+    string,
+    { sectionId: string; colIndex: number; blockIndex: number }
+  >,
+  sectionColumns: SectionColumns
+) {
+  const fromPos = blockMap.get(activeId);
+  if (!fromPos) return null;
+
+  const fromCols = sectionColumns[fromPos.sectionId];
+  const item = fromCols?.[fromPos.colIndex]?.[fromPos.blockIndex];
+  if (!item) return null;
+
+  return {
+    item,
+    fromPos,
+    fromSectionId: fromPos.sectionId,
+    fromColumnIndex: fromPos.colIndex,
+    movingItemIndex: fromPos.blockIndex,
+  };
+}
 
 type UseGalleryHandlersProps = {
-  columns: Block[][];
-  blockMap: Map<string, { colIndex: number; blockIndex: number }>;
-  updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
+  sectionColumns: SectionColumns;
+  sections: Section[];
+  blockMap: Map<
+    string,
+    { sectionId: string; colIndex: number; blockIndex: number }
+  >;
+  updateSections: (
+    updates: Record<string, (prev: Block[][]) => Block[][]>
+  ) => void;
   setDraggedBlock: (img: Block | null) => void;
-  overId: string | null;
-  setOverId: (id: string | null) => void;
+  dropIndicatorId: string | null;
+  setDropIndicatorId: (id: string | null) => void;
   setSelectedBlocks: React.Dispatch<
     React.SetStateAction<Record<string, Block>>
   >;
@@ -16,12 +52,13 @@ type UseGalleryHandlersProps = {
 };
 
 export function useGalleryHandlers({
-  columns,
+  sectionColumns,
+  sections,
   blockMap,
-  updateColumns,
+  updateSections,
   setDraggedBlock,
-  overId,
-  setOverId,
+  dropIndicatorId,
+  setDropIndicatorId,
   setSelectedBlocks,
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
@@ -30,8 +67,8 @@ export function useGalleryHandlers({
   const overIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    overIdRef.current = overId;
-  }, [overId]);
+    overIdRef.current = dropIndicatorId;
+  }, [dropIndicatorId]);
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
@@ -50,7 +87,9 @@ export function useGalleryHandlers({
       const { active, activatorEvent } = event;
       const pos = blockMap.get(active.id.toString());
       if (pos) {
-        const activeImage = columns[pos.colIndex]?.[pos.blockIndex];
+        const sectionCols = sectionColumns[pos.sectionId];
+        const col = sectionCols?.[pos.colIndex];
+        const activeImage = col?.[pos.blockIndex];
         if (activeImage) {
           setDraggedBlock(activeImage);
         }
@@ -62,7 +101,7 @@ export function useGalleryHandlers({
         initialPointerYRef.current = activatorEvent.touches[0]?.clientY ?? null;
       }
     },
-    [columns]
+    [sectionColumns]
   );
 
   const handleDragMove = useCallback(
@@ -70,7 +109,7 @@ export function useGalleryHandlers({
       const { delta, over } = event;
 
       if (!over) {
-        setOverId(null);
+        setDropIndicatorId(null);
         return;
       }
 
@@ -88,14 +127,14 @@ export function useGalleryHandlers({
 
       const dropId =
         currentPointerY < middleY
-          ? `drop-${pos.colIndex}-${pos.blockIndex}`
-          : `drop-${pos.colIndex}-${pos.blockIndex + 1}`;
+          ? `drop-${pos.sectionId}-${pos.colIndex}-${pos.blockIndex}`
+          : `drop-${pos.sectionId}-${pos.colIndex}-${pos.blockIndex + 1}`;
 
       if (dropId !== overIdRef.current) {
-        setOverId(dropId);
+        setDropIndicatorId(dropId);
       }
     },
-    [blockMap, setOverId]
+    [blockMap, setDropIndicatorId]
   );
 
   const handleDragEnd = useCallback(
@@ -105,104 +144,81 @@ export function useGalleryHandlers({
       setDraggedBlock(null);
       initialPointerYRef.current = null;
 
-      const { active } = event;
+      const { active, over } = event;
       const activeId = active.id.toString();
 
-      const dropMatch = String(overId).match(/^drop-(\d+)-(\d+)$/);
-      if (!dropMatch) return;
-
-      const toColumnIndex = Number(dropMatch[1]);
-      const insertIndex = Number(dropMatch[2]);
-      console.log(
-        "toColumnIndex: ",
-        toColumnIndex,
-        " insertIndex: ",
-        insertIndex
+      const dropMatch = String(dropIndicatorId).match(
+        /^drop-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-(\d+)-(\d+)$/
       );
+      const sectionMatch = String(over?.id).match(/^section-(\d+)$/);
 
-      const fromPos = blockMap.get(activeId);
-      if (!fromPos) return;
+      console.log("Overid: ", over?.id);
 
-      const fromColumnIndex = fromPos.colIndex;
-      const movingItemIndex = fromPos.blockIndex;
+      // first we deal with block reorganization
+      if (dropMatch) {
+        const toSectionId = String(dropMatch[1]);
+        const toColumnIndex = Number(dropMatch[2]);
+        const insertIndex = Number(dropMatch[3]);
 
-      // No movement
-      if (
-        fromColumnIndex === toColumnIndex &&
-        (movingItemIndex === insertIndex || movingItemIndex === insertIndex - 1)
-      ) {
-        setOverId(null);
-        return;
+        handleBlockDrop({
+          activeId,
+          blockMap,
+          sectionColumns,
+          updateSections,
+          insertIndex,
+          toColumnIndex,
+          toSectionId,
+        });
+
+        // then we handle section matches
+      } else if (sectionMatch) {
+        const sectionIndex = Number(sectionMatch[1]);
+        const targetSection = sections[sectionIndex];
+
+        if (!targetSection) return;
+
+        const result = getMovingItem(activeId, blockMap, sectionColumns);
+        if (!result) return;
+        const { item: movingItem, fromPos } = result;
+
+        const fromCols = sectionColumns[fromPos.sectionId];
+        if (movingItem.section_id === targetSection.section_id) {
+          return;
+        }
+
+        const updatedBlock = {
+          ...movingItem,
+          section_id: targetSection.section_id,
+        };
+
+        const spacingSize = useUIStore.getState().spacingSize;
+        const toCols = sectionColumns[targetSection.section_id];
+        const toColIndex = findShortestColumn(toCols, spacingSize);
+
+        const fromCol = [...fromCols[fromPos.colIndex]];
+        fromCol.splice(fromPos.blockIndex, 1);
+        const updatedFromCols = fromCols.map((col, i) =>
+          i === fromPos.colIndex ? fromCol : col
+        );
+        const updatedToCol = [...toCols[toColIndex], updatedBlock];
+        const newCols = toCols.map((col, i) =>
+          i === toColIndex ? updatedToCol : col
+        );
+
+        updateSections({
+          [fromPos.sectionId]: () => updatedFromCols,
+          [targetSection.section_id]: () => newCols,
+        });
       }
 
-      updateColumns((prev) => {
-        const fromCol = [...prev[fromColumnIndex]];
-        const [movingItem] = fromCol.splice(movingItemIndex, 1); // remove the item
-
-        // if dragged to same column
-        if (fromColumnIndex === toColumnIndex) {
-          let adjustedInsertIndex = insertIndex;
-
-          // if it's moved downward, then offset the index to account for deletion
-          if (insertIndex > movingItemIndex) {
-            adjustedInsertIndex -= 1;
-          }
-
-          fromCol.splice(adjustedInsertIndex, 0, movingItem);
-
-          // return the new array only with modified column changed
-          return prev.map((col, i) => (i === fromColumnIndex ? fromCol : col));
-        }
-
-        // different column behavior
-        const toCol = [...prev[toColumnIndex]];
-        const insertAt = Math.min(insertIndex, toCol.length);
-        toCol.splice(insertAt, 0, movingItem);
-
-        return prev.map((col, i) => {
-          if (i === fromColumnIndex) return fromCol;
-          if (i === toColumnIndex) return toCol;
-          return col;
-        });
-      });
-
-      setOverId(null);
+      setDropIndicatorId(null);
     },
-    [blockMap, overId, updateColumns, setDraggedBlock]
-  );
-
-  const handleItemClick = useCallback(
-    (block: Block, event: React.MouseEvent<Element, MouseEvent>) => {
-      console.log("Clicked? ", event, block);
-
-      setSelectedBlocks((prevSelected) => {
-        const newSelected = { ...prevSelected };
-
-        if (event.metaKey || event.ctrlKey) {
-          if (newSelected[block.block_id]) {
-            delete newSelected[block.block_id];
-          } else {
-            newSelected[block.block_id] = block;
-          }
-          return newSelected;
-        } else {
-          if (
-            newSelected[block.block_id] &&
-            Object.entries(newSelected).length === 1
-          ) {
-            return {};
-          }
-          return { [block.block_id]: block };
-        }
-      });
-    },
-    []
+    [blockMap, dropIndicatorId, updateSections, sectionColumns, setDraggedBlock]
   );
 
   return {
     handleDragStart,
     handleDragMove,
     handleDragEnd,
-    handleItemClick,
   };
 }

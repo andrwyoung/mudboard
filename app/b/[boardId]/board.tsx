@@ -22,6 +22,18 @@ import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
 import { createSection } from "@/lib/db-actions/create-new-section";
 import { toast } from "sonner";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
+import {
+  DndContext,
+  DragOverlay,
+  MouseSensor,
+  pointerWithin,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
+import Image from "next/image";
+import { SectionColumns } from "@/types/board-types";
 
 // differentiating mirror gallery from real one
 const MirrorContext = createContext(false);
@@ -36,15 +48,14 @@ export default function Board({ boardId }: { boardId: string }) {
   const [isUploading, setIsUploading] = useState(false);
   console.log(isUploading);
 
+  const [selectedSectionId, setSelectedSectionId] = useState("");
+
   // when dragging blocks
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
 
   const spacingSize = useUIStore((s) => s.spacingSize);
   const numCols = useUIStore((s) => s.numCols);
-  const mirrorNumCols = useUIStore((s) => s.mirrorNumCols);
-
-  const [columns, setColumns] = useState<Block[][]>([]);
-  const [mirrorCols, setMirrorCols] = useState<Block[][]>([]);
+  // const mirrorNumCols = useUIStore((s) => s.mirrorNumCols);
 
   // sections
   const sections = useUIStore((s) => s.sections);
@@ -64,8 +75,17 @@ export default function Board({ boardId }: { boardId: string }) {
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   // helper function (so I don't forget setting layout dirty)
-  const updateColumns = useColumnUpdater(setColumns);
-  const updateMirrorColumns = useColumnUpdater(setMirrorCols);
+  const [sectionColumns, setSectionColumns] = useState<SectionColumns>({});
+
+  const updateSectionColumns = useColumnUpdater(setSectionColumns);
+
+  // for dragging and stuff
+  const [dropIndicatorId, setDropIndicatorId] = useState<string | null>(null);
+  const initialPointerYRef = useRef<number | null>(null);
+
+  const [selectedBlocks, setSelectedBlocks] = useState<Record<string, Block>>(
+    {}
+  );
 
   // SECTION: Getting all the initial images
   //
@@ -87,6 +107,7 @@ export default function Board({ boardId }: { boardId: string }) {
         console.log("Got sections: ", sections);
 
         setSections(sections);
+        setSelectedSectionId(sections[0].section_id);
         console.log("Set sections to:", sections);
       } catch (err) {
         console.error("Error loading sections:", err);
@@ -97,33 +118,43 @@ export default function Board({ boardId }: { boardId: string }) {
     loadImages();
   }, [boardId, setSections]);
 
+  // group them into sectioned blocks
+  const blocksBySection = useMemo(() => {
+    const grouped: Record<string, Block[]> = {};
+    for (const block of flatBlocks) {
+      const key = block.section_id ?? "unassigned";
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(block);
+    }
+    return grouped;
+  }, [flatBlocks]);
+
   // KEY SECTION: here is where we regenerate columns and block maps
 
   // this is where we generate the columns everytime things change
-  const mainColumns = useMemo(
-    () => generateColumnsFromBlocks(flatBlocks, numCols),
-    [flatBlocks, numCols]
-  );
+  useEffect(() => {
+    const nextColumns: SectionColumns = {};
+    for (const [sectionId, blocks] of Object.entries(blocksBySection)) {
+      nextColumns[sectionId] = generateColumnsFromBlocks(blocks, numCols);
+    }
+    setSectionColumns(nextColumns);
+  }, [blocksBySection, numCols]);
 
-  const mirrorColumns = useMemo(
-    () => generateColumnsFromBlocks(flatBlocks, mirrorNumCols),
-    [flatBlocks, mirrorNumCols]
-  );
+  // const mirrorColumns = useMemo(
+  //   () => generateColumnsFromBlocks(flatBlocks, mirrorNumCols),
+  //   [flatBlocks, mirrorNumCols]
+  // );
 
   // update the fake columns with the real ones if reals ones change
-  useEffect(() => {
-    setColumns(mainColumns);
-  }, [mainColumns]);
 
-  useEffect(() => {
-    setMirrorCols(mirrorColumns);
-  }, [mirrorColumns]);
-
-  const blockMap = useMemo(() => createBlockMap(columns), [columns]);
-  const mirrorBlockMap = useMemo(
-    () => createBlockMap(mirrorCols),
-    [mirrorCols]
+  const blockMap = useMemo(
+    () => createBlockMap(sectionColumns),
+    [sectionColumns]
   );
+  // const mirrorBlockMap = useMemo(
+  //   () => createBlockMap(mirrorCols),
+  //   [mirrorCols]
+  // );
 
   //
   //
@@ -134,23 +165,23 @@ export default function Board({ boardId }: { boardId: string }) {
   useEffect(() => {
     const interval = setInterval(() => {
       if (useLayoutStore.getState().layoutDirty) {
-        syncOrderToSupabase(columns, boardId, spacingSize); // pass in current layout
+        syncOrderToSupabase(sectionColumns, boardId, spacingSize); // pass in current layout
         useLayoutStore.getState().setLayoutDirty(false);
       }
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [boardId, columns, spacingSize]);
+  }, [boardId, sectionColumns, spacingSize]);
 
   // SECTION: When you drag and drop and image
   //
 
   // handling importing images
   useImageImport({
-    sectionId: sections[0]?.section_id ?? "",
+    sectionId: selectedSectionId,
     boardId,
-    columns,
-    updateColumns,
+    columns: sectionColumns[selectedSectionId],
+    updateColumns: (fn) => updateSectionColumns(selectedSectionId, fn),
     setIsDragging: setIsDraggingFile,
     setDraggedFileCount,
     setIsUploading,
@@ -241,6 +272,39 @@ export default function Board({ boardId }: { boardId: string }) {
   //     if (timeout) clearTimeout(timeout);
   //   };
   // }, [draggedBlock, setShowBlurImg]);
+  const { handleDragStart, handleDragMove, handleDragEnd } = useGalleryHandlers(
+    {
+      sectionColumns,
+      sections,
+      blockMap,
+      updateSections: (
+        updates: Record<string, (prev: Block[][]) => Block[][]>
+      ) => {
+        for (const [sectionId, fn] of Object.entries(updates)) {
+          updateSectionColumns(sectionId, fn);
+        }
+      },
+      setDraggedBlock,
+      dropIndicatorId,
+      setDropIndicatorId,
+      setSelectedBlocks,
+      initialPointerYRef,
+    }
+  );
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 70,
+        tolerance: 5,
+      },
+    })
+  );
 
   return (
     <div className="flex h-screen overflow-hidden relative">
@@ -252,73 +316,112 @@ export default function Board({ boardId }: { boardId: string }) {
         </div>
       )}
 
-      {/* Sidebar */}
-      <aside
-        className="hidden lg:block w-1/6 min-w-[200px] max-w-[350px]
-      bg-primary"
-        ref={sidebarRef}
+      <DndContext
+        collisionDetection={pointerWithin}
+        onDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
+        onDragMove={handleDragMove}
+        sensors={sensors}
       >
-        <Sidebar
-          sections={sections}
-          sliderVal={sliderVal}
-          setSliderVal={setSliderVal}
-          setFadeGallery={setFadeGallery}
-          setShowLoading={setShowLoading}
-        />
-      </aside>
+        {/* Sidebar */}
+        <aside
+          className="hidden lg:block w-1/6 min-w-[200px] max-w-[350px]
+      bg-primary"
+          ref={sidebarRef}
+        >
+          <Sidebar
+            sections={sections}
+            sliderVal={sliderVal}
+            setSliderVal={setSliderVal}
+            setFadeGallery={setFadeGallery}
+            setShowLoading={setShowLoading}
+          />
+        </aside>
 
-      {/* Gallery */}
-      <main ref={mainRef} className="flex-1">
-        <div
-          className={`absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 
+        {/* Gallery */}
+        <main ref={mainRef} className="flex-1">
+          <div
+            className={`absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 
             transition-opacity duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
             pointer-events-none ${
               fadeGallery ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
-        >
-          {showLoading ? "Loading" : `${sliderVal} Columns`}
-        </div>
-
-        <div
-          className={`transition-opacity flex flex-row w-full h-full ${
-            fadeGallery
-              ? "duration-200 opacity-0 pointer-events-none"
-              : "duration-500 opacity-100"
-          }`}
-        >
-          <div
-            className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
-            style={{ direction: "rtl" }}
           >
-            <div style={{ direction: "ltr" }}>
-              <MirrorContext.Provider value={false}>
+            {showLoading ? "Loading" : `${sliderVal} Columns`}
+          </div>
+
+          <div
+            className={`transition-opacity flex flex-row w-full h-full ${
+              fadeGallery
+                ? "duration-200 opacity-0 pointer-events-none"
+                : "duration-500 opacity-100"
+            }`}
+          >
+            <div
+              className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
+              style={{ direction: "rtl" }}
+            >
+              <div style={{ direction: "ltr" }}>
+                <MirrorContext.Provider value={false}>
+                  {Object.entries(sectionColumns).map(
+                    ([sectionId, columns]) => (
+                      <div key={sectionId}>
+                        {/* <h1 title={sectionMap[sectionId]?.title ?? "Untitled"} /> */}
+                        <h1 title={sectionId} />
+                        <Gallery
+                          sectionId={sectionId}
+                          columns={columns}
+                          updateColumns={(fn) =>
+                            updateSectionColumns(selectedSectionId, fn)
+                          }
+                          draggedBlock={draggedBlock}
+                          sidebarWidth={sidebarWidth}
+                          scrollY={scrollY}
+                          selectedBlocks={selectedBlocks}
+                          setSelectedBlocks={setSelectedBlocks}
+                          overId={dropIndicatorId}
+                        />
+                      </div>
+                    )
+                  )}
+                </MirrorContext.Provider>
+              </div>
+            </div>
+            {/* <div
+              className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
+            >
+              <MirrorContext.Provider value={true}>
                 <Gallery
-                  columns={columns}
-                  updateColumns={updateColumns}
-                  blockMap={blockMap}
+                  columns={mirrorCols}
+                  updateColumns={updateMirrorColumns}
                   draggedBlock={draggedBlock}
-                  setDraggedBlock={setDraggedBlock}
                   sidebarWidth={sidebarWidth}
                   scrollY={scrollY}
+                  selectedBlocks={selectedBlocks}
+                  setSelectedBlocks={setSelectedBlocks}
+                  overId={overId}
                 />
               </MirrorContext.Provider>
-            </div>
+            </div> */}
           </div>
-          <div className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}>
-            <MirrorContext.Provider value={true}>
-              <Gallery
-                columns={mirrorCols}
-                updateColumns={updateMirrorColumns}
-                blockMap={mirrorBlockMap}
-                draggedBlock={draggedBlock}
-                setDraggedBlock={setDraggedBlock}
-                sidebarWidth={sidebarWidth}
-                scrollY={scrollY}
+        </main>
+
+        <DragOverlay>
+          {draggedBlock &&
+            draggedBlock.block_type === "image" &&
+            draggedBlock.data &&
+            "fileName" in draggedBlock.data && (
+              <Image
+                src={draggedBlock.data.fileName}
+                alt={draggedBlock.data.caption}
+                width={draggedBlock.data.width}
+                height={draggedBlock.height}
+                className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
+        duration-200 ease-out scale-105 shadow-xl rotate-1"
               />
-            </MirrorContext.Provider>
-          </div>
-        </div>
-      </main>
+            )}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 }

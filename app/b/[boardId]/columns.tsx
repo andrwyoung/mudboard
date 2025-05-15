@@ -40,6 +40,7 @@ function getBlockLayout(
 }
 
 type Props = {
+  sectionId: string;
   column: Block[];
   columnWidth: number;
   columnIndex: number;
@@ -51,6 +52,7 @@ type Props = {
 };
 
 function ColumnComponent({
+  sectionId: sectionId,
   column,
   columnWidth,
   columnIndex,
@@ -65,7 +67,7 @@ function ColumnComponent({
   // const overscan = OVERSCAN_SIZE;
   const viewportHeight = window.innerHeight;
 
-  const { items, totalHeight } = getBlockLayout(
+  const { items } = getBlockLayout(
     column,
     spacingSize,
     columnWidth,
@@ -88,12 +90,13 @@ function ColumnComponent({
   //   });
 
   return (
-    <div style={{ height: totalHeight, position: "relative" }}>
+    // <div style={{ height: totalHeight, position: "relative" }}>
+    <div>
       <SortableContext items={column.map((block) => block.block_id)}>
         {/* First drop zone */}
         <MemoizedDropIndicator
-          id={`drop-${columnIndex}-0`}
-          isActive={overId === `drop-${columnIndex}-0`}
+          id={`drop-${sectionId}-${columnIndex}-0`}
+          isActive={overId === `drop-${sectionId}-${columnIndex}-0`}
           padding="above"
           // style={{
           //   position: "absolute",
@@ -136,9 +139,11 @@ function ColumnComponent({
             >
               {index !== 0 ? (
                 <MemoizedDropIndicator
-                  key={`drop-${columnIndex}-${index}`}
-                  id={`drop-${columnIndex}-${index}`}
-                  isActive={overId === `drop-${columnIndex}-${index}`}
+                  key={`drop-${sectionId}-${columnIndex}-${index}`}
+                  id={`drop-${sectionId}-${columnIndex}-${index}`}
+                  isActive={
+                    overId === `drop-${sectionId}-${columnIndex}-${index}`
+                  }
                   // style={{
                   //   position: "absolute",
                   //   top,
@@ -161,8 +166,10 @@ function ColumnComponent({
 
         {/* Drop zone at the end */}
         <MemoizedDropIndicator
-          id={`drop-${columnIndex}-${column.length}`}
-          isActive={overId === `drop-${columnIndex}-${column.length}`}
+          id={`drop-${sectionId}-${columnIndex}-${column.length}`}
+          isActive={
+            overId === `drop-${sectionId}-${columnIndex}-${column.length}`
+          }
           padding="bottom"
           // style={{
           //   position: "absolute",

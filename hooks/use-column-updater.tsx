@@ -1,11 +1,15 @@
 import { useLayoutStore } from "@/store/layout-store";
 import { Block } from "@/types/block-types";
-
+import { SectionColumns } from "@/types/board-types";
 export function useColumnUpdater(
-  setter: React.Dispatch<React.SetStateAction<Block[][]>>
+  setter: React.Dispatch<React.SetStateAction<SectionColumns>>
 ) {
-  return (fn: (prev: Block[][]) => Block[][]) => {
+  return (sectionId: string, fn: (prev: Block[][]) => Block[][]) => {
     useLayoutStore.getState().setLayoutDirty(true);
-    setter(fn);
+
+    setter((prev) => ({
+      ...prev,
+      [sectionId]: fn(prev[sectionId] ?? []),
+    }));
   };
 }

@@ -12,11 +12,7 @@ export function DroppableColumn({
   });
 
   return (
-    <div
-      ref={setNodeRef}
-      data-id={id}
-      className={`flex flex-col transition-colors `}
-    >
+    <div ref={setNodeRef} data-id={id}>
       {children}
     </div>
   );

@@ -22,9 +22,11 @@ export function findShortestColumn(
 }
 
 export function getNextRowIndex(col: Block[], spacing: number): number {
-  return col.reduce((acc, block, index) => {
-    const blockHeight = block.height ?? 0;
-    const padding = index > 0 ? spacing : 0;
-    return acc + blockHeight + padding;
-  }, 0);
+  if (col.length === 0) return 0;
+
+  const lastBlock = col[col.length - 1];
+  const height = lastBlock.height ?? 0;
+  const rowIndex = lastBlock.row_index ?? 0;
+
+  return rowIndex + height + spacing;
 }

@@ -1,52 +1,44 @@
 "use client";
 import { DroppableColumn } from "@/components/drag/droppable-column";
-import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
-import Image from "next/image";
-import {
-  DndContext,
-  DragOverlay,
-  MouseSensor,
-  pointerWithin,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { toast } from "sonner";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { MemoizedDroppableColumn } from "./columns";
 import { useIsMirror } from "./board";
 
 export default function Gallery({
+  sectionId,
   columns,
   updateColumns,
-  blockMap,
   draggedBlock,
-  setDraggedBlock,
   sidebarWidth,
   scrollY,
+  selectedBlocks,
+  setSelectedBlocks,
+  overId,
 }: {
+  sectionId: string;
   columns: Block[][];
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
-  blockMap: Map<string, { colIndex: number; blockIndex: number }>;
   draggedBlock: Block | null;
-  setDraggedBlock: (b: Block | null) => void;
   sidebarWidth: number;
   scrollY: number;
+  selectedBlocks: Record<string, Block>;
+  setSelectedBlocks: Dispatch<SetStateAction<Record<string, Block>>>;
+  overId: string | null;
 }) {
   const isMirror = useIsMirror();
   const numCols = useUIStore((s) => (isMirror ? s.mirrorNumCols : s.numCols));
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
-
-  const [overId, setOverId] = useState<string | null>(null);
-  const initialPointerYRef = useRef<number | null>(null);
-
-  const [selectedBlocks, setSelectedBlocks] = useState<Record<string, Block>>(
-    {}
-  );
 
   // column width
   const columnWidth = useMemo(() => {
@@ -107,7 +99,7 @@ export default function Gallery({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedBlocks, updateColumns]);
+  }, [selectedBlocks, updateColumns, setSelectedBlocks]);
 
   //
   // SECTION: click and drag behavior
@@ -134,57 +126,60 @@ export default function Gallery({
     return () => {
       document.body.removeEventListener("click", handleGlobalClick);
     };
-  }, []);
+  }, [setSelectedBlocks]);
 
   // all the drag handlers
-  const { handleDragStart, handleDragMove, handleDragEnd, handleItemClick } =
-    useGalleryHandlers({
-      columns,
-      blockMap,
-      updateColumns,
-      setDraggedBlock,
-      overId,
-      setOverId,
-      setSelectedBlocks,
-      initialPointerYRef,
-    });
+  const handleItemClick = useCallback(
+    (block: Block, event: React.MouseEvent<Element, MouseEvent>) => {
+      console.log("Clicked? ", event, block);
 
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 70,
-        tolerance: 5,
-      },
-    })
+      setSelectedBlocks((prevSelected) => {
+        const newSelected = { ...prevSelected };
+
+        if (event.metaKey || event.ctrlKey) {
+          if (newSelected[block.block_id]) {
+            delete newSelected[block.block_id];
+          } else {
+            newSelected[block.block_id] = block;
+          }
+          return newSelected;
+        } else {
+          if (
+            newSelected[block.block_id] &&
+            Object.entries(newSelected).length === 1
+          ) {
+            return {};
+          }
+          return { [block.block_id]: block };
+        }
+      });
+    },
+    [setSelectedBlocks]
   );
 
   return (
-    <DndContext
-      collisionDetection={pointerWithin}
-      onDragEnd={handleDragEnd}
-      onDragStart={handleDragStart}
-      onDragMove={handleDragMove}
-      sensors={sensors}
+    <div
+      className={`grid h-full ${
+        draggedBlock ? "cursor-grabbing" : "cursor-default"
+      }`}
+      style={{
+        paddingLeft: gallerySpacingSize,
+        paddingRight: gallerySpacingSize,
+        gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
+      }}
     >
-      <div
-        className={`grid h-full ${
-          draggedBlock ? "cursor-grabbing" : "cursor-default"
-        }`}
-        style={{
-          paddingLeft: gallerySpacingSize,
-          paddingRight: gallerySpacingSize,
-          gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
-          gap: spacingSize,
-        }}
-      >
-        {columns.map((column, columnIndex) => (
-          <DroppableColumn key={`col-${columnIndex}`} id={`col-${columnIndex}`}>
+      {columns.map((column, columnIndex) => (
+        <div
+          key={`col-${sectionId}-${columnIndex}`}
+          className={`flex flex-col transition-colors `}
+          style={{
+            paddingLeft: spacingSize / 2,
+            paddingRight: spacingSize / 2,
+          }}
+        >
+          <DroppableColumn id={`drop-${sectionId}-${columnIndex}`}>
             <MemoizedDroppableColumn
+              sectionId={sectionId}
               column={column}
               columnWidth={columnWidth}
               columnIndex={columnIndex}
@@ -195,23 +190,8 @@ export default function Gallery({
               scrollY={scrollY}
             />
           </DroppableColumn>
-        ))}
-      </div>
-      <DragOverlay>
-        {draggedBlock &&
-          draggedBlock.block_type === "image" &&
-          draggedBlock.data &&
-          "fileName" in draggedBlock.data && (
-            <Image
-              src={draggedBlock.data.fileName}
-              alt={draggedBlock.data.caption}
-              width={draggedBlock.data.width}
-              height={draggedBlock.height}
-              className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
-        duration-200 ease-out scale-105 shadow-xl rotate-1"
-            />
-          )}
-      </DragOverlay>
-    </DndContext>
+        </div>
+      ))}
+    </div>
   );
 }
