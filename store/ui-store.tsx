@@ -1,4 +1,4 @@
-import { Section } from "@/types/block-types";
+import { Section } from "@/types/board-types";
 import {
   DEFAULT_COLUMNS,
   DEFAULT_GALLERY_SPACING,
@@ -12,9 +12,6 @@ type UIStore = {
   mirrorNumCols: number;
   setMirrorNumCols: (cols: number) => void;
 
-  sections: Section[];
-  setSections: (section: Section[]) => void;
-
   spacingSize: number;
   setSpacingSize: (spacing: number) => void;
 
@@ -27,9 +24,6 @@ export const useUIStore = create<UIStore>((set) => ({
   setNumCols: (cols) => set({ numCols: cols }),
   mirrorNumCols: DEFAULT_COLUMNS,
   setMirrorNumCols: (cols) => set({ numCols: cols }),
-
-  sections: [] as Section[],
-  setSections: (sections: Section[]) => set({ sections }),
 
   spacingSize: DEFAULT_SPACING,
   setSpacingSize: (spacing) => set({ spacingSize: spacing }),

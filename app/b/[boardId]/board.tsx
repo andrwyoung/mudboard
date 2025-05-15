@@ -34,6 +34,8 @@ import {
 import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import Image from "next/image";
 import { SectionColumns } from "@/types/board-types";
+import { useMetadataStore } from "@/store/metadata-store";
+import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 
 // differentiating mirror gallery from real one
 const MirrorContext = createContext(false);
@@ -59,8 +61,9 @@ export default function Board({ boardId }: { boardId: string }) {
   // const mirrorNumCols = useUIStore((s) => s.mirrorNumCols);
 
   // sections
-  const sections = useUIStore((s) => s.sections);
-  const setSections = useUIStore((s) => s.setSections);
+  const sections = useMetadataStore((s) => s.sections);
+  const setSections = useMetadataStore((s) => s.setSections);
+  const setBoard = useMetadataStore((s) => s.setBoard);
 
   // when blurring images
   const setShowBlurImg = useLayoutStore((s) => s.setShowBlurImg);
@@ -95,6 +98,9 @@ export default function Board({ boardId }: { boardId: string }) {
   useEffect(() => {
     async function loadImages() {
       try {
+        const board = await fetchSupabaseBoard(boardId);
+        setBoard(board);
+
         const blocks = await fetchSupabaseBlocks(boardId);
         setFlatBlocks(blocks);
 
@@ -117,7 +123,7 @@ export default function Board({ boardId }: { boardId: string }) {
     }
 
     loadImages();
-  }, [boardId, setSections]);
+  }, [boardId, setSections, setBoard]);
 
   // group them into sectioned blocks
   const blocksBySection = useMemo(() => {
@@ -337,7 +343,7 @@ export default function Board({ boardId }: { boardId: string }) {
       >
         {/* Sidebar */}
         <aside
-          className="hidden lg:block w-1/6 min-w-[200px] max-w-[350px]
+          className="hidden lg:block w-1/6 min-w-[200px] max-w-[280px]
       bg-primary"
           ref={sidebarRef}
         >

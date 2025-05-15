@@ -19,7 +19,7 @@ export function DroppableColumn({
     <div
       ref={setNodeRef}
       data-id={id}
-      className={`flex flex-col transition-colors bg-amber-100`}
+      className={`flex flex-col transition-colors `}
       style={{
         paddingLeft,
         paddingRight,

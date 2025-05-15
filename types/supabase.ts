@@ -84,27 +84,44 @@ export type Database = {
           board_id: string
           created_at: string
           marked_for_deletion: boolean
+          password_hash: string | null
+          saved_column_num: number | null
           slug: string | null
           title: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           board_id?: string
           created_at?: string
           marked_for_deletion?: boolean
+          password_hash?: string | null
+          saved_column_num?: number | null
           slug?: string | null
           title?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           board_id?: string
           created_at?: string
           marked_for_deletion?: boolean
+          password_hash?: string | null
+          saved_column_num?: number | null
           slug?: string | null
           title?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "boards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       images: {
         Row: {
@@ -173,6 +190,27 @@ export type Database = {
             referencedColumns: ["board_id"]
           },
         ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string | null
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          user_id?: string
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

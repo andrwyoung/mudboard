@@ -31,6 +31,8 @@ export const allowedMimeTypes = [
     "image/tiff",
   ];
 
+  // password
+  export const SALT_ROUNDS = 10;
 
 
   // concurrent uploads

@@ -15,14 +15,6 @@ export type UploadStatus =
 export type FileType = "database" | "blob" | "local";
 export type BlockType = "image" | "text" | "spacer";
 
-export type Section = {
-  section_id: string;
-  board_id: string;
-
-  order_index?: number;
-  title?: string;
-};
-
 export type Block = {
   block_id: string;
   section_id: string;

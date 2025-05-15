@@ -1,0 +1,17 @@
+// these functions save board passwords into local storage
+
+export function saveBoardPassword(boardId: string, password: string) {
+  localStorage.setItem(
+    `mudboard:auth:${boardId}`,
+    JSON.stringify({ password })
+  );
+}
+
+export function getBoardPassword(boardId: string): string | null {
+  const raw = localStorage.getItem(`mudboard:auth:${boardId}`);
+  try {
+    return raw ? JSON.parse(raw).password : null;
+  } catch {
+    return null;
+  }
+}

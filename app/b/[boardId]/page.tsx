@@ -12,5 +12,5 @@ export default async function BoardPage({
   const boardExists = await checkIfBoardExists(boardId);
   if (!boardExists) return notFound();
 
-  return <Board boardId={boardId} />;
+  return <Board key={boardId} boardId={boardId} />;
 }

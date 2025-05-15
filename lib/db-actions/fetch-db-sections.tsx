@@ -1,4 +1,4 @@
-import { Section } from "@/types/block-types";
+import { Section } from "@/types/board-types";
 import { supabase } from "../supabase";
 
 export async function fetchSupabaseSections(
