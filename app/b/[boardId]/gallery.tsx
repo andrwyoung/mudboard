@@ -212,7 +212,6 @@ export default function Gallery({
             />
           )}
       </DragOverlay>
-      <div>{overId}</div>
     </DndContext>
   );
 }

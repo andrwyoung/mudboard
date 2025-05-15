@@ -10,7 +10,6 @@ import {
 } from "react";
 import Sidebar from "./sidebar";
 import { Block } from "@/types/block-types";
-import { fetchSupabaseBlocks as fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import { useImageImport } from "@/hooks/use-import-images";
 import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
 import { useLayoutStore } from "@/store/layout-store";
@@ -20,6 +19,9 @@ import { generateColumnsFromBlocks } from "@/lib/columns/generate-columns";
 import { createBlockMap } from "@/lib/columns/generate-block-map";
 import { useColumnUpdater } from "@/hooks/use-column-updater";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
+import { createSection } from "@/lib/db-actions/create-new-section";
+import { toast } from "sonner";
+import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 
 // differentiating mirror gallery from real one
 const MirrorContext = createContext(false);
@@ -45,6 +47,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const [mirrorCols, setMirrorCols] = useState<Block[][]>([]);
 
   // sections
+  const sections = useUIStore((s) => s.sections);
   const setSections = useUIStore((s) => s.setSections);
 
   // when blurring images
@@ -70,11 +73,25 @@ export default function Board({ boardId }: { boardId: string }) {
   // load all images on init
   useEffect(() => {
     async function loadImages() {
-      const blocks = await fetchSupabaseBlocks(boardId);
-      setFlatBlocks(blocks);
+      try {
+        const blocks = await fetchSupabaseBlocks(boardId);
+        setFlatBlocks(blocks);
 
-      const sections = await fetchSupabaseSections(boardId);
-      setSections(sections);
+        let sections = await fetchSupabaseSections(boardId);
+
+        if (sections.length === 0) {
+          console.log("No sections, creating one");
+          const fallback = await createSection({ board_id: boardId });
+          sections = [fallback];
+        }
+        console.log("Got sections: ", sections);
+
+        setSections(sections);
+        console.log("Set sections to:", sections);
+      } catch (err) {
+        console.error("Error loading sections:", err);
+        toast.error("Error loading data! Try reloading");
+      }
     }
 
     loadImages();
@@ -130,6 +147,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // handling importing images
   useImageImport({
+    sectionId: sections[0]?.section_id ?? "",
     boardId,
     columns,
     updateColumns,
@@ -241,6 +259,7 @@ export default function Board({ boardId }: { boardId: string }) {
         ref={sidebarRef}
       >
         <Sidebar
+          sections={sections}
           sliderVal={sliderVal}
           setSliderVal={setSliderVal}
           setFadeGallery={setFadeGallery}

@@ -31,8 +31,7 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
     .order("row_index", { ascending: true });
 
   if (error) {
-    console.error("Error fetching images from DB:", error.message);
-    return [];
+    throw new Error("Failed to fetch Blocks: " + error.message);
   }
 
   type BlockWithOptionalImage = BlockDownload & {

@@ -11,9 +11,14 @@ export async function fetchSupabaseSections(
     .order("order_index", { ascending: true });
 
   if (error) {
-    console.error("Failed to fetch sections:", error.message);
-    return [];
+    throw new Error("Failed to fetch sections: " + error.message);
   }
+
+  //  // No sections found — create a default one
+  //  if (!data || data.length === 0) {
+  //   const fallback = await createSection({ board_id: boardId });
+  //   return [fallback];
+  // }
 
   return data;
 }

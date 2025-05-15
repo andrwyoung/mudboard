@@ -42,6 +42,7 @@ type PreparedImage = {
 };
 
 export function useImageImport({
+  sectionId,
   boardId,
   columns,
   updateColumns,
@@ -49,6 +50,7 @@ export function useImageImport({
   setDraggedFileCount,
   setIsUploading,
 }: {
+  sectionId: string;
   boardId: string;
   columns: Block[][];
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
@@ -65,6 +67,7 @@ export function useImageImport({
 
   // handling importing images
   useEffect(() => {
+    if (!sectionId) return;
     let dragCounter = 0;
 
     function handleDragEnter(e: DragEvent) {
@@ -164,8 +167,11 @@ export function useImageImport({
             uploadStatus: "uploading",
           };
 
+          console.log("sectionId: ", sectionId);
+
           const tempBlockId = `temp-${uuidv4()}`;
           const incompleteBlock = {
+            section_id: sectionId,
             board_id: boardId,
             block_type: "image" as BlockType,
             height,
@@ -233,6 +239,11 @@ export function useImageImport({
         console.timeEnd("🗜️ Compression phase");
         console.time("📤 Upload phase");
 
+        console.log(
+          "Compression done! Compressed ",
+          preparedImages.length,
+          " images"
+        );
         //
         // KEY SECTION: here we actually upload everything to db
         //
@@ -252,6 +263,7 @@ export function useImageImport({
                 img.variants.thumb.file
               )
                 .then((block_id) => {
+                  if (!block_id) throw new Error("No block_id returned");
                   successfulUploads++;
                   updateColumns((prevCols) =>
                     prevCols.map((col) =>
@@ -276,7 +288,7 @@ export function useImageImport({
                   updateColumns((prevCols) =>
                     prevCols.map((col) =>
                       col.map((block) =>
-                        block.block_id === img.image_id
+                        block.block_id === img.tempBlockId
                           ? {
                               ...block,
                               data: {
@@ -315,5 +327,5 @@ export function useImageImport({
       window.removeEventListener("drop", handleDrop);
       window.removeEventListener("dragleave", handleDragLeave);
     };
-  }, []);
+  }, [sectionId]);
 }

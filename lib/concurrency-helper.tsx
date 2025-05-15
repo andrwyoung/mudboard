@@ -1,27 +1,23 @@
-// used for multithread uploading and compressing files
-
 export async function runWithConcurrency<T>(
   tasks: (() => Promise<T>)[],
   concurrency: number
 ): Promise<T[]> {
   const results: T[] = [];
-  const executing: Promise<void>[] = [];
+  let index = 0;
 
-  for (const task of tasks) {
-    const p = task().then((result) => {
-      results.push(result);
-    });
-    executing.push(p);
-
-    if (executing.length >= concurrency) {
-      await Promise.race(executing);
-      // Clean up finished tasks
-      for (let i = executing.length - 1; i >= 0; i--) {
-        executing.splice(i, 1);
+  async function worker() {
+    while (index < tasks.length) {
+      const i = index++;
+      try {
+        const result = await tasks[i]();
+        results.push(result);
+      } catch (err) {
+        console.warn("Task failed:", err);
+        // still continue — maybe log or handle error if needed
       }
     }
   }
 
-  await Promise.all(executing);
+  await Promise.all(Array.from({ length: concurrency }, worker));
   return results;
 }

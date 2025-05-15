@@ -53,7 +53,7 @@ export async function uploadImageToSupabase(
   const { error: insertError } = await supabase.from("images").insert(payload);
 
   if (insertError) {
-    throw new Error(`DB insert failed: ${insertError.message}`);
+    throw new Error(`DB image insert failed: ${insertError.message}`);
   }
 
   //
@@ -73,7 +73,7 @@ export async function uploadImageToSupabase(
     .single();
 
   if (blockInsertError) {
-    throw new Error(`DB insert failed: ${blockInsertError.message}`);
+    throw new Error(`DB block insert failed: ${blockInsertError.message}`);
   }
 
   console.log("Uploaded: ", file);

@@ -1,7 +1,9 @@
+import { DroppableSection } from "@/components/drag/droppable-section";
 import NewBoardButton from "@/components/sidebar/new-board-button";
 import { Slider } from "@/components/ui/slider";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
+import { Section } from "@/types/block-types";
 import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,11 +14,13 @@ const refClass =
   "text-accent hover:text-primary-foreground transition-all hover:underline";
 
 export default function Sidebar({
+  sections,
   sliderVal,
   setSliderVal,
   setFadeGallery,
   setShowLoading,
 }: {
+  sections: Section[];
   sliderVal: number;
   setSliderVal: (e: number) => void;
   setFadeGallery: (e: boolean) => void;
@@ -41,15 +45,10 @@ export default function Sidebar({
           />
         </Link>
       </div>
-      <div className="flex flex-col flex-grow justify-center px-10 gap-24">
+      <div className="flex flex-col flex-grow justify-center px-10 gap-12">
         <div className="flex flex-col">
-          <h1 className="text-3xl  font-bold mb-4">
-            Site Under Construction ...But:
-          </h1>
-          <p className="text-sm mb-12 font-semibold leading-relaxed">
-            - You can drag and drop images.
-            <br />- Use that big slider <br />- Enjoy paintings + PCT photos
-          </p>
+          <h1 className="text-3xl  font-bold mb-4">Site Under Construction!</h1>
+
           <div className="flex flex-col gap-2">
             <p className={`${fontClass}`}>
               •{" "}
@@ -75,6 +74,17 @@ export default function Sidebar({
             </p>
           </div>
         </div>
+
+        <div className="flex flex-col gap-2">
+          {sections.map((section, index) => (
+            <DroppableSection id={`section-${index}`} key={section.section_id}>
+              <div className="text-lg text-primary-foreground">
+                {section.title}
+              </div>
+            </DroppableSection>
+          ))}
+        </div>
+
         <div
           onPointerDown={() => {
             setShowLoading(false);
@@ -98,7 +108,7 @@ export default function Sidebar({
             min={MIN_COLUMNS}
             max={MAX_COLUMNS}
             onValueChange={(val) => setSliderVal(val[0])}
-            orientation="vertical"
+            // orientation="vertical"
           />
         </div>
         <div>
