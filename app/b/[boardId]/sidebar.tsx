@@ -1,3 +1,4 @@
+import NewBoardButton from "@/components/sidebar/new-board-button";
 import { Slider } from "@/components/ui/slider";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
@@ -99,6 +100,9 @@ export default function Sidebar({
             onValueChange={(val) => setSliderVal(val[0])}
             orientation="vertical"
           />
+        </div>
+        <div>
+          <NewBoardButton />
         </div>
       </div>
       <div

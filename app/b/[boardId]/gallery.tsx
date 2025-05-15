@@ -2,7 +2,7 @@
 import { DroppableColumn } from "@/components/drag/droppable-column";
 import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import { useUIStore } from "@/store/ui-store";
-import { Block } from "@/types/image-type";
+import { Block } from "@/types/block-types";
 import Image from "next/image";
 import {
   DndContext,
@@ -17,6 +17,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { MemoizedDroppableColumn } from "./columns";
+import { useIsMirror } from "./board";
 
 export default function Gallery({
   columns,
@@ -35,7 +36,8 @@ export default function Gallery({
   sidebarWidth: number;
   scrollY: number;
 }) {
-  const numCols = useUIStore((s) => s.numCols);
+  const isMirror = useIsMirror();
+  const numCols = useUIStore((s) => (isMirror ? s.mirrorNumCols : s.numCols));
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 

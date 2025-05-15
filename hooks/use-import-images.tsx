@@ -18,7 +18,7 @@ import {
   BlockInsert,
   BlockType,
   MudboardImage,
-} from "@/types/image-type";
+} from "@/types/block-types";
 import {
   findShortestColumn,
   getNextRowIndex,

@@ -1,11 +1,12 @@
 import { memo } from "react";
 import { SortableContext } from "@dnd-kit/sortable";
 import { MemoizedBlock } from "@/components/blocks/memoized-block";
-import { Block, isBlockWithWidth } from "@/types/image-type";
+import { Block } from "@/types/block-types";
 import React from "react";
 import { MemoizedDropIndicator } from "@/components/drag/drag-indicator";
 import { useUIStore } from "@/store/ui-store";
-import { IMAGE_OVERSCAN_SIZE, OVERSCAN_SIZE } from "@/types/upload-settings";
+import { IMAGE_OVERSCAN_SIZE } from "@/types/upload-settings";
+import { isBlockWithWidth } from "@/lib/type-validators/is-image-block";
 
 // virtualization
 function getBlockLayout(
@@ -61,7 +62,7 @@ function ColumnComponent({
 }: Props) {
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
-  const overscan = OVERSCAN_SIZE;
+  // const overscan = OVERSCAN_SIZE;
   const viewportHeight = window.innerHeight;
 
   const { items, totalHeight } = getBlockLayout(
@@ -71,20 +72,20 @@ function ColumnComponent({
     gallerySpacingSize
   );
 
-  const visibleItems = items.filter(({ top, height }) => {
-    return (
-      top + height > scrollY - overscan &&
-      top < scrollY + viewportHeight + overscan
-    );
-  });
+  // const visibleItems = items.filter(({ top, height }) => {
+  //   return (
+  //     top + height > scrollY - overscan &&
+  //     top < scrollY + viewportHeight + overscan
+  //   );
+  // });
 
-  const visibleIndicators = items
-    .map(({ top }, index) => ({ top, index }))
-    .filter(({ top }) => {
-      return (
-        top > scrollY - overscan && top < scrollY + viewportHeight + overscan
-      );
-    });
+  // const visibleIndicators = items
+  //   .map(({ top }, index) => ({ top, index }))
+  //   .filter(({ top }) => {
+  //     return (
+  //       top > scrollY - overscan && top < scrollY + viewportHeight + overscan
+  //     );
+  //   });
 
   return (
     <div style={{ height: totalHeight, position: "relative" }}>
@@ -94,15 +95,15 @@ function ColumnComponent({
           id={`drop-${columnIndex}-0`}
           isActive={overId === `drop-${columnIndex}-0`}
           padding="above"
-          style={{
-            position: "absolute",
-            top: items[0]?.top ?? 0,
-            width: "100%",
-          }}
+          // style={{
+          //   position: "absolute",
+          //   top: items[0]?.top ?? 0,
+          //   width: "100%",
+          // }}
         />
 
         {/* Drop indicators between blocks */}
-        {visibleIndicators.map(({ top, index }) =>
+        {/* {visibleIndicators.map(({ top, index }) =>
           index !== 0 ? (
             <MemoizedDropIndicator
               key={`drop-${columnIndex}-${index}`}
@@ -115,21 +116,10 @@ function ColumnComponent({
               }}
             />
           ) : null
-        )}
+        )} */}
 
-        {/* Drop zone at the end */}
-        <MemoizedDropIndicator
-          id={`drop-${columnIndex}-${column.length}`}
-          isActive={overId === `drop-${columnIndex}-${column.length}`}
-          padding="bottom"
-          style={{
-            position: "absolute",
-            top: totalHeight - gallerySpacingSize,
-            width: "100%",
-          }}
-        />
-
-        {visibleItems.map(({ block, top, height }) => {
+        {/* {visibleItems.map(({ block, top, height }) => { */}
+        {items.map(({ block, top }, index) => {
           const shouldEagerLoad =
             top < scrollY + viewportHeight + IMAGE_OVERSCAN_SIZE;
 
@@ -137,13 +127,26 @@ function ColumnComponent({
             <div
               key={block.block_id}
               data-id={block.block_id}
-              style={{
-                position: "absolute",
-                top: top + spacingSize,
-                height,
-                width: "100%",
-              }}
+              // style={{
+              //   position: "absolute",
+              //   top: top + spacingSize,
+              //   height,
+              //   width: "100%",
+              // }}
             >
+              {index !== 0 ? (
+                <MemoizedDropIndicator
+                  key={`drop-${columnIndex}-${index}`}
+                  id={`drop-${columnIndex}-${index}`}
+                  isActive={overId === `drop-${columnIndex}-${index}`}
+                  // style={{
+                  //   position: "absolute",
+                  //   top,
+                  //   width: "100%",
+                  // }}
+                />
+              ) : null}
+
               <MemoizedBlock
                 block={block}
                 isSelected={!!selectedBlocks[block.block_id]}
@@ -155,6 +158,18 @@ function ColumnComponent({
             </div>
           );
         })}
+
+        {/* Drop zone at the end */}
+        <MemoizedDropIndicator
+          id={`drop-${columnIndex}-${column.length}`}
+          isActive={overId === `drop-${columnIndex}-${column.length}`}
+          padding="bottom"
+          // style={{
+          //   position: "absolute",
+          //   top: totalHeight - gallerySpacingSize,
+          //   width: "100%",
+          // }}
+        />
       </SortableContext>
     </div>
   );

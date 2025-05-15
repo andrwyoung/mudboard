@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { SortableImageItem } from "@/components/drag/sortable-wrapper";
-import { Block, MudboardImage } from "@/types/image-type";
+import { Block, MudboardImage } from "@/types/block-types";
 import { ImageBlock } from "./image-block";
 
 export function BlockChooser({

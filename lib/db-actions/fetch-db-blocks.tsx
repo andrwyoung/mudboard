@@ -3,7 +3,7 @@ import {
   BlockDownload,
   BlockType,
   ImageDownload,
-} from "@/types/image-type";
+} from "@/types/block-types";
 import { supabase } from "../supabase";
 import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
 
@@ -42,6 +42,7 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
     (block: BlockWithOptionalImage): Block => {
       const {
         block_id,
+        section_id,
         board_id,
         block_type,
         height,
@@ -54,6 +55,7 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
 
       const incompleteBlock: Omit<Block, "data"> = {
         block_id,
+        section_id,
         board_id,
         block_type: block_type as BlockType,
         height,

@@ -1,6 +1,6 @@
 import { DEFAULT_BOARD_ID } from "@/types/upload-settings";
-import { redirect } from "next/navigation";
+import Board from "./b/[boardId]/board";
 
 export default function Home() {
-  redirect(`/b/${DEFAULT_BOARD_ID}`);
+  return <Board boardId={DEFAULT_BOARD_ID} />;
 }

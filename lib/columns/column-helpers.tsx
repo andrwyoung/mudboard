@@ -1,4 +1,4 @@
-import { Block } from "@/types/image-type";
+import { Block } from "@/types/block-types";
 
 export function getColumnHeights(
   columns: Block[][],

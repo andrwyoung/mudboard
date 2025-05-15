@@ -15,9 +15,17 @@ export type UploadStatus =
 export type FileType = "database" | "blob" | "local";
 export type BlockType = "image" | "text" | "spacer";
 
+export type Section = {
+  section_id: string;
+  board_id: string;
+
+  order_index?: number;
+  title?: string;
+};
+
 export type Block = {
   block_id: string;
-
+  section_id: string;
   board_id: string;
 
   block_type: BlockType;
@@ -59,18 +67,3 @@ export type TextBlock = {
 export type SpacerBlock = {
   height: number;
 };
-
-export type GalleryOrder = {
-  id: string;
-  section: number;
-  order: number;
-};
-
-export function isBlockWithWidth(data: unknown): data is { width: number } {
-  return (
-    typeof data === "object" &&
-    data !== null &&
-    "width" in data &&
-    typeof (data as any).width === "number"
-  );
-}

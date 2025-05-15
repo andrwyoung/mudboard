@@ -1,4 +1,4 @@
-import { MudboardImage } from "@/types/image-type";
+import { MudboardImage } from "@/types/block-types";
 import React, { useState } from "react";
 import Image from "next/image";
 import { Blurhash } from "react-blurhash";

@@ -1,3 +1,4 @@
+import { Section } from "@/types/block-types";
 import {
   DEFAULT_COLUMNS,
   DEFAULT_GALLERY_SPACING,
@@ -7,20 +8,32 @@ import { create } from "zustand";
 
 type UIStore = {
   numCols: number;
-  spacingSize: number;
-  gallerySpacingSize: number;
-
   setNumCols: (cols: number) => void;
+  mirrorNumCols: number;
+  setMirrorNumCols: (cols: number) => void;
+
+  sections: Section[];
+  setSections: (section: Section[]) => void;
+
+  spacingSize: number;
   setSpacingSize: (spacing: number) => void;
+
+  gallerySpacingSize: number;
   setGallerySpacingSize: (spacing: number) => void;
 };
 
 export const useUIStore = create<UIStore>((set) => ({
   numCols: DEFAULT_COLUMNS,
-  spacingSize: DEFAULT_SPACING,
-  gallerySpacingSize: DEFAULT_GALLERY_SPACING,
-
   setNumCols: (cols) => set({ numCols: cols }),
+  mirrorNumCols: DEFAULT_COLUMNS,
+  setMirrorNumCols: (cols) => set({ numCols: cols }),
+
+  sections: [] as Section[],
+  setSections: (sections: Section[]) => set({ sections }),
+
+  spacingSize: DEFAULT_SPACING,
   setSpacingSize: (spacing) => set({ spacingSize: spacing }),
+
+  gallerySpacingSize: DEFAULT_GALLERY_SPACING,
   setGallerySpacingSize: (spacing) => set({ gallerySpacingSize: spacing }),
 }));

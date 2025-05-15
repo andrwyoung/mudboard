@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
-import { Block } from "@/types/image-type";
+import { Block } from "@/types/block-types";
 
 type UseGalleryHandlersProps = {
   columns: Block[][];

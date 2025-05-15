@@ -1,4 +1,4 @@
-import { Block, BlockInsert } from "@/types/image-type";
+import { Block, BlockInsert } from "@/types/block-types";
 import { supabase } from "../supabase";
 import { getVisuallySortedBlocksWithPasses } from "../columns/visual-sorting";
 

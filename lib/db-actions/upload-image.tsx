@@ -4,7 +4,7 @@ import {
   BlockInsert,
   ImageInsert,
   MudboardImage,
-} from "@/types/image-type";
+} from "@/types/block-types";
 
 export async function uploadImageToSupabase(
   file: File,
