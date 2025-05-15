@@ -14,7 +14,6 @@ function DropIndicator({
   style?: React.CSSProperties;
 }) {
   const spacingSize = useUIStore((s) => s.spacingSize);
-  const galleySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
   const { setNodeRef } = useDroppable({
     id,
@@ -41,7 +40,8 @@ function DropIndicator({
       style={{
         ...style,
         height,
-        minHeight: !height ? galleySpacingSize : undefined,
+        // minHeight: !height ? galleySpacingSize : undefined,
+        minHeight: !height ? spacingSize : undefined,
       }}
     >
       {isActive && (

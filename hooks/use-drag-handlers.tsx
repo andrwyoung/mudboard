@@ -2,8 +2,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block, Section } from "@/types/block-types";
 import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
-import { updateBlockSectionId } from "@/lib/db-actions/update-block-section";
-import { toast } from "sonner";
 import { SectionColumns } from "@/types/board-types";
 import { findShortestColumn } from "@/lib/columns/column-helpers";
 import { useUIStore } from "@/store/ui-store";
@@ -116,6 +114,34 @@ export function useGalleryHandlers({
       const rect = blockRectsRef.current.get(over.id.toString());
       if (!rect) return;
 
+      const id = over.id.toString();
+
+      // SCENARIO 1: we hover over a drop indicator
+      if (id.startsWith("drop-")) {
+        setDropIndicatorId(id);
+        return;
+      }
+
+      // SCENARIO 2: we hover over a column itself
+      const colMatch = String(id).match(
+        /^col-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-(\d+)$/
+      );
+      if (colMatch) {
+        const sectionId = colMatch[1];
+        const colIndex = Number(colMatch[2]);
+
+        // We'll just drop at the end of this column
+        const col = sectionColumns[sectionId]?.[colIndex];
+        const insertIndex = col?.length ?? 0;
+
+        const dropId = `drop-${sectionId}-${colIndex}-${insertIndex}`;
+        if (dropId !== overIdRef.current) {
+          setDropIndicatorId(dropId);
+        }
+        return;
+      }
+
+      // SCENARIO 3: we hover over another block
       const pos = blockMap.get(String(over.id));
       if (!pos) return;
 
@@ -154,6 +180,8 @@ export function useGalleryHandlers({
 
       console.log("Overid: ", over?.id);
 
+      console.log("drop match: ", dropMatch);
+
       // first we deal with block reorganization
       if (dropMatch) {
         const toSectionId = String(dropMatch[1]);
@@ -181,33 +209,33 @@ export function useGalleryHandlers({
         if (!result) return;
         const { item: movingItem, fromPos } = result;
 
-        const fromCols = sectionColumns[fromPos.sectionId];
         if (movingItem.section_id === targetSection.section_id) {
           return;
         }
 
-        const updatedBlock = {
-          ...movingItem,
-          section_id: targetSection.section_id,
-        };
-
-        const spacingSize = useUIStore.getState().spacingSize;
-        const toCols = sectionColumns[targetSection.section_id];
-        const toColIndex = findShortestColumn(toCols, spacingSize);
-
-        const fromCol = [...fromCols[fromPos.colIndex]];
-        fromCol.splice(fromPos.blockIndex, 1);
-        const updatedFromCols = fromCols.map((col, i) =>
-          i === fromPos.colIndex ? fromCol : col
-        );
-        const updatedToCol = [...toCols[toColIndex], updatedBlock];
-        const newCols = toCols.map((col, i) =>
-          i === toColIndex ? updatedToCol : col
-        );
-
         updateSections({
-          [fromPos.sectionId]: () => updatedFromCols,
-          [targetSection.section_id]: () => newCols,
+          [fromPos.sectionId]: (prev) => {
+            const cols = [...prev];
+            const fromCol = [...cols[fromPos.colIndex]];
+            fromCol.splice(fromPos.blockIndex, 1);
+            cols[fromPos.colIndex] = fromCol;
+            return cols;
+          },
+          [targetSection.section_id]: (prev) => {
+            const spacingSize = useUIStore.getState().spacingSize;
+            const toColIndex = findShortestColumn(prev, spacingSize);
+            const toCol = [
+              ...prev[toColIndex],
+              {
+                ...movingItem,
+                section_id: targetSection.section_id,
+              },
+            ];
+            const newCols = prev.map((col, i) =>
+              i === toColIndex ? toCol : col
+            );
+            return newCols;
+          },
         });
       }
 

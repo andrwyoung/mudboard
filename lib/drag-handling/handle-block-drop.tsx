@@ -48,31 +48,34 @@ export function handleBlockDrop({
   if (fromSectionId === toSectionId) {
     updateSections({
       [fromSectionId]: (prev) => {
-        const cols = [...prev];
-        const fromCol = [...cols[fromColumnIndex]];
-        const movingItem = fromCol[movingItemIndex];
+        const fromCol = [...prev[fromColumnIndex]];
+        const [movingItem] = fromCol.splice(movingItemIndex, 1); // remove the item
 
-        // Remove the item first
-        fromCol.splice(movingItemIndex, 1);
+        // if dragged to same column
+        if (fromColumnIndex === toColumnIndex) {
+          let adjustedInsertIndex = insertIndex;
 
-        // Adjust insert index if necessary
-        let adjustedInsertIndex = insertIndex;
-        if (
-          fromColumnIndex === toColumnIndex &&
-          insertIndex > movingItemIndex
-        ) {
-          adjustedInsertIndex -= 1;
+          // if it's moved downward, then offset the index to account for deletion
+          if (insertIndex > movingItemIndex) {
+            adjustedInsertIndex -= 1;
+          }
+
+          fromCol.splice(adjustedInsertIndex, 0, movingItem);
+
+          // return the new array only with modified column changed
+          return prev.map((col, i) => (i === fromColumnIndex ? fromCol : col));
         }
 
-        // Insert into correct place
-        const toCol = [...cols[toColumnIndex]];
-        const insertAt = Math.min(adjustedInsertIndex, toCol.length);
+        // different column behavior
+        const toCol = [...prev[toColumnIndex]];
+        const insertAt = Math.min(insertIndex, toCol.length);
         toCol.splice(insertAt, 0, movingItem);
 
-        cols[fromColumnIndex] = fromCol;
-        cols[toColumnIndex] = toCol;
-
-        return cols;
+        return prev.map((col, i) => {
+          if (i === fromColumnIndex) return fromCol;
+          if (i === toColumnIndex) return toCol;
+          return col;
+        });
       },
     });
   } else {

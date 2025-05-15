@@ -54,6 +54,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
 
   const spacingSize = useUIStore((s) => s.spacingSize);
+  const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const numCols = useUIStore((s) => s.numCols);
   // const mirrorNumCols = useUIStore((s) => s.mirrorNumCols);
 
@@ -151,6 +152,17 @@ export default function Board({ boardId }: { boardId: string }) {
     () => createBlockMap(sectionColumns),
     [sectionColumns]
   );
+
+  const sectionMap = useMemo(() => {
+    const map: Record<string, { title: string; section_id: string }> = {};
+    for (const section of sections) {
+      map[section.section_id] = {
+        section_id: section.section_id,
+        title: section.title ?? "Untitled",
+      };
+    }
+    return map;
+  }, [sections]);
   // const mirrorBlockMap = useMemo(
   //   () => createBlockMap(mirrorCols),
   //   [mirrorCols]
@@ -359,15 +371,34 @@ export default function Board({ boardId }: { boardId: string }) {
           >
             <div
               className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
-              style={{ direction: "rtl" }}
+              style={{
+                direction: "rtl",
+                paddingLeft: gallerySpacingSize,
+                paddingRight: gallerySpacingSize,
+              }}
             >
               <div style={{ direction: "ltr" }}>
                 <MirrorContext.Provider value={false}>
                   {Object.entries(sectionColumns).map(
                     ([sectionId, columns]) => (
                       <div key={sectionId}>
-                        {/* <h1 title={sectionMap[sectionId]?.title ?? "Untitled"} /> */}
-                        <h1 title={sectionId} />
+                        <div className="flex flex-row justify-between items-center pt-6 pb-0 px-6">
+                          <h1
+                            className="text-primary text-2xl "
+                            title={sectionMap[sectionId]?.title ?? "Untitled"}
+                          >
+                            {sectionMap[sectionId]?.title ?? "Untitled"}
+                          </h1>
+
+                          <p
+                            className="text-primary "
+                            title={sectionMap[sectionId]?.title ?? "Untitled"}
+                          >
+                            Descripiton Here here herne reotfrne tfrnto
+                            irnfeitnreoi t
+                          </p>
+                        </div>
+
                         <Gallery
                           sectionId={sectionId}
                           columns={columns}

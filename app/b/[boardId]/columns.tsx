@@ -94,16 +94,18 @@ function ColumnComponent({
     <div>
       <SortableContext items={column.map((block) => block.block_id)}>
         {/* First drop zone */}
-        <MemoizedDropIndicator
-          id={`drop-${sectionId}-${columnIndex}-0`}
-          isActive={overId === `drop-${sectionId}-${columnIndex}-0`}
-          padding="above"
-          // style={{
-          //   position: "absolute",
-          //   top: items[0]?.top ?? 0,
-          //   width: "100%",
-          // }}
-        />
+        {column.length > 0 && (
+          <MemoizedDropIndicator
+            id={`drop-${sectionId}-${columnIndex}-0`}
+            isActive={overId === `drop-${sectionId}-${columnIndex}-0`}
+            padding="above"
+            // style={{
+            //   position: "absolute",
+            //   top: items[0]?.top ?? 0,
+            //   width: "100%",
+            // }}
+          />
+        )}
 
         {/* Drop indicators between blocks */}
         {/* {visibleIndicators.map(({ top, index }) =>

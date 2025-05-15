@@ -9,7 +9,6 @@ export const MAX_COLUMNS = 8;
 export const DEFAULT_COLUMNS = 6;
 
 export const DEFAULT_SPACING = 12;
-
-export const DEFAULT_GALLERY_SPACING = 16;
+export const DEFAULT_GALLERY_SPACING = 32;
 
 export const DEFAULT_SECTION_NAME = "Untitled Section";

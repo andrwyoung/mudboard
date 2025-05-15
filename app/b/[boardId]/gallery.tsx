@@ -163,34 +163,30 @@ export default function Gallery({
         draggedBlock ? "cursor-grabbing" : "cursor-default"
       }`}
       style={{
-        paddingLeft: gallerySpacingSize,
-        paddingRight: gallerySpacingSize,
         gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
       }}
     >
       {columns.map((column, columnIndex) => (
-        <div
+        <DroppableColumn
+          id={`col-${sectionId}-${columnIndex}`}
+          paddingLeft={columnIndex === 0 ? 0 : spacingSize / 2}
+          paddingRight={
+            columnIndex === columns.length - 1 ? 0 : spacingSize / 2
+          }
           key={`col-${sectionId}-${columnIndex}`}
-          className={`flex flex-col transition-colors `}
-          style={{
-            paddingLeft: spacingSize / 2,
-            paddingRight: spacingSize / 2,
-          }}
         >
-          <DroppableColumn id={`drop-${sectionId}-${columnIndex}`}>
-            <MemoizedDroppableColumn
-              sectionId={sectionId}
-              column={column}
-              columnWidth={columnWidth}
-              columnIndex={columnIndex}
-              overId={overId}
-              draggedImage={draggedBlock}
-              selectedBlocks={selectedBlocks}
-              handleItemClick={handleItemClick}
-              scrollY={scrollY}
-            />
-          </DroppableColumn>
-        </div>
+          <MemoizedDroppableColumn
+            sectionId={sectionId}
+            column={column}
+            columnWidth={columnWidth}
+            columnIndex={columnIndex}
+            overId={overId}
+            draggedImage={draggedBlock}
+            selectedBlocks={selectedBlocks}
+            handleItemClick={handleItemClick}
+            scrollY={scrollY}
+          />
+        </DroppableColumn>
       ))}
     </div>
   );
