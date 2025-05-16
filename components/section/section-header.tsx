@@ -1,33 +1,38 @@
 import { Section } from "@/types/board-types";
 import InlineEditText from "../ui/inline-edit";
-import { useMetadataStore } from "@/store/metadata-store";
+import {
+  updateSectionDescription,
+  updateSectionTitle,
+} from "@/lib/sync/section-actions";
 
 export default function SectionHeader({ section }: { section: Section }) {
-  const setSections = useMetadataStore((s) => s.setSections);
-  const allSections = useMetadataStore((s) => s.sections);
-
-  const title = section?.title ?? "Untitled";
+  const title = section?.title;
   const description = section?.description;
 
   return (
-    <div className="flex flex-row justify-between items-center pt-6 pb-0 px-6">
-      <InlineEditText
-        value={title}
-        onChange={(newTitle) => {
-          setSections(
-            allSections.map((s) =>
-              s.section_id === section.section_id
-                ? { ...s, title: newTitle }
-                : s
-            )
-          );
-        }}
-      />
-      {description && (
-        <p className="text-primary text-sm ml-4 italic opacity-80">
-          {description}
-        </p>
-      )}
+    <div className="flex flex-row justify-between items-center pt-6 pb-0 px-3">
+      <div className="flex w-xs md:w-sm">
+        <InlineEditText
+          value={title && title.trim() != "" ? title : null}
+          unnamedPlaceholder="Click to add Title"
+          placeholder="Add title"
+          onChange={(newTitle) => {
+            updateSectionTitle(section.section_id, newTitle);
+          }}
+          className="text-lg sm:text-xl md:text-2xl text-left"
+        />
+      </div>
+      <div className="hidden lg:flex w-xs md:w-sm">
+        <InlineEditText
+          value={description && description.trim() != "" ? description : null}
+          unnamedPlaceholder="Click to add a Description"
+          placeholder="Add a Description"
+          onChange={(newDesc) => {
+            updateSectionDescription(section.section_id, newDesc);
+          }}
+          className="text-sm text-right"
+        />
+      </div>
     </div>
   );
 }

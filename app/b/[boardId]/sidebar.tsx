@@ -1,21 +1,14 @@
-import { DroppableSection } from "@/components/drag/droppable-section";
 import NewBoardButton from "@/components/sidebar/new-board-button";
 import { Slider } from "@/components/ui/slider";
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore, useUserStore } from "@/store/metadata-store";
 import { useUIStore } from "@/store/ui-store";
-import {
-  DEFAULT_SECTION_NAME,
-  MAX_COLUMNS,
-  MIN_COLUMNS,
-} from "@/types/constants";
+import { MAX_COLUMNS, MIN_COLUMNS, SCROLLBAR_STYLE } from "@/types/constants";
 import Image from "next/image";
 import Link from "next/link";
 import React, { RefObject, useEffect } from "react";
 import AccountSyncSection from "@/components/sidebar/account/account-section";
-import { FaPlus } from "react-icons/fa6";
-import FillingDot from "@/components/ui/filling-dot";
-import { createSection } from "@/lib/db-actions/create-new-section";
+import SectionsSection from "@/components/sidebar/sections-section";
 
 const fontClass = "font-semibold text-sm font-header";
 const refClass =
@@ -38,8 +31,6 @@ export default function Sidebar({
   const setNumCols = useUIStore((s) => s.setNumCols);
 
   const board = useMetadataStore((s) => s.board);
-  const setSections = useMetadataStore((s) => s.setSections);
-  const sections = useMetadataStore((s) => s.sections);
   const user = useUserStore((s) => s.user);
 
   // syncing access
@@ -48,7 +39,9 @@ export default function Sidebar({
   }, [board, user]);
 
   return (
-    <div className="flex flex-col h-full w-full relative">
+    <div
+      className={`flex flex-col h-full w-full relative overflow-y-auto ${SCROLLBAR_STYLE}`}
+    >
       <div className="flex justify-center py-8 px-4 ">
         <Link
           className="cursor-pointer hover:scale-105 transition-transform duration-300"
@@ -93,48 +86,7 @@ export default function Sidebar({
           </div>
         </div>
 
-        <div className="flex flex-col gap-1 items-start">
-          <h1 className="text-xl font-semibold">Sections:</h1>
-          {sections.map((section, index) => (
-            <DroppableSection id={`section-${index}`} key={section.section_id}>
-              <div
-                className=" select-none flex gap-3 items-center group cursor-pointer w-full"
-                onClick={() => {
-                  const sectionEl = sectionRefs.current?.[section.section_id];
-                  if (sectionEl) {
-                    sectionEl.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }
-                }}
-              >
-                <FillingDot />
-                <h2 className="text-lg text-primary-foreground group-hover:text-accent transition-all duration-300">
-                  {section.title}
-                </h2>
-              </div>
-            </DroppableSection>
-          ))}
-          <button
-            type="button"
-            className="text-primary-foreground hover:underline hover:underline-offset-2 
-            transition-all duration-300 cursor-pointer
-            flex gap-1 items-center mt-2"
-            onClick={async () => {
-              if (!board) return;
-              const newSection = await createSection({
-                board_id: board?.board_id,
-                title: DEFAULT_SECTION_NAME,
-              });
-
-              setSections([...sections, newSection]);
-            }}
-          >
-            <FaPlus className="size-3.5" />
-            Add Section
-          </button>
-        </div>
+        <SectionsSection sectionRefs={sectionRefs} />
 
         <div className="flex flex-col gap-1 self-center w-full">
           {/* <div className="flex flex-col gap-1 max-w-42 self-center w-full"> */}
@@ -174,7 +126,7 @@ export default function Sidebar({
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4 w-full px-8">
+      <div className="flex flex-col gap-4 w-full px-8 pt-6">
         <AccountSyncSection />
         <NewBoardButton />
       </div>

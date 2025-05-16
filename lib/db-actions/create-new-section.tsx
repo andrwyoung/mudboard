@@ -1,12 +1,11 @@
 import { supabase } from "@/lib/supabase";
 import { Section } from "@/types/board-types";
-import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { TablesInsert } from "@/types/supabase";
 import { v4 as uuidv4 } from "uuid";
 
-export async function createSection({
+export async function createSupabaseSection({
   board_id,
-  title = DEFAULT_SECTION_NAME,
+  title,
   order_index,
 }: {
   board_id: string;

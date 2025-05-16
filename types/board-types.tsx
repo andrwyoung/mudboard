@@ -11,8 +11,8 @@ export type Section = {
   board_id: string;
 
   order_index?: number;
-  title?: string;
-  description?: string;
+  title?: string | null;
+  description?: string | null;
 };
 
 export type Board = {

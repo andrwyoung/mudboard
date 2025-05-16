@@ -17,7 +17,7 @@ import { DEFAULT_COLUMNS, SCROLLBAR_STYLE } from "@/types/constants";
 import { generateColumnsFromBlocks } from "@/lib/columns/generate-columns";
 import { createBlockMap } from "@/lib/columns/generate-block-map";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
-import { createSection } from "@/lib/db-actions/create-new-section";
+import { createSupabaseSection } from "@/lib/db-actions/create-new-section";
 import { toast } from "sonner";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import {
@@ -108,7 +108,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
         if (sections.length === 0) {
           console.log("No sections, creating one");
-          const fallback = await createSection({ board_id: boardId });
+          const fallback = await createSupabaseSection({ board_id: boardId });
           sections = [fallback];
         }
         console.log("Got sections: ", sections);
