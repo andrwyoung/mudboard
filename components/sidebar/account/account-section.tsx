@@ -59,11 +59,9 @@ export default function AccountSyncSection() {
   return (
     <div className="flex flex-col gap-2">
       {accessLevel === "UNCLAIMED" && board && (
-        <div className="mb-4">
-          <AccordianWrapper title="This board is unclaimed. Anyone can edit">
-            <ClaimBoardSection board={board} />
-          </AccordianWrapper>
-        </div>
+        <AccordianWrapper title="This board is unclaimed. Anyone can edit">
+          <ClaimBoardSection board={board} />
+        </AccordianWrapper>
       )}
 
       {accessLevel === "CLAIMED_NOT_LOGGED_IN" && board && (

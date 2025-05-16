@@ -22,8 +22,8 @@ export default function NewBoardButton() {
     <Button
       onClick={handleClick}
       type="button"
-      variant="outline"
-      className="text-sm"
+      variant="outline_accent"
+      className="text-sm font-bold tracking-wide"
     >
       Make your own board!
     </Button>
