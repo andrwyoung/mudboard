@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"; // your className merge helper
 const buttonVariants = cva(
   "flex flex-row items-center justify-center cursor-pointer rounded-md font-medium transition-all" +
     "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50" +
-    "disabled:pointer-events-none px-3 py-1 duration-200",
+    "disabled:pointer-events-none px-3 py-1 duration-300",
   {
     variants: {
       variant: {

@@ -13,7 +13,7 @@ export function DroppableSection({
     <div
       ref={setNodeRef}
       data-id={id}
-      className={`rounded transition-colors duration-150 ${
+      className={`rounded transition-colors duration-150 w-full ${
         isOver ? "bg-accent/40 border border-accent" : "bg-transparent"
       }`}
     >

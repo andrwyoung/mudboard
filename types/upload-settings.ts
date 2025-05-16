@@ -7,7 +7,7 @@ export const OVERSCAN_SIZE = 1000;
 export const IMAGE_OVERSCAN_SIZE = 600;
 
 // syncing
-export const AUTOSYNC_DELAY = 10000;
+export const AUTOSYNC_DELAY = 5000;
 
 
 // compression

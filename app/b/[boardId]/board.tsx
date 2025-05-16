@@ -31,10 +31,11 @@ import {
 } from "@dnd-kit/core";
 import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import Image from "next/image";
-import { SectionColumns } from "@/types/board-types";
+import { Section, SectionColumns } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 import { AUTOSYNC_DELAY } from "@/types/upload-settings";
+import SectionHeader from "@/components/section/section-header";
 
 // differentiating mirror gallery from real one
 const MirrorContext = createContext(false);
@@ -62,6 +63,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const sections = useMetadataStore((s) => s.sections);
   const setSections = useMetadataStore((s) => s.setSections);
   const setBoard = useMetadataStore((s) => s.setBoard);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // when blurring images
   const setShowBlurImg = useLayoutStore((s) => s.setShowBlurImg);
@@ -158,12 +160,9 @@ export default function Board({ boardId }: { boardId: string }) {
   );
 
   const sectionMap = useMemo(() => {
-    const map: Record<string, { title: string; section_id: string }> = {};
+    const map: Record<string, Section> = {};
     for (const section of sections) {
-      map[section.section_id] = {
-        section_id: section.section_id,
-        title: section.title ?? "Untitled",
-      };
+      map[section.section_id] = section;
     }
     return map;
   }, [sections]);
@@ -343,11 +342,11 @@ export default function Board({ boardId }: { boardId: string }) {
           ref={sidebarRef}
         >
           <Sidebar
-            sections={sections}
             sliderVal={sliderVal}
             setSliderVal={setSliderVal}
             setFadeGallery={setFadeGallery}
             setShowLoading={setShowLoading}
+            sectionRefs={sectionRefs}
           />
         </aside>
 
@@ -382,23 +381,13 @@ export default function Board({ boardId }: { boardId: string }) {
                 <MirrorContext.Provider value={false}>
                   {Object.entries(sectionColumns).map(
                     ([sectionId, columns]) => (
-                      <div key={sectionId}>
-                        <div className="flex flex-row justify-between items-center pt-6 pb-0 px-6">
-                          <h1
-                            className="text-primary text-2xl "
-                            title={sectionMap[sectionId]?.title ?? "Untitled"}
-                          >
-                            {sectionMap[sectionId]?.title ?? "Untitled"}
-                          </h1>
-
-                          <p
-                            className="text-primary "
-                            title={sectionMap[sectionId]?.title ?? "Untitled"}
-                          >
-                            Descripiton Here here herne reotfrne tfrnto
-                            irnfeitnreoi t
-                          </p>
-                        </div>
+                      <div
+                        key={sectionId}
+                        ref={(el) => {
+                          sectionRefs.current[sectionId] = el;
+                        }}
+                      >
+                        <SectionHeader section={sectionMap[sectionId]} />
 
                         <Gallery
                           sectionId={sectionId}

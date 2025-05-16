@@ -12,6 +12,7 @@ export type Section = {
 
   order_index?: number;
   title?: string;
+  description?: string;
 };
 
 export type Board = {

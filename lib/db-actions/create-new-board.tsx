@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { Tables, TablesInsert } from "@/types/supabase";
 import { v4 as uuidv4 } from "uuid";
 import { createSection } from "./create-new-section";
+import { DEFAULT_SECTION_NAME } from "@/types/constants";
 
 export async function createNewBoard({
   title = "Untitled Board",
@@ -26,7 +27,7 @@ export async function createNewBoard({
   // always make a new section if we make a board
   await createSection({
     board_id: boardData.board_id,
-    title: "Untitled Section",
+    title: DEFAULT_SECTION_NAME,
   });
 
   return boardData;
