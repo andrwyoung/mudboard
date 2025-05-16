@@ -11,13 +11,11 @@ import {
 import Sidebar from "./sidebar";
 import { Block } from "@/types/block-types";
 import { useImageImport } from "@/hooks/use-import-images";
-import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
 import { DEFAULT_COLUMNS, SCROLLBAR_STYLE } from "@/types/constants";
 import { generateColumnsFromBlocks } from "@/lib/columns/generate-columns";
 import { createBlockMap } from "@/lib/columns/generate-block-map";
-import { useColumnUpdater } from "@/hooks/use-column-updater";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
 import { createSection } from "@/lib/db-actions/create-new-section";
 import { toast } from "sonner";
@@ -36,6 +34,7 @@ import Image from "next/image";
 import { SectionColumns } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
+import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 
 // differentiating mirror gallery from real one
 const MirrorContext = createContext(false);
@@ -55,7 +54,6 @@ export default function Board({ boardId }: { boardId: string }) {
   // when dragging blocks
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
 
-  const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const numCols = useUIStore((s) => s.numCols);
   // const mirrorNumCols = useUIStore((s) => s.mirrorNumCols);
@@ -79,9 +77,9 @@ export default function Board({ boardId }: { boardId: string }) {
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   // helper function (so I don't forget setting layout dirty)
-  const [sectionColumns, setSectionColumns] = useState<SectionColumns>({});
-
-  const updateSectionColumns = useColumnUpdater(setSectionColumns);
+  const sectionColumns = useLayoutStore((s) => s.sectionColumns);
+  const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
+  const updateSectionColumns = useLayoutStore((s) => s.updateSectionColumns);
 
   // for dragging and stuff
   const [dropIndicatorId, setDropIndicatorId] = useState<string | null>(null);
@@ -145,7 +143,7 @@ export default function Board({ boardId }: { boardId: string }) {
       nextColumns[sectionId] = generateColumnsFromBlocks(blocks, numCols);
     }
     setSectionColumns(nextColumns);
-  }, [blocksBySection, numCols]);
+  }, [blocksBySection, numCols, setSectionColumns]);
 
   // const mirrorColumns = useMemo(
   //   () => generateColumnsFromBlocks(flatBlocks, mirrorNumCols),
@@ -182,14 +180,11 @@ export default function Board({ boardId }: { boardId: string }) {
   // syncing block order to database
   useEffect(() => {
     const interval = setInterval(() => {
-      if (useLayoutStore.getState().layoutDirty) {
-        syncOrderToSupabase(sectionColumns, boardId, spacingSize); // pass in current layout
-        useLayoutStore.getState().setLayoutDirty(false);
-      }
-    }, 4000);
+      useLayoutStore.getState().syncLayout();
+    }, AUTOSYNC_DELAY);
 
     return () => clearInterval(interval);
-  }, [boardId, sectionColumns, spacingSize]);
+  }, []);
 
   // SECTION: When you drag and drop and image
   //

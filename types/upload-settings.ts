@@ -1,10 +1,13 @@
-export const DEFAULT_BOARD_ID = "b92fe04b-01cd-4806-a1d3-9e108b9902e3"
+export const DEFAULT_BOARD_ID = "06b0c345-35bd-4852-9e80-b4e8e698a1e0"
 
 export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
 
 // virtualization
 export const OVERSCAN_SIZE = 1000;
 export const IMAGE_OVERSCAN_SIZE = 600;
+
+// syncing
+export const AUTOSYNC_DELAY = 10000;
 
 
 // compression

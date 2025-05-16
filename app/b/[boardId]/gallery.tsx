@@ -169,10 +169,8 @@ export default function Gallery({
       {columns.map((column, columnIndex) => (
         <DroppableColumn
           id={`col-${sectionId}-${columnIndex}`}
-          paddingLeft={columnIndex === 0 ? 0 : spacingSize / 2}
-          paddingRight={
-            columnIndex === columns.length - 1 ? 0 : spacingSize / 2
-          }
+          paddingLeft={spacingSize / 2}
+          paddingRight={spacingSize / 2}
           key={`col-${sectionId}-${columnIndex}`}
         >
           <MemoizedDroppableColumn

@@ -1,6 +1,7 @@
 import { useLayoutStore } from "@/store/layout-store";
 import { Block } from "@/types/block-types";
 import { SectionColumns } from "@/types/board-types";
+
 export function useColumnUpdater(
   setter: React.Dispatch<React.SetStateAction<SectionColumns>>
 ) {
@@ -9,7 +10,7 @@ export function useColumnUpdater(
 
     setter((prev) => ({
       ...prev,
-      [sectionId]: fn(prev[sectionId] ?? []),
+      [sectionId]: fn(prev[sectionId] ?? [[]]),
     }));
   };
 }

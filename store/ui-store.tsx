@@ -1,4 +1,3 @@
-import { Section } from "@/types/board-types";
 import {
   DEFAULT_COLUMNS,
   DEFAULT_GALLERY_SPACING,

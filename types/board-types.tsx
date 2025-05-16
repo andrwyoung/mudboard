@@ -1,6 +1,10 @@
 import { Block } from "./block-types";
 
 export type SectionColumns = Record<string, Block[][]>;
+export type BoardAccessLevel =
+  | "UNCLAIMED"
+  | "CLAIMED_NOT_LOGGED_IN"
+  | "CLAIMED_LOGGED_IN";
 
 export type Section = {
   section_id: string;
@@ -18,4 +22,10 @@ export type Board = {
   password_hash: string | null;
 
   saved_column_num: number;
+};
+
+export type User = {
+  user_id: string;
+  username: string | null;
+  email: string | null;
 };

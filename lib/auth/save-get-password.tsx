@@ -15,3 +15,7 @@ export function getBoardPassword(boardId: string): string | null {
     return null;
   }
 }
+
+export function clearBoardPassword(boardId: string) {
+  localStorage.removeItem(`mudboard:auth:${boardId}`);
+}

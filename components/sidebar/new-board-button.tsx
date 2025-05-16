@@ -2,6 +2,7 @@
 import { createNewBoard } from "@/lib/db-actions/create-new-board";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 export default function NewBoardButton() {
   const router = useRouter();
@@ -18,8 +19,13 @@ export default function NewBoardButton() {
   }
 
   return (
-    <button onClick={handleClick} className="btn">
-      + New Board
-    </button>
+    <Button
+      onClick={handleClick}
+      type="button"
+      variant="outline"
+      className="text-sm"
+    >
+      Make your own board!
+    </Button>
   );
 }

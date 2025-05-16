@@ -11,7 +11,8 @@ export default function NotFound() {
       </p>
       <Link
         href="/b/b92fe04b-01cd-4806-a1d3-9e108b9902e3"
-        className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 hover:scale-105 transition-all
+        className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary-lighter 
+        hover:scale-105 transition-all duration-200
         flex flex-row gap-1 items-center"
       >
         <FaChevronLeft /> Back to Home

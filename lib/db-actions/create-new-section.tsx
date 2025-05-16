@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Section } from "@/types/block-types";
+import { Section } from "@/types/board-types";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { TablesInsert } from "@/types/supabase";
 import { v4 as uuidv4 } from "uuid";

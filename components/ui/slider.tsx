@@ -41,13 +41,13 @@ function Slider({
       <SliderPrimitive.Track
         data-slot="slider-track"
         className={cn(
-          "bg-muted relative grow overflow-hidden rounded-lg data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-5"
+          "outline-2 outline-white relative grow overflow-hidden rounded-sm data-[orientation=horizontal]:h-4 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-5"
         )}
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
           className={cn(
-            "bg-secondary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+            "outline-2 bg-secondary/30 absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
           )}
         />
       </SliderPrimitive.Track>
@@ -55,10 +55,11 @@ function Slider({
         <SliderPrimitive.Thumb
           data-slot="slider-thumb"
           key={index}
-          className={`bg-background 
+          className={`bg-white
          ${isDraggingSlider ? "cursor-grabbing" : "cursor-pointer"}
-          ring-accent block size-8 shrink-0 rounded-full border shadow-sm 
-          transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50`}
+          ring-accent block w-6 h-4 shrink-0 rounded-full border shadow-sm 
+          transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden 
+          disabled:pointer-events-none disabled:opacity-50`}
           onPointerDown={() => setIsDraggingSlider(true)}
           onPointerUp={() => setIsDraggingSlider(false)}
         />

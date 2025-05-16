@@ -33,9 +33,12 @@
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
-  --color-secondary-light: var(--secondary-light);
+  --color-secondary-lighter: var(--secondary-lighter);
+  --color-secondary-darker: var(--secondary-darker);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-lighter: var(--primary-lighter);
+  --color-primary-darker: var(--primary-darker);
   --color-primary-text: var(--primary-text);
   --color-grey-light: var(--grey-light);
   --color-grey-mid: var(--grey-mid);
@@ -58,10 +61,12 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.53 0.0351 20.8);
+  --primary-lighter: oklch(0.60 0.031 20.8);
+  --primary-darker: oklch(0.43 0.0351 20.8);
   --primary-text: oklch(1 0 0);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.87 0.0871 58.96);
-  --secondary-light: oklch(0.97 0.0971 55.96);
+  --secondary-lighter: oklch(0.93 0.0971 55.96);
   --secondary-foreground: oklch(1 0 0);
   --grey-light: oklch(0.93 0 0);
   --grey-mid: oklch(0.68 0.0083 48.6);
@@ -123,6 +128,21 @@
 }
 
 
+@keyframes spin-once {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-732deg); /* two full rotations */
+  }
+}
+
+@layer utilities {
+  .animate-spin-twice {
+    animation: spin-once 1.6s ease-out;
+  }
+}
+
 @layer base {
   * {
     @apply border-border font-body font-medium outline-ring/50 ;
@@ -135,3 +155,4 @@
     @apply font-header;
   }
 }
+
