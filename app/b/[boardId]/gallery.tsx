@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { MemoizedDroppableColumn } from "./columns";
 import { useIsMirror } from "./board";
+import Image from "next/image";
 
 export default function Gallery({
   sectionId,
@@ -39,6 +40,8 @@ export default function Gallery({
   const numCols = useUIStore((s) => (isMirror ? s.mirrorNumCols : s.numCols));
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
+
+  const isEmpty = columns.every((col) => col.length === 0);
 
   // column width
   const columnWidth = useMemo(() => {
@@ -67,6 +70,14 @@ export default function Gallery({
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      const activeEl = document.activeElement;
+      const isTyping =
+        activeEl?.tagName === "INPUT" ||
+        activeEl?.tagName === "TEXTAREA" ||
+        (activeEl instanceof HTMLElement && activeEl.isContentEditable);
+
+      if (isTyping) return;
+
       // deleting image
       if (e.key === "Backspace" || e.key === "Delete") {
         const blocksToDelete = Object.values(selectedBlocks);
@@ -112,14 +123,15 @@ export default function Gallery({
       const target = event.target as HTMLElement;
       const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
 
-      if (clickedId) {
-        // Clicked inside an image or an image container
-        console.log("Clicked on image id:", clickedId);
-        return;
+      if (
+        !clickedId ||
+        clickedId.startsWith("drop-") ||
+        clickedId.startsWith("col-") ||
+        clickedId.startsWith("section-")
+      ) {
+        console.log("Clicked outside block. Clearing selection.");
+        setSelectedBlocks({});
       }
-      // Otherwise clicked somewhere else, clear selections
-      console.log("Clicked elsewhere. Clearing", clickedId);
-      setSelectedBlocks({});
     }
     document.body.addEventListener("click", handleGlobalClick);
 
@@ -144,12 +156,12 @@ export default function Gallery({
           }
           return newSelected;
         } else {
-          if (
-            newSelected[block.block_id] &&
-            Object.entries(newSelected).length === 1
-          ) {
-            return {};
-          }
+          // if (
+          //   newSelected[block.block_id] &&
+          //   Object.entries(newSelected).length === 1
+          // ) {
+          //   return {};
+          // }
           return { [block.block_id]: block };
         }
       });
@@ -159,13 +171,25 @@ export default function Gallery({
 
   return (
     <div
-      className={`grid h-full ${
+      className={`grid h-full relative ${
         draggedBlock ? "cursor-grabbing" : "cursor-default"
       }`}
       style={{
         gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
       }}
     >
+      {/* <p className="text-primary">hey there</p> */}
+      {isEmpty && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center 
+        opacity-60 pointer-events-none z-10"
+        >
+          <Image src="/1.png" alt="No images yet" width={375} height={150} />
+          <h3 className="text-primary text-sm">
+            No Images Yet! Drag one in or click here to add.
+          </h3>
+        </div>
+      )}
       {columns.map((column, columnIndex) => (
         <DroppableColumn
           id={`col-${sectionId}-${columnIndex}`}

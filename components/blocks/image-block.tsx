@@ -8,8 +8,8 @@ import {
   imageNames,
   SUPABASE_OBJECT_URL,
 } from "@/types/upload-settings";
-import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
+import { useLoadingStore } from "@/store/loading-store";
 
 export function getImageUrl(
   image_id: string,
@@ -21,15 +21,19 @@ export function getImageUrl(
 
 export function ImageBlock({
   img,
+  caption,
   height,
   shouldEagerLoad,
+  captionIsActive,
 }: {
   img: MudboardImage;
+  caption: string | null;
   height: number;
   shouldEagerLoad: boolean;
   columnWidth: number;
+  captionIsActive: boolean;
 }) {
-  const showBlurImg = useLayoutStore((s) => s.showBlurImg);
+  const showBlurImg = useLoadingStore((s) => s.showBlurImg);
   const numCols = useUIStore((s) => s.numCols);
   const [loaded, setLoaded] = useState(false);
 
@@ -55,11 +59,11 @@ export function ImageBlock({
       {!isErrored ? (
         <div
           style={{ aspectRatio: `${img.width} / ${height}`, width: "100%" }}
-          className="relative rounded-sm overflow-hidden"
+          className={`relative overflow-hidden `}
         >
           {img.blurhash && (
             <div
-              className="absolute inset-0"
+              className="absolute inset-0 rounded-sm"
               style={{
                 opacity: isBlurred ? 1 : 0,
                 transition: `opacity ${
@@ -79,14 +83,13 @@ export function ImageBlock({
 
           <Image
             src={fileName}
-            alt={img.caption}
+            alt={caption ?? img.original_name}
             width={realWidth}
             height={realHeight}
             onError={() => setIsErrored(true)}
             onLoad={() => setLoaded(true)}
-            className={`rounded-sm w-full h-full ${
-              showBlurImg ? "hidden" : "visible"
-            }`}
+            className={`w-full h-full ${showBlurImg ? "hidden" : "visible"}
+            ${captionIsActive ? "rounded-t-sm" : "rounded-sm"}`}
             loading={shouldEagerLoad ? "eager" : "lazy"}
           />
         </div>
@@ -100,7 +103,7 @@ export function ImageBlock({
           flex items-center justify-center relative text-center"
         >
           <span className="text-zinc-500 text-xs px-2">
-            {img.caption || "Image failed to load"}
+            {caption || "Image failed to load"}
           </span>
         </div>
       )}

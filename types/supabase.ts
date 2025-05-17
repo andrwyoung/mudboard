@@ -14,6 +14,7 @@ export type Database = {
           block_id: string
           block_type: string
           board_id: string
+          caption: string | null
           col_index: number
           created_at: string
           data: Json | null
@@ -29,6 +30,7 @@ export type Database = {
           block_id?: string
           block_type: string
           board_id: string
+          caption?: string | null
           col_index?: number
           created_at?: string
           data?: Json | null
@@ -44,6 +46,7 @@ export type Database = {
           block_id?: string
           block_type?: string
           board_id?: string
+          caption?: string | null
           col_index?: number
           created_at?: string
           data?: Json | null
@@ -163,6 +166,7 @@ export type Database = {
         Row: {
           board_id: string
           created_at: string
+          description: string | null
           order_index: number | null
           section_id: string
           title: string | null
@@ -170,6 +174,7 @@ export type Database = {
         Insert: {
           board_id: string
           created_at?: string
+          description?: string | null
           order_index?: number | null
           section_id?: string
           title?: string | null
@@ -177,6 +182,7 @@ export type Database = {
         Update: {
           board_id?: string
           created_at?: string
+          description?: string | null
           order_index?: number | null
           section_id?: string
           title?: string | null

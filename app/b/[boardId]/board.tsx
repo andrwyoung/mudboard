@@ -13,7 +13,7 @@ import { Block } from "@/types/block-types";
 import { useImageImport } from "@/hooks/use-import-images";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
-import { DEFAULT_COLUMNS, SCROLLBAR_STYLE } from "@/types/constants";
+import { SCROLLBAR_STYLE } from "@/types/constants";
 import { generateColumnsFromBlocks } from "@/lib/columns/generate-columns";
 import { createBlockMap } from "@/lib/columns/generate-block-map";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
@@ -36,6 +36,7 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 import SectionHeader from "@/components/section/section-header";
+import { useLoadingStore } from "@/store/loading-store";
 
 // differentiating mirror gallery from real one
 const MirrorContext = createContext(false);
@@ -62,14 +63,15 @@ export default function Board({ boardId }: { boardId: string }) {
   // sections
   const sections = useMetadataStore((s) => s.sections);
   const setSections = useMetadataStore((s) => s.setSections);
+  const [initSections, setInitSections] = useState<Section[]>([]);
   const setBoard = useMetadataStore((s) => s.setBoard);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // when blurring images
-  const setShowBlurImg = useLayoutStore((s) => s.setShowBlurImg);
-  const [sliderVal, setSliderVal] = useState(DEFAULT_COLUMNS);
-  const [fadeGallery, setFadeGallery] = useState(false);
-  const [showLoading, setShowLoading] = useState(false);
+  const setShowBlurImg = useLoadingStore((s) => s.setShowBlurImg);
+  const sliderVal = useLoadingStore((s) => s.sliderVal);
+  const fadeGallery = useLoadingStore((s) => s.fadeGallery);
+  const showLoading = useLoadingStore((s) => s.showLoading);
 
   const [scrollY, setScrollY] = useState(0);
 
@@ -108,12 +110,16 @@ export default function Board({ boardId }: { boardId: string }) {
 
         if (sections.length === 0) {
           console.log("No sections, creating one");
-          const fallback = await createSupabaseSection({ board_id: boardId });
+          const fallback = await createSupabaseSection({
+            board_id: boardId,
+            order_index: 0,
+          });
           sections = [fallback];
         }
         console.log("Got sections: ", sections);
 
         setSections(sections);
+        setInitSections(sections);
         setSelectedSectionId(sections[0].section_id);
         console.log("Set sections to:", sections);
       } catch (err) {
@@ -140,12 +146,18 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // this is where we generate the columns everytime things change
   useEffect(() => {
+    if (!initSections.length) return;
+
     const nextColumns: SectionColumns = {};
-    for (const [sectionId, blocks] of Object.entries(blocksBySection)) {
-      nextColumns[sectionId] = generateColumnsFromBlocks(blocks, numCols);
+
+    for (const section of initSections) {
+      nextColumns[section.section_id] = generateColumnsFromBlocks(
+        blocksBySection[section.section_id],
+        numCols
+      );
     }
     setSectionColumns(nextColumns);
-  }, [blocksBySection, numCols, setSectionColumns]);
+  }, [blocksBySection, initSections, numCols, setSectionColumns]);
 
   // const mirrorColumns = useMemo(
   //   () => generateColumnsFromBlocks(flatBlocks, mirrorNumCols),
@@ -341,13 +353,7 @@ export default function Board({ boardId }: { boardId: string }) {
       bg-primary"
           ref={sidebarRef}
         >
-          <Sidebar
-            sliderVal={sliderVal}
-            setSliderVal={setSliderVal}
-            setFadeGallery={setFadeGallery}
-            setShowLoading={setShowLoading}
-            sectionRefs={sectionRefs}
-          />
+          <Sidebar sectionRefs={sectionRefs} />
         </aside>
 
         {/* Gallery */}
@@ -355,9 +361,7 @@ export default function Board({ boardId }: { boardId: string }) {
           <div
             className={`absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 
             transition-opacity duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
-            pointer-events-none ${
-              fadeGallery ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+             ${fadeGallery ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           >
             {showLoading ? "Loading" : `${sliderVal} Columns`}
           </div>
@@ -379,32 +383,38 @@ export default function Board({ boardId }: { boardId: string }) {
             >
               <div style={{ direction: "ltr" }}>
                 <MirrorContext.Provider value={false}>
-                  {Object.entries(sectionColumns).map(
-                    ([sectionId, columns]) => (
-                      <div
-                        key={sectionId}
-                        ref={(el) => {
-                          sectionRefs.current[sectionId] = el;
-                        }}
-                      >
-                        <SectionHeader section={sectionMap[sectionId]} />
+                  {sections
+                    .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
+                    .map((section) => {
+                      const sectionId = section.section_id;
+                      const columns = sectionColumns[sectionId];
 
-                        <Gallery
-                          sectionId={sectionId}
-                          columns={columns}
-                          updateColumns={(fn) =>
-                            updateSectionColumns(selectedSectionId, fn)
-                          }
-                          draggedBlock={draggedBlock}
-                          sidebarWidth={sidebarWidth}
-                          scrollY={scrollY}
-                          selectedBlocks={selectedBlocks}
-                          setSelectedBlocks={setSelectedBlocks}
-                          overId={dropIndicatorId}
-                        />
-                      </div>
-                    )
-                  )}
+                      return (
+                        <div
+                          key={sectionId}
+                          ref={(el) => {
+                            sectionRefs.current[sectionId] = el;
+                          }}
+                        >
+                          <SectionHeader section={sectionMap[sectionId]} />
+                          {columns && (
+                            <Gallery
+                              sectionId={sectionId}
+                              columns={columns}
+                              updateColumns={(fn) =>
+                                updateSectionColumns(selectedSectionId, fn)
+                              }
+                              draggedBlock={draggedBlock}
+                              sidebarWidth={sidebarWidth}
+                              scrollY={scrollY}
+                              selectedBlocks={selectedBlocks}
+                              setSelectedBlocks={setSelectedBlocks}
+                              overId={dropIndicatorId}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
                 </MirrorContext.Provider>
               </div>
             </div>
@@ -434,7 +444,7 @@ export default function Board({ boardId }: { boardId: string }) {
             "fileName" in draggedBlock.data && (
               <Image
                 src={draggedBlock.data.fileName}
-                alt={draggedBlock.data.caption}
+                alt={draggedBlock.caption ?? draggedBlock.data.original_name}
                 width={draggedBlock.data.width}
                 height={draggedBlock.height}
                 className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform

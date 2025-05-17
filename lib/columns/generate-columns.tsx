@@ -1,10 +1,14 @@
 import { Block } from "@/types/block-types";
 
 export function generateColumnsFromBlocks(
-  blocks: Block[],
+  blocks: Block[] | undefined,
   numCols: number
 ): Block[][] {
+  console.log("generating blocks from this array: ", blocks);
   const newColumns: Block[][] = Array.from({ length: numCols }, () => []);
+  console.log("here's how many columns we have: ", newColumns);
+
+  if (!blocks) return newColumns;
 
   const maxSavedCol = blocks.reduce(
     (max, b) => Math.max(max, b.col_index ?? 0),

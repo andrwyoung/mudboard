@@ -10,7 +10,7 @@ export async function createSupabaseSection({
 }: {
   board_id: string;
   title?: string;
-  order_index?: number;
+  order_index: number;
 }): Promise<Section> {
   const newSectionId = uuidv4();
 

@@ -9,19 +9,21 @@ import { FaCaretDown } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 
-function AccordianWrapper({
+export function AccordianWrapper({
   title,
   children,
+  titleClassName = "",
 }: {
   title?: string;
   children: React.ReactNode;
+  titleClassName?: string;
 }) {
   const [showForm, setShowForm] = useState(false);
   return (
     <div className="flex flex-col gap-2">
       <div
         className={`text-sm flex flex-row gap-1 items-center transition-all duration-200
-            font-semibold cursor-pointer hover:underline hover:underline-offset-2 }`}
+            font-semibold cursor-pointer hover:underline hover:underline-offset-2 ${titleClassName}`}
         onClick={() => setShowForm((prev) => !prev)}
       >
         {title}

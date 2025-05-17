@@ -4,10 +4,14 @@ import {
   updateSectionDescription,
   updateSectionTitle,
 } from "@/lib/sync/section-actions";
+import { useLoadingStore } from "@/store/loading-store";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
   const description = section?.description;
+
+  const isEditing =
+    useLoadingStore.getState().editingSectionId === section.section_id;
 
   return (
     <div className="flex flex-row justify-between items-center pt-6 pb-0 px-3">
@@ -15,6 +19,7 @@ export default function SectionHeader({ section }: { section: Section }) {
         <InlineEditText
           value={title && title.trim() != "" ? title : null}
           unnamedPlaceholder="Click to add Title"
+          autofocus={isEditing}
           placeholder="Add title"
           onChange={(newTitle) => {
             updateSectionTitle(section.section_id, newTitle);

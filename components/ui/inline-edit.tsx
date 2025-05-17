@@ -1,3 +1,4 @@
+import { useLoadingStore } from "@/store/loading-store";
 import { useEffect, useRef, useState } from "react";
 
 export default function InlineEditText({
@@ -7,6 +8,7 @@ export default function InlineEditText({
   className,
   unnamedPlaceholder = "Click to Edit",
   placeholder,
+  autofocus = false,
 }: {
   value: string | null;
   onChange: (newValue: string | null) => void;
@@ -14,6 +16,7 @@ export default function InlineEditText({
   className?: string;
   unnamedPlaceholder?: string;
   placeholder?: string;
+  autofocus?: boolean;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(value ?? "");
@@ -24,6 +27,13 @@ export default function InlineEditText({
       inputRef.current.select();
     }
   }, [isEditing]);
+
+  useEffect(() => {
+    if (autofocus && inputRef.current) {
+      inputRef.current.focus();
+      useLoadingStore.getState().setEditingSectionId(null);
+    }
+  }, [autofocus]);
 
   const confirm = () => {
     const trimmed = draft.trim();
@@ -48,7 +58,7 @@ export default function InlineEditText({
     >
       {isEditing ? (
         <input
-          autoFocus
+          autoFocus={autofocus}
           ref={inputRef}
           value={draft}
           placeholder={placeholder}

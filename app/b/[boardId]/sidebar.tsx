@@ -1,35 +1,24 @@
 import NewBoardButton from "@/components/sidebar/new-board-button";
-import { Slider } from "@/components/ui/slider";
-import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore, useUserStore } from "@/store/metadata-store";
-import { useUIStore } from "@/store/ui-store";
-import { MAX_COLUMNS, MIN_COLUMNS, SCROLLBAR_STYLE } from "@/types/constants";
+import { SCROLLBAR_STYLE } from "@/types/constants";
 import Image from "next/image";
 import Link from "next/link";
 import React, { RefObject, useEffect } from "react";
-import AccountSyncSection from "@/components/sidebar/account/account-section";
+import AccountSyncSection, {
+  AccordianWrapper,
+} from "@/components/sidebar/account/account-section";
 import SectionsSection from "@/components/sidebar/sections-section";
+import CustomizeSection from "@/components/sidebar/customize-section";
 
-const fontClass = "font-semibold text-sm font-header";
-const refClass =
-  "text-accent hover:text-primary-foreground transition-all hover:underline";
+// const fontClass = "font-semibold text-sm font-header";
+// const refClass =
+//   "text-white hover:text-primary-foreground transition-all hover:underline";
 
 export default function Sidebar({
-  sliderVal,
-  setSliderVal,
-  setFadeGallery,
-  setShowLoading,
   sectionRefs,
 }: {
-  sliderVal: number;
-  setSliderVal: (e: number) => void;
-  setFadeGallery: (e: boolean) => void;
-  setShowLoading: (e: boolean) => void;
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
 }) {
-  const setShowBlurImg = useLayoutStore((s) => s.setShowBlurImg);
-  const setNumCols = useUIStore((s) => s.setNumCols);
-
   const board = useMetadataStore((s) => s.board);
   const user = useUserStore((s) => s.user);
 
@@ -52,15 +41,25 @@ export default function Sidebar({
             alt="mudboard logo"
             height={387}
             width={1267}
-            className="w-[200px]"
+            className="w-[150px]"
           />
         </Link>
       </div>
-      <div className="flex flex-col flex-grow justify-center px-10 gap-20">
-        <div className="flex flex-col">
-          <h1 className="text-3xl  font-bold mb-2">Site Under Construction!</h1>
 
-          <div className="flex flex-col gap-1">
+      <div className="flex flex-col flex-grow justify-center gap-24">
+        <div className="flex flex-col px-8 items-center gap-1">
+          <h1 className="text-3xl font-bold">Hi there!</h1>
+          <p className="text-xs font-semibold text-center mb-3">
+            This board is <strong>fully customizable</strong>.<br />
+            <br />
+            Play around with this board, <br />
+            drop in new images, or
+          </p>
+          <div className="w-fit">
+            <NewBoardButton />
+          </div>
+
+          {/* <div className="flex flex-col gap-1">
             <p className={`${fontClass}`}>
               •{" "}
               <a
@@ -83,52 +82,23 @@ export default function Sidebar({
                 How this is being built
               </a>
             </p>
-          </div>
+          </div> */}
         </div>
 
-        <SectionsSection sectionRefs={sectionRefs} />
+        <div className="px-10 flex flex-col gap-12">
+          <SectionsSection sectionRefs={sectionRefs} />
 
-        <div className="flex flex-col gap-1 self-center w-full">
-          {/* <div className="flex flex-col gap-1 max-w-42 self-center w-full"> */}
-          <h3 className="mb-1">Columns:</h3>
-
-          <div className="flex flex-row justify-between px-1 items-center gap-3 text-sm font-bold">
-            <p className="font-bold">{MIN_COLUMNS}</p>
-            <div
-              className="w-full"
-              onPointerDown={() => {
-                setShowLoading(false);
-                setShowBlurImg(true);
-                setFadeGallery(true);
-              }}
-              onPointerUp={() => {
-                // setFadeGallery(false);
-                setShowLoading(true);
-                setTimeout(() => {
-                  setNumCols(sliderVal);
-                  setFadeGallery(false);
-                  setTimeout(() => {
-                    setShowBlurImg(false);
-                  }, 400);
-                }, 300); // small delay to let layout commit — tweak as needed
-              }}
-            >
-              <Slider
-                defaultValue={[sliderVal]}
-                min={MIN_COLUMNS}
-                max={MAX_COLUMNS}
-                onValueChange={(val) => setSliderVal(val[0])}
-                // orientation="vertical"
-              />
-            </div>
-
-            <p className="font-bold">{MAX_COLUMNS}</p>
-          </div>
+          <AccordianWrapper
+            title="Customize!"
+            titleClassName="font-header text-lg"
+          >
+            <CustomizeSection />
+          </AccordianWrapper>
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full px-8 pt-6">
         <AccountSyncSection />
-        <NewBoardButton />
+        {/* <NewBoardButton /> */}
       </div>
       <div
         className="flex flex-col items-center px-4 py-4 

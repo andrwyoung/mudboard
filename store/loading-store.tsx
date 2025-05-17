@@ -1,11 +1,42 @@
+import { DEFAULT_COLUMNS } from "@/types/constants";
 import { create } from "zustand";
 
 type LoadingStore = {
+  // unused right now
   uploading: boolean;
   setUploading: (d: boolean) => void;
+
+  // not working right now
+  // used for focusing on the title when makign new section
+  editingSectionId: string | null;
+  setEditingSectionId: (id: string | null) => void;
+
+  showBlurImg: boolean;
+  setShowBlurImg: (d: boolean) => void;
+
+  // for fading out gallery
+  sliderVal: number;
+  setSliderVal: (d: number) => void;
+  fadeGallery: boolean;
+  setFadeGallery: (d: boolean) => void;
+  showLoading: boolean;
+  setShowLoading: (d: boolean) => void;
 };
 
 export const useLoadingStore = create<LoadingStore>((set) => ({
   uploading: false,
   setUploading: (d) => set({ uploading: d }),
+
+  editingSectionId: null,
+  setEditingSectionId: (id: string | null) => set({ editingSectionId: id }),
+
+  showBlurImg: false,
+  setShowBlurImg: (d) => set({ showBlurImg: d }),
+
+  sliderVal: DEFAULT_COLUMNS,
+  setSliderVal: (d: number) => set({ sliderVal: d }),
+  fadeGallery: false,
+  setFadeGallery: (d: boolean) => set({ fadeGallery: d }),
+  showLoading: false,
+  setShowLoading: (d: boolean) => set({ showLoading: d }),
 }));

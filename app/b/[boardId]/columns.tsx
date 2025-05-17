@@ -91,7 +91,7 @@ function ColumnComponent({
 
   return (
     // <div style={{ height: totalHeight, position: "relative" }}>
-    <div>
+    <div style={{ minHeight: 250 }}>
       <SortableContext items={column.map((block) => block.block_id)}>
         {/* First drop zone */}
         {column.length > 0 && (

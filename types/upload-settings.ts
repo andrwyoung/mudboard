@@ -6,6 +6,8 @@ export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/stor
 export const OVERSCAN_SIZE = 1000;
 export const IMAGE_OVERSCAN_SIZE = 600;
 
+export const CAPTION_HEIGHT = 28;
+
 // syncing
 export const AUTOSYNC_DELAY = 5000;
 
