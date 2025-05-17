@@ -14,7 +14,6 @@ export type Database = {
           block_id: string
           block_type: string
           board_id: string
-          caption: string | null
           col_index: number
           created_at: string
           data: Json | null
@@ -30,7 +29,6 @@ export type Database = {
           block_id?: string
           block_type: string
           board_id: string
-          caption?: string | null
           col_index?: number
           created_at?: string
           data?: Json | null
@@ -46,7 +44,6 @@ export type Database = {
           block_id?: string
           block_type?: string
           board_id?: string
-          caption?: string | null
           col_index?: number
           created_at?: string
           data?: Json | null

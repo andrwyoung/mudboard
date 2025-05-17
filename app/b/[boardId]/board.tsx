@@ -444,7 +444,9 @@ export default function Board({ boardId }: { boardId: string }) {
             "fileName" in draggedBlock.data && (
               <Image
                 src={draggedBlock.data.fileName}
-                alt={draggedBlock.caption ?? draggedBlock.data.original_name}
+                alt={
+                  draggedBlock.data.caption ?? draggedBlock.data.original_name
+                }
                 width={draggedBlock.data.width}
                 height={draggedBlock.height}
                 className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform

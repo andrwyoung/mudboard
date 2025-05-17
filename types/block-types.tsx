@@ -23,7 +23,6 @@ export type Block = {
   block_type: BlockType;
   image_id?: string;
   data: MudboardImage | TextBlock | null;
-  caption?: string | null;
 
   height: number;
 
@@ -41,7 +40,7 @@ export type MudboardImage = {
   original_name: string;
 
   width: number;
-
+  caption?: string | null;
   blurhash?: string;
 
   // defined by me on fetch

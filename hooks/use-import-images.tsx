@@ -158,7 +158,7 @@ export function useImageImport({
             image_id,
             file_ext: DEFAULT_FILE_EXT,
             original_name,
-            caption: original_name,
+            caption: null,
             width,
             blurhash,
 
