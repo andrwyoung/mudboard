@@ -1,9 +1,11 @@
+import { useLayoutStore } from "@/store/layout-store";
+import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
 
-export function getColumnHeights(
-  columns: Block[][],
-  spacing: number
-): number[] {
+export function getColumnHeights(sectionId: string): number[] {
+  const columns = useLayoutStore.getState().sectionColumns[sectionId] ?? [];
+  const spacing = useUIStore.getState().spacingSize;
+
   return columns.map((col) => {
     return col.reduce((sum, block, index) => {
       const height = block.height ?? 0;
@@ -13,16 +15,14 @@ export function getColumnHeights(
   });
 }
 
-export function findShortestColumn(
-  columns: Block[][],
-  spacing: number
-): number {
-  const heights = getColumnHeights(columns, spacing);
+export function findShortestColumn(sectionId: string): number {
+  const heights = getColumnHeights(sectionId);
   return heights.indexOf(Math.min(...heights));
 }
 
-export function getNextRowIndex(col: Block[], spacing: number): number {
+export function getNextRowIndex(col: Block[]): number {
   if (col.length === 0) return 0;
+  const spacing = useUIStore.getState().spacingSize;
 
   const lastBlock = col[col.length - 1];
   const height = lastBlock.height ?? 0;

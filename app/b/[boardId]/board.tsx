@@ -46,10 +46,8 @@ export default function Board({ boardId }: { boardId: string }) {
   const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
 
   // when dragging new images from local computer
-  const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  console.log(isUploading);
+  const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
 
   const [selectedSectionId, setSelectedSectionId] = useState("");
 
@@ -83,7 +81,7 @@ export default function Board({ boardId }: { boardId: string }) {
   // helper function (so I don't forget setting layout dirty)
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
-  const updateSectionColumns = useLayoutStore((s) => s.updateSectionColumns);
+  const updateSectionColumns = useLayoutStore((s) => s.updateColumnsInASection);
 
   // for dragging and stuff
   const [dropIndicatorId, setDropIndicatorId] = useState<string | null>(null);
@@ -203,12 +201,8 @@ export default function Board({ boardId }: { boardId: string }) {
   // handling importing images
   useImageImport({
     sectionId: selectedSectionId,
-    boardId,
-    columns: sectionColumns[selectedSectionId],
-    updateColumns: (fn) => updateSectionColumns(selectedSectionId, fn),
-    setIsDragging: setIsDraggingFile,
+    setIsDraggingFile,
     setDraggedFileCount,
-    setIsUploading,
   });
 
   // SECTION: Things to do with blurirng
@@ -379,6 +373,8 @@ export default function Board({ boardId }: { boardId: string }) {
                 direction: "rtl",
                 paddingLeft: gallerySpacingSize,
                 paddingRight: gallerySpacingSize,
+                paddingTop: gallerySpacingSize,
+                paddingBottom: gallerySpacingSize,
               }}
             >
               <div style={{ direction: "ltr" }}>

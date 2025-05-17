@@ -9,7 +9,7 @@ import { toast } from "sonner";
 type LayoutStore = {
   sectionColumns: SectionColumns;
   setSectionColumns: (cols: SectionColumns) => void;
-  updateSectionColumns: (
+  updateColumnsInASection: (
     sectionId: string,
     fn: (prev: Block[][]) => Block[][]
   ) => void;
@@ -26,7 +26,7 @@ type LayoutStore = {
 export const useLayoutStore = create<LayoutStore>((set, get) => ({
   sectionColumns: {},
   setSectionColumns: (cols: SectionColumns) => set({ sectionColumns: cols }),
-  updateSectionColumns: (sectionId, fn) => {
+  updateColumnsInASection: (sectionId, fn) => {
     set((state) => {
       const numCols = useUIStore.getState().numCols;
       const current =

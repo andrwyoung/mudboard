@@ -1,0 +1,254 @@
+import {
+  allowedMimeTypes,
+  COMPRESSION_THREADS,
+  DEFAULT_FILE_EXT,
+  imageNames,
+  UPLOAD_THREADS,
+} from "@/types/upload-settings";
+import { toast } from "sonner";
+import { runWithConcurrency } from "../concurrency-helper";
+import { uploadImageToSupabase } from "../db-actions/upload-image";
+import { v4 as uuidv4 } from "uuid";
+import { CompressedImage, convertToWebP } from "./compress-image";
+import {
+  Block,
+  BlockInsert,
+  BlockType,
+  MudboardImage,
+} from "@/types/block-types";
+import { generateBlurhashFromImage } from "./blur-hash";
+import { findShortestColumn, getNextRowIndex } from "../columns/column-helpers";
+import { useMetadataStore } from "@/store/metadata-store";
+import { useLayoutStore } from "@/store/layout-store";
+import { useLoadingStore } from "@/store/loading-store";
+
+type PreparedImage = {
+  image_id: string;
+  original_name: string;
+  fileExt: string;
+
+  variants: Record<imageNames, CompressedImage>;
+  blurhash?: string;
+
+  objectUrl: string;
+  newImage: MudboardImage;
+  bestEffortBlock: BlockInsert;
+  tempBlockId: string;
+};
+
+export async function uploadImages(files: FileList, sectionId: string) {
+  const boardId = useMetadataStore.getState().board?.board_id;
+  if (!boardId) return;
+
+  if (!files || files.length === 0) return;
+
+  const updateColumnsInASection =
+    useLayoutStore.getState().updateColumnsInASection;
+  const updateColumns = (fn: (prevCols: Block[][]) => Block[][]) => {
+    updateColumnsInASection(sectionId, fn);
+  };
+
+  let successfulUploads = 0;
+  //   let failedUploads = 0;
+
+  console.time("🗜️ Compression phase");
+  useLoadingStore.setState({ isUploading: true });
+
+  const compressionTasks = Array.from(files).map((file) => async () => {
+    const image_id = uuidv4();
+
+    const match = file.name.match(/^(.*)\.([^.]+)$/);
+    const original_name = match ? match[1] : file.name;
+    const fileExt = match ? match[2].toLowerCase() : null; // just used to check
+
+    if (!fileExt || !allowedMimeTypes.includes(file.type)) {
+      toast.error(`Unsupported file type: ${file.type}`);
+      return;
+    }
+
+    // SECTION: image compression
+    //
+
+    let variants: Record<imageNames, CompressedImage>;
+    try {
+      variants = await convertToWebP(file);
+    } catch (err) {
+      toast.error("Image conversion failed. Please try a different file.");
+      console.log("Image Conversion failed: ", err);
+      return;
+    }
+
+    let blurhash: string | undefined;
+    try {
+      const thumbImg = new Image();
+      thumbImg.src = URL.createObjectURL(variants.thumb.file);
+      await new Promise((resolve, reject) => {
+        thumbImg.onload = resolve;
+        thumbImg.onerror = reject;
+      });
+      blurhash = await generateBlurhashFromImage(thumbImg);
+    } catch (err) {
+      console.warn("Failed to generate blurhash", err);
+    }
+
+    // SECTION: Putting it all together
+    //
+
+    const objectUrl = URL.createObjectURL(variants.full.file);
+    const { width, height } = variants.medium;
+
+    const newImage: MudboardImage = {
+      image_id,
+      file_ext: DEFAULT_FILE_EXT,
+      original_name,
+      caption: null,
+      width,
+      blurhash,
+
+      fileName: objectUrl, // the local file
+      fileType: "blob",
+      uploadStatus: "uploading",
+    };
+
+    console.log("sectionId: ", sectionId);
+
+    const tempBlockId = `temp-${uuidv4()}`;
+    const incompleteBlock = {
+      section_id: sectionId,
+      board_id: boardId,
+      block_type: "image" as BlockType,
+      height,
+
+      deleted: false,
+    };
+
+    // here we add it to local layout so we can immediately interact
+    updateColumns((prevCols) => {
+      const colIndex = findShortestColumn(sectionId);
+      const rowIndex = getNextRowIndex(prevCols[colIndex] ?? []);
+
+      const newBlock: Block = {
+        block_id: tempBlockId,
+
+        ...incompleteBlock,
+        data: newImage,
+
+        col_index: colIndex,
+        row_index: rowIndex,
+        order_index: 0,
+      };
+
+      const newCols = [...prevCols];
+      newCols[colIndex] = [...newCols[colIndex], newBlock];
+      return newCols;
+    });
+
+    // best effort block
+    // optimistically generate order and columns
+    const cols = useLayoutStore.getState().sectionColumns[sectionId] ?? [];
+    const optimisticColIndex = findShortestColumn(sectionId);
+    const optimisticRowIndex = getNextRowIndex(cols[optimisticColIndex] ?? []);
+    const bestEffortBlock: BlockInsert = {
+      ...incompleteBlock,
+
+      col_index: optimisticColIndex,
+      row_index: optimisticRowIndex,
+      order_index: 0,
+    };
+
+    return {
+      image_id,
+      original_name,
+      fileExt,
+      variants,
+      blurhash,
+      objectUrl,
+      newImage,
+      bestEffortBlock,
+      tempBlockId,
+    };
+  });
+
+  const preparedImages = await runWithConcurrency<PreparedImage | undefined>(
+    compressionTasks,
+    COMPRESSION_THREADS
+  );
+
+  console.timeEnd("🗜️ Compression phase");
+  console.time("📤 Upload phase");
+
+  console.log(
+    "Compression done! Compressed ",
+    preparedImages.length,
+    " images"
+  );
+  //
+  // KEY SECTION: here we actually upload everything to db
+  //
+  //
+
+  const filteredImages = preparedImages.filter((img): img is PreparedImage =>
+    Boolean(img)
+  );
+  await runWithConcurrency(
+    filteredImages.map(
+      (img) => () =>
+        uploadImageToSupabase(
+          img.variants.medium.file,
+          img.bestEffortBlock,
+          img.newImage,
+          img.variants.full.file,
+          img.variants.thumb.file
+        )
+          .then((block_id) => {
+            if (!block_id) throw new Error("No block_id returned");
+            successfulUploads++;
+            updateColumns((prevCols) =>
+              prevCols.map((col) =>
+                col.map((block) =>
+                  block.block_id === img.tempBlockId
+                    ? {
+                        ...block,
+                        block_id: block_id, // NOTE: we grab set real block_id
+                        data: {
+                          ...(block.data as MudboardImage),
+                          uploadStatus: "uploaded",
+                        },
+                      }
+                    : block
+                )
+              )
+            );
+          })
+          .catch((err) => {
+            console.error(err);
+            // failedUploads++;
+            updateColumns((prevCols) =>
+              prevCols.map((col) =>
+                col.map((block) =>
+                  block.block_id === img.tempBlockId
+                    ? {
+                        ...block,
+                        data: {
+                          ...(block.data as MudboardImage),
+                          uploadStatus: "error",
+                        },
+                      }
+                    : block
+                )
+              )
+            );
+          })
+    ),
+    UPLOAD_THREADS
+  );
+
+  console.timeEnd("📤 Upload phase");
+  useLoadingStore.setState({ isUploading: false });
+
+  // we may have incorrect versions of the order, so trigger a sync
+  toast.success(
+    `Successfully uploaded ${successfulUploads} of ${preparedImages.length} images!`
+  );
+  console.log(`All ${preparedImages.length} uploads complete!`);
+}

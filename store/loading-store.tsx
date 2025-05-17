@@ -3,8 +3,8 @@ import { create } from "zustand";
 
 type LoadingStore = {
   // unused right now
-  uploading: boolean;
-  setUploading: (d: boolean) => void;
+  isUploading: boolean;
+  setIsUploading: (d: boolean) => void;
 
   // not working right now
   // used for focusing on the title when makign new section
@@ -24,8 +24,8 @@ type LoadingStore = {
 };
 
 export const useLoadingStore = create<LoadingStore>((set) => ({
-  uploading: false,
-  setUploading: (d) => set({ uploading: d }),
+  isUploading: false,
+  setIsUploading: (d) => set({ isUploading: d }),
 
   editingSectionId: null,
   setEditingSectionId: (id: string | null) => set({ editingSectionId: id }),
