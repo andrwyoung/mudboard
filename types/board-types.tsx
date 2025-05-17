@@ -13,6 +13,8 @@ export type Section = {
   order_index?: number;
   title?: string | null;
   description?: string | null;
+
+  deleted: boolean;
 };
 
 export type Board = {

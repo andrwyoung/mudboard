@@ -222,8 +222,7 @@ export function useGalleryHandlers({
             return cols;
           },
           [targetSection.section_id]: (prev) => {
-            const spacingSize = useUIStore.getState().spacingSize;
-            const toColIndex = findShortestColumn(prev, spacingSize);
+            const toColIndex = findShortestColumn(targetSection.section_id);
             const toCol = [
               ...prev[toColIndex],
               {
