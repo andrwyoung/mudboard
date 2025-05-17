@@ -9,7 +9,8 @@ export default function InlineEditText({
   unnamedPlaceholder = "Click to Edit",
   placeholder,
   autofocus = false,
-}: {
+}: // multilineDisplay = false,
+{
   value: string | null;
   onChange: (newValue: string | null) => void;
   isEditable?: boolean;
@@ -17,6 +18,7 @@ export default function InlineEditText({
   unnamedPlaceholder?: string;
   placeholder?: string;
   autofocus?: boolean;
+  multilineDisplay?: boolean;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(value ?? "");
@@ -84,7 +86,7 @@ export default function InlineEditText({
         `}
           title={isEditable ? "Click to rename" : "This list can’t be renamed"}
         >
-          {value ?? unnamedPlaceholder}
+          {value && value.trim() !== "" ? value : unnamedPlaceholder}
         </h1>
       )}
     </div>

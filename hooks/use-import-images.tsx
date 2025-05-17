@@ -3,6 +3,8 @@ import { CompressedImage } from "@/lib/process-images/compress-image";
 import { imageNames } from "@/types/upload-settings";
 import { BlockInsert, MudboardImage } from "@/types/block-types";
 import { uploadImages } from "@/lib/process-images/upload-images";
+import { Section } from "@/types/board-types";
+import { toast } from "sonner";
 
 type PreparedImage = {
   image_id: string;
@@ -19,17 +21,17 @@ type PreparedImage = {
 };
 
 export function useImageImport({
-  sectionId,
+  selectedSection,
   setIsDraggingFile,
   setDraggedFileCount,
 }: {
-  sectionId: string;
+  selectedSection: Section | null;
   setIsDraggingFile: (isDragging: boolean) => void;
   setDraggedFileCount: (count: number | null) => void;
 }) {
   // handling importing images
   useEffect(() => {
-    if (!sectionId) return;
+    if (!selectedSection) return;
     let dragCounter = 0;
 
     function handleDragEnter(e: DragEvent) {
@@ -64,7 +66,11 @@ export function useImageImport({
       setDraggedFileCount(null);
 
       if (files && files.length > 0) {
-        uploadImages(files, sectionId);
+        if (!selectedSection || selectedSection.section_id.trim() === "") {
+          toast.error("No Selected Section");
+          return;
+        }
+        uploadImages(files, selectedSection.section_id);
       }
     }
 
@@ -79,5 +85,5 @@ export function useImageImport({
       window.removeEventListener("drop", handleDrop);
       window.removeEventListener("dragleave", handleDragLeave);
     };
-  }, [sectionId]);
+  }, [selectedSection]);
 }

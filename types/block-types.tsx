@@ -22,7 +22,7 @@ export type Block = {
 
   block_type: BlockType;
   image_id?: string;
-  data: MudboardImage | TextBlock | null;
+  data: MudboardImage | TextBlockType | null;
 
   height: number;
 
@@ -51,7 +51,7 @@ export type MudboardImage = {
   uploadStatus?: UploadStatus;
 };
 
-export type TextBlock = {
+export type TextBlockType = {
   text: string;
 };
 

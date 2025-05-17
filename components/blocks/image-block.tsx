@@ -1,5 +1,5 @@
 import { Block, MudboardImage } from "@/types/block-types";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { Blurhash } from "react-blurhash";
 
@@ -12,7 +12,7 @@ import {
 import { useUIStore } from "@/store/ui-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { AnimatePresence, motion } from "framer-motion";
-import { updateImageBlockCaption } from "@/lib/sync/block-actions";
+import { updateImageBlockCaption } from "@/lib/sync/image-block-actions";
 
 export function getImageUrl(
   image_id: string,
@@ -65,15 +65,15 @@ export function ImageBlock({
   const [isFocused, setIsFocused] = useState(false);
 
   // focus on input as soon as selected
-  useEffect(() => {
-    if (isSelected && inputRef.current) {
-      inputRef.current.focus({ preventScroll: true });
-      inputRef.current.setSelectionRange(
-        inputRef.current.value.length,
-        inputRef.current.value.length
-      ); // places cursor at the end
-    }
-  }, [isSelected]);
+  // useEffect(() => {
+  //   if (isSelected && inputRef.current) {
+  //     inputRef.current.focus({ preventScroll: true });
+  //     inputRef.current.setSelectionRange(
+  //       inputRef.current.value.length,
+  //       inputRef.current.value.length
+  //     ); // places cursor at the end
+  //   }
+  // }, [isSelected]);
 
   return (
     <>

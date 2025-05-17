@@ -2,6 +2,7 @@ import { memo } from "react";
 import { SortableImageItem } from "@/components/drag/sortable-wrapper";
 import { Block } from "@/types/block-types";
 import { ImageBlock } from "./image-block";
+import TextBlock from "./text-block";
 
 export function BlockChooser({
   block,
@@ -25,7 +26,7 @@ export function BlockChooser({
         />
       );
     case "text":
-      return <div className="p-2 text-zinc-600 italic">[Text block]</div>; // placeholder
+      return <TextBlock block={block} />;
     case "spacer":
       return <div className="h-8 w-full bg-transparent" />; // placeholder
     default:

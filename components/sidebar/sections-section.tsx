@@ -1,11 +1,23 @@
 import { useMetadataStore } from "@/store/metadata-store";
-import React, { RefObject } from "react";
+import React, { RefObject, useState } from "react";
 import { DroppableSection } from "../drag/droppable-section";
 import FillingDot from "../ui/filling-dot";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import { addNewSection } from "@/lib/sync/section-actions";
 import { useLoadingStore } from "@/store/loading-store";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
+import { Section } from "@/types/board-types";
+import { toast } from "sonner";
 
 export default function SectionsSection({
   sectionRefs,
@@ -16,10 +28,11 @@ export default function SectionsSection({
   const sections = useMetadataStore((s) => s.sections);
 
   const setEditingSectionId = useLoadingStore((s) => s.setEditingSectionId);
+  const [sectionToDelete, setSectionToDelete] = useState<Section | null>(null);
 
   return (
     <div className="flex flex-col gap-1 items-start">
-      <h1 className="text-2xl font-semibold">Sections:</h1>
+      <h1 className="text-2xl font-semibold px-4">Sections:</h1>
       <div className="w-full">
         {[...sections]
           .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
@@ -31,25 +44,73 @@ export default function SectionsSection({
                 id={`section-${index}`}
                 key={section.section_id}
               >
-                <div
-                  className=" select-none flex gap-3 items-center group cursor-pointer w-full"
-                  onClick={() => {
-                    const sectionEl = sectionRefs.current?.[section.section_id];
-                    if (sectionEl) {
-                      sectionEl.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }
-                  }}
-                >
-                  <FillingDot />
-                  <h2
-                    className={`text-lg text-primary-foreground group-hover:text-accent transition-all duration-300
-                    ${titleExists ? "" : "italic"}`}
+                <div className="flex justify-between group items-center pl-2 ">
+                  <div
+                    className=" select-none flex gap-3 items-center cursor-pointer w-full py-[1px]"
+                    onClick={() => {
+                      const sectionEl =
+                        sectionRefs.current?.[section.section_id];
+                      if (sectionEl) {
+                        sectionEl.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        });
+                      }
+                    }}
                   >
-                    {titleExists ? section.title : DEFAULT_SECTION_NAME}
-                  </h2>
+                    <FillingDot />
+                    <h2
+                      className={`text-lg text-primary-foreground group-hover:text-accent transition-all duration-300
+                    ${titleExists ? "" : "italic"}`}
+                    >
+                      {titleExists ? section.title : DEFAULT_SECTION_NAME}
+                    </h2>
+                  </div>
+
+                  <FaTrash
+                    className="size-3.5 hover:rotate-24 text-accent transition-all duration-300 
+                  opacity-0 group-hover:opacity-100 cursor-pointer"
+                    title="Delete Section"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSectionToDelete(section);
+                    }}
+                  />
+                  {sectionToDelete && (
+                    <AlertDialog
+                      open={!!sectionToDelete}
+                      onOpenChange={(open) => !open && setSectionToDelete(null)}
+                    >
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-2xl text-primary">
+                            Delete &quot;
+                            {sectionToDelete.title ?? DEFAULT_SECTION_NAME}
+                            &quot;?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will remove the section and any blocks inside
+                            it. This action cannot be undone (as of now).
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="font-semibold">
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="font-bold"
+                            onClick={() => {
+                              // deleteSection(sectionToDelete.section_id);
+                              toast.error("Not implemented yet lol");
+                              setSectionToDelete(null);
+                            }}
+                          >
+                            Delete Section
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
                 </div>
               </DroppableSection>
             );
@@ -58,7 +119,7 @@ export default function SectionsSection({
       <button
         type="button"
         className="text-primary-foreground hover:underline hover:underline-offset-2 
-            transition-all duration-300 cursor-pointer
+            transition-all duration-300 cursor-pointer px-4
             flex gap-1 items-center text-sm"
         onClick={async () => {
           if (!board) return;

@@ -13,7 +13,7 @@ import { Block } from "@/types/block-types";
 import { useImageImport } from "@/hooks/use-import-images";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
-import { SCROLLBAR_STYLE } from "@/types/constants";
+import { DEFAULT_SECTION_NAME, SCROLLBAR_STYLE } from "@/types/constants";
 import { generateColumnsFromBlocks } from "@/lib/columns/generate-columns";
 import { createBlockMap } from "@/lib/columns/generate-block-map";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
@@ -49,7 +49,9 @@ export default function Board({ boardId }: { boardId: string }) {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
 
-  const [selectedSectionId, setSelectedSectionId] = useState("");
+  const [selectedSection, setSelectedSectionId] = useState<Section | null>(
+    null
+  );
 
   // when dragging blocks
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
@@ -118,7 +120,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
         setSections(sections);
         setInitSections(sections);
-        setSelectedSectionId(sections[0].section_id);
+        setSelectedSectionId(sections[0]);
         console.log("Set sections to:", sections);
       } catch (err) {
         console.error("Error loading sections:", err);
@@ -200,7 +202,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // handling importing images
   useImageImport({
-    sectionId: selectedSectionId,
+    selectedSection: selectedSection,
     setIsDraggingFile,
     setDraggedFileCount,
   });
@@ -327,10 +329,21 @@ export default function Board({ boardId }: { boardId: string }) {
   return (
     <div className="flex h-screen overflow-hidden relative">
       {isDraggingFile && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center text-white text-2xl">
-          {draggedFileCount
-            ? `Drop ${draggedFileCount} file${draggedFileCount > 1 ? "s" : ""}!`
-            : "Drop your file!"}
+        <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
+          <div className="text-3xl font-header">
+            {draggedFileCount
+              ? `Drop ${draggedFileCount} file${
+                  draggedFileCount > 1 ? "s" : ""
+                }!`
+              : "Drop your file!"}
+          </div>
+          <div className="text-md">
+            {/* {draggedFileCount &&
+              draggedFileCount > DROP_SPREAD_THRESHOLD &&
+              `Adding more than ${DROP_SPREAD_THRESHOLD} spreads over all columns
+          `} */}
+            {`Adding to ${selectedSection?.title ?? DEFAULT_SECTION_NAME}`}
+          </div>
         </div>
       )}
 
@@ -398,7 +411,7 @@ export default function Board({ boardId }: { boardId: string }) {
                               sectionId={sectionId}
                               columns={columns}
                               updateColumns={(fn) =>
-                                updateSectionColumns(selectedSectionId, fn)
+                                updateSectionColumns(sectionId, fn)
                               }
                               draggedBlock={draggedBlock}
                               sidebarWidth={sidebarWidth}

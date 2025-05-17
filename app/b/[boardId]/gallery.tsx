@@ -14,6 +14,7 @@ import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { MemoizedDroppableColumn } from "./columns";
 import { useIsMirror } from "./board";
 import Image from "next/image";
+import { useImagePicker } from "@/hooks/use-image-picker";
 
 export default function Gallery({
   sectionId,
@@ -42,6 +43,7 @@ export default function Gallery({
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
   const isEmpty = columns.every((col) => col.length === 0);
+  const { triggerImagePicker, fileInput } = useImagePicker(sectionId);
 
   // column width
   const columnWidth = useMemo(() => {
@@ -180,15 +182,19 @@ export default function Gallery({
     >
       {/* <p className="text-primary">hey there</p> */}
       {isEmpty && (
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center 
-        opacity-60 pointer-events-none z-10"
-        >
-          <Image src="/1.png" alt="No images yet" width={375} height={150} />
-          <h3 className="text-primary text-sm">
-            No Images Yet! Drag one in or click here to add.
-          </h3>
-        </div>
+        <>
+          {fileInput}
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center 
+        opacity-60 z-10 hover:opacity-90 transition-all duration-200 cursor-pointer"
+            onClick={triggerImagePicker}
+          >
+            <Image src="/1.png" alt="No images yet" width={375} height={150} />
+            <h3 className="text-primary text-sm">
+              No Images Yet! Drag one in or click here to add.
+            </h3>
+          </div>
+        </>
       )}
       {columns.map((column, columnIndex) => (
         <DroppableColumn

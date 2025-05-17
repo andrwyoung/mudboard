@@ -15,12 +15,15 @@ const buttonVariants = cva(
           "bg-secondary border-secondary text-primary hover:bg-secondary-lighter hover:outline-2 hover:outline-secondary",
         white:
           "bg-white text-primary-darker border-white hover:bg-secondary-lighter",
-        destructive: "bg-destructive text-white hover:bg-destructive/90",
+        destructive:
+          "bg-rose-400 outline-2 outline-rose-400 text-white  hover:outline-rose-500 hover:bg-rose-300",
         accent: "bg-white text-primary hover:bg-white",
         outline:
-          "bg-primary outline-2 outline-white text-white hover:bg-white/30 ",
+          "bg-transparent outline-2 outline-white text-white hover:bg-white/30 ",
+        outline_primary:
+          "bg-transparent outline-2 outline-primary text-primary hover:bg-secondary/50 ",
         outline_accent:
-          "bg-primary outline-2 outline-white text-white hover:text-accent hover:outline-accent",
+          "bg-transparent outline-2 outline-white text-white hover:text-accent hover:outline-accent",
       },
     },
     defaultVariants: {

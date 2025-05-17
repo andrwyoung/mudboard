@@ -85,15 +85,19 @@ export default function Sidebar({
           </div> */}
         </div>
 
-        <div className="px-10 flex flex-col gap-12">
-          <SectionsSection sectionRefs={sectionRefs} />
+        <div className="flex flex-col gap-12">
+          <div className="px-6">
+            <SectionsSection sectionRefs={sectionRefs} />
+          </div>
 
-          <AccordianWrapper
-            title="Customize!"
-            titleClassName="font-header text-lg"
-          >
-            <CustomizeSection />
-          </AccordianWrapper>
+          <div className="px-10">
+            <AccordianWrapper
+              title="Customize!"
+              titleClassName="font-header text-lg"
+            >
+              <CustomizeSection />
+            </AccordianWrapper>
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full px-8 pt-6">

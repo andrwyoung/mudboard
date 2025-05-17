@@ -8,6 +8,7 @@ export async function fetchSupabaseSections(
     .from("sections")
     .select("*")
     .eq("board_id", boardId)
+    .eq("deleted", false) // don't serve deleted blocks
     .order("order_index", { ascending: true });
 
   if (error) {

@@ -2,6 +2,7 @@ import {
   allowedMimeTypes,
   COMPRESSION_THREADS,
   DEFAULT_FILE_EXT,
+  DROP_SPREAD_THRESHOLD,
   imageNames,
   UPLOAD_THREADS,
 } from "@/types/upload-settings";
@@ -36,7 +37,11 @@ type PreparedImage = {
   tempBlockId: string;
 };
 
-export async function uploadImages(files: FileList, sectionId: string) {
+export async function uploadImages(
+  files: FileList,
+  sectionId: string,
+  columnIndex?: number
+) {
   const boardId = useMetadataStore.getState().board?.board_id;
   if (!boardId) return;
 
@@ -124,7 +129,10 @@ export async function uploadImages(files: FileList, sectionId: string) {
 
     // here we add it to local layout so we can immediately interact
     updateColumns((prevCols) => {
-      const colIndex = findShortestColumn(sectionId);
+      const colIndex =
+        files.length <= DROP_SPREAD_THRESHOLD && columnIndex !== undefined
+          ? columnIndex
+          : findShortestColumn(sectionId);
       const rowIndex = getNextRowIndex(prevCols[colIndex] ?? []);
 
       const newBlock: Block = {
@@ -146,7 +154,10 @@ export async function uploadImages(files: FileList, sectionId: string) {
     // best effort block
     // optimistically generate order and columns
     const cols = useLayoutStore.getState().sectionColumns[sectionId] ?? [];
-    const optimisticColIndex = findShortestColumn(sectionId);
+    const optimisticColIndex =
+      files.length <= DROP_SPREAD_THRESHOLD && columnIndex !== undefined
+        ? columnIndex
+        : findShortestColumn(sectionId);
     const optimisticRowIndex = getNextRowIndex(cols[optimisticColIndex] ?? []);
     const bestEffortBlock: BlockInsert = {
       ...incompleteBlock,

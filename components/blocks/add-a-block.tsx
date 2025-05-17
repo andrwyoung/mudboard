@@ -1,36 +1,35 @@
-import { uploadImages } from "@/lib/process-images/upload-images";
-import React, { useRef } from "react";
+import { useImagePicker } from "@/hooks/use-image-picker";
+import { createTextBlock } from "@/lib/sync/text-block-actions";
+import React from "react";
 import { FaPlus } from "react-icons/fa";
 
 const buttonClass =
-  "text-primary font-header font-bold text-lg opacity-0 group-hover:opacity-20 group-hover/button:opacity-100 transition-opacity duration-400";
+  "text-primary font-header font-semibold text-md opacity-0 group-hover:opacity-20 group-hover/button:opacity-100 transition-opacity duration-400";
 
-export default function BlockAdder({ sectionId }: { sectionId: string }) {
+export default function BlockAdder({
+  sectionId,
+  columnIndex,
+}: {
+  sectionId: string;
+  columnIndex: number;
+}) {
   // for triggering the file opener
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { triggerImagePicker, fileInput } = useImagePicker(
+    sectionId,
+    columnIndex
+  );
+
   function handleAddImageBlock() {
-    fileInputRef.current?.click();
+    triggerImagePicker();
   }
 
   function handleAddTextBlock() {
-    console.log("not implemented yet");
+    createTextBlock(sectionId, columnIndex);
   }
 
   return (
     <>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        className="hidden"
-        onChange={(e) => {
-          const files = e.target.files;
-          if (files && files.length > 0) {
-            uploadImages(files, sectionId);
-          }
-        }}
-      />
+      {fileInput}
       <div className="relative h-12 w-full group ">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <div
@@ -51,7 +50,7 @@ export default function BlockAdder({ sectionId }: { sectionId: string }) {
           className="absolute left-0 top-0 bottom-0 w-1/2 group/button pointer-events-auto cursor-pointer"
         >
           <span
-            className={`absolute top-1/2 left-1/2 -translate-y-1/2 translate-x-5 ${buttonClass}`}
+            className={`absolute top-1/2 right-[calc(20%)] -translate-y-1/2 text-right ${buttonClass}`}
           >
             image
           </span>
@@ -61,7 +60,7 @@ export default function BlockAdder({ sectionId }: { sectionId: string }) {
           className="absolute right-0 top-0 bottom-0 w-1/2 group/button pointer-events-auto cursor-pointer"
         >
           <span
-            className={`absolute top-1/2 right-1/2 -translate-y-1/2 -translate-x-8 text-left ${buttonClass}`}
+            className={`absolute top-1/2 left-[calc(20%)] -translate-y-1/2 text-left ${buttonClass}`}
           >
             text
           </span>

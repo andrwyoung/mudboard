@@ -3,6 +3,7 @@ import {
   BlockDownload,
   BlockType,
   ImageDownload,
+  TextBlockType,
 } from "@/types/block-types";
 import { supabase } from "../supabase";
 import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
@@ -49,10 +50,11 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
         row_index,
         order_index,
         deleted,
+        data: nonImageBlockData,
         image,
       } = block;
 
-      const incompleteBlock: Omit<Block, "data"> = {
+      const incompleteImageBlock: Omit<Block, "data"> = {
         block_id,
         section_id,
         board_id,
@@ -66,7 +68,7 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
 
       if (block_type === "image" && image) {
         return {
-          ...incompleteBlock,
+          ...incompleteImageBlock,
 
           data: {
             image_id: image.image_id,
@@ -83,9 +85,15 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
             fileType: "database",
           },
         };
+      } else if (block_type === "text") {
+        return {
+          ...incompleteImageBlock,
+          data: nonImageBlockData as TextBlockType,
+        };
       }
 
-      return { ...incompleteBlock, data: null };
+      // for all other blocks just return everything
+      return { ...incompleteImageBlock, data: null };
     }
   );
 

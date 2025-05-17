@@ -5,7 +5,8 @@ export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/stor
 // virtualization
 export const OVERSCAN_SIZE = 1000;
 export const IMAGE_OVERSCAN_SIZE = 600;
-
+// fixed heights
+export const TEXT_BLOCK_HEIGHT = 120;
 export const CAPTION_HEIGHT = 28;
 
 // syncing
@@ -40,6 +41,8 @@ export const allowedMimeTypes = [
   export const SALT_ROUNDS = 10;
 
 
+  //uploading
+  export const DROP_SPREAD_THRESHOLD = 3;
   // concurrent uploads
   export const UPLOAD_THREADS = 3;
   export const COMPRESSION_THREADS = 3;

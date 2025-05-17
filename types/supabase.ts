@@ -163,6 +163,7 @@ export type Database = {
         Row: {
           board_id: string
           created_at: string
+          deleted: boolean
           description: string | null
           order_index: number | null
           section_id: string
@@ -171,6 +172,7 @@ export type Database = {
         Insert: {
           board_id: string
           created_at?: string
+          deleted?: boolean
           description?: string | null
           order_index?: number | null
           section_id?: string
@@ -179,6 +181,7 @@ export type Database = {
         Update: {
           board_id?: string
           created_at?: string
+          deleted?: boolean
           description?: string | null
           order_index?: number | null
           section_id?: string
