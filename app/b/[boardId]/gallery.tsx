@@ -184,15 +184,22 @@ export default function Gallery({
       {isEmpty && (
         <>
           {fileInput}
-          <div
-            className="absolute inset-0 flex flex-col items-center justify-center 
+          <div className="absolute inset-0 flex flex-col items-center justify-center ">
+            <div
+              className="w-fit h-fit flex flex-col items-center
         opacity-60 z-10 hover:opacity-90 transition-all duration-200 cursor-pointer"
-            onClick={triggerImagePicker}
-          >
-            <Image src="/1.png" alt="No images yet" width={375} height={150} />
-            <h3 className="text-primary text-sm">
-              No Images Yet! Drag one in or click here to add.
-            </h3>
+              onClick={triggerImagePicker}
+            >
+              <Image
+                src="/1.png"
+                alt="No images yet"
+                width={375}
+                height={150}
+              />
+              <h3 className="text-primary text-sm">
+                No Images Yet! Drag one in or click here to add.
+              </h3>
+            </div>
           </div>
         </>
       )}

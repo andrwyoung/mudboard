@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { FaChevronLeft } from "react-icons/fa";
+import Image from "next/image";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-4">
+      <Image src="/2.png" alt="Board not found" width={375} height={150} />
       <h1 className="text-3xl font-bold mb-2 text-primary">Board not found</h1>
-      <p className="text-muted-foreground mb-6">
+      <p className="text-muted-foreground mb-6 text-sm">
         The board you&apos;re looking for doesn&apos;t exist or has been
         deleted.
       </p>
