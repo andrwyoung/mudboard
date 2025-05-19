@@ -10,6 +10,12 @@ export async function generateBlurhashFromImage(
 
   canvas.width = img.width;
   canvas.height = img.height;
+
+  // transparent images should always have white behind it
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // now draw it
   ctx.drawImage(img, 0, 0, img.width, img.height);
 
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
