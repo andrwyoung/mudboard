@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { uploadImages } from "@/lib/process-images/upload-images";
+import { uploadImages } from "@/lib/upload-images/upload-images";
 
 export function useImagePicker(sectionId: string, columnIndex?: number) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -18,7 +18,7 @@ export function useImagePicker(sectionId: string, columnIndex?: number) {
       onChange={(e) => {
         const files = e.target.files;
         if (files && files.length > 0) {
-          uploadImages(files, sectionId, columnIndex);
+          uploadImages(Array.from(files), sectionId, columnIndex);
         }
       }}
     />

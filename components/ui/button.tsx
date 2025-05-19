@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils"; // your className merge helper
+import { cn } from "@/utils/utils"; // your className merge helper
 
 const buttonVariants = cva(
   "flex flex-row items-center justify-center cursor-pointer rounded-md font-medium transition-all" +

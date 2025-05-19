@@ -1,5 +1,5 @@
 import { BlockInsert } from "@/types/block-types";
-import { supabase } from "../supabase";
+import { supabase } from "../../utils/supabase";
 import { getVisuallySortedBlocksWithPasses } from "../columns/visual-sorting";
 import { SectionColumns } from "@/types/board-types";
 

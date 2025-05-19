@@ -1,7 +1,7 @@
 import { useMetadataStore, useUserStore } from "@/store/metadata-store";
 import React from "react";
 import { hashPassword } from "@/lib/auth/encrypt-decrypt";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/utils/supabase";
 import { toast } from "sonner";
 import { saveBoardPassword } from "@/lib/auth/save-get-password";
 import { Board } from "@/types/board-types";

@@ -1,10 +1,13 @@
 import { useEffect } from "react";
-import { CompressedImage } from "@/lib/process-images/compress-image";
+import { CompressedImage } from "@/lib/upload-images/processing/compress-image";
 import { imageNames } from "@/types/upload-settings";
 import { BlockInsert, MudboardImage } from "@/types/block-types";
-import { uploadImages } from "@/lib/process-images/upload-images";
+import { uploadImages } from "@/lib/upload-images/upload-images";
 import { Section } from "@/types/board-types";
 import { toast } from "sonner";
+import { isImageUrl } from "@/utils/upload-helpers";
+import { getImageBlobSmart } from "@/lib/upload-images/url-handling/fetch-image-from-url";
+import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 
 type PreparedImage = {
   image_id: string;
@@ -61,16 +64,62 @@ export function useImageImport({
       e.preventDefault();
       dragCounter = 0;
       setIsDraggingFile(false);
-
-      const files = e.dataTransfer?.files;
       setDraggedFileCount(null);
 
+      console.log("handline drop. here's what we have: ", e);
+
+      const files = e.dataTransfer?.files;
+
+      // checks
+      if (!selectedSection || selectedSection.section_id.trim() === "") {
+        toast.error("No Selected Section");
+        return;
+      }
+
+      // first check if these files are from local. handle that first
       if (files && files.length > 0) {
-        if (!selectedSection || selectedSection.section_id.trim() === "") {
-          toast.error("No Selected Section");
-          return;
+        uploadImages(Array.from(files), selectedSection.section_id);
+        return;
+      }
+
+      // SECTION
+
+      // then check if it's a dropped URL or image from another tab
+      const html = e.dataTransfer?.getData("text/html");
+      const uri =
+        e.dataTransfer?.getData("text/uri-list") ||
+        e.dataTransfer?.getData("text/plain");
+      let imageUrl: string | null = null;
+
+      console.log("html: ", html, "uri: ", uri);
+
+      if (uri) {
+        // Step 1: check if it matches any known url funks
+        const maybeImage = resolveProxiedImageUrl(uri);
+        const finalUrl = maybeImage || uri;
+
+        // Step 2: now check if it's an image URL
+        if (isImageUrl(finalUrl)) {
+          imageUrl = finalUrl;
         }
-        uploadImages(files, selectedSection.section_id);
+      }
+
+      if (!imageUrl && html) {
+        const match = html.match(/<img[^>]+src=["']([^"']+)["']/);
+        if (match?.[1]) {
+          imageUrl = match[1];
+        }
+      }
+
+      if (imageUrl) {
+        const blob = await getImageBlobSmart(imageUrl);
+        if (blob) {
+          const filename = imageUrl.split("/").pop() ?? "image.jpg";
+          const file = new File([blob], filename, { type: blob.type });
+          uploadImages([file], selectedSection.section_id);
+        } else {
+          toast.error("Failed to load image — source may block downloads.");
+        }
       }
     }
 

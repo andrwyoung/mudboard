@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/utils/supabase";
 
 export async function checkIfBoardExists(boardId: string) {
   const { data, error } = await supabase

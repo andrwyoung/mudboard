@@ -1,5 +1,5 @@
 import { Board } from "@/types/board-types"; // adjust path as needed
-import { supabase } from "../supabase";
+import { supabase } from "../../utils/supabase";
 
 export async function fetchSupabaseBoard(boardId: string): Promise<Board> {
   const { data, error } = await supabase

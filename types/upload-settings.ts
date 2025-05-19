@@ -27,15 +27,42 @@ export const IMAGE_VARIANT_MAP: Record<imageNames, { width: number; quality: num
   full: { width: MAX_IMAGE_WIDTH, quality: 0.8 },
 };
 
-export const allowedMimeTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif",
-    "image/heic",
-    "image/heif",
-    "image/tiff",
-  ];
+
+export const allowedUploadExtensions = [
+  "jpg",
+  "jpeg",
+  "png",
+  "webp",
+  "gif",
+  "heic",
+  "heif",
+  "tiff",
+  "avif",
+  "svg",
+  "bmp",
+  "ico",
+  "jfif",
+  "apng",
+  // "pdf",
+];
+export const allowedMimeTypes = allowedUploadExtensions.map((ext) => {
+  switch (ext) {
+    case "jpg":
+    case "jpeg":
+    case "jfif":
+      return "image/jpeg";
+    case "tiff":
+      return "image/tiff";
+    case "svg":
+      return "image/svg+xml";
+    case "ico":
+      return "image/x-icon";
+    case "pdf":
+      return "application/pdf";
+    default:
+      return `image/${ext}`;
+  }
+});
 
   // password
   export const SALT_ROUNDS = 10;

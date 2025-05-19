@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
 import { hasWriteAccess } from "../db-actions/check-write-access";
 import { createSupabaseSection } from "../db-actions/create-new-section";

@@ -5,7 +5,7 @@ import {
   ImageDownload,
   TextBlockType,
 } from "@/types/block-types";
-import { supabase } from "../supabase";
+import { supabase } from "../../utils/supabase";
 import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
 
 export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {

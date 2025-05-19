@@ -1,5 +1,5 @@
 import { User } from "@/types/board-types";
-import { supabase } from "../supabase";
+import { supabase } from "../../utils/supabase";
 
 export async function fetchSupabaseUser(userId: string): Promise<User> {
   const { data, error } = await supabase

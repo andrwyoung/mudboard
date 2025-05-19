@@ -386,7 +386,7 @@ export default function Board({ boardId }: { boardId: string }) {
                 direction: "rtl",
                 paddingLeft: gallerySpacingSize,
                 paddingRight: gallerySpacingSize,
-                paddingTop: gallerySpacingSize,
+                // paddingTop: gallerySpacingSize,
                 paddingBottom: gallerySpacingSize,
               }}
             >

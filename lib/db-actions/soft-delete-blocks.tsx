@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/utils/supabase";
 
 export async function softDeleteBlocks(blockIds: string[]) {
   if (blockIds.length === 0) return;

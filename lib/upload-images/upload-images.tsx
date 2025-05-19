@@ -7,21 +7,22 @@ import {
   UPLOAD_THREADS,
 } from "@/types/upload-settings";
 import { toast } from "sonner";
-import { runWithConcurrency } from "../concurrency-helper";
+import { runWithConcurrency } from "../../utils/concurrency-helper";
 import { uploadImageToSupabase } from "../db-actions/upload-image";
 import { v4 as uuidv4 } from "uuid";
-import { CompressedImage, convertToWebP } from "./compress-image";
+import { CompressedImage, convertToWebP } from "./processing/compress-image";
 import {
   Block,
   BlockInsert,
   BlockType,
   MudboardImage,
 } from "@/types/block-types";
-import { generateBlurhashFromImage } from "./blur-hash";
+import { generateBlurhashFromImage } from "./processing/blur-hash";
 import { findShortestColumn, getNextRowIndex } from "../columns/column-helpers";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
+import { rasterizeVectorImage } from "./processing/rasterize-vectors";
 
 type PreparedImage = {
   image_id: string;
@@ -38,7 +39,7 @@ type PreparedImage = {
 };
 
 export async function uploadImages(
-  files: FileList,
+  files: File[],
   sectionId: string,
   columnIndex?: number
 ) {
@@ -54,6 +55,7 @@ export async function uploadImages(
   };
 
   let successfulUploads = 0;
+  let totalUploads = files.length;
   //   let failedUploads = 0;
 
   console.time("🗜️ Compression phase");
@@ -68,7 +70,43 @@ export async function uploadImages(
 
     if (!fileExt || !allowedMimeTypes.includes(file.type)) {
       toast.error(`Unsupported file type: ${file.type}`);
+      totalUploads--;
       return;
+    }
+
+    let processedFile = file;
+
+    // SECTION: special case conversions
+    //
+    // pdf -> png
+    // if (file.type === "application/pdf") {
+    //   if (typeof window !== "undefined") {
+    //     try {
+    //       const { convertPdfPageOneToPng } = await import(
+    //         "./processing/convert-pdf"
+    //       );
+    //       processedFile = await convertPdfPageOneToPng(file); // returns a WebP File
+    //     } catch (err) {
+    //       toast.error("Failed to convert PDF to image.");
+    //       totalUploads--;
+    //       return;
+    //     }
+    //   } else {
+    //     console.warn("PDF processing skipped — not running in browser");
+    //   }
+    // } else
+    if (
+      // svg or ico -> raster
+      file.type === "image/svg+xml" ||
+      file.type === "image/x-icon"
+    ) {
+      try {
+        processedFile = await rasterizeVectorImage(file); // returns a WebP File
+      } catch {
+        toast.error("Failed to convert vector image: ");
+        totalUploads--;
+        return;
+      }
     }
 
     // SECTION: image compression
@@ -76,7 +114,7 @@ export async function uploadImages(
 
     let variants: Record<imageNames, CompressedImage>;
     try {
-      variants = await convertToWebP(file);
+      variants = await convertToWebP(processedFile);
     } catch (err) {
       toast.error("Image conversion failed. Please try a different file.");
       console.log("Image Conversion failed: ", err);
@@ -257,9 +295,13 @@ export async function uploadImages(
   console.timeEnd("📤 Upload phase");
   useLoadingStore.setState({ isUploading: false });
 
-  // we may have incorrect versions of the order, so trigger a sync
-  toast.success(
-    `Successfully uploaded ${successfulUploads} of ${preparedImages.length} images!`
-  );
-  console.log(`All ${preparedImages.length} uploads complete!`);
+  if (successfulUploads > 0) {
+    // we may have incorrect versions of the order, so trigger a sync
+    useLayoutStore.setState({ layoutDirty: true });
+    toast.success(
+      `Successfully uploaded ${successfulUploads} of ${totalUploads} images!`
+    );
+  }
+
+  console.log(`Trying to upload ${preparedImages.length} complete!`);
 }

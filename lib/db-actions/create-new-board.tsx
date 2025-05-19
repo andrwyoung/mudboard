@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/utils/supabase";
 import { Tables, TablesInsert } from "@/types/supabase";
 import { v4 as uuidv4 } from "uuid";
 import { createSupabaseSection } from "./create-new-section";

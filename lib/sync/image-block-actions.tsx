@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/utils/supabase";
 import { hasWriteAccess } from "../db-actions/check-write-access";
 import { useLayoutStore } from "@/store/layout-store";
 import { Block, MudboardImage } from "@/types/block-types";

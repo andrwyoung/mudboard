@@ -1,5 +1,5 @@
 import { Section } from "@/types/board-types";
-import { supabase } from "../supabase";
+import { supabase } from "../../utils/supabase";
 
 export async function fetchSupabaseSections(
   boardId: string
