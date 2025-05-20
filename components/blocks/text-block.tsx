@@ -6,7 +6,7 @@ import { updateTextBlockText } from "@/lib/sync/text-block-actions";
 export default function TextBlock({ block }: { block: Block }) {
   const textData = block.data as TextBlockType;
 
-  console.log("textdata: ", textData);
+  // console.log("textdata: ", textData);
 
   return (
     <div

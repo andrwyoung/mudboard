@@ -28,7 +28,9 @@ export async function getImageBlobSmart(url: string): Promise<Blob | null> {
 
   // Fallback to backend proxy
   try {
-    const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(url)}`;
+    const proxyUrl = `${
+      window.location.origin
+    }/api/image-proxy?url=${encodeURIComponent(url)}`;
     const res = await fetch(proxyUrl);
     if (!res.ok) throw new Error("Proxy failed");
     return await res.blob();

@@ -18,10 +18,9 @@ export function resolveProxiedImageUrl(rawUrl: string): string | null {
     }
 
     // Bing Images (potential)
-    // e.g. https://www.bing.com/images/search?view=detailV2&imgurl=https://cdn.example.com/image.jpg
-    if (url.hostname.includes("bing.com")) {
-      const imgurl = url.searchParams.get("imgurl");
-      return imgurl ? decodeURIComponent(imgurl) : null;
+    if (url.hostname.includes("bing.com") && url.searchParams.has("mediaurl")) {
+      const mediaUrl = url.searchParams.get("mediaurl");
+      return mediaUrl ? decodeURIComponent(mediaUrl) : null;
     }
 
     // fallback
@@ -29,4 +28,19 @@ export function resolveProxiedImageUrl(rawUrl: string): string | null {
   } catch {
     return null;
   }
+}
+
+export function upgradePinterestImage(urlString: string): string {
+  try {
+    const url = new URL(urlString);
+
+    if (url.hostname === "i.pinimg.com" && url.pathname.startsWith("/236x/")) {
+      url.pathname = url.pathname.replace("/236x/", "/736x/");
+      return url.toString();
+    }
+  } catch {
+    // if URL parsing fails, just return original
+  }
+
+  return urlString;
 }

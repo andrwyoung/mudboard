@@ -7,7 +7,10 @@ import { Section } from "@/types/board-types";
 import { toast } from "sonner";
 import { isImageUrl } from "@/utils/upload-helpers";
 import { getImageBlobSmart } from "@/lib/upload-images/url-handling/fetch-image-from-url";
-import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
+import {
+  resolveProxiedImageUrl,
+  upgradePinterestImage,
+} from "@/lib/upload-images/url-handling/resolve-image-links";
 
 type PreparedImage = {
   image_id: string;
@@ -112,7 +115,18 @@ export function useImageImport({
       }
 
       if (imageUrl) {
-        const blob = await getImageBlobSmart(imageUrl);
+        // Pinterest 236x → 736x upgrade
+        const upgradedUrl = upgradePinterestImage(imageUrl);
+
+        // grab the image itself
+        // Try high-res version first
+        let blob = await getImageBlobSmart(upgradedUrl);
+
+        // If that fails, fallback to original 236x
+        if (!blob && upgradedUrl !== imageUrl) {
+          blob = await getImageBlobSmart(imageUrl);
+        }
+
         if (blob) {
           const filename = imageUrl.split("/").pop() ?? "image.jpg";
           const file = new File([blob], filename, { type: blob.type });

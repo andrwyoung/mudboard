@@ -64,6 +64,13 @@ export const allowedMimeTypes = allowedUploadExtensions.map((ext) => {
   }
 });
 
+ //white listed domains
+ export const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://mudboard.com",
+  "https://andrwyoung.com",
+];
   // password
   export const SALT_ROUNDS = 10;
 
