@@ -128,6 +128,8 @@ export default function Gallery({
   // listen for clicking elsewhere (to deselect)
   useEffect(() => {
     function handleGlobalClick(event: MouseEvent) {
+      if (useSelectionStore.getState().overlayGalleryIsOpen) return;
+
       const target = event.target as HTMLElement;
       const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
 

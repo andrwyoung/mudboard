@@ -143,22 +143,31 @@ export default function OverlayGallery({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [closeOverlayGallery]);
 
+  // when users aren't active, hide the ui
   useEffect(() => {
     let timeout: NodeJS.Timeout;
 
-    const handleMouseMove = () => {
+    const showControls = () => {
       setShowZoomControls(true);
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         setShowZoomControls(false);
-      }, 1000); // 2 seconds of inactivity
+      }, 1000);
     };
 
+    const handleMouseMove = showControls;
+    const handleMouseDown = showControls;
+    const handleMouseUp = showControls;
+
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mouseup", handleMouseUp);
 
     return () => {
       clearTimeout(timeout);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
 
@@ -213,7 +222,7 @@ export default function OverlayGallery({
       </div>
 
       <div
-        className={`absolute bottom-16 left-1/2 -translate-x-1/2 z-61 bg-stone-800/80 backdrop-blur-sm 
+        className={`absolute bottom-16 left-1/2 -translate-x-1/2 z-62 bg-stone-800/80 backdrop-blur-sm 
         rounded-lg flex px-4 py-2 items-center gap-2 text-sm w-fit transition-opacity duration-700 ${
           showZoomControls ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
