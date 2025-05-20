@@ -22,7 +22,7 @@ export function AccordianWrapper({
   return (
     <div className="flex flex-col gap-2">
       <div
-        className={`text-sm flex flex-row gap-1 items-center transition-all duration-200
+        className={`flex flex-row gap-1 items-center transition-all duration-200
             font-semibold cursor-pointer hover:underline hover:underline-offset-2 ${titleClassName}`}
         onClick={() => setShowForm((prev) => !prev)}
       >
@@ -61,13 +61,19 @@ export default function AccountSyncSection() {
   return (
     <div className="flex flex-col gap-2">
       {accessLevel === "UNCLAIMED" && board && (
-        <AccordianWrapper title="This board is unclaimed. Anyone can edit">
+        <AccordianWrapper
+          title="This board is unclaimed. Anyone can edit"
+          titleClassName="text-xs"
+        >
           <ClaimBoardSection board={board} />
         </AccordianWrapper>
       )}
 
       {accessLevel === "CLAIMED_NOT_LOGGED_IN" && board && (
-        <AccordianWrapper title="This Board is Claimed">
+        <AccordianWrapper
+          title="This Board is Claimed"
+          titleClassName="text-xs "
+        >
           <LoginSection board={board} />
         </AccordianWrapper>
       )}

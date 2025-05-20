@@ -83,12 +83,7 @@ export function useGalleryHandlers({
       const { active, activatorEvent } = event;
       const pos = positionedBlockMap.get(active.id.toString());
       if (pos) {
-        const sectionCols = sectionColumns[pos.sectionId];
-        const col = sectionCols?.[pos.colIndex];
-        const activeImage = col?.[pos.rowIndex];
-        if (activeImage) {
-          setDraggedBlock(activeImage);
-        }
+        setDraggedBlock(pos.block);
       }
 
       if (activatorEvent instanceof MouseEvent) {

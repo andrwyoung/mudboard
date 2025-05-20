@@ -15,7 +15,7 @@ export default function LoggedInSection({ board }: { board: Board }) {
   }
 
   return (
-    <div className="flex gap-2 justify-between items-center text-sm">
+    <div className="flex gap-2 justify-between items-center text-xs">
       <p className="">You are logged in.</p>
       <button
         onClick={handleLogout}

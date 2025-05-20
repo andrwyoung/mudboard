@@ -367,7 +367,6 @@ export default function Board({ boardId }: { boardId: string }) {
               scrollY={scrollY}
               sidebarWidth={sidebarWidth}
             />
-
             {mirrorMode && (
               <div className="hidden lg:flex w-full h-full">
                 <Canvas

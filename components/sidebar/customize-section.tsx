@@ -35,7 +35,7 @@ export default function CustomizeSection() {
 
       <div className="flex flex-col gap-1 self-center w-full">
         {/* <div className="flex flex-col gap-1 max-w-42 self-center w-full"> */}
-        <h3 className="mb-1 text-sm">Columns:</h3>
+        <h3 className="mb-1 text-xs font-semibold">Columns:</h3>
 
         <div className="flex flex-row justify-between px-1 items-center gap-3 text-sm font-bold">
           <p className="font-bold">{MIN_COLUMNS}</p>

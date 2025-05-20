@@ -31,7 +31,7 @@ export default function Sidebar({
     <div
       className={`flex flex-col h-full w-full relative overflow-y-auto ${SCROLLBAR_STYLE}`}
     >
-      <div className="flex justify-center py-8 px-4 ">
+      <div className="flex flex-col gap-2 justify-center items-center py-8 px-4 ">
         <Link
           className="cursor-pointer hover:scale-105 transition-transform duration-300"
           href={"/"}
@@ -44,22 +44,23 @@ export default function Sidebar({
             className="w-[150px]"
           />
         </Link>
+        <div className="flex flex-col items-center gap-1.5">
+          <p className="font-header text-xs font-bold">Start creating:</p>
+          <NewBoardButton />
+        </div>
       </div>
 
       <div className="flex flex-col flex-grow justify-center gap-24">
-        <div className="flex flex-col px-8 items-center gap-1">
-          {/* <h1 className="text-3xl font-bold">Hi there!</h1>
+        {/*  <div className="flex flex-col px-8 items-center gap-1">
+         <h1 className="text-3xl font-bold">Hi there!</h1>
           <p className="text-xs font-semibold text-center mb-3">
             This board is <strong>fully customizable</strong>.<br />
             <br />
             Play around with this board, <br />
             drop in new images, or
           </p> */}
-          <div className="w-fit">
-            <NewBoardButton />
-          </div>
 
-          {/* <div className="flex flex-col gap-1">
+        {/* <div className="flex flex-col gap-1">
             <p className={`${fontClass}`}>
               •{" "}
               <a
@@ -82,8 +83,8 @@ export default function Sidebar({
                 How this is being built
               </a>
             </p>
-          </div> */}
-        </div>
+          </div> 
+        </div> */}
 
         <div className="flex flex-col gap-12">
           <div className="px-6">
@@ -93,7 +94,7 @@ export default function Sidebar({
           <div className="px-8">
             <AccordianWrapper
               title="Customize!"
-              titleClassName="font-header text-lg px-2"
+              titleClassName="font-header text-md px-2"
             >
               <CustomizeSection />
             </AccordianWrapper>
