@@ -8,12 +8,10 @@ export function BlockChooser({
   block,
   shouldEagerLoad,
   columnWidth,
-  isSelected,
 }: {
   block: Block;
   shouldEagerLoad: boolean;
   columnWidth: number;
-  isSelected: boolean;
 }) {
   switch (block.block_type) {
     case "image":
@@ -22,7 +20,6 @@ export function BlockChooser({
           block={block}
           shouldEagerLoad={shouldEagerLoad}
           columnWidth={columnWidth}
-          isSelected={isSelected}
         />
       );
     case "text":
@@ -71,7 +68,6 @@ function BlockComponent({
           block={block}
           shouldEagerLoad={shouldEagerLoad}
           columnWidth={columnWidth}
-          isSelected={isSelected}
         />
       </SortableImageItem>
     </div>

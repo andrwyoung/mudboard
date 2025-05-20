@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block } from "@/types/block-types";
 import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
-import { Section, SectionColumns } from "@/types/board-types";
+import { CanvasScope, Section, SectionColumns } from "@/types/board-types";
 import { findShortestColumn } from "@/lib/columns/column-helpers";
 import { useUIStore } from "@/store/ui-store";
 import { PositionedBlock } from "@/types/sync-types";
@@ -38,9 +38,7 @@ type UseGalleryHandlersProps = {
   setDraggedBlock: (img: Block | null) => void;
   dropIndicatorId: string | null;
   setDropIndicatorId: (id: string | null) => void;
-  setSelectedBlocks: React.Dispatch<
-    React.SetStateAction<Record<string, Block>>
-  >;
+  deselectBlocks: () => void;
   initialPointerYRef: React.RefObject<number | null>;
 };
 
@@ -52,7 +50,7 @@ export function useGalleryHandlers({
   setDraggedBlock,
   dropIndicatorId,
   setDropIndicatorId,
-  setSelectedBlocks,
+  deselectBlocks,
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
   // caching for handleDragMove
@@ -66,7 +64,7 @@ export function useGalleryHandlers({
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       document.body.classList.add("cursor-grabbing");
-      setSelectedBlocks({});
+      deselectBlocks();
 
       console.log(
         "starting drag. here's positioned block map: ",

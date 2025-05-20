@@ -1,9 +1,8 @@
 import { Block } from "@/types/block-types";
+import { CanvasScope } from "@/types/board-types";
 import { create, StateCreator } from "zustand";
 
-type OverlayScope = "main" | "mirror";
-
-export function useOverlayStore(scope: OverlayScope): OverlayState {
+export function useOverlayStore(scope: CanvasScope): OverlayState {
   return scope === "main" ? useMainOverlayStore() : useMirrorOverlayStore();
 }
 type OverlayState = {

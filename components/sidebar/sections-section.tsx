@@ -44,7 +44,7 @@ export default function SectionsSection({
                 id={`section-${index}`}
                 key={section.section_id}
               >
-                <div className="flex justify-between group items-center pl-2 ">
+                <div className="flex justify-between group items-center px-2 ">
                   <div
                     className=" select-none flex gap-3 items-center cursor-pointer w-full py-[1px]"
                     onClick={() => {
@@ -61,6 +61,7 @@ export default function SectionsSection({
                     <FillingDot />
                     <h2
                       className={`text-lg text-primary-foreground group-hover:text-accent transition-all duration-300
+                         truncate whitespace-nowrap overflow-hidden 
                     ${titleExists ? "" : "italic"}`}
                     >
                       {titleExists ? section.title : DEFAULT_SECTION_NAME}
@@ -69,7 +70,7 @@ export default function SectionsSection({
 
                   <FaTrash
                     className="size-3.5 hover:rotate-24 text-accent transition-all duration-300 
-                  opacity-0 group-hover:opacity-100 cursor-pointer"
+                  opacity-0 group-hover:opacity-100 cursor-pointer flex-none"
                     title="Delete Section"
                     onClick={(e) => {
                       e.stopPropagation();

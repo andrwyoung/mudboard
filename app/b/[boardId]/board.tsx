@@ -75,6 +75,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const setSelectedBlocks = useSelectionStore((s) => s.setSelectedBlocks);
+  const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   // virtualization
   const mainRef = useRef<HTMLDivElement | null>(null);
@@ -272,7 +273,7 @@ export default function Board({ boardId }: { boardId: string }) {
       setDraggedBlock,
       dropIndicatorId,
       setDropIndicatorId,
-      setSelectedBlocks,
+      deselectBlocks,
       initialPointerYRef,
     }
   );

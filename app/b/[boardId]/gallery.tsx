@@ -2,13 +2,7 @@
 import { DroppableColumn } from "@/components/drag/droppable-column";
 import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { MemoizedDroppableColumn } from "./columns";
@@ -16,6 +10,8 @@ import { useIsMirror } from "./board";
 import Image from "next/image";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
+import { CanvasScope } from "@/types/board-types";
+import { useSelectionStore } from "@/store/selection-store";
 
 export default function Gallery({
   sectionId,
@@ -35,16 +31,23 @@ export default function Gallery({
   sidebarWidth: number;
   scrollY: number;
   selectedBlocks: Record<string, Block>;
-  setSelectedBlocks: Dispatch<SetStateAction<Record<string, Block>>>;
+  setSelectedBlocks: (
+    scope: CanvasScope,
+    blocks: Record<string, Block>
+  ) => void;
   overId: string | null;
 }) {
   const isMirror = useIsMirror();
+  const canvasScope = isMirror ? "mirror" : "main";
+
   const numCols = useUIStore((s) => (isMirror ? s.mirrorNumCols : s.numCols));
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
+  const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
+
   const { isOpen: overlayGalleryIsOpen, openOverlay: openOverlayGallery } =
-    useOverlayStore(useIsMirror() ? "mirror" : "main");
+    useOverlayStore(canvasScope);
 
   const isEmpty = columns.every((col) => col.length === 0);
   const { triggerImagePicker, fileInput } = useImagePicker(sectionId);
@@ -110,7 +113,7 @@ export default function Gallery({
 
       // deselect with escape
       if (e.key === "Escape") {
-        setSelectedBlocks({});
+        deselectBlocks();
       }
 
       // Add more keys (Arrow keys for movement, etc.) as needed
@@ -118,7 +121,13 @@ export default function Gallery({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedBlocks, updateColumns, setSelectedBlocks, overlayGalleryIsOpen]);
+  }, [
+    selectedBlocks,
+    updateColumns,
+    setSelectedBlocks,
+    overlayGalleryIsOpen,
+    deselectBlocks,
+  ]);
 
   //
   // SECTION: click and drag behavior
@@ -140,7 +149,7 @@ export default function Gallery({
         clickedId.startsWith("section-")
       ) {
         console.log("Clicked outside block. Clearing selection.");
-        setSelectedBlocks({});
+        deselectBlocks();
       }
     }
     document.body.addEventListener("click", handleGlobalClick);
@@ -148,7 +157,7 @@ export default function Gallery({
     return () => {
       document.body.removeEventListener("click", handleGlobalClick);
     };
-  }, [setSelectedBlocks, overlayGalleryIsOpen]);
+  }, [setSelectedBlocks, overlayGalleryIsOpen, deselectBlocks]);
 
   // when clicking on an image
   const handleItemClick = useCallback(
@@ -157,33 +166,27 @@ export default function Gallery({
 
       if (event.detail === 2) {
         console.log("Double clicked:", block);
-        setSelectedBlocks({ [block.block_id]: block });
+        setSelectedBlocks(canvasScope, { [block.block_id]: block });
         openOverlayGallery(block);
         return;
       }
 
-      setSelectedBlocks((prevSelected) => {
-        const newSelected = { ...prevSelected };
+      let newSelected: Record<string, Block> = {};
 
-        if (event.metaKey || event.ctrlKey) {
-          if (newSelected[block.block_id]) {
-            delete newSelected[block.block_id];
-          } else {
-            newSelected[block.block_id] = block;
-          }
-          return newSelected;
+      if (event.metaKey || event.ctrlKey) {
+        newSelected = { ...selectedBlocks };
+        if (newSelected[block.block_id]) {
+          delete newSelected[block.block_id];
         } else {
-          // if (
-          //   newSelected[block.block_id] &&
-          //   Object.entries(newSelected).length === 1
-          // ) {
-          //   return {};
-          // }
-          return { [block.block_id]: block };
+          newSelected[block.block_id] = block;
         }
-      });
+      } else {
+        newSelected = { [block.block_id]: block };
+      }
+
+      setSelectedBlocks(canvasScope, newSelected);
     },
-    [setSelectedBlocks, openOverlayGallery]
+    [setSelectedBlocks, openOverlayGallery, selectedBlocks, canvasScope]
   );
 
   return (

@@ -13,6 +13,8 @@ import { useUIStore } from "@/store/ui-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { AnimatePresence, motion } from "framer-motion";
 import { updateImageBlockCaption } from "@/lib/sync/image-block-actions";
+import { useSelectionStore } from "@/store/selection-store";
+import { useIsMirror } from "@/app/b/[boardId]/board";
 
 export function getImageUrl(
   image_id: string,
@@ -25,12 +27,10 @@ export function getImageUrl(
 export function ImageBlock({
   block,
   shouldEagerLoad,
-  isSelected,
 }: {
   block: Block;
   shouldEagerLoad: boolean;
   columnWidth: number;
-  isSelected: boolean;
 }) {
   const img = block.data as MudboardImage;
   const height = block.height;
@@ -42,6 +42,19 @@ export function ImageBlock({
 
   const [isErrored, setIsErrored] = useState(false);
   const isBlurred = !loaded || showBlurImg;
+
+  // SECTION: selection
+
+  const selectedScope = useSelectionStore((s) => s.selectionScope);
+  const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
+  const isMirror = useIsMirror();
+  const isSelected = !!selectedBlocks[block.block_id];
+  const isInScope = selectedScope === (isMirror ? "mirror" : "main");
+  const isSoleSelected =
+    isInScope && Object.keys(selectedBlocks).length === 1 && isSelected;
+  const captionIsActive = Boolean(caption) || isSoleSelected;
+
+  // SECTION: filename and sizing
 
   let size: imageNames = "medium";
   if (numCols > 6) size = "thumb";
@@ -57,11 +70,10 @@ export function ImageBlock({
       ? img.fileName
       : getImageUrl(img.image_id, img.file_ext, size);
 
-  const [captionDraft, setCaptionDraft] = useState(caption ?? "");
-  const captionIsActive =
-    isSelected || captionDraft.length > 0 || Boolean(caption);
-  const inputRef = useRef<HTMLInputElement>(null);
+  // SECTION caption
 
+  const [captionDraft, setCaptionDraft] = useState(caption ?? "");
+  const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
 
   // focus on input as soon as selected

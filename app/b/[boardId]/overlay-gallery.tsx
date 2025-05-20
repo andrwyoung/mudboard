@@ -4,16 +4,17 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-import { useIsMirror } from "./board";
 import { useOverlayStore } from "@/store/overlay-store";
 
 export default function OverlayGallery({
   selectedBlock,
+  isMirror,
 }: {
   selectedBlock: Block;
+  isMirror: boolean;
 }) {
   const { closeOverlay: closeOverlayGallery } = useOverlayStore(
-    useIsMirror() ? "mirror" : "main"
+    isMirror ? "mirror" : "main"
   );
   const imageBlock = selectedBlock.data as MudboardImage;
 
@@ -215,7 +216,7 @@ export default function OverlayGallery({
       </div>
 
       <div
-        className={`fixed top-4 right-4 z-60 bg-stone-800/80 backdrop-blur-sm rounded-lg p-2 hover:bg-stone-700/80 
+        className={`absolute top-4 right-4 z-60 bg-stone-800/80 backdrop-blur-sm rounded-lg p-2 hover:bg-stone-700/80 
           transition-all cursor-pointer duration-700 ${
             showZoomControls ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}

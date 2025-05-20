@@ -1,12 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { Dispatch, SetStateAction } from "react";
 import OverlayGallery from "./overlay-gallery";
 import { useUIStore } from "@/store/ui-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
 import { MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
 import Gallery from "./gallery";
-import { Section, SectionColumns } from "@/types/board-types";
+import { CanvasScope, Section, SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
 import { useOverlayStore } from "@/store/overlay-store";
 
@@ -20,7 +19,10 @@ type CanvasProps = {
 
   draggedBlock: Block | null;
   selectedBlocks: Record<string, Block>;
-  setSelectedBlocks: Dispatch<SetStateAction<Record<string, Block>>>;
+  setSelectedBlocks: (
+    scope: CanvasScope,
+    blocks: Record<string, Block>
+  ) => void;
 
   updateSectionColumns: (
     sectionId: string,
@@ -68,7 +70,10 @@ export default function Canvas({
             transition={{ duration: 0.2 }}
             className="absolute inset-0 z-60"
           >
-            <OverlayGallery selectedBlock={overlayGalleryBlock} />
+            <OverlayGallery
+              selectedBlock={overlayGalleryBlock}
+              isMirror={isMirror}
+            />
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,5 +1,7 @@
 import { Block } from "./block-types";
 
+export type CanvasScope = "main" | "mirror";
+
 export type SectionColumns = Record<string, Block[][]>;
 export type BoardAccessLevel =
   | "UNCLAIMED"
