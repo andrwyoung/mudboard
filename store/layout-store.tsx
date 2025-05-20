@@ -9,7 +9,6 @@ import { generatePositionedBlocks } from "@/lib/ordering/generate-block-position
 
 type LayoutStore = {
   // SECTION 1
-
   sectionColumns: SectionColumns;
   setSectionColumns: (cols: SectionColumns) => void;
   updateColumnsInASection: (
