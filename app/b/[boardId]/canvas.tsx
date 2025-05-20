@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { Dispatch, SetStateAction } from "react";
 import OverlayGallery from "./overlay-gallery";
-import { useSelectionStore } from "@/store/selection-store";
 import { useUIStore } from "@/store/ui-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
 import { MirrorContext } from "./board";
@@ -9,6 +8,7 @@ import SectionHeader from "@/components/section/section-header";
 import Gallery from "./gallery";
 import { Section, SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
+import { useOverlayStore } from "@/store/overlay-store";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -49,15 +49,17 @@ export default function Canvas({
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
   // overlay gallery stuff
-  const overlayGalleryIsOpen = useSelectionStore((s) => s.overlayGalleryIsOpen);
-  const overlayGalleryShowing = useSelectionStore(
-    (s) => s.overlayGalleryShowing
-  );
+  const { isOpen: overlayGalleryIsOpen, overlayBlock: overlayGalleryBlock } =
+    useOverlayStore(isMirror ? "mirror" : "main");
 
   return (
-    <div className="relative h-full w-full">
+    <div
+      className={`relative h-full w-full ${
+        isMirror ? "bg-stone-300 text-white" : ""
+      }`}
+    >
       <AnimatePresence>
-        {overlayGalleryIsOpen && overlayGalleryShowing && (
+        {overlayGalleryIsOpen && overlayGalleryBlock && (
           <motion.div
             key="overlay-gallery"
             initial={{ opacity: 0 }}
@@ -66,7 +68,7 @@ export default function Canvas({
             transition={{ duration: 0.2 }}
             className="absolute inset-0 z-60"
           >
-            <OverlayGallery selectedBlock={overlayGalleryShowing} />
+            <OverlayGallery selectedBlock={overlayGalleryBlock} />
           </motion.div>
         )}
       </AnimatePresence>

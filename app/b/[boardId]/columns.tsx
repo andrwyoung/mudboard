@@ -7,7 +7,6 @@ import { MemoizedDropIndicator } from "@/components/drag/drag-indicator";
 import { useUIStore } from "@/store/ui-store";
 import { IMAGE_OVERSCAN_SIZE } from "@/types/upload-settings";
 import { isBlockWithWidth } from "@/lib/type-validators/is-image-block";
-import BlockAdder from "@/components/blocks/add-a-block";
 
 // virtualization
 function getBlockLayout(
@@ -67,7 +66,7 @@ function ColumnComponent({
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   // const overscan = OVERSCAN_SIZE;
   const viewportHeight = window.innerHeight;
-  const isEmpty = column.length === 0;
+  // const isEmpty = column.length === 0;
 
   const { items } = getBlockLayout(
     column,
@@ -182,9 +181,9 @@ function ColumnComponent({
           // }}
         />
       </SortableContext>
-      {!isEmpty && (
+      {/* {!isEmpty && (
         <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
-      )}
+      )} */}
     </div>
   );
 }

@@ -48,13 +48,13 @@ export default function Sidebar({
 
       <div className="flex flex-col flex-grow justify-center gap-24">
         <div className="flex flex-col px-8 items-center gap-1">
-          <h1 className="text-3xl font-bold">Hi there!</h1>
+          {/* <h1 className="text-3xl font-bold">Hi there!</h1>
           <p className="text-xs font-semibold text-center mb-3">
             This board is <strong>fully customizable</strong>.<br />
             <br />
             Play around with this board, <br />
             drop in new images, or
-          </p>
+          </p> */}
           <div className="w-fit">
             <NewBoardButton />
           </div>

@@ -15,7 +15,7 @@ import { MemoizedDroppableColumn } from "./columns";
 import { useIsMirror } from "./board";
 import Image from "next/image";
 import { useImagePicker } from "@/hooks/use-image-picker";
-import { useSelectionStore } from "@/store/selection-store";
+import { useOverlayStore } from "@/store/overlay-store";
 
 export default function Gallery({
   sectionId,
@@ -43,7 +43,8 @@ export default function Gallery({
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
-  const overlayGalleryIsOpen = useSelectionStore((s) => s.overlayGalleryIsOpen);
+  const { isOpen: overlayGalleryIsOpen, openOverlay: openOverlayGallery } =
+    useOverlayStore(useIsMirror() ? "mirror" : "main");
 
   const isEmpty = columns.every((col) => col.length === 0);
   const { triggerImagePicker, fileInput } = useImagePicker(sectionId);
@@ -109,7 +110,6 @@ export default function Gallery({
 
       // deselect with escape
       if (e.key === "Escape") {
-        useSelectionStore.getState().closeOverlayGallery();
         setSelectedBlocks({});
       }
 
@@ -128,7 +128,7 @@ export default function Gallery({
   // listen for clicking elsewhere (to deselect)
   useEffect(() => {
     function handleGlobalClick(event: MouseEvent) {
-      if (useSelectionStore.getState().overlayGalleryIsOpen) return;
+      if (overlayGalleryIsOpen) return;
 
       const target = event.target as HTMLElement;
       const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
@@ -148,7 +148,7 @@ export default function Gallery({
     return () => {
       document.body.removeEventListener("click", handleGlobalClick);
     };
-  }, [setSelectedBlocks]);
+  }, [setSelectedBlocks, overlayGalleryIsOpen]);
 
   // when clicking on an image
   const handleItemClick = useCallback(
@@ -158,7 +158,7 @@ export default function Gallery({
       if (event.detail === 2) {
         console.log("Double clicked:", block);
         setSelectedBlocks({ [block.block_id]: block });
-        useSelectionStore.getState().openOverlayGallery(block);
+        openOverlayGallery(block);
         return;
       }
 
@@ -183,7 +183,7 @@ export default function Gallery({
         }
       });
     },
-    [setSelectedBlocks]
+    [setSelectedBlocks, openOverlayGallery]
   );
 
   return (

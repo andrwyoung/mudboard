@@ -1,17 +1,20 @@
 import { getImageUrl } from "@/components/blocks/image-block";
-import { useSelectionStore } from "@/store/selection-store";
 import { Block, MudboardImage } from "@/types/block-types";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
+import { useIsMirror } from "./board";
+import { useOverlayStore } from "@/store/overlay-store";
 
 export default function OverlayGallery({
   selectedBlock,
 }: {
   selectedBlock: Block;
 }) {
-  const closeOverlayGallery = useSelectionStore((s) => s.closeOverlayGallery);
+  const { closeOverlay: closeOverlayGallery } = useOverlayStore(
+    useIsMirror() ? "mirror" : "main"
+  );
   const imageBlock = selectedBlock.data as MudboardImage;
 
   // zoomingggg
