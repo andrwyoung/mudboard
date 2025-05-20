@@ -179,9 +179,9 @@ export async function uploadImages(
         ...incompleteBlock,
         data: newImage,
 
-        col_index: colIndex,
-        row_index: rowIndex,
-        order_index: 0,
+        init_col_index: colIndex,
+        init_row_index: rowIndex,
+        init_order_index: 0,
       };
 
       const newCols = [...prevCols];

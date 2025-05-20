@@ -1,5 +1,7 @@
 import { SectionColumns } from "@/types/board-types";
+import { PositionedBlock } from "@/types/sync-types";
 
+// close to being DEPRECATED
 export function createBlockMap(
   sectionColumns: SectionColumns
 ): Map<string, { sectionId: string; colIndex: number; blockIndex: number }> {
@@ -16,6 +18,20 @@ export function createBlockMap(
         }
       });
     });
+  }
+
+  return map;
+}
+
+export function createPositionedBlockMap(
+  positionedBlocksBySection: Record<string, PositionedBlock[]>
+): Map<string, PositionedBlock> {
+  const map = new Map<string, PositionedBlock>();
+
+  for (const sectionBlocks of Object.values(positionedBlocksBySection)) {
+    for (const positioned of sectionBlocks) {
+      map.set(positioned.block.block_id, positioned);
+    }
   }
 
   return map;

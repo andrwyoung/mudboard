@@ -3,6 +3,7 @@ import { SortableImageItem } from "@/components/drag/sortable-wrapper";
 import { Block } from "@/types/block-types";
 import { ImageBlock } from "./image-block";
 import TextBlock from "./text-block";
+import { useLayoutStore } from "@/store/layout-store";
 
 export function BlockChooser({
   block,
@@ -49,6 +50,8 @@ function BlockComponent({
   shouldEagerLoad: boolean;
   columnWidth: number;
 }) {
+  const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
+
   return (
     <div
       // layoutId={`block-${block.block_id}`} // for animating
@@ -61,8 +64,8 @@ function BlockComponent({
       onClick={onClick}
     >
       <SortableImageItem id={block.block_id}>
-        <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10">
-          {block.order_index}
+        <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
+          {position?.colIndex}, {position?.rowIndex}, {position?.orderIndex}
         </h1>
 
         <BlockChooser

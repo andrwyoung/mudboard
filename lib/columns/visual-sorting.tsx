@@ -1,3 +1,4 @@
+// DEPRECATED. replaced by generate-block-position
 import { Block } from "@/types/block-types";
 
 type VisualBlock = {

@@ -56,6 +56,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
 
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
+  const spacingSize = useUIStore((s) => s.spacingSize);
   const numCols = useUIStore((s) => s.numCols);
   // const mirrorNumCols = useUIStore((s) => s.mirrorNumCols);
 
@@ -98,6 +99,8 @@ export default function Board({ boardId }: { boardId: string }) {
   // for dragging and stuff
   const [dropIndicatorId, setDropIndicatorId] = useState<string | null>(null);
   const initialPointerYRef = useRef<number | null>(null);
+
+  // ordering
 
   // SECTION: Getting all the initial images
   //
@@ -172,9 +175,15 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // update the fake columns with the real ones if reals ones change
 
+  // next up for DEPRECATION
   const blockMap = useMemo(
     () => createBlockMap(sectionColumns),
     [sectionColumns]
+  );
+  useEffect(
+    () =>
+      useLayoutStore.getState().regenerateLayout(sectionColumns, spacingSize),
+    [sectionColumns, spacingSize]
   );
 
   const sectionMap = useMemo(() => {

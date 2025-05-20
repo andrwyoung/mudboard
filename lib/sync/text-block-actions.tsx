@@ -30,9 +30,9 @@ export async function createTextBlock(
     block_type: "text",
     data: textBlock,
     height: TEXT_BLOCK_HEIGHT,
-    col_index: colIndex,
-    row_index: rowIndex,
-    order_index: 0,
+    init_col_index: colIndex,
+    init_row_index: rowIndex,
+    init_order_index: 0,
     deleted: false,
   };
 
