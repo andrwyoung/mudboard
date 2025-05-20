@@ -16,6 +16,9 @@ type UIStore = {
 
   gallerySpacingSize: number;
   setGallerySpacingSize: (spacing: number) => void;
+
+  prettyMode: boolean;
+  setPrettyMode: (d: boolean) => void;
 };
 
 export const useUIStore = create<UIStore>((set) => ({
@@ -29,4 +32,7 @@ export const useUIStore = create<UIStore>((set) => ({
 
   gallerySpacingSize: DEFAULT_GALLERY_SPACING,
   setGallerySpacingSize: (spacing) => set({ gallerySpacingSize: spacing }),
+
+  prettyMode: true,
+  setPrettyMode: (d) => set({ prettyMode: d }),
 }));

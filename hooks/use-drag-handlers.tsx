@@ -5,20 +5,18 @@ import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
 import { Section, SectionColumns } from "@/types/board-types";
 import { findShortestColumn } from "@/lib/columns/column-helpers";
 import { useUIStore } from "@/store/ui-store";
+import { PositionedBlock } from "@/types/sync-types";
 
 export function getMovingItem(
   activeId: string,
-  blockMap: Map<
-    string,
-    { sectionId: string; colIndex: number; blockIndex: number }
-  >,
+  positionedBlockMap: Map<string, PositionedBlock>,
   sectionColumns: SectionColumns
 ) {
-  const fromPos = blockMap.get(activeId);
+  const fromPos = positionedBlockMap.get(activeId);
   if (!fromPos) return null;
 
   const fromCols = sectionColumns[fromPos.sectionId];
-  const item = fromCols?.[fromPos.colIndex]?.[fromPos.blockIndex];
+  const item = fromCols?.[fromPos.colIndex]?.[fromPos.rowIndex];
   if (!item) return null;
 
   return {
@@ -26,17 +24,14 @@ export function getMovingItem(
     fromPos,
     fromSectionId: fromPos.sectionId,
     fromColumnIndex: fromPos.colIndex,
-    movingItemIndex: fromPos.blockIndex,
+    movingItemIndex: fromPos.rowIndex,
   };
 }
 
 type UseGalleryHandlersProps = {
   sectionColumns: SectionColumns;
   sections: Section[];
-  blockMap: Map<
-    string,
-    { sectionId: string; colIndex: number; blockIndex: number }
-  >;
+  positionedBlockMap: Map<string, PositionedBlock>;
   updateSections: (
     updates: Record<string, (prev: Block[][]) => Block[][]>
   ) => void;
@@ -52,7 +47,7 @@ type UseGalleryHandlersProps = {
 export function useGalleryHandlers({
   sectionColumns,
   sections,
-  blockMap,
+  positionedBlockMap,
   updateSections,
   setDraggedBlock,
   dropIndicatorId,
@@ -73,6 +68,11 @@ export function useGalleryHandlers({
       document.body.classList.add("cursor-grabbing");
       setSelectedBlocks({});
 
+      console.log(
+        "starting drag. here's positioned block map: ",
+        positionedBlockMap
+      );
+
       // cache blockRefs map so move doesn't have to recompute
       blockRectsRef.current = new Map();
       document.querySelectorAll<HTMLElement>("[data-id]").forEach((el) => {
@@ -83,11 +83,11 @@ export function useGalleryHandlers({
       });
 
       const { active, activatorEvent } = event;
-      const pos = blockMap.get(active.id.toString());
+      const pos = positionedBlockMap.get(active.id.toString());
       if (pos) {
         const sectionCols = sectionColumns[pos.sectionId];
         const col = sectionCols?.[pos.colIndex];
-        const activeImage = col?.[pos.blockIndex];
+        const activeImage = col?.[pos.rowIndex];
         if (activeImage) {
           setDraggedBlock(activeImage);
         }
@@ -142,7 +142,7 @@ export function useGalleryHandlers({
       }
 
       // SCENARIO 3: we hover over another block
-      const pos = blockMap.get(String(over.id));
+      const pos = positionedBlockMap.get(String(over.id));
       if (!pos) return;
 
       const startY = initialPointerYRef.current;
@@ -153,14 +153,14 @@ export function useGalleryHandlers({
 
       const dropId =
         currentPointerY < middleY
-          ? `drop-${pos.sectionId}-${pos.colIndex}-${pos.blockIndex}`
-          : `drop-${pos.sectionId}-${pos.colIndex}-${pos.blockIndex + 1}`;
+          ? `drop-${pos.sectionId}-${pos.colIndex}-${pos.rowIndex}`
+          : `drop-${pos.sectionId}-${pos.colIndex}-${pos.rowIndex + 1}`;
 
       if (dropId !== overIdRef.current) {
         setDropIndicatorId(dropId);
       }
     },
-    [blockMap, setDropIndicatorId]
+    [positionedBlockMap, setDropIndicatorId]
   );
 
   const handleDragEnd = useCallback(
@@ -190,7 +190,7 @@ export function useGalleryHandlers({
 
         handleBlockDrop({
           activeId,
-          blockMap,
+          positionedBlockMap,
           sectionColumns,
           updateSections,
           insertIndex,
@@ -205,7 +205,11 @@ export function useGalleryHandlers({
 
         if (!targetSection) return;
 
-        const result = getMovingItem(activeId, blockMap, sectionColumns);
+        const result = getMovingItem(
+          activeId,
+          positionedBlockMap,
+          sectionColumns
+        );
         if (!result) return;
         const { item: movingItem, fromPos } = result;
 
@@ -217,7 +221,7 @@ export function useGalleryHandlers({
           [fromPos.sectionId]: (prev) => {
             const cols = [...prev];
             const fromCol = [...cols[fromPos.colIndex]];
-            fromCol.splice(fromPos.blockIndex, 1);
+            fromCol.splice(fromPos.rowIndex, 1);
             cols[fromPos.colIndex] = fromCol;
             return cols;
           },
@@ -240,7 +244,13 @@ export function useGalleryHandlers({
 
       setDropIndicatorId(null);
     },
-    [blockMap, dropIndicatorId, updateSections, sectionColumns, setDraggedBlock]
+    [
+      positionedBlockMap,
+      dropIndicatorId,
+      updateSections,
+      sectionColumns,
+      setDraggedBlock,
+    ]
   );
 
   return {

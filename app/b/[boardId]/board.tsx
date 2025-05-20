@@ -101,6 +101,11 @@ export default function Board({ boardId }: { boardId: string }) {
   const initialPointerYRef = useRef<number | null>(null);
 
   // ordering
+  const positionedBlockMap = useLayoutStore((s) => s.positionedBlockMap);
+  const positionedBlocksBySection = useLayoutStore(
+    (s) => s.positionedBlocksBySection
+  );
+  const regenerateLayout = useLayoutStore((s) => s.regenerateLayout);
 
   // SECTION: Getting all the initial images
   //
@@ -166,6 +171,7 @@ export default function Board({ boardId }: { boardId: string }) {
       );
     }
     setSectionColumns(nextColumns);
+    regenerateLayout(spacingSize);
   }, [blocksBySection, initSections, numCols, setSectionColumns]);
 
   // const mirrorColumns = useMemo(
@@ -175,16 +181,11 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // update the fake columns with the real ones if reals ones change
 
-  // next up for DEPRECATION
-  const blockMap = useMemo(
-    () => createBlockMap(sectionColumns),
-    [sectionColumns]
-  );
-  useEffect(
-    () =>
-      useLayoutStore.getState().regenerateLayout(sectionColumns, spacingSize),
-    [sectionColumns, spacingSize]
-  );
+  // regenerate the position map whenever map or spacing size changes
+  useEffect(() => {
+    regenerateLayout(spacingSize);
+    console.log("regenerating layout: ", positionedBlocksBySection);
+  }, [sectionColumns, spacingSize, regenerateLayout]);
 
   const sectionMap = useMemo(() => {
     const map: Record<string, Section> = {};
@@ -286,7 +287,7 @@ export default function Board({ boardId }: { boardId: string }) {
     {
       sectionColumns,
       sections,
-      blockMap,
+      positionedBlockMap,
       updateSections: (
         updates: Record<string, (prev: Block[][]) => Block[][]>
       ) => {

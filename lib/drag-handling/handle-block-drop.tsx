@@ -1,10 +1,11 @@
 import { getMovingItem } from "@/hooks/use-drag-handlers";
 import { Block } from "@/types/block-types";
 import { SectionColumns } from "@/types/board-types";
+import { PositionedBlock } from "@/types/sync-types";
 
 export function handleBlockDrop({
   activeId,
-  blockMap,
+  positionedBlockMap,
   sectionColumns,
   updateSections,
   insertIndex,
@@ -12,10 +13,7 @@ export function handleBlockDrop({
   toSectionId,
 }: {
   activeId: string;
-  blockMap: Map<
-    string,
-    { sectionId: string; colIndex: number; blockIndex: number }
-  >;
+  positionedBlockMap: Map<string, PositionedBlock>;
   sectionColumns: SectionColumns;
   updateSections: (
     updates: Record<string, (prev: Block[][]) => Block[][]>
@@ -26,7 +24,7 @@ export function handleBlockDrop({
 }) {
   console.log("toColumnIndex: ", toColumnIndex, " insertIndex: ", insertIndex);
 
-  const result = getMovingItem(activeId, blockMap, sectionColumns);
+  const result = getMovingItem(activeId, positionedBlockMap, sectionColumns);
   if (!result) return;
 
   const {

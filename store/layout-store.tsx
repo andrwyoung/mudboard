@@ -4,11 +4,12 @@ import { useUIStore } from "./ui-store";
 import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
 import { SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
-import { toast } from "sonner";
 import { PositionedBlock } from "@/types/sync-types";
 import { generatePositionedBlocks } from "@/lib/ordering/generate-block-positions";
 
 type LayoutStore = {
+  // SECTION 1
+
   sectionColumns: SectionColumns;
   setSectionColumns: (cols: SectionColumns) => void;
   updateColumnsInASection: (
@@ -16,19 +17,10 @@ type LayoutStore = {
     fn: (prev: Block[][]) => Block[][]
   ) => void;
 
-  layoutDirty: boolean;
-  setLayoutDirty: (d: boolean) => void;
-
-  prettyMode: boolean;
-  setPrettyMode: (d: boolean) => void;
-
-  // SECTION: layout stuff
+  // SECTION 2
 
   positionedBlocksBySection: Record<string, PositionedBlock[]>;
-  regenerateLayout: (
-    sectionColumns: SectionColumns,
-    spacingSize: number
-  ) => void;
+  regenerateLayout: (spacingSize: number) => void;
   // regenerateSectionLayout: (sectionId: string) => void;
 
   positionedBlockMap: Map<string, PositionedBlock>;
@@ -38,10 +30,17 @@ type LayoutStore = {
   getNextBlock: (currentId: string) => PositionedBlock | null;
   getPrevBlock: (currentId: string) => PositionedBlock | null;
 
+  // SECTION 3
+
+  layoutDirty: boolean;
+  setLayoutDirty: (d: boolean) => void;
+
   syncLayout: () => Promise<boolean>;
 };
 
 export const useLayoutStore = create<LayoutStore>((set, get) => ({
+  // SECTION: the columns themselves
+
   sectionColumns: {},
   setSectionColumns: (cols: SectionColumns) => set({ sectionColumns: cols }),
   updateColumnsInASection: (sectionId, fn) => {
@@ -61,21 +60,19 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
     });
   },
 
-  layoutDirty: false,
-  setLayoutDirty: (d) => set({ layoutDirty: d }),
-
-  prettyMode: true,
-  setPrettyMode: (d) => set({ prettyMode: d }),
+  // SECTION: figuring out positions
+  //
+  //
 
   positionedBlocksBySection: {},
-  regenerateLayout: (sectionColumns: SectionColumns, spacingSize: number) => {
+  positionedBlockMap: new Map(),
+  regenerateLayout: (spacingSize: number) => {
     const columns = get().sectionColumns;
     const { positionedBlocksBySection, positionedBlockMap } =
       generatePositionedBlocks(columns, spacingSize);
     set({ positionedBlocksBySection, positionedBlockMap });
   },
 
-  positionedBlockMap: new Map(),
   getBlockPosition: (blockId) => get().positionedBlockMap.get(blockId),
   //  regenerateSectionLayout: (sectionId: string) => {const columns = get().sectionColumns;
   //   generatePositionedBlocks(columns)},
@@ -93,6 +90,13 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
     const index = flat.findIndex((b) => b.block.block_id === currentId);
     return flat[index - 1] ?? null;
   },
+
+  // SECTION: sycing to database
+  //
+  //
+
+  layoutDirty: false,
+  setLayoutDirty: (d) => set({ layoutDirty: d }),
 
   syncLayout: async () => {
     const { layoutDirty } = get();
