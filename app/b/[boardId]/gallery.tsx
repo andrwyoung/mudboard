@@ -15,6 +15,7 @@ import { MemoizedDroppableColumn } from "./columns";
 import { useIsMirror } from "./board";
 import Image from "next/image";
 import { useImagePicker } from "@/hooks/use-image-picker";
+import { useSelectionStore } from "@/store/selection-store";
 
 export default function Gallery({
   sectionId,
@@ -41,6 +42,8 @@ export default function Gallery({
   const numCols = useUIStore((s) => (isMirror ? s.mirrorNumCols : s.numCols));
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
+
+  const overlayGalleryIsOpen = useSelectionStore((s) => s.overlayGalleryIsOpen);
 
   const isEmpty = columns.every((col) => col.length === 0);
   const { triggerImagePicker, fileInput } = useImagePicker(sectionId);
@@ -72,6 +75,8 @@ export default function Gallery({
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      if (overlayGalleryIsOpen) return;
+
       const activeEl = document.activeElement;
       const isTyping =
         activeEl?.tagName === "INPUT" ||
@@ -104,6 +109,7 @@ export default function Gallery({
 
       // deselect with escape
       if (e.key === "Escape") {
+        useSelectionStore.getState().closeOverlayGallery();
         setSelectedBlocks({});
       }
 
@@ -112,7 +118,7 @@ export default function Gallery({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedBlocks, updateColumns, setSelectedBlocks]);
+  }, [selectedBlocks, updateColumns, setSelectedBlocks, overlayGalleryIsOpen]);
 
   //
   // SECTION: click and drag behavior
@@ -142,10 +148,17 @@ export default function Gallery({
     };
   }, [setSelectedBlocks]);
 
-  // all the drag handlers
+  // when clicking on an image
   const handleItemClick = useCallback(
     (block: Block, event: React.MouseEvent<Element, MouseEvent>) => {
       console.log("Clicked? ", event, block);
+
+      if (event.detail === 2) {
+        console.log("Double clicked:", block);
+        setSelectedBlocks({ [block.block_id]: block });
+        useSelectionStore.getState().openOverlayGallery(block);
+        return;
+      }
 
       setSelectedBlocks((prevSelected) => {
         const newSelected = { ...prevSelected };
@@ -175,10 +188,11 @@ export default function Gallery({
     <div
       className={`grid h-full relative ${
         draggedBlock ? "cursor-grabbing" : "cursor-default"
-      }`}
+      } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
       style={{
         gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
       }}
+      aria-hidden={overlayGalleryIsOpen ? "true" : "false"}
     >
       {/* <p className="text-primary">hey there</p> */}
       {isEmpty && (

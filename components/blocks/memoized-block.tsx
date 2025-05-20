@@ -51,7 +51,8 @@ function BlockComponent({
 }) {
   return (
     <div
-      data-id={block.block_id}
+      // layoutId={`block-${block.block_id}`} // for animating
+      data-id={block.block_id} // for sortable
       className={`flex flex-col rounded-sm object-cover transition-all duration-150 cursor-pointer shadow-md 
       hover:scale-101 hover:shadow-xl hover:opacity-100
       relative bg-background

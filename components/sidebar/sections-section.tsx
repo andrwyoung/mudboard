@@ -76,45 +76,45 @@ export default function SectionsSection({
                       setSectionToDelete(section);
                     }}
                   />
-                  {sectionToDelete && (
-                    <AlertDialog
-                      open={!!sectionToDelete}
-                      onOpenChange={(open) => !open && setSectionToDelete(null)}
-                    >
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-2xl text-primary">
-                            Delete &quot;
-                            {sectionToDelete.title ?? DEFAULT_SECTION_NAME}
-                            &quot;?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will remove the section and any blocks inside
-                            it. This action cannot be undone (as of now).
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="font-semibold">
-                            Cancel
-                          </AlertDialogCancel>
-                          <AlertDialogAction
-                            className="font-bold"
-                            onClick={() => {
-                              // deleteSection(sectionToDelete.section_id);
-                              toast.error("Not implemented yet lol");
-                              setSectionToDelete(null);
-                            }}
-                          >
-                            Delete Section
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
                 </div>
               </DroppableSection>
             );
           })}
+        {sectionToDelete && (
+          <AlertDialog
+            open={!!sectionToDelete}
+            onOpenChange={(open) => !open && setSectionToDelete(null)}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-2xl text-primary">
+                  Delete &quot;
+                  {sectionToDelete.title ?? DEFAULT_SECTION_NAME}
+                  &quot;?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will remove the section and any blocks inside it. This
+                  action cannot be undone (as of now).
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="font-semibold">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="font-bold"
+                  onClick={() => {
+                    // deleteSection(sectionToDelete.section_id);
+                    toast.error("Not implemented yet lol");
+                    setSectionToDelete(null);
+                  }}
+                >
+                  Delete Section
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
       <button
         type="button"

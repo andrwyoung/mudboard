@@ -37,6 +37,8 @@ import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 import SectionHeader from "@/components/section/section-header";
 import { useLoadingStore } from "@/store/loading-store";
+import OverlayGallery from "./overlay-gallery";
+import { useSelectionStore } from "@/store/selection-store";
 
 // differentiating mirror gallery from real one
 const MirrorContext = createContext(false);
@@ -48,10 +50,6 @@ export default function Board({ boardId }: { boardId: string }) {
   // when dragging new images from local computer
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
-
-  const [selectedSection, setSelectedSectionId] = useState<Section | null>(
-    null
-  );
 
   // when dragging blocks
   const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
@@ -75,6 +73,12 @@ export default function Board({ boardId }: { boardId: string }) {
 
   const [scrollY, setScrollY] = useState(0);
 
+  // selection stuff
+  const selectedSection = useSelectionStore((s) => s.selectedSection);
+  const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
+  const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
+  const setSelectedBlocks = useSelectionStore((s) => s.setSelectedBlocks);
+
   // virtualization
   const mainRef = useRef<HTMLDivElement | null>(null);
   const [sidebarWidth, setSidebarWidth] = useState(0);
@@ -88,10 +92,6 @@ export default function Board({ boardId }: { boardId: string }) {
   // for dragging and stuff
   const [dropIndicatorId, setDropIndicatorId] = useState<string | null>(null);
   const initialPointerYRef = useRef<number | null>(null);
-
-  const [selectedBlocks, setSelectedBlocks] = useState<Record<string, Block>>(
-    {}
-  );
 
   // SECTION: Getting all the initial images
   //
@@ -120,7 +120,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
         setSections(sections);
         setInitSections(sections);
-        setSelectedSectionId(sections[0]);
+        setSelectedSection(sections[0]);
         console.log("Set sections to:", sections);
       } catch (err) {
         console.error("Error loading sections:", err);
@@ -129,7 +129,7 @@ export default function Board({ boardId }: { boardId: string }) {
     }
 
     loadImages();
-  }, [boardId, setSections, setBoard]);
+  }, [boardId, setSections, setBoard, setSelectedSection]);
 
   // group them into sectioned blocks
   const blocksBySection = useMemo(() => {
@@ -366,8 +366,8 @@ export default function Board({ boardId }: { boardId: string }) {
         {/* Gallery */}
         <main ref={mainRef} className="flex-1">
           <div
-            className={`absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 
-            transition-opacity duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
+            className={`absolute top-1/2 left-1/2 z-40 -translate-x-1/2 -translate-y-1/2 
+            transition-opacity  duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
              ${fadeGallery ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           >
             {showLoading ? "Loading" : `${sliderVal} Columns`}
@@ -380,51 +380,57 @@ export default function Board({ boardId }: { boardId: string }) {
                 : "duration-500 opacity-100"
             }`}
           >
-            <div
-              className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
-              style={{
-                direction: "rtl",
-                paddingLeft: gallerySpacingSize,
-                paddingRight: gallerySpacingSize,
-                // paddingTop: gallerySpacingSize,
-                paddingBottom: gallerySpacingSize,
-              }}
-            >
-              <div style={{ direction: "ltr" }}>
-                <MirrorContext.Provider value={false}>
-                  {sections
-                    .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
-                    .map((section) => {
-                      const sectionId = section.section_id;
-                      const columns = sectionColumns[sectionId];
+            <div className="relative h-full w-full">
+              <OverlayGallery />
 
-                      return (
-                        <div
-                          key={sectionId}
-                          ref={(el) => {
-                            sectionRefs.current[sectionId] = el;
-                          }}
-                        >
-                          <SectionHeader section={sectionMap[sectionId]} />
-                          {columns && (
-                            <Gallery
-                              sectionId={sectionId}
-                              columns={columns}
-                              updateColumns={(fn) =>
-                                updateSectionColumns(sectionId, fn)
-                              }
-                              draggedBlock={draggedBlock}
-                              sidebarWidth={sidebarWidth}
-                              scrollY={scrollY}
-                              selectedBlocks={selectedBlocks}
-                              setSelectedBlocks={setSelectedBlocks}
-                              overId={dropIndicatorId}
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
-                </MirrorContext.Provider>
+              <div
+                className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
+                style={{
+                  direction: "rtl",
+                  paddingLeft: gallerySpacingSize,
+                  paddingRight: gallerySpacingSize,
+                  // paddingTop: gallerySpacingSize,
+                  paddingBottom: gallerySpacingSize,
+                }}
+              >
+                <div style={{ direction: "ltr" }}>
+                  <MirrorContext.Provider value={false}>
+                    {sections
+                      .sort(
+                        (a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)
+                      )
+                      .map((section) => {
+                        const sectionId = section.section_id;
+                        const columns = sectionColumns[sectionId];
+
+                        return (
+                          <div
+                            key={sectionId}
+                            ref={(el) => {
+                              sectionRefs.current[sectionId] = el;
+                            }}
+                          >
+                            <SectionHeader section={sectionMap[sectionId]} />
+                            {columns && (
+                              <Gallery
+                                sectionId={sectionId}
+                                columns={columns}
+                                updateColumns={(fn) =>
+                                  updateSectionColumns(sectionId, fn)
+                                }
+                                draggedBlock={draggedBlock}
+                                sidebarWidth={sidebarWidth}
+                                scrollY={scrollY}
+                                selectedBlocks={selectedBlocks}
+                                setSelectedBlocks={setSelectedBlocks}
+                                overId={dropIndicatorId}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                  </MirrorContext.Provider>
+                </div>
               </div>
             </div>
             {/* <div

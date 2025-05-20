@@ -6,9 +6,6 @@ import {
 import { create } from "zustand";
 
 type UIStore = {
-  galleryIsOpen: boolean;
-  setGalleryIsOpen: (g: boolean) => void;
-
   numCols: number;
   setNumCols: (cols: number) => void;
   mirrorNumCols: number;
@@ -22,9 +19,6 @@ type UIStore = {
 };
 
 export const useUIStore = create<UIStore>((set) => ({
-  galleryIsOpen: false,
-  setGalleryIsOpen: (g: boolean) => set({ galleryIsOpen: g }),
-
   numCols: DEFAULT_COLUMNS,
   setNumCols: (cols) => set({ numCols: cols }),
   mirrorNumCols: DEFAULT_COLUMNS,
