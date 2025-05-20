@@ -6,10 +6,11 @@ import {
 import { create } from "zustand";
 
 type UIStore = {
+  mirrorMode: boolean;
+  toggleMirrorMode: () => void;
+
   numCols: number;
   setNumCols: (cols: number) => void;
-  mirrorNumCols: number;
-  setMirrorNumCols: (cols: number) => void;
 
   spacingSize: number;
   setSpacingSize: (spacing: number) => void;
@@ -22,10 +23,14 @@ type UIStore = {
 };
 
 export const useUIStore = create<UIStore>((set) => ({
+  mirrorMode: false,
+  toggleMirrorMode: () =>
+    set((state) => ({
+      mirrorMode: !state.mirrorMode,
+    })),
+
   numCols: DEFAULT_COLUMNS,
   setNumCols: (cols) => set({ numCols: cols }),
-  mirrorNumCols: DEFAULT_COLUMNS,
-  setMirrorNumCols: (cols) => set({ numCols: cols }),
 
   spacingSize: DEFAULT_SPACING,
   setSpacingSize: (spacing) => set({ spacingSize: spacing }),

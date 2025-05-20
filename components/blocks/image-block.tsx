@@ -1,5 +1,5 @@
 import { Block, MudboardImage } from "@/types/block-types";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Blurhash } from "react-blurhash";
 
@@ -86,6 +86,11 @@ export function ImageBlock({
   //     ); // places cursor at the end
   //   }
   // }, [isSelected]);
+
+  // when mirror changes caption, then also update this one
+  useEffect(() => {
+    setCaptionDraft(caption ?? "");
+  }, [caption]);
 
   return (
     <>

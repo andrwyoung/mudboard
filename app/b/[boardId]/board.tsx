@@ -53,7 +53,8 @@ export default function Board({ boardId }: { boardId: string }) {
 
   const spacingSize = useUIStore((s) => s.spacingSize);
   const numCols = useUIStore((s) => s.numCols);
-  // const mirrorNumCols = useUIStore((s) => s.mirrorNumCols);
+
+  const mirrorMode = useUIStore((s) => s.mirrorMode);
 
   // sections
   const sections = useMetadataStore((s) => s.sections);
@@ -167,6 +168,12 @@ export default function Board({ boardId }: { boardId: string }) {
     regenerateLayout,
     spacingSize,
   ]);
+
+  // whenever the order changes, regenerate the layout
+  useEffect(
+    () => regenerateLayout(spacingSize),
+    [sectionColumns, spacingSize, regenerateLayout]
+  );
 
   const sectionMap = useMemo(() => {
     const map: Record<string, Section> = {};
@@ -322,7 +329,7 @@ export default function Board({ boardId }: { boardId: string }) {
       >
         {/* Sidebar */}
         <aside
-          className="hidden lg:block w-1/6 min-w-[200px] max-w-[280px]
+          className="hidden lg:block w-1/6 min-w-[200px] max-w-[250px]
       bg-primary"
           ref={sidebarRef}
         >
@@ -361,20 +368,24 @@ export default function Board({ boardId }: { boardId: string }) {
               sidebarWidth={sidebarWidth}
             />
 
-            <Canvas
-              isMirror={true}
-              sections={sections}
-              sectionColumns={sectionColumns}
-              sectionRefs={sectionRefs}
-              sectionMap={sectionMap}
-              draggedBlock={draggedBlock}
-              selectedBlocks={selectedBlocks}
-              setSelectedBlocks={setSelectedBlocks}
-              updateSectionColumns={updateSectionColumns}
-              dropIndicatorId={dropIndicatorId}
-              scrollY={scrollY}
-              sidebarWidth={sidebarWidth}
-            />
+            {mirrorMode && (
+              <div className="hidden lg:flex w-full h-full">
+                <Canvas
+                  isMirror={true}
+                  sections={sections}
+                  sectionColumns={sectionColumns}
+                  sectionRefs={sectionRefs}
+                  sectionMap={sectionMap}
+                  draggedBlock={draggedBlock}
+                  selectedBlocks={selectedBlocks}
+                  setSelectedBlocks={setSelectedBlocks}
+                  updateSectionColumns={updateSectionColumns}
+                  dropIndicatorId={dropIndicatorId}
+                  scrollY={scrollY}
+                  sidebarWidth={sidebarWidth}
+                />
+              </div>
+            )}
           </div>
         </main>
 

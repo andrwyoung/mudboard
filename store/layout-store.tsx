@@ -66,6 +66,7 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
   positionedBlocksBySection: {},
   positionedBlockMap: new Map(),
   regenerateLayout: (spacingSize: number) => {
+    console.log("regenerating layout");
     const columns = get().sectionColumns;
     const { positionedBlocksBySection, positionedBlockMap } =
       generatePositionedBlocks(columns, spacingSize);

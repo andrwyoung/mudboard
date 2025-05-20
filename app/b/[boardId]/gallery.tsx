@@ -40,7 +40,7 @@ export default function Gallery({
   const isMirror = useIsMirror();
   const canvasScope = isMirror ? "mirror" : "main";
 
-  const numCols = useUIStore((s) => (isMirror ? s.mirrorNumCols : s.numCols));
+  const numCols = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 

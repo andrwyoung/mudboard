@@ -44,9 +44,12 @@ export default function SectionsSection({
                 id={`section-${index}`}
                 key={section.section_id}
               >
-                <div className="flex justify-between group items-center px-2 ">
+                <div
+                  className="grid group items-center w-full"
+                  style={{ gridTemplateColumns: "1fr auto" }}
+                >
                   <div
-                    className=" select-none flex gap-3 items-center cursor-pointer w-full py-[1px]"
+                    className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
                     onClick={() => {
                       const sectionEl =
                         sectionRefs.current?.[section.section_id];
@@ -60,8 +63,8 @@ export default function SectionsSection({
                   >
                     <FillingDot />
                     <h2
-                      className={`text-lg text-primary-foreground group-hover:text-accent transition-all duration-300
-                         truncate whitespace-nowrap overflow-hidden 
+                      className={`text-lg text-primary-foreground group-hover:text-accent transition-all duration-300 
+                         truncate whitespace-nowrap overflow-hidden min-w-0
                     ${titleExists ? "" : "italic"}`}
                     >
                       {titleExists ? section.title : DEFAULT_SECTION_NAME}

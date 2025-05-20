@@ -90,10 +90,10 @@ export default function Sidebar({
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
 
-          <div className="px-10">
+          <div className="px-8">
             <AccordianWrapper
               title="Customize!"
-              titleClassName="font-header text-lg"
+              titleClassName="font-header text-lg px-2"
             >
               <CustomizeSection />
             </AccordianWrapper>

@@ -5,11 +5,13 @@ import {
   updateSectionTitle,
 } from "@/lib/sync/section-actions";
 import { useLoadingStore } from "@/store/loading-store";
+import { useUIStore } from "@/store/ui-store";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
   const description = section?.description;
 
+  const mirrorMode = useUIStore((s) => s.mirrorMode);
   const isEditing =
     useLoadingStore.getState().editingSectionId === section.section_id;
 
@@ -27,17 +29,19 @@ export default function SectionHeader({ section }: { section: Section }) {
           className="text-lg sm:text-xl md:text-2xl text-left"
         />
       </div>
-      <div className="hidden lg:flex w-xs md:w-sm">
-        <InlineEditText
-          value={description && description.trim() != "" ? description : null}
-          unnamedPlaceholder="Click to add a Description"
-          placeholder="Add a Description"
-          onChange={(newDesc) => {
-            updateSectionDescription(section.section_id, newDesc);
-          }}
-          className="text-sm text-right"
-        />
-      </div>
+      {!mirrorMode && (
+        <div className="hidden lg:flex w-xs">
+          <InlineEditText
+            value={description && description.trim() != "" ? description : null}
+            unnamedPlaceholder="Click to add a Description"
+            placeholder="Add a Description"
+            onChange={(newDesc) => {
+              updateSectionDescription(section.section_id, newDesc);
+            }}
+            className="text-sm text-right"
+          />
+        </div>
+      )}
     </div>
   );
 }
