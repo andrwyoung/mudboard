@@ -39,6 +39,7 @@ import SectionHeader from "@/components/section/section-header";
 import { useLoadingStore } from "@/store/loading-store";
 import OverlayGallery from "./overlay-gallery";
 import { useSelectionStore } from "@/store/selection-store";
+import { AnimatePresence, motion } from "framer-motion";
 
 // differentiating mirror gallery from real one
 const MirrorContext = createContext(false);
@@ -73,6 +74,11 @@ export default function Board({ boardId }: { boardId: string }) {
 
   const [scrollY, setScrollY] = useState(0);
 
+  // overlay gallery stuff
+  const overlayGalleryIsOpen = useSelectionStore((s) => s.overlayGalleryIsOpen);
+  const overlayGalleryShowing = useSelectionStore(
+    (s) => s.overlayGalleryShowing
+  );
   // selection stuff
   const selectedSection = useSelectionStore((s) => s.selectedSection);
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
@@ -267,31 +273,6 @@ export default function Board({ boardId }: { boardId: string }) {
     };
   }, []);
 
-  // // if you're scrolling using an image, then blur everything
-  // useEffect(() => {
-  //   if (!draggedBlock) return;
-
-  //   let timeout: NodeJS.Timeout | null = null;
-
-  //   const handleScroll = () => {
-  //     setShowBlurImg(true);
-
-  //     if (timeout) clearTimeout(timeout);
-  //     timeout = setTimeout(() => {
-  //       setShowBlurImg(false);
-  //     }, 300); // adjust this delay to match "scroll stop" detection
-  //   };
-
-  //   const mainScrollEl = document.querySelector("main"); // adjust if needed
-  //   if (!mainScrollEl) return;
-
-  //   mainScrollEl.addEventListener("scroll", handleScroll);
-
-  //   return () => {
-  //     mainScrollEl.removeEventListener("scroll", handleScroll);
-  //     if (timeout) clearTimeout(timeout);
-  //   };
-  // }, [draggedBlock, setShowBlurImg]);
   const { handleDragStart, handleDragMove, handleDragEnd } = useGalleryHandlers(
     {
       sectionColumns,
@@ -381,7 +362,20 @@ export default function Board({ boardId }: { boardId: string }) {
             }`}
           >
             <div className="relative h-full w-full">
-              <OverlayGallery />
+              <AnimatePresence>
+                {overlayGalleryIsOpen && overlayGalleryShowing && (
+                  <motion.div
+                    key="overlay-gallery"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute inset-0 z-60"
+                  >
+                    <OverlayGallery selectedBlock={overlayGalleryShowing} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <div
                 className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}

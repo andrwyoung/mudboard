@@ -1,39 +1,76 @@
 import { getImageUrl } from "@/components/blocks/image-block";
 import { useSelectionStore } from "@/store/selection-store";
-import { MudboardImage } from "@/types/block-types";
+import { Block, MudboardImage } from "@/types/block-types";
 import Image from "next/image";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaXmark } from "react-icons/fa6";
 
-export default function OverlayGallery() {
-  const overlayGalleryIsOpen = useSelectionStore((s) => s.overlayGalleryIsOpen);
+export default function OverlayGallery({
+  selectedBlock,
+}: {
+  selectedBlock: Block;
+}) {
   const closeOverlayGallery = useSelectionStore((s) => s.closeOverlayGallery);
-  const selectedBlock = useSelectionStore((s) => s.overlayGalleryShowing);
+  const imageBlock = selectedBlock.data as MudboardImage;
 
-  const imageBlock = selectedBlock?.data as MudboardImage;
-
-  const zoomLevel = 1;
+  // zoomingggg
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const zoomIn = () => setZoomLevel((z) => Math.min(z + 0.1, 3));
+  const zoomOut = () => setZoomLevel((z) => Math.max(z - 0.1, 0.1));
+  const resetZoom = () => setZoomLevel(1);
+  const [showZoomControls, setShowZoomControls] = useState(true);
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const isDragging = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
 
-  // drag while in the thing
+  const [initialSize, setInitialSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+
+  // calculate initial height and width
   useEffect(() => {
     const container = scrollContainerRef.current;
-    if (!overlayGalleryIsOpen || !container) return;
+    if (!container) return;
+
+    const containerWidth = container.clientWidth - 24 * 4; // remove padding (px-12)
+    const containerHeight = container.clientHeight - 24 * 4; // remove padding (py-12)
+
+    const imageAspect = imageBlock.width / selectedBlock.height;
+    const containerAspect = containerWidth / containerHeight;
+
+    let width = imageBlock.width;
+    let height = selectedBlock.height;
+
+    if (imageAspect > containerAspect) {
+      width = containerWidth;
+      height = containerWidth / imageAspect;
+    } else {
+      height = containerHeight;
+      width = containerHeight * imageAspect;
+    }
+
+    setInitialSize({ width, height });
+  }, [imageBlock.width, selectedBlock.height]);
+
+  // dragggin the image around
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
     const onMouseDown = (e: MouseEvent) => {
       if (e.button !== 0) return;
-      isDragging.current = true;
+      setIsDragging(true);
       dragStart.current = { x: e.clientX, y: e.clientY };
-      container.style.cursor = "grabbing";
 
       // Prevent default drag behavior on image
       e.preventDefault();
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      if (!isDragging.current || !dragStart.current) return;
+      if (!isDragging || !dragStart.current) return;
 
       const dx = e.clientX - dragStart.current.x;
       const dy = e.clientY - dragStart.current.y;
@@ -46,7 +83,7 @@ export default function OverlayGallery() {
 
     const onMouseUp = () => {
       if (!isDragging) return;
-      isDragging.current = false;
+      setIsDragging(false);
       dragStart.current = null;
       container.style.cursor = "default";
     };
@@ -60,59 +97,156 @@ export default function OverlayGallery() {
       container.removeEventListener("mousemove", onMouseMove);
       container.removeEventListener("mouseup", onMouseUp);
     };
-  }, [isDragging, overlayGalleryIsOpen]);
+  }, [isDragging]);
+
+  // scroll wheel
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.metaKey || e.ctrlKey) {
+        e.preventDefault();
+        const direction = e.deltaY > 0 ? -1 : 1; // up = zoom in, down = zoom out
+
+        setZoomLevel((z) => {
+          const next = z + direction * 0.1;
+          return Math.min(Math.max(next, 0.1), 3); // clamp between 0.1 and 3
+        });
+      }
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   // keyboard nav
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      // deselect with escape
-      if (e.key === "Escape") {
+      if (e.key === "=" || e.key === "+") {
+        e.preventDefault();
+        zoomIn();
+      } else if (e.key === "-") {
+        e.preventDefault();
+        zoomOut();
+      } else if (e.key === "0") {
+        resetZoom();
+      } else if (e.key === "Escape") {
         closeOverlayGallery();
       }
-      // Add more keys (Arrow keys for movement, etc.) as needed
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [closeOverlayGallery]);
 
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
+    const handleMouseMove = () => {
+      setShowZoomControls(true);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setShowZoomControls(false);
+      }, 1000); // 2 seconds of inactivity
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
   return (
     <>
-      {overlayGalleryIsOpen && selectedBlock && imageBlock && (
-        <div
-          ref={scrollContainerRef}
-          className={`absolute inset-0 bg-stone-700/90 z-50 overflow-auto 
-            scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-background scrollbar-track-transparent
+      <div
+        ref={scrollContainerRef}
+        className={`absolute inset-0 bg-stone-700/90 z-50 overflow-auto 
+            scrollbar-none scrollbar-thumb-rounded scrollbar-thumb-background scrollbar-track-transparent
             `}
-          //   onClick={() => closeOverlayGallery()}
-          style={{}}
-        >
-          <div className="grid place-items-center min-w-full min-h-full">
-            <div className="px-12 py-12 box-content">
-              <div
-                className="relative"
-                style={{
-                  width: imageBlock.width * zoomLevel, // controls horizontal zoom
-                  height: selectedBlock.height * zoomLevel, // controls vertical zoom
-                }}
-              >
-                <Image
-                  src={getImageUrl(
-                    imageBlock.image_id,
-                    imageBlock.file_ext,
-                    "full"
-                  )}
-                  draggable={false}
-                  alt={imageBlock.caption ?? imageBlock.original_name}
-                  width={imageBlock.width}
-                  height={selectedBlock.height}
-                  className="h-full w-full object-contain rounded-md shadow-lg"
-                />
-              </div>
+        onClick={() => closeOverlayGallery()}
+        style={{}}
+      >
+        <div className="grid place-items-center min-w-full min-h-full">
+          <div className="px-12 py-12 box-content">
+            <div
+              className="relative"
+              style={{
+                width: (initialSize?.width ?? imageBlock.width) * zoomLevel,
+                height:
+                  (initialSize?.height ?? selectedBlock.height) * zoomLevel,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src={getImageUrl(
+                  imageBlock.image_id,
+                  imageBlock.file_ext,
+                  "full"
+                )}
+                draggable={false}
+                alt={imageBlock.caption ?? imageBlock.original_name}
+                width={imageBlock.width}
+                height={selectedBlock.height}
+                className={`h-full w-full object-contain rounded-md shadow-lg ${
+                  isDragging ? "cursor-grabbing" : "cursor-grab"
+                }`}
+              />
             </div>
           </div>
         </div>
-      )}
+      </div>
+
+      <div
+        className={`fixed top-4 right-4 z-60 bg-stone-800/80 backdrop-blur-sm rounded-lg p-2 hover:bg-stone-700/80 
+          transition-all cursor-pointer duration-700 ${
+            showZoomControls ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        onClick={() => closeOverlayGallery()}
+      >
+        <FaXmark />
+      </div>
+
+      <div
+        className={`absolute bottom-16 left-1/2 -translate-x-1/2 z-61 bg-stone-800/80 backdrop-blur-sm 
+        rounded-lg flex px-4 py-2 items-center gap-2 text-sm w-fit transition-opacity duration-700 ${
+          showZoomControls ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={zoomOut}
+          type="button"
+          className="hover:scale-110 transition-transform font-bold text-sm cursor-pointer p-2"
+        >
+          <FaMinus />
+        </button>
+        <button
+          type="button"
+          title="Reset Zoom"
+          className={`w-12 text-center select-none font-header font-semibold transition-all duration-200
+            ${
+              zoomLevel !== 1
+                ? "cursor-pointer hover:underline hover:scale-105"
+                : ""
+            }`}
+          onClick={resetZoom}
+        >
+          {(zoomLevel * 100).toFixed(0)}%
+        </button>
+        <button
+          onClick={zoomIn}
+          type="button"
+          className="hover:scale-110 transition-transform font-bold text-sm cursor-pointer p-2"
+        >
+          <FaPlus />
+        </button>
+      </div>
 
       {/* <div
         className="absolute bg-stone-300 inset-0 z-20 w-full h-full opacity-80 flex flex-col items-center justify-center"
