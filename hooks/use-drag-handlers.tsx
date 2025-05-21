@@ -188,12 +188,6 @@ export function useGalleryHandlers({
     (event: DragEndEvent) => {
       document.body.classList.remove("cursor-grabbing");
 
-      // debug
-      const scrollContainer = document.querySelector(
-        '[key="test-key"]'
-      ) as HTMLElement;
-      const scrollTopBefore = scrollContainer?.scrollTop ?? 0;
-
       setDraggedBlocks(null);
       initialPointerYRef.current = null;
 
@@ -272,21 +266,7 @@ export function useGalleryHandlers({
       }
 
       setDropIndicatorId(null);
-
-      setTimeout(() => {
-        const scrollTopAfter = scrollContainer?.scrollTop;
-        console.log("Scroll changed?", scrollTopBefore !== scrollTopAfter);
-        console.log("Before:", scrollTopBefore, "After:", scrollTopAfter);
-      }, 500);
-      setTimeout(() => {
-        const focused = document.activeElement;
-        if (focused) {
-          console.log("Focused element after drag:", focused);
-          console.log("Tag:", focused.tagName);
-          console.log("Classes:", focused.className);
-          console.log("ID:", focused.id);
-        }
-      }, 500);
+      deselectBlocks();
     },
     [
       positionedBlockMap,

@@ -2,22 +2,18 @@
 import { DroppableColumn } from "@/components/drag/droppable-column";
 import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
-import React, { useCallback, useEffect, useMemo } from "react";
-import { toast } from "sonner";
-import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
+import React, { useCallback, useMemo } from "react";
 import { MemoizedDroppableColumn } from "./columns";
 import { useIsMirror } from "./board";
 import Image from "next/image";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
 import { CanvasScope } from "@/types/board-types";
-import { useSelectionStore } from "@/store/selection-store";
 import { useGetScope } from "@/hooks/use-get-scope";
 
 export default function Gallery({
   sectionId,
   columns,
-  updateColumns,
   draggedBlocks,
   sidebarWidth,
   scrollY,
@@ -27,7 +23,6 @@ export default function Gallery({
 }: {
   sectionId: string;
   columns: Block[][];
-  updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
   draggedBlocks: Block[] | null;
   sidebarWidth: number;
   scrollY: number;
@@ -45,8 +40,6 @@ export default function Gallery({
   const numCols = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
-
-  const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   const { isOpen: overlayGalleryIsOpen, openOverlay: openOverlayGallery } =
     useOverlayStore(canvasScope);
@@ -75,92 +68,6 @@ export default function Gallery({
     );
     return width;
   }, [spacingSize, gallerySpacingSize, numCols, sidebarWidth]);
-
-  //
-  // SECTION: keyboard controls
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (overlayGalleryIsOpen) return;
-
-      const activeEl = document.activeElement;
-      const isTyping =
-        activeEl?.tagName === "INPUT" ||
-        activeEl?.tagName === "TEXTAREA" ||
-        (activeEl instanceof HTMLElement && activeEl.isContentEditable);
-
-      if (isTyping) return;
-
-      // deleting image
-      if (e.key === "Backspace" || e.key === "Delete") {
-        const blocksToDelete = Object.values(selectedBlocks);
-        if (blocksToDelete.length > 0) {
-          const deletedIds = blocksToDelete.map((b) => b.block_id);
-
-          updateColumns((prevCols) =>
-            prevCols.map((col) =>
-              col.filter((b) => !deletedIds.includes(b.block_id))
-            )
-          );
-
-          softDeleteBlocks(deletedIds); // send to db
-
-          toast.success(
-            `Deleted ${blocksToDelete.length} block${
-              blocksToDelete.length > 1 ? "s" : ""
-            }`
-          );
-        }
-      }
-
-      // deselect with escape
-      if (e.key === "Escape") {
-        deselectBlocks();
-      }
-
-      // Add more keys (Arrow keys for movement, etc.) as needed
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    selectedBlocks,
-    updateColumns,
-    setSelectedBlocks,
-    overlayGalleryIsOpen,
-    deselectBlocks,
-  ]);
-
-  //
-  // SECTION: click and drag behavior
-  //
-  //
-
-  // listen for clicking elsewhere (to deselect)
-  useEffect(() => {
-    function handleGlobalClick(event: MouseEvent) {
-      if (overlayGalleryIsOpen) return;
-
-      const target = event.target as HTMLElement;
-      const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
-
-      const rawId = clickedId?.split("::")[1]; // removes the scope prefix
-      if (
-        !rawId ||
-        rawId.startsWith("drop-") ||
-        rawId.startsWith("col-") ||
-        rawId.startsWith("section-")
-      ) {
-        console.log("Clicked outside block. Clearing selection.");
-        deselectBlocks();
-      }
-    }
-    document.body.addEventListener("click", handleGlobalClick);
-
-    return () => {
-      document.body.removeEventListener("click", handleGlobalClick);
-    };
-  }, [setSelectedBlocks, overlayGalleryIsOpen, deselectBlocks]);
 
   // when clicking on an image
   const handleItemClick = useCallback(

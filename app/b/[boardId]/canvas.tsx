@@ -26,10 +26,6 @@ type CanvasProps = {
     blocks: Record<string, Block>
   ) => void;
 
-  updateSectionColumns: (
-    sectionId: string,
-    fn: (prev: Block[][]) => Block[][]
-  ) => void;
   dropIndicatorId: string | null;
 
   sidebarWidth: number;
@@ -44,7 +40,6 @@ export default function Canvas({
   draggedBlocks,
   selectedBlocks,
   setSelectedBlocks,
-  updateSectionColumns,
   dropIndicatorId,
   sidebarWidth,
 }: CanvasProps) {
@@ -151,9 +146,6 @@ export default function Canvas({
                       <Gallery
                         sectionId={sectionId}
                         columns={columns}
-                        updateColumns={(fn) =>
-                          updateSectionColumns(sectionId, fn)
-                        }
                         draggedBlocks={draggedBlocks}
                         sidebarWidth={sidebarWidth}
                         scrollY={scrollY}

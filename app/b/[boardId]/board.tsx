@@ -36,6 +36,7 @@ import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 import { useLoadingStore } from "@/store/loading-store";
 import { useSelectionStore } from "@/store/selection-store";
 import Canvas from "./canvas";
+import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -192,6 +193,70 @@ export default function Board({ boardId }: { boardId: string }) {
     return () => clearInterval(interval);
   }, []);
 
+  // SECTION: global listeners
+
+  //
+  // SECTION: keyboard controls
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const activeEl = document.activeElement;
+      const isTyping =
+        activeEl?.tagName === "INPUT" ||
+        activeEl?.tagName === "TEXTAREA" ||
+        (activeEl instanceof HTMLElement && activeEl.isContentEditable);
+
+      if (isTyping) return;
+
+      // deleting image
+      if (e.key === "Backspace" || e.key === "Delete") {
+        const blocksToDelete = Object.values(selectedBlocks);
+        if (blocksToDelete.length > 0) {
+          softDeleteBlocks(blocksToDelete);
+        }
+      }
+
+      // deselect with escape
+      if (e.key === "Escape") {
+        deselectBlocks();
+      }
+
+      // Add more keys (Arrow keys for movement, etc.) as needed
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedBlocks, deselectBlocks]);
+
+  //
+  // SECTION: click and drag behavior
+  //
+  //
+
+  // listen for clicking elsewhere (to deselect)
+  useEffect(() => {
+    function handleGlobalClick(event: MouseEvent) {
+      const target = event.target as HTMLElement;
+      const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
+
+      const rawId = clickedId?.split("::")[1]; // removes the scope prefix
+      if (
+        !rawId ||
+        rawId.startsWith("drop-") ||
+        rawId.startsWith("col-") ||
+        rawId.startsWith("section-")
+      ) {
+        console.log("Clicked outside block. Clearing selection.");
+        deselectBlocks();
+      }
+    }
+    document.body.addEventListener("click", handleGlobalClick);
+
+    return () => {
+      document.body.removeEventListener("click", handleGlobalClick);
+    };
+  }, [setSelectedBlocks, deselectBlocks]);
+
   // SECTION: blur image when resizing window
   //
   //
@@ -314,7 +379,7 @@ export default function Board({ boardId }: { boardId: string }) {
         onDragStart={handleDragStart}
         onDragMove={handleDragMove}
         sensors={sensors}
-        autoScroll={false}
+        autoScroll={!mirrorMode}
       >
         {/* Sidebar */}
         <aside
@@ -351,7 +416,6 @@ export default function Board({ boardId }: { boardId: string }) {
               draggedBlocks={draggedBlocks}
               selectedBlocks={selectedBlocks}
               setSelectedBlocks={setSelectedBlocks}
-              updateSectionColumns={updateSectionColumns}
               dropIndicatorId={dropIndicatorId}
               sidebarWidth={sidebarWidth}
             />
@@ -366,7 +430,6 @@ export default function Board({ boardId }: { boardId: string }) {
                   draggedBlocks={draggedBlocks}
                   selectedBlocks={selectedBlocks}
                   setSelectedBlocks={setSelectedBlocks}
-                  updateSectionColumns={updateSectionColumns}
                   dropIndicatorId={dropIndicatorId}
                   sidebarWidth={sidebarWidth}
                 />
