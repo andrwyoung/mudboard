@@ -69,8 +69,6 @@ export default function Board({ boardId }: { boardId: string }) {
   const fadeGallery = useLoadingStore((s) => s.fadeGallery);
   const showLoading = useLoadingStore((s) => s.showLoading);
 
-  const [scrollY, setScrollY] = useState(0);
-
   // selection stuff
   const selectedSection = useSelectionStore((s) => s.selectedSection);
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
@@ -79,7 +77,6 @@ export default function Board({ boardId }: { boardId: string }) {
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   // virtualization
-  const mainRef = useRef<HTMLDivElement | null>(null);
   const [sidebarWidth, setSidebarWidth] = useState(0);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
@@ -123,7 +120,10 @@ export default function Board({ boardId }: { boardId: string }) {
 
         setSections(sections);
         setInitSections(sections);
-        setSelectedSection(sections[0]);
+        const topSection = sections.find((s) => s.order_index === 0);
+        if (topSection) {
+          setSelectedSection(topSection);
+        }
         console.log("Set sections to:", sections);
       } catch (err) {
         console.error("Error loading sections:", err);
@@ -220,19 +220,6 @@ export default function Board({ boardId }: { boardId: string }) {
   // SECTION: measurements and virtualization setup
   //
   //
-
-  // track scroll behavior for virtualization
-  useEffect(() => {
-    const el = mainRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      setScrollY(el.scrollTop);
-    };
-
-    el.addEventListener("scroll", onScroll);
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
 
   // measure sidebar
   useEffect(() => {
@@ -338,7 +325,7 @@ export default function Board({ boardId }: { boardId: string }) {
         </aside>
 
         {/* Gallery */}
-        <main ref={mainRef} className="flex-1">
+        <main className="flex-1">
           <div
             className={`absolute top-1/2 left-1/2 z-40 -translate-x-1/2 -translate-y-1/2 
             transition-opacity  duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
@@ -365,7 +352,6 @@ export default function Board({ boardId }: { boardId: string }) {
               setSelectedBlocks={setSelectedBlocks}
               updateSectionColumns={updateSectionColumns}
               dropIndicatorId={dropIndicatorId}
-              scrollY={scrollY}
               sidebarWidth={sidebarWidth}
             />
             {mirrorMode && (
@@ -381,7 +367,6 @@ export default function Board({ boardId }: { boardId: string }) {
                   setSelectedBlocks={setSelectedBlocks}
                   updateSectionColumns={updateSectionColumns}
                   dropIndicatorId={dropIndicatorId}
-                  scrollY={scrollY}
                   sidebarWidth={sidebarWidth}
                 />
               </div>

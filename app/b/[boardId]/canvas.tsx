@@ -8,6 +8,8 @@ import Gallery from "./gallery";
 import { CanvasScope, Section, SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
 import { useOverlayStore } from "@/store/overlay-store";
+import { useEffect, useRef, useState } from "react";
+import { useSelectionStore } from "@/store/selection-store";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -30,7 +32,6 @@ type CanvasProps = {
   ) => void;
   dropIndicatorId: string | null;
 
-  scrollY: number;
   sidebarWidth: number;
 };
 
@@ -45,7 +46,6 @@ export default function Canvas({
   setSelectedBlocks,
   updateSectionColumns,
   dropIndicatorId,
-  scrollY,
   sidebarWidth,
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
@@ -53,6 +53,44 @@ export default function Canvas({
   // overlay gallery stuff
   const { isOpen: overlayGalleryIsOpen, overlayBlock: overlayGalleryBlock } =
     useOverlayStore(isMirror ? "mirror" : "main");
+
+  const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
+
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [scrollY, setScrollY] = useState(0);
+  // track scroll behavior for virtualization
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || isMirror) return;
+
+    const onScroll = () => {
+      setScrollY(el.scrollTop);
+
+      // detecting which section we're in
+      const scrollTop = el.scrollTop;
+      const sectionEntries = Object.entries(sectionRefs.current);
+
+      // Sort sections by vertical position
+      const sorted = sectionEntries
+        .filter(([, ref]) => ref)
+        .sort(([, a], [, b]) => (a?.offsetTop ?? 0) - (b?.offsetTop ?? 0));
+
+      for (const [sectionId, ref] of sorted) {
+        if (!ref) continue;
+        const top = ref.offsetTop;
+        const height = ref.offsetHeight;
+
+        if (scrollTop >= top - 100 && scrollTop < top + height - 100) {
+          // Give some buffer with -100
+          setSelectedSection(sectionMap[sectionId]);
+          break;
+        }
+      }
+    };
+
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [sectionMap, sectionRefs, setSelectedSection, isMirror]);
 
   return (
     <div
@@ -82,6 +120,7 @@ export default function Canvas({
         key="test-key"
         className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
         tabIndex={-1}
+        ref={scrollRef}
         style={{
           direction: isMirror ? "ltr" : "rtl",
           paddingLeft: gallerySpacingSize,

@@ -18,6 +18,7 @@ import {
 } from "../ui/alert-dialog";
 import { Section } from "@/types/board-types";
 import { toast } from "sonner";
+import { useSelectionStore } from "@/store/selection-store";
 
 export default function SectionsSection({
   sectionRefs,
@@ -28,6 +29,8 @@ export default function SectionsSection({
   const sections = useMetadataStore((s) => s.sections);
 
   const setEditingSectionId = useLoadingStore((s) => s.setEditingSectionId);
+  const selectedSection = useSelectionStore((s) => s.selectedSection);
+  const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
   const [sectionToDelete, setSectionToDelete] = useState<Section | null>(null);
 
   return (
@@ -53,6 +56,7 @@ export default function SectionsSection({
                     onClick={() => {
                       const sectionEl =
                         sectionRefs.current?.[section.section_id];
+                      setSelectedSection(section);
                       if (sectionEl) {
                         sectionEl.scrollIntoView({
                           behavior: "smooth",
@@ -61,7 +65,11 @@ export default function SectionsSection({
                       }
                     }}
                   >
-                    <FillingDot />
+                    <FillingDot
+                      selected={
+                        selectedSection?.section_id === section.section_id
+                      }
+                    />
                     <h2
                       className={`text-lg text-primary-foreground group-hover:text-accent transition-all duration-300 
                          truncate whitespace-nowrap overflow-hidden min-w-0

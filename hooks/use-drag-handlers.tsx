@@ -2,9 +2,8 @@ import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block } from "@/types/block-types";
 import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
-import { CanvasScope, Section, SectionColumns } from "@/types/board-types";
+import { Section, SectionColumns } from "@/types/board-types";
 import { findShortestColumn } from "@/lib/columns/column-helpers";
-import { useUIStore } from "@/store/ui-store";
 import { PositionedBlock } from "@/types/sync-types";
 
 export function getMovingItem(
