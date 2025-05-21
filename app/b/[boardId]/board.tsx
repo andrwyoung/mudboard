@@ -49,7 +49,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
 
   // when dragging blocks
-  const [draggedBlock, setDraggedBlock] = useState<Block | null>(null);
+  const [draggedBlocks, setDraggedBlocks] = useState<Block[] | null>(null);
 
   const spacingSize = useUIStore((s) => s.spacingSize);
   const numCols = useUIStore((s) => s.numCols);
@@ -264,10 +264,11 @@ export default function Board({ boardId }: { boardId: string }) {
           updateSectionColumns(sectionId, fn);
         }
       },
-      setDraggedBlock,
+      setDraggedBlocks,
       dropIndicatorId,
       setDropIndicatorId,
       deselectBlocks,
+      selectedBlocks,
       initialPointerYRef,
     }
   );
@@ -347,7 +348,7 @@ export default function Board({ boardId }: { boardId: string }) {
               sectionColumns={sectionColumns}
               sectionRefs={sectionRefs}
               sectionMap={sectionMap}
-              draggedBlock={draggedBlock}
+              draggedBlocks={draggedBlocks}
               selectedBlocks={selectedBlocks}
               setSelectedBlocks={setSelectedBlocks}
               updateSectionColumns={updateSectionColumns}
@@ -362,7 +363,7 @@ export default function Board({ boardId }: { boardId: string }) {
                   sectionColumns={sectionColumns}
                   sectionRefs={sectionRefs}
                   sectionMap={sectionMap}
-                  draggedBlock={draggedBlock}
+                  draggedBlocks={draggedBlocks}
                   selectedBlocks={selectedBlocks}
                   setSelectedBlocks={setSelectedBlocks}
                   updateSectionColumns={updateSectionColumns}
@@ -375,22 +376,35 @@ export default function Board({ boardId }: { boardId: string }) {
         </main>
 
         <DragOverlay dropAnimation={null}>
-          {draggedBlock &&
-            draggedBlock.block_type === "image" &&
-            draggedBlock.data &&
-            "fileName" in draggedBlock.data && (
-              <Image
-                src={draggedBlock.data.fileName}
-                alt={
-                  draggedBlock.data.caption ?? draggedBlock.data.original_name
-                }
-                width={draggedBlock.data.width}
-                height={draggedBlock.height}
-                tabIndex={-1}
-                className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
-        duration-200 ease-out scale-105 shadow-xl rotate-1"
-              />
-            )}
+          {draggedBlocks && draggedBlocks.length > 0 && (
+            <div className="relative">
+              {draggedBlocks[0].block_type === "image" &&
+                draggedBlocks[0].data &&
+                "fileName" in draggedBlocks[0].data && (
+                  <Image
+                    src={draggedBlocks[0].data.fileName}
+                    alt={
+                      draggedBlocks[0].data.caption ??
+                      draggedBlocks[0].data.original_name
+                    }
+                    width={draggedBlocks[0].data.width}
+                    height={draggedBlocks[0].height}
+                    tabIndex={-1}
+                    className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
+                    duration-200 ease-out scale-105 shadow-xl rotate-1"
+                  />
+                )}
+
+              {draggedBlocks.length > 1 && (
+                <div
+                  className="absolute bottom-0 font-header right-0 bg-white px-3 py-1 
+                text-md text-primary rounded-lg"
+                >
+                  {draggedBlocks.length}
+                </div>
+              )}
+            </div>
+          )}
         </DragOverlay>
       </DndContext>
     </div>

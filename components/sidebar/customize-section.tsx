@@ -28,6 +28,7 @@ export default function CustomizeSection() {
           className={` transition-all duration-300 group-hover:underline  ${
             mirrorMode ? "text-accent" : "text-white group-hover:text-accent"
           }`}
+          title="Toggle Mirror Mode"
         >
           Mirror Mode
         </h3>

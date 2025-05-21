@@ -46,7 +46,7 @@ type Props = {
   columnWidth: number;
   columnIndex: number;
   overId: string | null;
-  draggedImage: Block | null;
+  draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
   handleItemClick: (block: Block, e: React.MouseEvent) => void;
   scrollY: number;
@@ -58,7 +58,7 @@ function ColumnComponent({
   columnWidth,
   columnIndex,
   overId,
-  draggedImage,
+  draggedBlocks: draggedBlocks,
   selectedBlocks,
   handleItemClick,
   scrollY,
@@ -163,7 +163,9 @@ function ColumnComponent({
               <MemoizedBlock
                 block={block}
                 isSelected={!!selectedBlocks[block.block_id]}
-                isDragging={draggedImage?.block_id === block.block_id}
+                isDragging={
+                  !!draggedBlocks?.some((b) => b.block_id === block.block_id)
+                }
                 onClick={(e) => handleItemClick(block, e)}
                 shouldEagerLoad={shouldEagerLoad}
                 columnWidth={columnWidth}

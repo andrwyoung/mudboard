@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block } from "@/types/block-types";
 import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
-import { Section, SectionColumns } from "@/types/board-types";
+import { CanvasScope, Section, SectionColumns } from "@/types/board-types";
 import { findShortestColumn } from "@/lib/columns/column-helpers";
 import { PositionedBlock } from "@/types/sync-types";
 
@@ -34,10 +34,11 @@ type UseGalleryHandlersProps = {
   updateSections: (
     updates: Record<string, (prev: Block[][]) => Block[][]>
   ) => void;
-  setDraggedBlock: (img: Block | null) => void;
+  setDraggedBlocks: (img: Block[] | null) => void;
   dropIndicatorId: string | null;
   setDropIndicatorId: (id: string | null) => void;
   deselectBlocks: () => void;
+  selectedBlocks: Record<string, Block>;
   initialPointerYRef: React.RefObject<number | null>;
 };
 
@@ -46,10 +47,11 @@ export function useGalleryHandlers({
   sections,
   positionedBlockMap,
   updateSections,
-  setDraggedBlock,
+  setDraggedBlocks,
   dropIndicatorId,
   setDropIndicatorId,
   deselectBlocks,
+  selectedBlocks,
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
   // caching for handleDragMove
@@ -63,7 +65,7 @@ export function useGalleryHandlers({
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       document.body.classList.add("cursor-grabbing");
-      deselectBlocks();
+      // deselectBlocks();
 
       console.log(
         "starting drag. here's positioned block map: ",
@@ -82,9 +84,24 @@ export function useGalleryHandlers({
       const { active, activatorEvent } = event;
       const rawBlockId =
         active.id.toString().match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
-      const pos = positionedBlockMap.get(rawBlockId);
-      if (pos) {
-        setDraggedBlock(pos.block);
+      const initDraggedBlock = positionedBlockMap.get(rawBlockId);
+
+      if (!initDraggedBlock || !selectedBlocks) return;
+
+      const isSelected = !!selectedBlocks?.[rawBlockId];
+
+      // if not selected already, then we're just dragging this block
+      if (!isSelected) {
+        setDraggedBlocks([initDraggedBlock.block]);
+      } else {
+        // but if not then we grab all selected blocks and set them to drag
+        const selectedIds = Object.keys(selectedBlocks);
+
+        const draggedGroup = selectedIds
+          .map((id) => positionedBlockMap.get(id)?.block)
+          .filter((b): b is Block => Boolean(b));
+
+        setDraggedBlocks(draggedGroup);
       }
 
       if (activatorEvent instanceof MouseEvent) {
@@ -93,7 +110,7 @@ export function useGalleryHandlers({
         initialPointerYRef.current = activatorEvent.touches[0]?.clientY ?? null;
       }
     },
-    [sectionColumns]
+    [sectionColumns, selectedBlocks]
   );
 
   const handleDragMove = useCallback(
@@ -177,7 +194,7 @@ export function useGalleryHandlers({
       ) as HTMLElement;
       const scrollTopBefore = scrollContainer?.scrollTop ?? 0;
 
-      setDraggedBlock(null);
+      setDraggedBlocks(null);
       initialPointerYRef.current = null;
 
       const { active, over } = event;
@@ -276,7 +293,7 @@ export function useGalleryHandlers({
       dropIndicatorId,
       updateSections,
       sectionColumns,
-      setDraggedBlock,
+      setDraggedBlocks,
     ]
   );
 

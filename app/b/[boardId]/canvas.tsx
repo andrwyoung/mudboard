@@ -19,7 +19,7 @@ type CanvasProps = {
   sectionRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
   sectionMap: Record<string, Section>;
 
-  draggedBlock: Block | null;
+  draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
   setSelectedBlocks: (
     scope: CanvasScope,
@@ -41,7 +41,7 @@ export default function Canvas({
   sectionColumns,
   sectionRefs,
   sectionMap,
-  draggedBlock,
+  draggedBlocks,
   selectedBlocks,
   setSelectedBlocks,
   updateSectionColumns,
@@ -154,7 +154,7 @@ export default function Canvas({
                         updateColumns={(fn) =>
                           updateSectionColumns(sectionId, fn)
                         }
-                        draggedBlock={draggedBlock}
+                        draggedBlocks={draggedBlocks}
                         sidebarWidth={sidebarWidth}
                         scrollY={scrollY}
                         selectedBlocks={selectedBlocks}

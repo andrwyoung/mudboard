@@ -18,7 +18,7 @@ export default function Gallery({
   sectionId,
   columns,
   updateColumns,
-  draggedBlock,
+  draggedBlocks,
   sidebarWidth,
   scrollY,
   selectedBlocks,
@@ -28,7 +28,7 @@ export default function Gallery({
   sectionId: string;
   columns: Block[][];
   updateColumns: (fn: (prev: Block[][]) => Block[][]) => void;
-  draggedBlock: Block | null;
+  draggedBlocks: Block[] | null;
   sidebarWidth: number;
   scrollY: number;
   selectedBlocks: Record<string, Block>;
@@ -195,7 +195,7 @@ export default function Gallery({
   return (
     <div
       className={`grid h-full relative ${
-        draggedBlock ? "cursor-grabbing" : "cursor-default"
+        draggedBlocks ? "cursor-grabbing" : "cursor-default"
       } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
       style={{
         gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
@@ -238,7 +238,7 @@ export default function Gallery({
             columnWidth={columnWidth}
             columnIndex={columnIndex}
             overId={overId}
-            draggedImage={draggedBlock}
+            draggedBlocks={draggedBlocks}
             selectedBlocks={selectedBlocks}
             handleItemClick={handleItemClick}
             scrollY={scrollY}
