@@ -65,7 +65,8 @@ function BlockComponent({
     >
       <SortableImageItem id={`${scope}::block-${block.block_id}`}>
         <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
-          {position?.colIndex}, {position?.rowIndex}, {position?.orderIndex}
+          {/* y:{position?.colIndex}, x:{position?.rowIndex},  */}
+          o:{position?.orderIndex}, t:{position?.top}, h:{position?.height}
         </h1>
 
         <BlockChooser

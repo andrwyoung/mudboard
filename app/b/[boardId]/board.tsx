@@ -71,6 +71,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   // virtualization
+  const [windowWidth, setWindowWidth] = useState(() => 0);
   const [sidebarWidth, setSidebarWidth] = useState(0);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
@@ -121,20 +122,18 @@ export default function Board({ boardId }: { boardId: string }) {
       );
     }
     setSectionColumns(nextColumns);
-    regenerateLayout(spacingSize);
+    regenerateLayout(sidebarWidth, windowWidth, spacingSize);
   }, [
     blocksBySection,
     initSections,
     numCols,
     setSectionColumns,
     regenerateLayout,
-    spacingSize,
   ]);
 
-  // whenever the order changes, regenerate the layout
   useEffect(
-    () => regenerateLayout(spacingSize),
-    [sectionColumns, spacingSize, regenerateLayout]
+    () => regenerateLayout(sidebarWidth, windowWidth, spacingSize),
+    [sectionColumns, spacingSize, regenerateLayout, sidebarWidth, windowWidth]
   );
 
   const sectionMap = useMemo(() => {
@@ -156,6 +155,9 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // SECTION: blur image when resizing window
   //
+  useEffect(() => {
+    setWindowWidth(window.innerWidth); // now it's safe, runs only on client
+  }, []);
   //
   useEffect(() => {
     let timeout: NodeJS.Timeout | null = null;
@@ -163,6 +165,9 @@ export default function Board({ boardId }: { boardId: string }) {
     const handleResize = () => {
       setShowBlurImg(true);
       console.log("blurring image (resizing)");
+
+      // setting window widht for recalculation
+      setWindowWidth(window.innerWidth);
 
       if (timeout) clearTimeout(timeout);
       timeout = setTimeout(() => {

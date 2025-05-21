@@ -189,9 +189,7 @@ function ColumnComponent({
           // }}
         />
       </SortableContext>
-      {/* {!isEmpty && (
-        <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
-      )} */}
+      {/* <BlockAdder sectionId={sectionId} columnIndex={columnIndex} /> */}
     </div>
   );
 }

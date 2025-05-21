@@ -18,14 +18,15 @@ type LayoutStore = {
 
   // SECTION 2
 
-  positionedBlocksBySection: Record<string, PositionedBlock[]>;
-  regenerateLayout: (spacingSize: number) => void;
-  // regenerateSectionLayout: (sectionId: string) => void;
-
   positionedBlockMap: Map<string, PositionedBlock>;
-  getBlockPosition: (blockId: string) => PositionedBlock | undefined;
+  masterBlockOrder: PositionedBlock[];
+  regenerateLayout: (
+    sidebarWidth: number,
+    windowWidth: number,
+    spacingSize: number
+  ) => void;
 
-  getOrderedFlatList: () => PositionedBlock[];
+  getBlockPosition: (blockId: string) => PositionedBlock | undefined;
   getNextBlock: (currentId: string) => PositionedBlock | null;
   getPrevBlock: (currentId: string) => PositionedBlock | null;
 
@@ -63,30 +64,39 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
   //
   //
 
-  positionedBlocksBySection: {},
   positionedBlockMap: new Map(),
-  regenerateLayout: (spacingSize: number) => {
+  masterBlockOrder: [],
+  regenerateLayout: (
+    sidebarWidth: number,
+    windowWidth: number,
+    spacingSize: number
+  ) => {
     console.log("regenerating layout");
     const columns = get().sectionColumns;
-    const { positionedBlocksBySection, positionedBlockMap } =
-      generatePositionedBlocks(columns, spacingSize);
-    set({ positionedBlocksBySection, positionedBlockMap });
+    const { orderedBlocks, positionedBlockMap } = generatePositionedBlocks(
+      columns,
+      sidebarWidth,
+      windowWidth,
+      spacingSize
+    );
+
+    set({
+      positionedBlockMap,
+      masterBlockOrder: orderedBlocks,
+    });
   },
 
   getBlockPosition: (blockId) => get().positionedBlockMap.get(blockId),
   //  regenerateSectionLayout: (sectionId: string) => {const columns = get().sectionColumns;
   //   generatePositionedBlocks(columns)},
-  getOrderedFlatList: () => {
-    const all = Object.values(get().positionedBlocksBySection);
-    return all.flat().sort((a, b) => a.orderIndex - b.orderIndex);
-  },
+
   getNextBlock: (currentId) => {
-    const flat = get().getOrderedFlatList();
+    const flat = get().masterBlockOrder;
     const index = flat.findIndex((b) => b.block.block_id === currentId);
     return flat[index + 1] ?? null;
   },
   getPrevBlock: (currentId) => {
-    const flat = get().getOrderedFlatList();
+    const flat = get().masterBlockOrder;
     const index = flat.findIndex((b) => b.block.block_id === currentId);
     return flat[index - 1] ?? null;
   },
@@ -103,7 +113,7 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
     const boardId = useMetadataStore.getState().board?.board_id;
 
     if (layoutDirty && boardId) {
-      const flat = get().getOrderedFlatList();
+      const flat = get().masterBlockOrder;
       const success = await syncOrderToSupabase(flat, boardId);
       if (success) {
         set({ layoutDirty: false });
