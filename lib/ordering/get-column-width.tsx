@@ -28,8 +28,8 @@ export function getColumnWidth(
   // total_width - sidebar_width - (scrollbar + numcol * padding + gallery_padding * 2) * 2 if mirror
   // = amount of space left for columns / numcol = columnWidth
 
-  // const scrollbarWidth = getScrollbarWidth();
-  const scrollbarWidth = 0;
+  const scrollbarWidth = getScrollbarWidth();
+  //   const scrollbarWidth = 0;
   const numCols = useUIStore.getState().numCols;
   const gutterPadding = spacingSize * numCols;
   const galleryPadding = useUIStore.getState().gallerySpacingSize * 2;
