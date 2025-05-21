@@ -7,6 +7,7 @@ import { useSelectionStore } from "@/store/selection-store";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { useLayoutStore } from "@/store/layout-store";
 import { createSupabaseSection } from "./create-new-section";
+import { reindexSections } from "./reindex-sections";
 
 export async function softDeleteSection(section: Section) {
   // check if access
@@ -81,6 +82,9 @@ export async function softDeleteSection(section: Section) {
 
     useSelectionStore.getState().setSelectedSection(fallback);
   }
+
+  // reorder sections
+  await reindexSections();
 
   // toast
   toast.success(`Deleted section: ${section.title ?? DEFAULT_SECTION_NAME}`);

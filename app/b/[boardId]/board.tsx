@@ -123,6 +123,7 @@ export default function Board({ boardId }: { boardId: string }) {
     }
     setSectionColumns(nextColumns);
     regenerateLayout(sidebarWidth, windowWidth, spacingSize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     blocksBySection,
     initSections,

@@ -139,7 +139,6 @@ export default function Canvas({
                       const key = isMirror ? `mirror-${sectionId}` : sectionId;
                       sectionRefs.current[key] = el;
                     }}
-                    className="bg-blue-200"
                   >
                     <SectionHeader section={sectionMap[sectionId]} />
                     {columns && (
