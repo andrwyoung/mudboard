@@ -14,10 +14,6 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { generateColumnsFromBlocks } from "@/lib/columns/generate-columns";
-import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
-import { createSupabaseSection } from "@/lib/db-actions/create-new-section";
-import { toast } from "sonner";
-import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import {
   DndContext,
   DragOverlay,
@@ -31,12 +27,12 @@ import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
 import Image from "next/image";
 import { Section, SectionColumns } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
-import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 import { useLoadingStore } from "@/store/loading-store";
 import { useSelectionStore } from "@/store/selection-store";
 import Canvas from "./canvas";
-import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
+import { useInitBoard } from "@/hooks/use-init-board";
+import { useBoardListeners } from "@/hooks/use-global-listeners";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -59,9 +55,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // sections
   const sections = useMetadataStore((s) => s.sections);
-  const setSections = useMetadataStore((s) => s.setSections);
   const [initSections, setInitSections] = useState<Section[]>([]);
-  const setBoard = useMetadataStore((s) => s.setBoard);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // when blurring images
@@ -72,7 +66,6 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // selection stuff
   const selectedSection = useSelectionStore((s) => s.selectedSection);
-  const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const setSelectedBlocks = useSelectionStore((s) => s.setSelectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
@@ -96,44 +89,11 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // SECTION: On load. Initialize everything
   //
+  //
+  useInitBoard(boardId, setFlatBlocks, setInitSections);
 
-  // load all images on init
-  useEffect(() => {
-    async function loadImages() {
-      try {
-        const board = await fetchSupabaseBoard(boardId);
-        setBoard(board);
-
-        const blocks = await fetchSupabaseBlocks(boardId);
-        setFlatBlocks(blocks);
-
-        let sections = await fetchSupabaseSections(boardId);
-
-        if (sections.length === 0) {
-          console.log("No sections, creating one");
-          const fallback = await createSupabaseSection({
-            board_id: boardId,
-            order_index: 0,
-          });
-          sections = [fallback];
-        }
-        console.log("Got sections: ", sections);
-
-        setSections(sections);
-        setInitSections(sections);
-        const topSection = sections.find((s) => s.order_index === 0);
-        if (topSection) {
-          setSelectedSection(topSection);
-        }
-        console.log("Set sections to:", sections);
-      } catch (err) {
-        console.error("Error loading sections:", err);
-        toast.error("Error loading data! Try reloading");
-      }
-    }
-
-    loadImages();
-  }, [boardId, setSections, setBoard, setSelectedSection]);
+  //
+  //
 
   // group them into sectioned blocks
   const blocksBySection = useMemo(() => {
@@ -193,70 +153,6 @@ export default function Board({ boardId }: { boardId: string }) {
     return () => clearInterval(interval);
   }, []);
 
-  // SECTION: global listeners
-
-  //
-  // SECTION: keyboard controls
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      const activeEl = document.activeElement;
-      const isTyping =
-        activeEl?.tagName === "INPUT" ||
-        activeEl?.tagName === "TEXTAREA" ||
-        (activeEl instanceof HTMLElement && activeEl.isContentEditable);
-
-      if (isTyping) return;
-
-      // deleting image
-      if (e.key === "Backspace" || e.key === "Delete") {
-        const blocksToDelete = Object.values(selectedBlocks);
-        if (blocksToDelete.length > 0) {
-          softDeleteBlocks(blocksToDelete);
-        }
-      }
-
-      // deselect with escape
-      if (e.key === "Escape") {
-        deselectBlocks();
-      }
-
-      // Add more keys (Arrow keys for movement, etc.) as needed
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedBlocks, deselectBlocks]);
-
-  //
-  // SECTION: click and drag behavior
-  //
-  //
-
-  // listen for clicking elsewhere (to deselect)
-  useEffect(() => {
-    function handleGlobalClick(event: MouseEvent) {
-      const target = event.target as HTMLElement;
-      const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
-
-      const rawId = clickedId?.split("::")[1]; // removes the scope prefix
-      if (
-        !rawId ||
-        rawId.startsWith("drop-") ||
-        rawId.startsWith("col-") ||
-        rawId.startsWith("section-")
-      ) {
-        console.log("Clicked outside block. Clearing selection.");
-        deselectBlocks();
-      }
-    }
-    document.body.addEventListener("click", handleGlobalClick);
-
-    return () => {
-      document.body.removeEventListener("click", handleGlobalClick);
-    };
-  }, [setSelectedBlocks, deselectBlocks]);
-
   // SECTION: blur image when resizing window
   //
   //
@@ -307,7 +203,12 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // SECTION: hooks
   //
+
+  // KEY SECTION: initializers
+
   //
+  // keyboard listeners
+  useBoardListeners();
 
   // handling importing images
   useImageImport({
