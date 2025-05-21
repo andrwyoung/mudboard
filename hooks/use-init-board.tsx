@@ -42,7 +42,9 @@ export function useInitBoard(
 
         setSections(sections);
         setInitSections(sections);
-        const topSection = sections.find((s) => s.order_index === 0);
+        const topSection = sections.reduce((min, curr) =>
+          (curr.order_index ?? 0) < (min.order_index ?? 0) ? curr : min
+        );
         if (topSection) {
           setSelectedSection(topSection);
         }

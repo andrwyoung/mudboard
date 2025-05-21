@@ -18,6 +18,7 @@ export type Database = {
           created_at: string
           data: Json | null
           deleted: boolean
+          deleted_at: string | null
           height: number
           image_id: string | null
           order_index: number
@@ -33,6 +34,7 @@ export type Database = {
           created_at?: string
           data?: Json | null
           deleted?: boolean
+          deleted_at?: string | null
           height: number
           image_id?: string | null
           order_index?: number
@@ -48,6 +50,7 @@ export type Database = {
           created_at?: string
           data?: Json | null
           deleted?: boolean
+          deleted_at?: string | null
           height?: number
           image_id?: string | null
           order_index?: number
@@ -164,6 +167,7 @@ export type Database = {
           board_id: string
           created_at: string
           deleted: boolean
+          deleted_at: string | null
           description: string | null
           order_index: number | null
           section_id: string
@@ -173,6 +177,7 @@ export type Database = {
           board_id: string
           created_at?: string
           deleted?: boolean
+          deleted_at?: string | null
           description?: string | null
           order_index?: number | null
           section_id?: string
@@ -182,6 +187,7 @@ export type Database = {
           board_id?: string
           created_at?: string
           deleted?: boolean
+          deleted_at?: string | null
           description?: string | null
           order_index?: number | null
           section_id?: string

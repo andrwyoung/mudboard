@@ -212,7 +212,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // handling importing images
   useImageImport({
-    selectedSection: selectedSection,
+    selectedSection,
     setIsDraggingFile,
     setDraggedFileCount,
   });

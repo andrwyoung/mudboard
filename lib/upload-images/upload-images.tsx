@@ -4,6 +4,7 @@ import {
   DEFAULT_FILE_EXT,
   DROP_SPREAD_THRESHOLD,
   imageNames,
+  mimeToExtension,
   UPLOAD_THREADS,
 } from "@/types/upload-settings";
 import { toast } from "sonner";
@@ -66,12 +67,22 @@ export async function uploadImages(
 
     const match = file.name.match(/^(.*)\.([^.]+)$/);
     const original_name = match ? match[1] : file.name;
-    const fileExt = match ? match[2].toLowerCase() : null; // just used to check
+    let fileExt = match ? match[2].toLowerCase() : null; // just used to check
 
-    if (!fileExt || !allowedMimeTypes.includes(file.type)) {
-      toast.error(`Unsupported file type: ${file.type}`);
+    if (!allowedMimeTypes.includes(file.type)) {
+      toast.error(`Unrecognized file type`);
       totalUploads--;
       return;
+    }
+
+    if (!fileExt) {
+      fileExt = mimeToExtension[file.type] ?? null;
+
+      if (!fileExt) {
+        toast.error(`Unsupported or unknown file type: ${file.type}`);
+        totalUploads--;
+        return;
+      }
     }
 
     let processedFile = file;

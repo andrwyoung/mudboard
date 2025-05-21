@@ -41,13 +41,27 @@ export function useImageImport({
     let dragCounter = 0;
 
     function handleDragEnter(e: DragEvent) {
+      console.log("entering!");
       e.preventDefault();
-      const items = e.dataTransfer?.items;
 
-      if (items && [...items].some((item) => item.kind === "file")) {
+      const types = Array.from(e.dataTransfer?.types ?? []);
+      const items = e.dataTransfer?.items;
+      const isFile = types.includes("Files");
+      const isLinkOrHtml =
+        types.includes("text/html") ||
+        types.includes("text/uri-list") ||
+        types.includes("text/plain");
+
+      if (isFile || isLinkOrHtml) {
         dragCounter++;
         setIsDraggingFile(true);
-        setDraggedFileCount(items.length);
+
+        // Only set count if we're dragging files
+        if (isFile && items) {
+          setDraggedFileCount(items.length);
+        } else {
+          setDraggedFileCount(null); // we don’t know count for link/image drag
+        }
       }
     }
 

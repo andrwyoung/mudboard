@@ -64,6 +64,22 @@ export const allowedMimeTypes = allowedUploadExtensions.map((ext) => {
   }
 });
 
+export const mimeToExtension: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+  "image/heic": "heic",
+  "image/heif": "heif",
+  "image/tiff": "tiff",
+  "image/avif": "avif",
+  "image/svg+xml": "svg",
+  "image/bmp": "bmp",
+  "image/x-icon": "ico",
+  "image/apng": "apng",
+  "application/pdf": "pdf",
+};
+
  //white listed domains
  export const allowedOrigins = [
   "http://localhost:3000",

@@ -17,8 +17,8 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { Section } from "@/types/board-types";
-import { toast } from "sonner";
 import { useSelectionStore } from "@/store/selection-store";
+import { softDeleteSection } from "@/lib/db-actions/soft-delete-section";
 
 export default function SectionsSection({
   sectionRefs,
@@ -79,15 +79,17 @@ export default function SectionsSection({
                     </h2>
                   </div>
 
-                  <FaTrash
-                    className="size-3.5 hover:rotate-24 text-accent transition-all duration-300 
+                  {sections.length > 1 && (
+                    <FaTrash
+                      className="size-3.5 hover:rotate-24 text-accent transition-all duration-300 
                   opacity-0 group-hover:opacity-100 cursor-pointer flex-none"
-                    title="Delete Section"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSectionToDelete(section);
-                    }}
-                  />
+                      title="Delete Section"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSectionToDelete(section);
+                      }}
+                    />
+                  )}
                 </div>
               </DroppableSection>
             );
@@ -116,8 +118,7 @@ export default function SectionsSection({
                 <AlertDialogAction
                   className="font-bold"
                   onClick={() => {
-                    // deleteSection(sectionToDelete.section_id);
-                    toast.error("Not implemented yet lol");
+                    softDeleteSection(sectionToDelete);
                     setSectionToDelete(null);
                   }}
                 >

@@ -9,7 +9,7 @@ export async function softDeleteBlocks(blocks: Block[]) {
 
   const canWrite = await hasWriteAccess();
   if (!canWrite) {
-    console.warn("Not syncing block caption");
+    console.warn("No write access: not deleting blocks");
     return false;
   }
 
@@ -18,7 +18,7 @@ export async function softDeleteBlocks(blocks: Block[]) {
   // first put it in db
   const { error } = await supabase
     .from("blocks")
-    .update({ deleted: true })
+    .update({ deleted: true, deleted_at: new Date().toISOString() })
     .in("block_id", deletedIds);
 
   if (error) {
