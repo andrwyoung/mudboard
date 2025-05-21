@@ -7,6 +7,7 @@ import { MemoizedDropIndicator } from "@/components/drag/drag-indicator";
 import { useUIStore } from "@/store/ui-store";
 import { IMAGE_OVERSCAN_SIZE } from "@/types/upload-settings";
 import { isBlockWithWidth } from "@/lib/type-validators/is-image-block";
+import { useGetScope } from "@/hooks/use-get-scope";
 
 // virtualization
 function getBlockLayout(
@@ -68,6 +69,8 @@ function ColumnComponent({
   const viewportHeight = window.innerHeight;
   // const isEmpty = column.length === 0;
 
+  const scope = useGetScope();
+
   const { items } = getBlockLayout(
     column,
     spacingSize,
@@ -97,8 +100,8 @@ function ColumnComponent({
         {/* First drop zone */}
         {column.length > 0 && (
           <MemoizedDropIndicator
-            id={`drop-${sectionId}-${columnIndex}-0`}
-            isActive={overId === `drop-${sectionId}-${columnIndex}-0`}
+            id={`${scope}::drop-${sectionId}-${columnIndex}-0`}
+            isActive={overId === `${scope}::drop-${sectionId}-${columnIndex}-0`}
             padding="above"
             // style={{
             //   position: "absolute",
@@ -131,8 +134,9 @@ function ColumnComponent({
 
           return (
             <div
-              key={block.block_id}
-              data-id={block.block_id}
+              key={`${block.block_id}`}
+              data-id={`${scope}::block-${block.block_id}`}
+              tabIndex={-1}
               // style={{
               //   position: "absolute",
               //   top: top + spacingSize,
@@ -142,10 +146,11 @@ function ColumnComponent({
             >
               {index !== 0 ? (
                 <MemoizedDropIndicator
-                  key={`drop-${sectionId}-${columnIndex}-${index}`}
-                  id={`drop-${sectionId}-${columnIndex}-${index}`}
+                  key={`${scope}::drop-${sectionId}-${columnIndex}-${index}`}
+                  id={`${scope}::drop-${sectionId}-${columnIndex}-${index}`}
                   isActive={
-                    overId === `drop-${sectionId}-${columnIndex}-${index}`
+                    overId ===
+                    `${scope}::drop-${sectionId}-${columnIndex}-${index}`
                   }
                   // style={{
                   //   position: "absolute",
@@ -169,9 +174,10 @@ function ColumnComponent({
 
         {/* Drop zone at the end */}
         <MemoizedDropIndicator
-          id={`drop-${sectionId}-${columnIndex}-${column.length}`}
+          id={`${scope}::drop-${sectionId}-${columnIndex}-${column.length}`}
           isActive={
-            overId === `drop-${sectionId}-${columnIndex}-${column.length}`
+            overId ===
+            `${scope}::drop-${sectionId}-${columnIndex}-${column.length}`
           }
           padding="bottom"
           // style={{

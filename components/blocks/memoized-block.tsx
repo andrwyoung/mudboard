@@ -4,6 +4,7 @@ import { Block } from "@/types/block-types";
 import { ImageBlock } from "./image-block";
 import TextBlock from "./text-block";
 import { useLayoutStore } from "@/store/layout-store";
+import { useGetScope } from "@/hooks/use-get-scope";
 
 export function BlockChooser({
   block,
@@ -48,11 +49,13 @@ function BlockComponent({
   columnWidth: number;
 }) {
   const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
+  const scope = useGetScope();
 
   return (
     <div
       // layoutId={`block-${block.block_id}`} // for animating
-      data-id={block.block_id} // for sortable
+      data-id={`${scope}::block-${block.block_id}`} // for sortable
+      tabIndex={-1}
       className={`flex flex-col rounded-sm object-cover transition-all duration-150 cursor-pointer shadow-md 
       hover:scale-101 hover:shadow-xl hover:opacity-100
       relative bg-background
@@ -60,7 +63,7 @@ function BlockComponent({
         ${isSelected ? "outline-4 outline-secondary" : ""}`}
       onClick={onClick}
     >
-      <SortableImageItem id={block.block_id}>
+      <SortableImageItem id={`${scope}::block-${block.block_id}`}>
         <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
           {position?.colIndex}, {position?.rowIndex}, {position?.orderIndex}
         </h1>

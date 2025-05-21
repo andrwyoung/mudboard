@@ -81,7 +81,9 @@ export function useGalleryHandlers({
       });
 
       const { active, activatorEvent } = event;
-      const pos = positionedBlockMap.get(active.id.toString());
+      const rawBlockId =
+        active.id.toString().match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
+      const pos = positionedBlockMap.get(rawBlockId);
       if (pos) {
         setDraggedBlock(pos.block);
       }
@@ -105,18 +107,25 @@ export function useGalleryHandlers({
       }
 
       const rect = blockRectsRef.current.get(over.id.toString());
-      if (!rect) return;
 
-      const id = over.id.toString();
+      const fullId = over.id.toString();
+      const idMatch = fullId.split("::");
+      const scope = idMatch[0];
+      const unscopedId = idMatch[1];
+
+      if (!unscopedId || !rect) {
+        setDropIndicatorId(null);
+        return;
+      }
 
       // SCENARIO 1: we hover over a drop indicator
-      if (id.startsWith("drop-")) {
-        setDropIndicatorId(id);
+      if (unscopedId.startsWith("drop-")) {
+        setDropIndicatorId(fullId);
         return;
       }
 
       // SCENARIO 2: we hover over a column itself
-      const colMatch = String(id).match(
+      const colMatch = String(unscopedId).match(
         /^col-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-(\d+)$/
       );
       if (colMatch) {
@@ -127,7 +136,7 @@ export function useGalleryHandlers({
         const col = sectionColumns[sectionId]?.[colIndex];
         const insertIndex = col?.length ?? 0;
 
-        const dropId = `drop-${sectionId}-${colIndex}-${insertIndex}`;
+        const dropId = `${scope}::drop-${sectionId}-${colIndex}-${insertIndex}`;
         if (dropId !== overIdRef.current) {
           setDropIndicatorId(dropId);
         }
@@ -135,7 +144,8 @@ export function useGalleryHandlers({
       }
 
       // SCENARIO 3: we hover over another block
-      const pos = positionedBlockMap.get(String(over.id));
+      const blockId = fullId.match(/^[^:]+::block-(.+)$/)?.[1];
+      const pos = positionedBlockMap.get(blockId ?? "");
       if (!pos) return;
 
       const startY = initialPointerYRef.current;
@@ -146,8 +156,10 @@ export function useGalleryHandlers({
 
       const dropId =
         currentPointerY < middleY
-          ? `drop-${pos.sectionId}-${pos.colIndex}-${pos.rowIndex}`
-          : `drop-${pos.sectionId}-${pos.colIndex}-${pos.rowIndex + 1}`;
+          ? `${scope}::drop-${pos.sectionId}-${pos.colIndex}-${pos.rowIndex}`
+          : `${scope}::drop-${pos.sectionId}-${pos.colIndex}-${
+              pos.rowIndex + 1
+            }`;
 
       if (dropId !== overIdRef.current) {
         setDropIndicatorId(dropId);
@@ -160,20 +172,28 @@ export function useGalleryHandlers({
     (event: DragEndEvent) => {
       document.body.classList.remove("cursor-grabbing");
 
+      // debug
+      const scrollContainer = document.querySelector(
+        '[key="test-key"]'
+      ) as HTMLElement;
+      const scrollTopBefore = scrollContainer?.scrollTop ?? 0;
+
       setDraggedBlock(null);
       initialPointerYRef.current = null;
 
       const { active, over } = event;
-      const activeId = active.id.toString();
+      const activeId =
+        active.id.toString().match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
 
-      const dropMatch = String(dropIndicatorId).match(
+      const unscopedDropId = String(dropIndicatorId).split("::")[1] ?? "";
+      const dropMatch = unscopedDropId.match(
         /^drop-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-(\d+)-(\d+)$/
       );
       const sectionMatch = String(over?.id).match(/^section-(\d+)$/);
 
       console.log("Overid: ", over?.id);
-
       console.log("drop match: ", dropMatch);
+      console.log("ActiveId ", activeId);
 
       // first we deal with block reorganization
       if (dropMatch) {
@@ -236,6 +256,21 @@ export function useGalleryHandlers({
       }
 
       setDropIndicatorId(null);
+
+      setTimeout(() => {
+        const scrollTopAfter = scrollContainer?.scrollTop;
+        console.log("Scroll changed?", scrollTopBefore !== scrollTopAfter);
+        console.log("Before:", scrollTopBefore, "After:", scrollTopAfter);
+      }, 500);
+      setTimeout(() => {
+        const focused = document.activeElement;
+        if (focused) {
+          console.log("Focused element after drag:", focused);
+          console.log("Tag:", focused.tagName);
+          console.log("Classes:", focused.className);
+          console.log("ID:", focused.id);
+        }
+      }, 500);
     },
     [
       positionedBlockMap,

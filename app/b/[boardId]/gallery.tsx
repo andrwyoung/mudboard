@@ -12,6 +12,7 @@ import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
 import { CanvasScope } from "@/types/board-types";
 import { useSelectionStore } from "@/store/selection-store";
+import { useGetScope } from "@/hooks/use-get-scope";
 
 export default function Gallery({
   sectionId,
@@ -39,6 +40,7 @@ export default function Gallery({
 }) {
   const isMirror = useIsMirror();
   const canvasScope = isMirror ? "mirror" : "main";
+  const scope = useGetScope();
 
   const numCols = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
@@ -142,11 +144,12 @@ export default function Gallery({
       const target = event.target as HTMLElement;
       const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
 
+      const rawId = clickedId?.split("::")[1]; // removes the scope prefix
       if (
-        !clickedId ||
-        clickedId.startsWith("drop-") ||
-        clickedId.startsWith("col-") ||
-        clickedId.startsWith("section-")
+        !rawId ||
+        rawId.startsWith("drop-") ||
+        rawId.startsWith("col-") ||
+        rawId.startsWith("section-")
       ) {
         console.log("Clicked outside block. Clearing selection.");
         deselectBlocks();
@@ -224,10 +227,10 @@ export default function Gallery({
       )}
       {columns.map((column, columnIndex) => (
         <DroppableColumn
-          id={`col-${sectionId}-${columnIndex}`}
+          id={`${scope}::col-${sectionId}-${columnIndex}`}
           paddingLeft={spacingSize / 2}
           paddingRight={spacingSize / 2}
-          key={`col-${sectionId}-${columnIndex}`}
+          key={`${sectionId}-${columnIndex}`}
         >
           <MemoizedDroppableColumn
             sectionId={sectionId}

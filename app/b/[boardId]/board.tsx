@@ -326,6 +326,7 @@ export default function Board({ boardId }: { boardId: string }) {
         onDragStart={handleDragStart}
         onDragMove={handleDragMove}
         sensors={sensors}
+        autoScroll={false}
       >
         {/* Sidebar */}
         <aside
@@ -388,7 +389,7 @@ export default function Board({ boardId }: { boardId: string }) {
           </div>
         </main>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={null}>
           {draggedBlock &&
             draggedBlock.block_type === "image" &&
             draggedBlock.data &&
@@ -400,6 +401,7 @@ export default function Board({ boardId }: { boardId: string }) {
                 }
                 width={draggedBlock.data.width}
                 height={draggedBlock.height}
+                tabIndex={-1}
                 className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
         duration-200 ease-out scale-105 shadow-xl rotate-1"
               />

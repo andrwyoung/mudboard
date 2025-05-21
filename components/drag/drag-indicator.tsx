@@ -37,6 +37,7 @@ function DropIndicator({
       data-id={id}
       className={`w-full z-15 transition-all duration-150 ease-in-out relative
        ${padding === "bottom" ? "flex-1" : ""}`}
+      tabIndex={-1}
       style={{
         ...style,
         height,

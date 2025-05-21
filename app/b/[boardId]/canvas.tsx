@@ -79,7 +79,9 @@ export default function Canvas({
       </AnimatePresence>
 
       <div
+        key="test-key"
         className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
+        tabIndex={-1}
         style={{
           direction: isMirror ? "ltr" : "rtl",
           paddingLeft: gallerySpacingSize,
