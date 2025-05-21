@@ -26,9 +26,9 @@ export type Block = {
 
   height: number;
 
-  init_col_index: number;
-  init_row_index: number;
-  init_order_index: number;
+  saved_col_index: number;
+  saved_row_index: number;
+  order_index: number;
 
   deleted: boolean;
 };

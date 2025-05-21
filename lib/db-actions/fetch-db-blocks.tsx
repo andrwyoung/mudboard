@@ -60,9 +60,9 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
         board_id,
         block_type: block_type as BlockType,
         height,
-        init_col_index: col_index,
-        init_row_index: row_index,
-        init_order_index: order_index,
+        saved_col_index: col_index,
+        saved_row_index: row_index,
+        order_index: order_index,
         deleted,
       };
 

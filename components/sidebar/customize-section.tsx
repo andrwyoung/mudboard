@@ -1,6 +1,5 @@
 import { useUIStore } from "@/store/ui-store";
 import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
-import React from "react";
 import { Slider } from "../ui/slider";
 import { useLoadingStore } from "@/store/loading-store";
 import { FiSidebar } from "react-icons/fi";

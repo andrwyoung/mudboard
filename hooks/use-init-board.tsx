@@ -3,8 +3,10 @@ import { createSupabaseSection } from "@/lib/db-actions/create-new-section";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
+import { useLoadingStore } from "@/store/loading-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useSelectionStore } from "@/store/selection-store";
+import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
 import { Section } from "@/types/board-types";
 import { useEffect } from "react";
@@ -19,11 +21,20 @@ export function useInitBoard(
   const setBoard = useMetadataStore((s) => s.setBoard);
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
 
+  const setNumCols = useUIStore((s) => s.setNumCols);
+
   useEffect(() => {
     async function loadImages() {
       try {
         const board = await fetchSupabaseBoard(boardId);
         setBoard(board);
+        if (board.saved_column_num) {
+          setNumCols(board.saved_column_num);
+          useLoadingStore.setState(() => ({
+            // this is a UI thing
+            sliderVal: board.saved_column_num,
+          }));
+        }
 
         const blocks = await fetchSupabaseBlocks(boardId);
         setFlatBlocks(blocks);

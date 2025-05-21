@@ -190,9 +190,9 @@ export async function uploadImages(
         ...incompleteBlock,
         data: newImage,
 
-        init_col_index: colIndex,
-        init_row_index: rowIndex,
-        init_order_index: 0,
+        saved_col_index: colIndex,
+        saved_row_index: rowIndex,
+        order_index: 0,
       };
 
       const newCols = [...prevCols];

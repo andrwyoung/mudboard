@@ -110,6 +110,7 @@ export default function Board({ boardId }: { boardId: string }) {
   // this is where we generate the columns everytime things change
   useEffect(() => {
     if (!initSections.length) return;
+    console.log("recreate column blocks!");
 
     const nextColumns: SectionColumns = {};
 
