@@ -3,30 +3,43 @@ import { Block, MudboardImage } from "@/types/block-types";
 import NextImage from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { FaAdjust, FaMinus, FaPlus } from "react-icons/fa";
-import { FaEyeDropper, FaXmark } from "react-icons/fa6";
+import { FaChevronLeft, FaEyeDropper, FaXmark } from "react-icons/fa6";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useCenteredZoom } from "@/hooks/overlay-gallery.tsx/use-zoom";
 import { useEyedropper } from "@/hooks/overlay-gallery.tsx/use-eyedropper";
+import { useLayoutStore } from "@/store/layout-store";
+import { useMetadataStore } from "@/store/metadata-store";
 
 type OverlayModes = "drag" | "eyedropper";
 
 export default function OverlayGallery({
-  selectedBlock,
   isMirror,
+  selectedBlock,
 }: {
-  selectedBlock: Block;
   isMirror: boolean;
+  selectedBlock: Block;
 }) {
-  const { closeOverlay: closeOverlayGallery } = useOverlayStore(
-    isMirror ? "mirror" : "main"
-  );
+  const {
+    closeOverlay: closeOverlayGallery,
+    setOverlayBlock: setSelectedBlock,
+  } = useOverlayStore(isMirror ? "mirror" : "main");
+
+  const getNextImage = useLayoutStore((s) => s.getNextImage);
+  const getPrevImage = useLayoutStore((s) => s.getPrevImage);
   const imageBlock = selectedBlock.data as MudboardImage;
   const [overlayMode, setOverlayMode] = useState<OverlayModes>("drag");
   const [isGreyscale, setIsGreyscale] = useState(false);
 
+  // const [direction, setDirection] = useState<"left" | "right">("right");
+
   // zoomingggg
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [showZoomControls, setShowZoomControls] = useState(true);
+  const [showOverlayUI, setShowOverlayUI] = useState(true);
+  const overlayUIClass = `transition-all duration-700 ${
+    showOverlayUI
+      ? "opacity-100 pointer-events-auto"
+      : "opacity-0 pointer-events-none"
+  }`;
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -39,6 +52,38 @@ export default function OverlayGallery({
 
   // candy
   const [greyscaleClicked, setGreyscaleClicked] = useState(false);
+  const [blockOrder, setBlockOrder] = useState<number | undefined>(undefined);
+  const [sectionOrder, setSectionOrder] = useState<number | undefined>(
+    undefined
+  );
+  const getBlockPosition = useLayoutStore((s) => s.getBlockPosition);
+  const sections = useMetadataStore((s) => s.sections);
+
+  // debug info
+  useEffect(() => {
+    const blockPos = getBlockPosition(selectedBlock.block_id);
+    setBlockOrder(blockPos?.orderIndex);
+
+    const section = sections.find((s) => s.section_id === blockPos?.sectionId);
+    setSectionOrder(section?.order_index);
+  }, [selectedBlock, getBlockPosition, sections]);
+
+  // flipping to next and prev block
+  const goToNextBlock = React.useCallback(() => {
+    const next = getNextImage(selectedBlock.block_id);
+    if (next) {
+      setInitialSize(null);
+      setSelectedBlock(next.block);
+    }
+  }, [getNextImage, selectedBlock.block_id, setSelectedBlock]);
+
+  const goToPrevBlock = React.useCallback(() => {
+    const prev = getPrevImage(selectedBlock.block_id);
+    if (prev) {
+      setInitialSize(null);
+      setSelectedBlock(prev.block);
+    }
+  }, [getPrevImage, selectedBlock.block_id, setSelectedBlock]);
 
   // calculate initial height and width
   useEffect(() => {
@@ -63,7 +108,7 @@ export default function OverlayGallery({
     }
 
     setInitialSize({ width, height });
-  }, [imageBlock.width, selectedBlock.height]);
+  }, [imageBlock.width, selectedBlock.height, scrollContainerRef.current]);
 
   // dragggin the image around
   useEffect(() => {
@@ -116,10 +161,10 @@ export default function OverlayGallery({
     let timeout: NodeJS.Timeout;
 
     const showControls = () => {
-      setShowZoomControls(true);
+      setShowOverlayUI(true);
       clearTimeout(timeout);
       timeout = setTimeout(() => {
-        setShowZoomControls(false);
+        setShowOverlayUI(false);
       }, 1000);
     };
 
@@ -157,6 +202,8 @@ export default function OverlayGallery({
   // keyboard nav
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      if (!selectedBlock) return;
+
       if (e.key === "=" || e.key === "+") {
         e.preventDefault();
         zoomIn();
@@ -167,12 +214,24 @@ export default function OverlayGallery({
         resetZoom();
       } else if (e.key === "Escape") {
         closeOverlayGallery();
+      } else if (e.key === "ArrowRight") {
+        goToNextBlock();
+      } else if (e.key === "ArrowLeft") {
+        goToPrevBlock();
       }
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [closeOverlayGallery, zoomIn, zoomOut, resetZoom]);
+  }, [
+    closeOverlayGallery,
+    zoomIn,
+    zoomOut,
+    resetZoom,
+    goToNextBlock,
+    goToPrevBlock,
+    selectedBlock,
+  ]);
 
   return (
     <>
@@ -180,58 +239,59 @@ export default function OverlayGallery({
         ref={scrollContainerRef}
         className={`absolute inset-0 bg-stone-700/90 z-50 overflow-auto 
             scrollbar-none scrollbar-thumb-rounded scrollbar-thumb-background scrollbar-track-transparent
-            `}
+             ${!showOverlayUI ? "cursor-none" : ""}`}
         onClick={() => closeOverlayGallery()}
         style={{}}
       >
         <div className="grid place-items-center min-w-full min-h-full">
           <div className="px-12 py-12 box-content">
-            <div
-              className="relative"
-              style={{
-                width: (initialSize?.width ?? imageBlock.width) * zoomLevel,
-                height:
-                  (initialSize?.height ?? selectedBlock.height) * zoomLevel,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (overlayMode === "eyedropper" && hoveredColor) {
-                  handleEyedropClick();
-                  setOverlayMode("drag");
-                }
-              }}
-              onMouseMove={(e) => {
-                if (overlayMode === "eyedropper") onMouseMove(e);
-              }}
-            >
-              <NextImage
-                src={getImageUrl(
-                  imageBlock.image_id,
-                  imageBlock.file_ext,
-                  "full"
-                )}
-                draggable={false}
-                alt={imageBlock.caption ?? imageBlock.original_name}
-                width={imageBlock.width}
-                height={selectedBlock.height}
-                className={`h-full w-full object-contain rounded-md shadow-lg ${
-                  overlayMode === "eyedropper"
-                    ? "cursor-crosshair"
-                    : isDragging
-                    ? "cursor-grabbing"
-                    : "cursor-grab"
-                } ${isGreyscale ? "grayscale" : ""}`}
-              />
-            </div>
+            {initialSize?.width && initialSize?.height && (
+              <div
+                className="relative"
+                style={{
+                  width: initialSize.width * zoomLevel,
+                  height: initialSize.height * zoomLevel,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (overlayMode === "eyedropper" && hoveredColor) {
+                    handleEyedropClick();
+                    setOverlayMode("drag");
+                  }
+                }}
+                onMouseMove={(e) => {
+                  if (overlayMode === "eyedropper") onMouseMove(e);
+                }}
+              >
+                <NextImage
+                  src={getImageUrl(
+                    imageBlock.image_id,
+                    imageBlock.file_ext,
+                    "full"
+                  )}
+                  draggable={false}
+                  alt={imageBlock.caption ?? imageBlock.original_name}
+                  width={imageBlock.width}
+                  height={selectedBlock.height}
+                  className={`h-full w-full object-contain rounded-md shadow-lg ${
+                    !showOverlayUI
+                      ? "cursor-none"
+                      : overlayMode === "eyedropper"
+                      ? "cursor-crosshair"
+                      : isDragging
+                      ? "cursor-grabbing"
+                      : "cursor-grab"
+                  } ${isGreyscale ? "grayscale" : ""}`}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       <div
         className={`absolute top-4 right-4 z-60 bg-stone-800/80 backdrop-blur-sm rounded-lg p-2 hover:bg-stone-700/80 
-          transition-all cursor-pointer duration-700 ${
-            showZoomControls ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+         cursor-pointer ${overlayUIClass}`}
         onClick={() => closeOverlayGallery()}
       >
         <FaXmark />
@@ -246,10 +306,17 @@ export default function OverlayGallery({
       )}
 
       <div
+        className={`absolute top-4 left-4 z-62 bg-stone-800/80 backdrop-blur-sm 
+        rounded-lg flex px-2 py-1 items-center gap-2 text-xs w-fit font-bold`}
+      >
+        block {blockOrder !== undefined ? blockOrder + 1 : "unknown"}
+        <br />
+        section {sectionOrder !== undefined ? sectionOrder + 1 : "unknown"}
+      </div>
+
+      <div
         className={`absolute bottom-16 left-1/2 -translate-x-1/2 z-62 bg-stone-800/80 backdrop-blur-sm 
-        rounded-lg flex px-4 py-2 items-center gap-2 text-sm w-fit transition-opacity duration-700 ${
-          showZoomControls ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        rounded-lg flex px-4 py-2 items-center gap-2 text-sm w-fit ${overlayUIClass}`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -309,6 +376,37 @@ export default function OverlayGallery({
         </button>
       </div>
 
+      <div
+        className={`absolute left-4 top-1/2 -translate-y-1/2 z-60 bg-stone-800/80 backdrop-blur-sm rounded-lg p-2 
+          ${
+            getPrevImage(selectedBlock.block_id)
+              ? "bg-stone-800/80 hover:bg-stone-700/80 cursor-pointer"
+              : "bg-stone-800/20 text-white/20"
+          } 
+          ${overlayUIClass}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          goToPrevBlock();
+        }}
+      >
+        <FaChevronLeft className="size-6" />
+      </div>
+      <div
+        className={`absolute right-4 top-1/2 -translate-y-1/2 z-60 backdrop-blur-sm rounded-lg p-2 
+          ${
+            getNextImage(selectedBlock.block_id)
+              ? "bg-stone-800/80 hover:bg-stone-700/80 cursor-pointer"
+              : "bg-stone-800/20 text-white/20"
+          } 
+          ${overlayUIClass}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          goToNextBlock();
+        }}
+      >
+        <FaChevronLeft className="size-6 rotate-180" />
+      </div>
+
       {/* <div
         className="absolute bg-stone-300 inset-0 z-20 w-full h-full opacity-80 flex flex-col items-center justify-center"
         onClick={() => setOverlayGalleryIsOpen(false)}
@@ -320,7 +418,7 @@ export default function OverlayGallery({
         ref={canvasRef} //
         width={imageBlock.width}
         height={selectedBlock.height}
-        // style={{ display: "none" }} // hidden: just used for eyedropper
+        style={{ display: "none", visibility: "hidden" }} // hidden: just used for eyedropper
       />
     </>
   );

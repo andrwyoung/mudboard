@@ -2,10 +2,15 @@
 import { useEffect } from "react";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { useSelectionStore } from "@/store/selection-store";
+import { useUIStore } from "@/store/ui-store";
+import { useOverlayStore } from "@/store/overlay-store";
+import { useIsMirror } from "@/app/b/[boardId]/board";
+import { useGetScope } from "./use-get-scope";
 
 export function useBoardListeners() {
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
+  const { isOpen: galleryIsOpen } = useOverlayStore(useGetScope());
 
   // Keyboard controls
   useEffect(() => {
@@ -26,6 +31,7 @@ export function useBoardListeners() {
       }
 
       if (e.key === "Escape") {
+        if (galleryIsOpen) return;
         deselectBlocks();
       }
     }

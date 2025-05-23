@@ -27,8 +27,8 @@ type LayoutStore = {
   ) => void;
 
   getBlockPosition: (blockId: string) => PositionedBlock | undefined;
-  getNextBlock: (currentId: string) => PositionedBlock | null;
-  getPrevBlock: (currentId: string) => PositionedBlock | null;
+  getNextImage: (currentId: string) => PositionedBlock | null;
+  getPrevImage: (currentId: string) => PositionedBlock | null;
 
   // SECTION 3
 
@@ -90,15 +90,23 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
   //  regenerateSectionLayout: (sectionId: string) => {const columns = get().sectionColumns;
   //   generatePositionedBlocks(columns)},
 
-  getNextBlock: (currentId) => {
+  getNextImage: (currentId) => {
     const flat = get().masterBlockOrder;
-    const index = flat.findIndex((b) => b.block.block_id === currentId);
-    return flat[index + 1] ?? null;
+    const currentIndex = flat.findIndex((b) => b.block.block_id === currentId);
+    return (
+      flat
+        .slice(currentIndex + 1)
+        .find((b) => b.block.block_type === "image") ?? null
+    );
   },
-  getPrevBlock: (currentId) => {
+  getPrevImage: (currentId) => {
     const flat = get().masterBlockOrder;
-    const index = flat.findIndex((b) => b.block.block_id === currentId);
-    return flat[index - 1] ?? null;
+    const currentIndex = flat.findIndex((b) => b.block.block_id === currentId);
+    return (
+      [...flat.slice(0, currentIndex)]
+        .reverse()
+        .find((b) => b.block.block_type === "image") ?? null
+    );
   },
 
   // SECTION: sycing to database
