@@ -2,7 +2,7 @@ import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
 import NextImage from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaAdjust, FaMinus, FaPlus } from "react-icons/fa";
 import { FaEyeDropper, FaXmark } from "react-icons/fa6";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useCenteredZoom } from "@/hooks/overlay-gallery.tsx/use-zoom";
@@ -22,6 +22,7 @@ export default function OverlayGallery({
   );
   const imageBlock = selectedBlock.data as MudboardImage;
   const [overlayMode, setOverlayMode] = useState<OverlayModes>("drag");
+  const [isGreyscale, setIsGreyscale] = useState(false);
 
   // zoomingggg
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -35,6 +36,9 @@ export default function OverlayGallery({
     width: number;
     height: number;
   } | null>(null);
+
+  // candy
+  const [greyscaleClicked, setGreyscaleClicked] = useState(false);
 
   // calculate initial height and width
   useEffect(() => {
@@ -216,7 +220,7 @@ export default function OverlayGallery({
                     : isDragging
                     ? "cursor-grabbing"
                     : "cursor-grab"
-                }`}
+                } ${isGreyscale ? "grayscale" : ""}`}
               />
             </div>
           </div>
@@ -276,6 +280,7 @@ export default function OverlayGallery({
           <FaPlus />
         </button>
         <button
+          title="Use Eyedropper"
           onClick={() =>
             setOverlayMode((m) => (m === "drag" ? "eyedropper" : "drag"))
           }
@@ -284,6 +289,23 @@ export default function OverlayGallery({
           }`}
         >
           <FaEyeDropper />
+        </button>
+        <button
+          onClick={() => {
+            setIsGreyscale((g) => !g);
+            setGreyscaleClicked(true);
+            setTimeout(() => setGreyscaleClicked(false), 400); // match animation duration
+          }}
+          title="Toggle Greyscale"
+          className={`p-2 rounded-lg cursor-pointer  group transition-all  ${
+            isGreyscale ? "bg-white text-stone-800/80" : ""
+          }`}
+        >
+          <FaAdjust
+            className={`transition-transform duration-400 ${
+              greyscaleClicked ? "animate-spin-once" : ""
+            }`}
+          />
         </button>
       </div>
 
