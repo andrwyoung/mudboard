@@ -26,16 +26,37 @@ export async function getImageBlobSmart(url: string): Promise<Blob | null> {
     if (direct) return direct;
   }
 
+  const proxyUrl = `${
+    window.location.origin
+  }/api/image-proxy?url=${encodeURIComponent(url)}`;
+
   // Fallback to backend proxy
   try {
-    const proxyUrl = `${
-      window.location.origin
-    }/api/image-proxy?url=${encodeURIComponent(url)}`;
-    const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error("Proxy failed");
+    const res = await fetch(proxyUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36",
+        Accept: "image/*,*/*;q=0.8",
+        Referer: "https://www.google.com",
+      },
+      redirect: "follow",
+    });
+
+    const contentType = res.headers.get("Content-Type");
+
+    if (!res.ok) {
+      console.error("[proxy] Non-OK response:", res.status, res.statusText);
+      throw new Error("Proxy returned non-OK status");
+    }
+
+    if (!contentType?.startsWith("image/")) {
+      console.error("[proxy] Invalid content type:", contentType);
+      throw new Error("Content-Type is not an image");
+    }
+
     return await res.blob();
   } catch (err) {
-    console.error("Both direct and proxy failed:", err);
+    console.error("Both direct and proxy fetch failed:", err);
     return null;
   }
 }

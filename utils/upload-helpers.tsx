@@ -8,5 +8,6 @@ const imageExtensionRegex = new RegExp(
 );
 
 export function isImageUrl(url: string): boolean {
-  return imageExtensionRegex.test(url);
+  const cleanUrl = url.split("?")[0];
+  return imageExtensionRegex.test(cleanUrl);
 }

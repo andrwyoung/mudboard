@@ -113,12 +113,12 @@ export function useImageImport({
       if (uri) {
         // Step 1: check if it matches any known url funks
         const maybeImage = resolveProxiedImageUrl(uri);
-        const finalUrl = maybeImage || uri;
+        imageUrl = maybeImage || uri;
 
-        // Step 2: now check if it's an image URL
-        if (isImageUrl(finalUrl)) {
-          imageUrl = finalUrl;
-        }
+        // Step 2 DISABLED: now check if it's an image URL
+        // if (isImageUrl(finalUrl)) {
+        //   imageUrl = finalUrl;
+        // }
       }
 
       if (!imageUrl && html) {
@@ -127,6 +127,8 @@ export function useImageImport({
           imageUrl = match[1];
         }
       }
+
+      console.log("this is the url we are trying to get: ", imageUrl);
 
       if (imageUrl) {
         // Pinterest 236x → 736x upgrade
