@@ -1,7 +1,7 @@
 import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
 import NextImage from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { FaEyeDropper, FaXmark } from "react-icons/fa6";
 import { useOverlayStore } from "@/store/overlay-store";
@@ -23,9 +23,6 @@ export default function OverlayGallery({
 
   // zoomingggg
   const [zoomLevel, setZoomLevel] = useState(1);
-  const zoomIn = () => setZoomLevel((z) => Math.min(z + 0.1, 3));
-  const zoomOut = () => setZoomLevel((z) => Math.max(z - 0.1, 0.1));
-  const resetZoom = () => setZoomLevel(1);
   const [showZoomControls, setShowZoomControls] = useState(true);
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -103,16 +100,51 @@ export default function OverlayGallery({
       container.style.cursor = "default";
     };
 
-    container.addEventListener("mousedown", onMouseDown);
-    container.addEventListener("mousemove", onMouseMove);
-    container.addEventListener("mouseup", onMouseUp);
+    window.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
 
     return () => {
-      container.removeEventListener("mousedown", onMouseDown);
-      container.removeEventListener("mousemove", onMouseMove);
-      container.removeEventListener("mouseup", onMouseUp);
+      window.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
     };
   }, [isDragging, overlayMode]);
+
+  /// zoooming
+  const zoomAtCenter = useCallback(
+    (zoomFn: (prev: number) => number) => {
+      const container = scrollContainerRef.current;
+      if (!container || !initialSize) return;
+
+      const prevZoom = zoomLevel;
+      const newZoom = zoomFn(prevZoom);
+      if (newZoom === prevZoom) return;
+
+      const rect = container.getBoundingClientRect();
+      const centerX = container.scrollLeft + rect.width / 2;
+      const centerY = container.scrollTop + rect.height / 2;
+      const ratio = newZoom / prevZoom;
+
+      setZoomLevel(newZoom);
+
+      // Adjust scroll so center stays in view
+      requestAnimationFrame(() => {
+        container.scrollLeft = centerX * ratio - rect.width / 2;
+        container.scrollTop = centerY * ratio - rect.height / 2;
+      });
+    },
+    [zoomLevel, initialSize]
+  );
+
+  const zoomIn = useCallback(() => {
+    zoomAtCenter((z) => Math.min(z + 0.1, 3));
+  }, [zoomAtCenter]);
+
+  const zoomOut = useCallback(() => {
+    zoomAtCenter((z) => Math.max(z - 0.1, 0.1));
+  }, [zoomAtCenter]);
+  const resetZoom = () => setZoomLevel(1);
 
   // scroll wheel
   useEffect(() => {
@@ -124,10 +156,8 @@ export default function OverlayGallery({
         e.preventDefault();
         const direction = e.deltaY > 0 ? -1 : 1; // up = zoom in, down = zoom out
 
-        setZoomLevel((z) => {
-          const next = z + direction * 0.1;
-          return Math.min(Math.max(next, 0.1), 3); // clamp between 0.1 and 3
-        });
+        if (direction > 0) zoomIn();
+        else zoomOut();
       }
     };
 
@@ -136,7 +166,7 @@ export default function OverlayGallery({
     return () => {
       container.removeEventListener("wheel", handleWheel);
     };
-  }, []);
+  }, [zoomIn, zoomOut]);
 
   // keyboard nav
   useEffect(() => {
@@ -156,7 +186,7 @@ export default function OverlayGallery({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [closeOverlayGallery]);
+  }, [closeOverlayGallery, zoomIn, zoomOut]);
 
   // when users aren't active, hide the ui
   useEffect(() => {
@@ -208,6 +238,7 @@ export default function OverlayGallery({
     selectedBlock.height,
   ]);
 
+  // when the mouse moves in eyedropper mode! then sample
   function onMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     if (overlayMode !== "eyedropper") return;
 
@@ -259,6 +290,7 @@ export default function OverlayGallery({
                   navigator.clipboard.writeText(hoveredColor).then(() => {
                     console.log("Copied to clipboard:", hoveredColor);
                     toast.success(`Copied ${hoveredColor} to Clipboard`);
+                    setOverlayMode("drag");
                   });
                 }
               }}
