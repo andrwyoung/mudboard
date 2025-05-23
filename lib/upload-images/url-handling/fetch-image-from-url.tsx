@@ -26,6 +26,32 @@ export async function getImageBlobSmart(url: string): Promise<Blob | null> {
     if (direct) return direct;
   }
 
+  const proxyUrl = `https://image-proxy-holy-cloud-3487.fly.dev/proxy?url=${encodeURIComponent(
+    url
+  )}`;
+
+  try {
+    const res = await fetch(proxyUrl);
+
+    if (!res.ok) {
+      const errorText = await res.text().catch(() => "No error body");
+      console.error(
+        `[Image Proxy Error] ${res.status} ${res.statusText}:`,
+        errorText
+      );
+
+      throw new Error(`Proxy failed with ${res.status}: ${res.statusText}`);
+    }
+
+    return await res.blob();
+  } catch (err) {
+    console.error("[Image Fetch] Request failed:", err);
+    return null;
+  }
+}
+
+// DEPRECATED
+export async function localProxy(url: string) {
   const proxyUrl = `${
     window.location.origin
   }/api/image-proxy?url=${encodeURIComponent(url)}`;

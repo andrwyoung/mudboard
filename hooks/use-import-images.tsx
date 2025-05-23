@@ -121,7 +121,7 @@ export function useImageImport({
         // }
       }
 
-      if (!imageUrl && html) {
+      if ((!imageUrl || !isImageUrl(imageUrl)) && html) {
         const match = html.match(/<img[^>]+src=["']([^"']+)["']/);
         if (match?.[1]) {
           imageUrl = match[1];
