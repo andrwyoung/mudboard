@@ -1,10 +1,13 @@
 import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
-import Image from "next/image";
+import NextImage from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
+import { FaEyeDropper, FaXmark } from "react-icons/fa6";
 import { useOverlayStore } from "@/store/overlay-store";
+import { toast } from "sonner";
+
+type OverlayModes = "drag" | "eyedropper";
 
 export default function OverlayGallery({
   selectedBlock,
@@ -34,6 +37,12 @@ export default function OverlayGallery({
     height: number;
   } | null>(null);
 
+  // eyedropper stuff
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [hoveredColor, setHoveredColor] = useState<string | null>(null);
+
+  const [overlayMode, setOverlayMode] = useState<OverlayModes>("drag");
+
   // calculate initial height and width
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -61,6 +70,8 @@ export default function OverlayGallery({
 
   // dragggin the image around
   useEffect(() => {
+    if (overlayMode !== "drag") return;
+
     const container = scrollContainerRef.current;
     if (!container) return;
 
@@ -101,7 +112,7 @@ export default function OverlayGallery({
       container.removeEventListener("mousemove", onMouseMove);
       container.removeEventListener("mouseup", onMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, overlayMode]);
 
   // scroll wheel
   useEffect(() => {
@@ -175,6 +186,54 @@ export default function OverlayGallery({
     };
   }, []);
 
+  // draw the image so we can use it for the eyedropper
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = getImageUrl(imageBlock.image_id, imageBlock.file_ext, "full");
+
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, imageBlock.width, selectedBlock.height);
+    };
+  }, [
+    imageBlock.image_id,
+    imageBlock.file_ext,
+    imageBlock.width,
+    selectedBlock.height,
+  ]);
+
+  function onMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    if (overlayMode !== "eyedropper") return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const scaleFactorX =
+      imageBlock.width / (initialSize?.width ?? imageBlock.width);
+    const scaleFactorY =
+      selectedBlock.height / (initialSize?.height ?? selectedBlock.height);
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = Math.floor(((e.clientX - rect.left) / zoomLevel) * scaleFactorX);
+    const y = Math.floor(((e.clientY - rect.top) / zoomLevel) * scaleFactorY);
+
+    const ctx = canvas.getContext("2d");
+    const pixel = ctx?.getImageData(x, y, 1, 1).data;
+    if (!pixel) return;
+
+    const [r, g, b] = pixel;
+    const hex = `#${[r, g, b]
+      .map((v) => v.toString(16).padStart(2, "0"))
+      .join("")}`;
+    setHoveredColor(hex);
+  }
+
   return (
     <>
       <div
@@ -194,9 +253,18 @@ export default function OverlayGallery({
                 height:
                   (initialSize?.height ?? selectedBlock.height) * zoomLevel,
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (overlayMode === "eyedropper" && hoveredColor) {
+                  navigator.clipboard.writeText(hoveredColor).then(() => {
+                    console.log("Copied to clipboard:", hoveredColor);
+                    toast.success(`Copied ${hoveredColor} to Clipboard`);
+                  });
+                }
+              }}
+              onMouseMove={onMouseMove}
             >
-              <Image
+              <NextImage
                 src={getImageUrl(
                   imageBlock.image_id,
                   imageBlock.file_ext,
@@ -207,7 +275,11 @@ export default function OverlayGallery({
                 width={imageBlock.width}
                 height={selectedBlock.height}
                 className={`h-full w-full object-contain rounded-md shadow-lg ${
-                  isDragging ? "cursor-grabbing" : "cursor-grab"
+                  overlayMode === "eyedropper"
+                    ? "cursor-crosshair"
+                    : isDragging
+                    ? "cursor-grabbing"
+                    : "cursor-grab"
                 }`}
               />
             </div>
@@ -224,6 +296,14 @@ export default function OverlayGallery({
       >
         <FaXmark />
       </div>
+      {overlayMode === "eyedropper" && hoveredColor && (
+        <div
+          className="absolute top-16 right-4 z-70 rounded-lg shadow h-8 w-8"
+          style={{
+            backgroundColor: hoveredColor,
+          }}
+        />
+      )}
 
       <div
         className={`absolute bottom-16 left-1/2 -translate-x-1/2 z-62 bg-stone-800/80 backdrop-blur-sm 
@@ -259,6 +339,16 @@ export default function OverlayGallery({
         >
           <FaPlus />
         </button>
+        <button
+          onClick={() =>
+            setOverlayMode((m) => (m === "drag" ? "eyedropper" : "drag"))
+          }
+          className={`cursor-pointer hover:text-accent hover:bg-white transition-all p-2 rounded-lg ${
+            overlayMode === "eyedropper" ? "bg-white text-stone-800/80" : ""
+          }`}
+        >
+          <FaEyeDropper />
+        </button>
       </div>
 
       {/* <div
@@ -267,6 +357,13 @@ export default function OverlayGallery({
       >
         Hey
       </div> */}
+
+      <canvas
+        ref={canvasRef} //
+        width={imageBlock.width}
+        height={selectedBlock.height}
+        // style={{ display: "none" }} // hidden: just used for eyedropper
+      />
     </>
   );
 }
