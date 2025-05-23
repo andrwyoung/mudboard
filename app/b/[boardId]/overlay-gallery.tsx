@@ -1,11 +1,12 @@
 import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
 import NextImage from "next/image";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { FaEyeDropper, FaXmark } from "react-icons/fa6";
 import { useOverlayStore } from "@/store/overlay-store";
-import { toast } from "sonner";
+import { useCenteredZoom } from "@/hooks/overlay-gallery.tsx/use-zoom";
+import { useEyedropper } from "@/hooks/overlay-gallery.tsx/use-eyedropper";
 
 type OverlayModes = "drag" | "eyedropper";
 
@@ -20,6 +21,7 @@ export default function OverlayGallery({
     isMirror ? "mirror" : "main"
   );
   const imageBlock = selectedBlock.data as MudboardImage;
+  const [overlayMode, setOverlayMode] = useState<OverlayModes>("drag");
 
   // zoomingggg
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -33,12 +35,6 @@ export default function OverlayGallery({
     width: number;
     height: number;
   } | null>(null);
-
-  // eyedropper stuff
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [hoveredColor, setHoveredColor] = useState<string | null>(null);
-
-  const [overlayMode, setOverlayMode] = useState<OverlayModes>("drag");
 
   // calculate initial height and width
   useEffect(() => {
@@ -111,83 +107,6 @@ export default function OverlayGallery({
     };
   }, [isDragging, overlayMode]);
 
-  /// zoooming
-  const zoomAtCenter = useCallback(
-    (zoomFn: (prev: number) => number) => {
-      const container = scrollContainerRef.current;
-      if (!container || !initialSize) return;
-
-      const prevZoom = zoomLevel;
-      const newZoom = zoomFn(prevZoom);
-      if (newZoom === prevZoom) return;
-
-      const rect = container.getBoundingClientRect();
-      const centerX = container.scrollLeft + rect.width / 2;
-      const centerY = container.scrollTop + rect.height / 2;
-      const ratio = newZoom / prevZoom;
-
-      setZoomLevel(newZoom);
-
-      // Adjust scroll so center stays in view
-      requestAnimationFrame(() => {
-        container.scrollLeft = centerX * ratio - rect.width / 2;
-        container.scrollTop = centerY * ratio - rect.height / 2;
-      });
-    },
-    [zoomLevel, initialSize]
-  );
-
-  const zoomIn = useCallback(() => {
-    zoomAtCenter((z) => Math.min(z + 0.1, 3));
-  }, [zoomAtCenter]);
-
-  const zoomOut = useCallback(() => {
-    zoomAtCenter((z) => Math.max(z - 0.1, 0.1));
-  }, [zoomAtCenter]);
-  const resetZoom = () => setZoomLevel(1);
-
-  // scroll wheel
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.metaKey || e.ctrlKey) {
-        e.preventDefault();
-        const direction = e.deltaY > 0 ? -1 : 1; // up = zoom in, down = zoom out
-
-        if (direction > 0) zoomIn();
-        else zoomOut();
-      }
-    };
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      container.removeEventListener("wheel", handleWheel);
-    };
-  }, [zoomIn, zoomOut]);
-
-  // keyboard nav
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "=" || e.key === "+") {
-        e.preventDefault();
-        zoomIn();
-      } else if (e.key === "-") {
-        e.preventDefault();
-        zoomOut();
-      } else if (e.key === "0") {
-        resetZoom();
-      } else if (e.key === "Escape") {
-        closeOverlayGallery();
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [closeOverlayGallery, zoomIn, zoomOut]);
-
   // when users aren't active, hide the ui
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -216,54 +135,40 @@ export default function OverlayGallery({
     };
   }, []);
 
-  // draw the image so we can use it for the eyedropper
+  // SECTION: hooks
+  //
+
+  /// zoooming
+  const { zoomIn, zoomOut, resetZoom } = useCenteredZoom(
+    scrollContainerRef,
+    initialSize,
+    zoomLevel,
+    setZoomLevel
+  );
+
+  // eyedropper
+  const { canvasRef, hoveredColor, onMouseMove, handleEyedropClick } =
+    useEyedropper(imageBlock, selectedBlock, initialSize, zoomLevel);
+
+  // keyboard nav
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "=" || e.key === "+") {
+        e.preventDefault();
+        zoomIn();
+      } else if (e.key === "-") {
+        e.preventDefault();
+        zoomOut();
+      } else if (e.key === "0") {
+        resetZoom();
+      } else if (e.key === "Escape") {
+        closeOverlayGallery();
+      }
+    }
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = getImageUrl(imageBlock.image_id, imageBlock.file_ext, "full");
-
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0, imageBlock.width, selectedBlock.height);
-    };
-  }, [
-    imageBlock.image_id,
-    imageBlock.file_ext,
-    imageBlock.width,
-    selectedBlock.height,
-  ]);
-
-  // when the mouse moves in eyedropper mode! then sample
-  function onMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (overlayMode !== "eyedropper") return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const scaleFactorX =
-      imageBlock.width / (initialSize?.width ?? imageBlock.width);
-    const scaleFactorY =
-      selectedBlock.height / (initialSize?.height ?? selectedBlock.height);
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.floor(((e.clientX - rect.left) / zoomLevel) * scaleFactorX);
-    const y = Math.floor(((e.clientY - rect.top) / zoomLevel) * scaleFactorY);
-
-    const ctx = canvas.getContext("2d");
-    const pixel = ctx?.getImageData(x, y, 1, 1).data;
-    if (!pixel) return;
-
-    const [r, g, b] = pixel;
-    const hex = `#${[r, g, b]
-      .map((v) => v.toString(16).padStart(2, "0"))
-      .join("")}`;
-    setHoveredColor(hex);
-  }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [closeOverlayGallery, zoomIn, zoomOut, resetZoom]);
 
   return (
     <>
@@ -287,14 +192,13 @@ export default function OverlayGallery({
               onClick={(e) => {
                 e.stopPropagation();
                 if (overlayMode === "eyedropper" && hoveredColor) {
-                  navigator.clipboard.writeText(hoveredColor).then(() => {
-                    console.log("Copied to clipboard:", hoveredColor);
-                    toast.success(`Copied ${hoveredColor} to Clipboard`);
-                    setOverlayMode("drag");
-                  });
+                  handleEyedropClick();
+                  setOverlayMode("drag");
                 }
               }}
-              onMouseMove={onMouseMove}
+              onMouseMove={(e) => {
+                if (overlayMode === "eyedropper") onMouseMove(e);
+              }}
             >
               <NextImage
                 src={getImageUrl(
