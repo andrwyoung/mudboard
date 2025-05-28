@@ -147,7 +147,7 @@ export default function Home() {
           </div>
 
           {/* FEATURES */}
-          <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-32 text-left">
+          <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-20 text-left">
             <Features />
           </div>
 
@@ -163,21 +163,31 @@ export default function Home() {
 
           <div className="mb-24 max-w-3xl">
             <h2 className="text-2xl font-bold mb-6 text-center">Pricing</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2">
               <PricingTable />
             </div>
+            {/* <p className="text-center text-sm font-semibold">
+              *Boards currently have a limit of around 1k images
+            </p> */}
           </div>
 
           <div className="w-full max-w-2xl mx-auto px-1 md:px-6 mb-20">
             <h2 className="text-4xl font-semibold mb-6 text-center">FAQ</h2>
             <div className="space-y-4">
               <FAQItem question="Do I need to sign up to use the app?">
-                No sign-up needed to make and share boards! Signup is only
-                neccesary if you&apos;re on paid tier (which...makes sense) or
-                if you want to <strong>claim</strong> a board.
+                <span className="text-accent font-bold">No sign-up needed</span>{" "}
+                to make and share boards! Signup is only neccesary if want to{" "}
+                <strong>claim</strong> a board so that no one else can edit it.
+                Note that unclaimed boards will be deleted in 7 days.
               </FAQItem>
-              <FAQItem question="Who can see or access my board?">
-                Your boards are{" "}
+              <FAQItem question="What does it mean to claim a board?">
+                Claiming a board means that it&apos;s linked to your account and
+                no one can else edit it. Note that claiming does not neccesarily
+                mean that it won&apos;t expire, since Free accounts can only
+                keep 1 board around permanently.
+              </FAQItem>
+              <FAQItem question="Who can see or edit my board?">
+                All boards are{" "}
                 <span className="text-accent font-bold">
                   private by default
                 </span>
@@ -186,14 +196,13 @@ export default function Home() {
                 view and edit it <strong>unless</strong> you’ve signed in and
                 claimed it.
               </FAQItem>
-              <FAQItem question="What are the Free Tier limits?">
+              <FAQItem question="How does Free Tier work?">
                 Free users get{" "}
-                <span className="text-accent font-bold">full access</span>, and
-                no features are locked. We just auto delete boards after 7 days
-                to keep things light and storage friendly. It’s perfect for
-                daily studies, throwaway sketch practice, or casual
-                moodboarding. And you can still keep it by upgrading before they
-                expire.
+                <span className="text-accent font-bold">full access</span> to
+                all features. You can create any number of boards, but only 1 of
+                those will stay forever. The rest will be auto deleted after 7
+                days to keep things light and storage friendly, or you can keep
+                them too by upgrading before they expire!
               </FAQItem>
               <FAQItem question="Is the second tier really unlimited storage?">
                 During beta, yes! We&apos;ll introduce tiers later, but early
@@ -212,7 +221,7 @@ export default function Home() {
               </FAQItem>
               <FAQItem question="What happens to my boards if I cancel?">
                 To keep storage costs manageable (and protect against abuse),
-                boards are deleted 14 days after cancellation. But feel free to
+                boards are deleted 7 days after cancellation. But feel free to
                 reach out if you would like to work something out!
               </FAQItem>
               <FAQItem question="What's the best way to reach out?">

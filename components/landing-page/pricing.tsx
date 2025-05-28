@@ -16,7 +16,11 @@ const plans: Plan[] = [
     name: "Free",
     price: "$0",
     description: "Try it out, no account needed.",
-    features: ["Access all features", "Boards are deleted after 7 days"],
+    features: [
+      "Access all features",
+      "1 forever board",
+      "All other boards are deleted after 7 days",
+    ],
     ctaText: "Try the Demo",
     ctaHref: "/demo",
   },
