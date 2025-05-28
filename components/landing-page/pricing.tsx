@@ -15,7 +15,7 @@ const plans: Plan[] = [
   {
     name: "Free",
     price: "$0",
-    description: "Try it out, no account needed.",
+    description: "Try it out!",
     features: [
       "Access all features",
       "1 forever board",
@@ -27,7 +27,7 @@ const plans: Plan[] = [
   {
     name: "Run Wild",
     price: "$5 / month",
-    description: "Lock in special beta pricing. Unlimited boards.",
+    description: "Pricing is for first 250 users in beta.",
     features: [
       <span className="font-header " key="unlimited">
         <span className="font-header font-bold text-accent">Unlimited</span>{" "}

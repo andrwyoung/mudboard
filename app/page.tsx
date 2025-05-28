@@ -45,6 +45,31 @@ function FAQItem({
   );
 }
 
+type ComparisonTileProps = {
+  title: string;
+  children: React.ReactNode;
+  highlight?: boolean;
+};
+
+function ComparisonTile({
+  title,
+  children,
+  highlight = false,
+}: ComparisonTileProps) {
+  return (
+    <div
+      className={`border rounded-lg p-4 ${
+        highlight ? "border-accent bg-accent/10" : "border-border bg-primary/20"
+      }`}
+    >
+      <h3 className={`text-xl font-semibold mb-2 ${highlight ? "" : ""}`}>
+        {title}
+      </h3>
+      <p className="text-sm ">{children}</p>
+    </div>
+  );
+}
+
 export default function Home() {
   const [copiedEmail, setCopiedEmail] = useState(false);
 
@@ -118,10 +143,15 @@ export default function Home() {
                 <p className="max-w-lg text-sm text-accent font-bold">
                   Open Beta • Special Access
                 </p>
-                <p className="text-md mb-14 w-full">
+                {/* <p className="text-md mb-14 w-full">
                   For illustrators who’d rather sketch than spend 30 minutes
                   <br />
                   building a ref board.
+                </p> */}
+                <p className="text-md mb-14 w-full">
+                  For illustrators who’d rather spend 30 minutes sketching than
+                  <br />
+                  wrestling with Pinterest, PureRef, or Figma
                 </p>
               </div>
 
@@ -147,8 +177,40 @@ export default function Home() {
           </div>
 
           {/* FEATURES */}
-          <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-20 text-left">
+          <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-32 text-left">
             <Features />
+          </div>
+
+          <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-0 mb-24">
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              What about other programs?
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm sm:text-base">
+              <ComparisonTile title="Pinterest">
+                I still use Pinterest all the time. But it&apos;s hard to use it
+                as a reference board. Boards are nice, but the layout isn&apos;t
+                really meant for advanced viewing or rearranging. So many ads
+                too...
+              </ComparisonTile>
+
+              <ComparisonTile title="PureRef">
+                I loved using PureRef! Used it for a ton of projects. But as
+                with any freeform canvas program, building scenes takes a while.
+                Files are also stuck on one computer.
+              </ComparisonTile>
+
+              <ComparisonTile title="Photoshop (or your file explorer)">
+                This is what I was doing before: pasting images in to CSP or
+                even just clicking through photos in Preview. It...works. But
+                it&apos;s a mess, and hard to go back to something later on.
+              </ComparisonTile>
+
+              <ComparisonTile title="Mudboard" highlight>
+                I built this because I just wanted something that let me drop in
+                images and draw. No setup, no shortcuts to memorize, no endless
+                rearranging. Hopefully it helps you too!
+              </ComparisonTile>
+            </div>
           </div>
 
           <Image
@@ -217,7 +279,8 @@ export default function Home() {
                 I really love how Clip Studio Paint and Procreate are one time
                 payments. But since we&apos;re on the cloud and have ongoing
                 storage/hosting costs on our end, we&apos;ve gone with a monthly
-                model to keep things simple.
+                model to keep things simple (and so we don&apos;t need to run
+                ads).
               </FAQItem>
               <FAQItem question="What happens to my boards if I cancel?">
                 To keep storage costs manageable (and protect against abuse),
