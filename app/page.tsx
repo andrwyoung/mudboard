@@ -92,7 +92,7 @@ export default function Home() {
 
         <div className="absolute inset-0 overflow-hidden z-0">
           <video
-            src="/demo.mp4"
+            src="/demo2.mp4"
             autoPlay
             muted
             playsInline

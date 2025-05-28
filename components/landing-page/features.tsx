@@ -1,6 +1,7 @@
 import React from "react";
 import { FaCloud } from "react-icons/fa";
 import { MdPalette, MdImage } from "react-icons/md";
+import FillingDot from "../ui/filling-dot";
 
 type FeatureItemProps = {
   title: string;
@@ -12,7 +13,7 @@ function FeatureItem({ title, icon, children }: FeatureItemProps) {
   return (
     <div>
       <div className="flex gap-2 items-center mb-2">
-        {icon && <span className="translate-y-[1px]">{icon}</span>}
+        {icon && <FillingDot />}
         <h2 className="font-semibold text-xl">{title}</h2>
       </div>
       <p className="leading-relaxed text-sm">{children}</p>
@@ -25,17 +26,21 @@ export default function Features() {
     <>
       {/* <h1>Features</h1> */}
       <FeatureItem icon={<MdPalette />} title="Just let me draw">
-        Just upload your images and then view them. No ads, no clutter. Add a
-        new image without breaking your flow, or your whole layout.
+        Just upload your images and then view them.{" "}
+        <span className="font-bold">No ads, no clutter</span>. Add a new image
+        without breaking your flow, or your whole layout.
       </FeatureItem>
       <FeatureItem icon={<MdImage />} title="Make it yours">
         Just because it&apos;s quick doesn&apos;t mean it&apos;s not
-        customizable. Rearrange blocks however you want. Group by section. Add
-        descriptions and captions. It&apos;s yours.
+        customizable. Rearrange blocks{" "}
+        <span className="font-bold">however you want</span>. Group by section.
+        Add descriptions and captions.{" "}
+        <span className="font-bold">It&apos;s yours</span>.
       </FeatureItem>
       <FeatureItem icon={<FaCloud />} title="Reference Anywhere">
-        Create your monster reference library and then share/view it anywhere.
-        No need to export your moodboard as a png to share now.
+        Create your monster reference library and then{" "}
+        <span className="font-bold">share/view it anywhere</span>. No need to
+        export your moodboard as a png to share now.
       </FeatureItem>
 
       {/* <FeatureItem title="Built in Timed Draws">
