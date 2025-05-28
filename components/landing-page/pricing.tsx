@@ -1,10 +1,11 @@
+import { JSX } from "react";
 import { Button } from "../ui/button";
 
 type Plan = {
   name: string;
   price: string;
   description: string;
-  features: string[];
+  features: (string | JSX.Element)[];
   ctaText?: string;
   ctaHref?: string;
   highlight?: boolean;
@@ -15,18 +16,22 @@ const plans: Plan[] = [
     name: "Free",
     price: "$0",
     description: "Try it out, no account needed.",
-    features: ["Access all features", "Boards are deleted after 14 days"],
+    features: ["Access all features", "Boards are deleted after 7 days"],
     ctaText: "Try the Demo",
     ctaHref: "/demo",
   },
   {
-    name: "Beta Pricing",
+    name: "Run Wild",
     price: "$5 / month",
-    description: "Unlimited storage while in beta.",
+    description: "Lock in special beta pricing. Unlimited boards.",
     features: [
-      "Unlimited image uploads + boards!",
+      <span className="font-header " key="unlimited">
+        <span className="font-header font-bold text-accent">Unlimited</span>{" "}
+        image uploads and boards!
+      </span>,
       "Priority Support",
       "Be the first to Request Features",
+      "Lock in price forever",
       "Early supporter street cred",
     ],
     ctaText: "Start Creating",
@@ -34,7 +39,7 @@ const plans: Plan[] = [
     highlight: true,
   },
   {
-    name: "Pro (Coming Soon)",
+    name: "More Coming Soon",
     price: "TBD",
     description: "More features. More tools.",
     features: [

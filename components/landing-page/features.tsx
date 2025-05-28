@@ -24,16 +24,18 @@ export default function Features() {
   return (
     <>
       {/* <h1>Features</h1> */}
-      <FeatureItem icon={<MdPalette />} title="Built for Creatives">
-        Just upload your images and then view them. No endless repositioning. No
-        ads and clutter.
+      <FeatureItem icon={<MdPalette />} title="Just let me draw">
+        Just upload your images and then view them. No ads, no clutter. Add a
+        new image without breaking your flow, or your whole layout.
       </FeatureItem>
-      <FeatureItem icon={<MdImage />} title="Fully Customizable">
-        Rearrange blocks however you want. Group by section. Add descriptions
-        and captions.
+      <FeatureItem icon={<MdImage />} title="Make it yours">
+        Just because it&apos;s quick doesn&apos;t mean it&apos;s not
+        customizable. Rearrange blocks however you want. Group by section. Add
+        descriptions and captions. It&apos;s yours.
       </FeatureItem>
-      <FeatureItem icon={<FaCloud />} title="Access anywhere">
+      <FeatureItem icon={<FaCloud />} title="Reference Anywhere">
         Create your monster reference library and then share/view it anywhere.
+        No need to export your moodboard as a png to share now.
       </FeatureItem>
 
       {/* <FeatureItem title="Built in Timed Draws">

@@ -24,6 +24,7 @@ const monoFont = Overpass_Mono({
 export const metadata: Metadata = {
   title: "Mudboard",
   description: "Moodboard Creator and Organizer for Professional Artists",
+  //practice tool, drawing-friendly, or reference-first
 };
 
 export default function RootLayout({

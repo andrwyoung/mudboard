@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
 
 import { useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import FillingDot from "@/components/ui/filling-dot";
 import PricingTable from "@/components/landing-page/pricing";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
+import Image from "next/image";
 
 function FAQItem({
   question,
@@ -68,21 +68,32 @@ export default function Home() {
           }`}
         >
           <Logo />
-          <Button
-            variant="outline_accent"
-            className={`text-md font-bold font-header transition-opacity duration-500 ${
-              scrolled ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            Create a Board
-          </Button>
+          <div className="flex gap-3">
+            <a
+              className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
+                rounded-md text-white text-sm font-header transition-all duration-500
+                hover:text-white hover:bg-white/30 ${
+                  scrolled ? "opacity-100" : "opacity-0"
+                }`}
+            >
+              Blank Board
+            </a>
+            <a
+              className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
+                rounded-md text-primary text-lg font-header transition-all duration-500
+                hover:text-white hover:bg-accent/90 ${
+                  scrolled ? "opacity-100" : "opacity-0"
+                }`}
+            >
+              Demo
+            </a>
+          </div>
         </div>
 
         <div className="absolute inset-0 overflow-hidden z-0">
           <video
             src="/demo.mp4"
             autoPlay
-            loop
             muted
             playsInline
             className="w-full h-full object-cover opacity-20"
@@ -98,27 +109,31 @@ export default function Home() {
             {/* HERO */}
 
             <div
-              className="max-w-xl self-center w-full text-center
+              className="max-w-lg self-center w-full text-center
             rounded-lg p-2 mb-48"
             >
-              <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-2 leading-12 sm:leading-14 md:leading-18">
-                Artist-First Reference Gallery
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-2 leading-12 sm:leading-14 md:leading-18">
+                Draw more. Organize less.
               </h1>
-              <p className="text-md mb-12 w-full">
-                A drag-and-drop gallery workspace for artists, illustrators, and
-                visual thinkers that stays out of your way.
+              <p className="text-sm text-accent font-bold">
+                Open Beta • Special Access
+              </p>
+              <p className="text-md mb-14 w-full">
+                For illustrators who’d rather sketch than spend 30 minutes
+                <br />
+                building a ref board.
               </p>
 
               {/* CTA */}
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <a
+              <div className="flex flex-col items-center justify-center gap-2">
+                {/* <a
                   href="/app"
                   title="Start a blank board"
                   className="px-6 py-2 border-2 border-accent text-accent transition-all duration-300
-                font-header rounded-md text-lg hover:bg-accent/80 hover:text-white"
+                font-header rounded-md text-md hover:bg-accent/80 hover:text-white"
                 >
-                  Create a Board
-                </a>
+                  Start a Blank Board
+                </a> */}
                 <a
                   href="/demo"
                   className="flex gap-2 items-center px-6 py-2 bg-accent justify-center
@@ -126,7 +141,13 @@ export default function Home() {
                 hover:text-white hover:bg-accent/90"
                 >
                   <FaPlay className="size-4 translate-y-[1px]" />
-                  Try the Demo
+                  Try a Demo Board
+                </a>
+                <a
+                  className="font-header font-semibold hover:underline hover:text-accent 
+                cursor-pointer select-none transition-all duration-300"
+                >
+                  Or Start a Blank Board
                 </a>
               </div>
             </div>
@@ -136,12 +157,18 @@ export default function Home() {
               <Features />
             </div>
 
+            <Image
+              src="/1white.png"
+              alt="Board not found"
+              width={375}
+              height={150}
+              className="mb-4"
+            />
+
             {/* PRICING */}
 
-            <div className="mb-24">
-              <h2 className="text-2xl font-bold mb-6 text-center">
-                Simple Pricing
-              </h2>
+            <div className="mb-24 max-w-3xl">
+              <h2 className="text-2xl font-bold mb-6 text-center">Pricing</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left">
                 <PricingTable />
               </div>
@@ -152,10 +179,29 @@ export default function Home() {
               <div className="space-y-4">
                 <FAQItem question="Do I need to sign up to use the app?">
                   No sign-up needed to make and share boards! Signup is only
-                  neccesary if you&apos;re on paid tier (which...makes sense
-                  right?)
+                  neccesary if you&apos;re on paid tier (which...makes sense) or
+                  if you want to <strong>claim</strong> a board.
                 </FAQItem>
-                <FAQItem question="Is it really unlimited storage?">
+                <FAQItem question="Who can see or access my board?">
+                  Your boards are{" "}
+                  <span className="text-accent font-bold">
+                    private by default
+                  </span>
+                  , meaning they’re unlisted and can’t be found unless you share
+                  the link. When you do share a board, anyone with the link can
+                  view and edit it <strong>unless</strong> you’ve signed in and
+                  claimed it.
+                </FAQItem>
+                <FAQItem question="What are the Free Tier limits?">
+                  Free users get{" "}
+                  <span className="text-accent font-bold">full access</span>,
+                  and no features are locked. We just auto delete boards after 7
+                  days to keep things light and storage friendly. It’s perfect
+                  for daily studies, throwaway sketch practice, or casual
+                  moodboarding. And you can still keep it by upgrading before
+                  they expire.
+                </FAQItem>
+                <FAQItem question="Is the second tier really unlimited storage?">
                   During beta, yes! We&apos;ll introduce tiers later, but early
                   users keep their ability to upload unlimited images and lock
                   in their pricing{" "}
@@ -193,6 +239,13 @@ export default function Home() {
                 </FAQItem>
               </div>
             </div>
+
+            <Image
+              src="/2white.png"
+              alt="Board not found"
+              width={375}
+              height={150}
+            />
           </div>
           {/* FOOTER */}
           <footer className="mb-8">
