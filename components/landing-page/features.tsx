@@ -16,7 +16,7 @@ function FeatureItem({ title, icon, children }: FeatureItemProps) {
         {icon && <FillingDot />}
         <h2 className="font-semibold text-xl">{title}</h2>
       </div>
-      <p className="leading-relaxed text-sm">{children}</p>
+      <p className="leading-relaxed text-[0.9375rem]">{children}</p>
     </div>
   );
 }
@@ -34,8 +34,7 @@ export default function Features() {
         Just because it&apos;s quick doesn&apos;t mean it&apos;s not
         customizable. Rearrange blocks{" "}
         <span className="font-bold">however you want</span>. Group by section.
-        Add descriptions and captions.{" "}
-        <span className="font-bold">It&apos;s yours</span>.
+        Add descriptions and captions.
       </FeatureItem>
       <FeatureItem icon={<FaCloud />} title="Reference Anywhere">
         Create your monster reference library and then{" "}

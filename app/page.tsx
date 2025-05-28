@@ -33,7 +33,7 @@ function FAQItem({
         <FillingDot selected={open} />
       </div>
       <div
-        className={`select-none text-sm font-semibold leading-relaxed transition-all duration-300 ${
+        className={`select-none text-[0.9375rem] leading-relaxed transition-all duration-300 ${
           open
             ? "max-h-40 mb-2 mt-4 opacity-100"
             : "max-h-0 opacity-0 overflow-hidden"
@@ -65,7 +65,7 @@ function ComparisonTile({
       <h3 className={`text-xl font-semibold mb-2 ${highlight ? "" : ""}`}>
         {title}
       </h3>
-      <p className="text-sm ">{children}</p>
+      <p className="text-[0.9375rem]">{children}</p>
     </div>
   );
 }
