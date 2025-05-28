@@ -1,14 +1,13 @@
 import NewBoardButton from "@/components/sidebar/new-board-button";
 import { useMetadataStore, useUserStore } from "@/store/metadata-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
-import Image from "next/image";
-import Link from "next/link";
 import React, { RefObject, useEffect } from "react";
 import AccountSyncSection, {
   AccordianWrapper,
 } from "@/components/sidebar/account/account-section";
 import SectionsSection from "@/components/sidebar/sections-section";
 import CustomizeSection from "@/components/sidebar/customize-section";
+import Logo from "@/components/ui/logo";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -32,18 +31,7 @@ export default function Sidebar({
       className={`flex flex-col h-full w-full relative overflow-y-auto ${SCROLLBAR_STYLE}`}
     >
       <div className="flex flex-col gap-2 justify-center items-center py-8 px-4 ">
-        <Link
-          className="cursor-pointer hover:scale-105 transition-transform duration-300"
-          href={"/"}
-        >
-          <Image
-            src={"/full-logo-white.png"}
-            alt="mudboard logo"
-            height={387}
-            width={1267}
-            className="w-[150px]"
-          />
-        </Link>
+        <Logo />
         <div className="flex flex-col items-center gap-1.5">
           <p className="font-header text-xs font-bold">Start creating:</p>
           <NewBoardButton />

@@ -108,6 +108,8 @@ export default function OverlayGallery({
     }
 
     setInitialSize({ width, height });
+    // disable lint cause we want that scrollcontainerRef here with us
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageBlock.width, selectedBlock.height, scrollContainerRef.current]);
 
   // dragggin the image around

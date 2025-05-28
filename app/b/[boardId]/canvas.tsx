@@ -90,7 +90,7 @@ export default function Canvas({
   return (
     <div
       className={`relative h-full w-full ${
-        isMirror ? "bg-stone-300 text-white" : ""
+        isMirror ? "bg-stone-300 text-white" : "bg-background"
       }`}
     >
       <AnimatePresence>
