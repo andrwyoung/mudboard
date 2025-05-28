@@ -60,7 +60,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-full h-full bg-primary overflow-x-hidden">
+    <div className="w-full h-full bg-primary">
       <div
         className={`z-12 flex flex-row justify-between px-8 py-4 fixed top-0 w-screen h-16 transition-colors duration-500 ${
           scrolled ? "bg-primary/95 backdrop-blur-md" : "bg-transparent"
@@ -69,7 +69,7 @@ export default function Home() {
         <Logo />
         <div className="flex gap-3">
           <a
-            className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
+            className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-white text-sm font-header transition-all duration-500
                 hover:text-white hover:bg-white/30 ${
                   scrolled ? "opacity-100" : "opacity-0"
@@ -101,46 +101,48 @@ export default function Home() {
 
       <div className=" flex flex-col items-center">
         <div
-          className="z-10 w-screen mx-auto px-6 pt-48 md:pt-68 text-primary-text 
+          className="z-10 w-full max-w-screen mx-auto px-6 text-primary-text 
           flex flex-col items-center"
         >
           {/* HERO */}
 
-          <div
-            className=" self-center w-full text-center
-            rounded-lg p-2 mb-64"
-          >
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 leading-12 sm:leading-14 md:leading-18">
-              Draw more. Organize less.
-            </h1>
-            <div className="flex flex-col items-center">
-              <p className="max-w-lg text-sm text-accent font-bold">
-                Open Beta • Special Access
-              </p>
-              <p className="text-md mb-14 w-full">
-                For illustrators who’d rather sketch than spend 30 minutes
-                <br />
-                building a ref board.
-              </p>
-            </div>
+          <div className="flex flex-col items-center justify-center min-h-[90vh] pt-[25vh] text-center">
+            <div
+              className=" self-center w-full text-center
+            rounded-lg p-2 mb-48"
+            >
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 leading-12 sm:leading-14 md:leading-18">
+                Draw more. Organize less.
+              </h1>
+              <div className="flex flex-col items-center">
+                <p className="max-w-lg text-sm text-accent font-bold">
+                  Open Beta • Special Access
+                </p>
+                <p className="text-md mb-14 w-full">
+                  For illustrators who’d rather sketch than spend 30 minutes
+                  <br />
+                  building a ref board.
+                </p>
+              </div>
 
-            {/* CTA */}
-            <div className="flex flex-col items-center justify-center gap-2">
-              <a
-                href="/demo"
-                className="flex gap-2 items-center px-6 py-2 bg-accent justify-center
+              {/* CTA */}
+              <div className="flex flex-col items-center justify-center gap-2">
+                <a
+                  href="/demo"
+                  className="flex gap-2 items-center px-6 py-2 bg-accent justify-center
                 rounded-md text-primary text-lg font-header transition-all duration-300
                 hover:text-white hover:bg-accent/90"
-              >
-                <FaPlay className="size-4 translate-y-[1px]" />
-                Try a Demo Board
-              </a>
-              <a
-                className="font-header font-semibold hover:underline hover:text-accent 
+                >
+                  <FaPlay className="size-4 translate-y-[1px]" />
+                  Try a Demo Board
+                </a>
+                <a
+                  className="font-header font-semibold hover:underline hover:text-accent 
                 cursor-pointer select-none transition-all duration-300 text-sm"
-              >
-                Or Start a Blank Board
-              </a>
+                >
+                  Or Start a Blank Board
+                </a>
+              </div>
             </div>
           </div>
 
