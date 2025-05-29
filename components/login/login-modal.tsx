@@ -40,11 +40,7 @@ export default function LoginModal() {
 
     // now send the email
 
-    const baseUrl =
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
-        : "https://www.mudboard.com";
-
+    const baseUrl = window.location.origin;
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
