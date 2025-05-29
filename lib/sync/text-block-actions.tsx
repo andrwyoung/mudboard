@@ -2,10 +2,10 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { Block, BlockInsert, TextBlockType } from "@/types/block-types";
 import { TEXT_BLOCK_HEIGHT } from "@/types/upload-settings";
 import { v4 as uuidv4 } from "uuid";
-import { hasWriteAccess } from "../db-actions/check-write-access";
 import { supabase } from "../../utils/supabase";
 import { useLayoutStore } from "@/store/layout-store";
 import { findShortestColumn, getNextRowIndex } from "../columns/column-helpers";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function createTextBlock(
   sectionId: string,
@@ -45,7 +45,7 @@ export async function createTextBlock(
   });
 
   // then if access allows it, then we upload it to supabase
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
   if (canWrite) {
     const { error: blockInsertError } = await supabase
       .from("blocks")
@@ -67,7 +67,7 @@ export async function updateTextBlockText(
   block: Block,
   newText: string | null
 ) {
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
 
   if (!canWrite) {
     console.warn("Not syncing text block text");

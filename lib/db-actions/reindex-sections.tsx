@@ -1,7 +1,7 @@
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
 import { Section } from "@/types/board-types";
-import { hasWriteAccess } from "./check-write-access";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 // reindexes sections and syncs with Supabase if it's allowed
 export async function reindexSections(): Promise<void> {
@@ -18,7 +18,7 @@ export async function reindexSections(): Promise<void> {
   }));
 
   // sync with database only if has access
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
   if (!canWrite) {
     console.warn("No write access: not deleting section");
     return;

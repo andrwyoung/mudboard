@@ -2,7 +2,7 @@ import LoginModal from "@/components/login/login-modal";
 import SyncButton from "../sync-button";
 import { useMetadataStore } from "@/store/metadata-store";
 import { supabase } from "@/utils/supabase";
-import { useCanEdit } from "@/hooks/auth/use-can-edit";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { claimBoard } from "@/lib/db-actions/claim-board";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 
@@ -13,7 +13,7 @@ export default function AccountSyncSection() {
   const boardUnclaimed = !board?.user_id;
   const boardIsYours = board?.user_id === user?.id;
 
-  const canEdit = useCanEdit();
+  const canEdit = canEditBoard();
 
   return (
     <div className="flex flex-col gap-2">

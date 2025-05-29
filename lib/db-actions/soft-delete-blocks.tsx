@@ -1,13 +1,13 @@
 import { supabase } from "@/utils/supabase";
-import { hasWriteAccess } from "./check-write-access";
 import { useLayoutStore } from "@/store/layout-store";
 import { Block } from "@/types/block-types";
 import { toast } from "sonner";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function softDeleteBlocks(blocks: Block[]) {
   if (blocks.length === 0) return false;
 
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
   if (!canWrite) {
     console.warn("No write access: not deleting blocks");
     return false;

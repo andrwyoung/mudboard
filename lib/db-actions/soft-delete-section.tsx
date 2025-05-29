@@ -1,5 +1,4 @@
 import { Section } from "@/types/board-types";
-import { hasWriteAccess } from "./check-write-access";
 import { supabase } from "@/utils/supabase";
 import { toast } from "sonner";
 import { useMetadataStore } from "@/store/metadata-store";
@@ -8,10 +7,11 @@ import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { useLayoutStore } from "@/store/layout-store";
 import { createSupabaseSection } from "./create-new-section";
 import { reindexSections } from "./reindex-sections";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function softDeleteSection(section: Section) {
   // check if access
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
   if (!canWrite) {
     console.warn("No write access: not deleting section");
     return false;

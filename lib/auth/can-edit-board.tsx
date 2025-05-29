@@ -1,14 +1,13 @@
-import { Board } from "@/types/board-types";
-import { verifyPassword } from "./encrypt-decrypt";
-import { getBoardPassword } from "./save-get-password";
+import { useMetadataStore } from "@/store/metadata-store";
 
-export async function canEditBoard(board: Board): Promise<boolean> {
-  // unclaimed boards can be edited by whoever
-  if (!board.user_id || !board.password_hash) return true;
+export function canEditBoard(): boolean {
+  const user = useMetadataStore.getState().user;
+  const board = useMetadataStore.getState().board;
 
-  // grab local password from storage
-  const localPassword = getBoardPassword(board.board_id);
+  // If unclaimed board, anyone can edit
+  if (!board?.user_id) return true;
 
-  // verify password
-  return await verifyPassword(localPassword || "", board.password_hash);
+  // If claimed, only owner can edit (for now)
+  // TODO: here is where we add the access_level checks
+  return user?.id === board.user_id;
 }

@@ -1,13 +1,13 @@
 import { supabase } from "@/utils/supabase";
-import { hasWriteAccess } from "../db-actions/check-write-access";
 import { useLayoutStore } from "@/store/layout-store";
 import { Block, MudboardImage } from "@/types/block-types";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function updateImageBlockCaption(
   block: Block,
   newCaption: string | null
 ) {
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
 
   if (!canWrite) {
     console.warn("Not syncing block caption");

@@ -11,6 +11,7 @@ import {
   resolveProxiedImageUrl,
   upgradePinterestImage,
 } from "@/lib/upload-images/url-handling/resolve-image-links";
+import { canEditBoard } from "../lib/auth/can-edit-board";
 
 type PreparedImage = {
   image_id: string;
@@ -82,6 +83,11 @@ export function useImageImport({
       dragCounter = 0;
       setIsDraggingFile(false);
       setDraggedFileCount(null);
+
+      if (!canEditBoard()) {
+        console.log("Can't edit board. Not allowing drop");
+        return;
+      }
 
       console.log("handline drop. here's what we have: ", e);
 

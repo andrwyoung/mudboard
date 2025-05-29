@@ -33,6 +33,7 @@ import { useSelectionStore } from "@/store/selection-store";
 import Canvas from "./canvas";
 import { useInitBoard } from "@/hooks/use-init-board";
 import { useBoardListeners } from "@/hooks/gallery/use-global-listeners";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -44,6 +45,7 @@ export default function Board({ boardId }: { boardId: string }) {
   // when dragging new images from local computer
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
+  const canEdit = canEditBoard();
 
   // when dragging blocks
   const [draggedBlocks, setDraggedBlocks] = useState<Block[] | null>(null);
@@ -264,20 +266,26 @@ export default function Board({ boardId }: { boardId: string }) {
     <div className="flex h-screen overflow-hidden relative">
       {isDraggingFile && (
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
-          <div className="text-3xl font-header">
-            {draggedFileCount
-              ? `Drop ${draggedFileCount} file${
-                  draggedFileCount > 1 ? "s" : ""
-                }!`
-              : "Drop your file!"}
-          </div>
-          <div className="text-md">
-            {/* {draggedFileCount &&
+          {canEdit ? (
+            <>
+              <div className="text-3xl font-header">
+                {draggedFileCount
+                  ? `Drop ${draggedFileCount} file${
+                      draggedFileCount > 1 ? "s" : ""
+                    }!`
+                  : "Drop your file!"}
+              </div>
+              <div className="text-md">
+                {/* {draggedFileCount &&
               draggedFileCount > DROP_SPREAD_THRESHOLD &&
               `Adding more than ${DROP_SPREAD_THRESHOLD} spreads over all columns
           `} */}
-            {`Adding to ${selectedSection?.title ?? DEFAULT_SECTION_NAME}`}
-          </div>
+                {`Adding to ${selectedSection?.title ?? DEFAULT_SECTION_NAME}`}
+              </div>
+            </>
+          ) : (
+            <div className="text-3xl font-header">Editing Disabled</div>
+          )}
         </div>
       )}
 

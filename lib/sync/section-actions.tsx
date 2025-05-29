@@ -1,15 +1,15 @@
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
-import { hasWriteAccess } from "../db-actions/check-write-access";
 import { createSupabaseSection } from "../db-actions/create-new-section";
 import { toast } from "sonner";
 import { initializeSectionColumns } from "./new-section-columns";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function updateSectionTitle(
   sectionId: string,
   newTitle: string | null
 ) {
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
 
   if (!canWrite) {
     console.warn("Not syncing section title");
@@ -36,7 +36,7 @@ export async function updateSectionDescription(
   sectionId: string,
   newDescription: string | null
 ) {
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
 
   if (!canWrite) {
     console.warn("Not syncing section description");
@@ -68,7 +68,7 @@ export async function addNewSection({
   title?: string;
   order_index: number;
 }) {
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
   if (!canWrite) {
     console.warn("Not adding new section");
     return null;

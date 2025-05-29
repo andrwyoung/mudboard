@@ -1,8 +1,8 @@
 import { BlockInsert } from "@/types/block-types";
 import { supabase } from "../../utils/supabase";
 import { PositionedBlock } from "@/types/sync-types";
-import { hasWriteAccess } from "./check-write-access";
 import { useUIStore } from "@/store/ui-store";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 function positionedBlocksToUpdates(
   blocks: PositionedBlock[]
@@ -23,7 +23,7 @@ export async function syncOrderToSupabase(
   board_id: string
 ): Promise<boolean> {
   // check for access
-  const canWrite = await hasWriteAccess();
+  const canWrite = canEditBoard();
   if (!canWrite) {
     console.warn("No write access: not syncing order");
     return false;
