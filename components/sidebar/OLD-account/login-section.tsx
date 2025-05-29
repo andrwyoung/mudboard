@@ -3,13 +3,10 @@ import { Board } from "@/types/board-types";
 import { verifyPassword } from "@/lib/auth/encrypt-decrypt";
 import { saveBoardPassword } from "@/lib/auth/save-get-password";
 import { toast } from "sonner";
-import { useMetadataStore, useShallowUserStore } from "@/store/metadata-store";
-import { fetchSupabaseUser } from "@/lib/db-actions/fetch-db-user";
-import PasswordForm from "../ui/password";
+import { useMetadataStore } from "@/store/metadata-store";
+import PasswordForm from "../../ui/password";
 
-export default function LoginSection({ board }: { board: Board }) {
-  const setUser = useShallowUserStore((s) => s.setUser);
-
+export default function OLDLoginSection({ board }: { board: Board }) {
   async function handleLogin(password: string) {
     if (!board || !board.password_hash) return;
 
@@ -34,8 +31,8 @@ export default function LoginSection({ board }: { board: Board }) {
     }
 
     try {
-      const user = await fetchSupabaseUser(board.user_id);
-      setUser(user);
+      // const user = await fetchSupabaseUser(board.user_id);
+      // setUser(user);
     } catch (e) {
       console.error(e);
       toast.error("Failed to fetch user.");

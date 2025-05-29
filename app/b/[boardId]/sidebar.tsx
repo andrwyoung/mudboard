@@ -4,7 +4,7 @@ import { RefObject } from "react";
 import SectionsSection from "@/components/sidebar/sections-section";
 import CustomizeSection from "@/components/sidebar/customize-section";
 import Logo from "@/components/ui/logo";
-import AccountSyncSection from "@/components/sidebar/account/account-sync-section";
+import AccountSyncSection from "@/components/sidebar/account-sync-section";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 
 // const fontClass = "font-semibold text-sm font-header";

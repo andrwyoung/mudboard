@@ -7,7 +7,7 @@ import { supabase } from "@/utils/supabase";
 import { toast } from "sonner";
 import { saveBoardPassword } from "@/lib/auth/save-get-password";
 import { Board } from "@/types/board-types";
-import PasswordForm from "../ui/password";
+import PasswordForm from "../../ui/password";
 
 export default function OLDClaimBoardSection({ board }: { board: Board }) {
   const setBoard = useMetadataStore((s) => s.setBoard);

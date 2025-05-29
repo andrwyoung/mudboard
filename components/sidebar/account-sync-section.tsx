@@ -1,5 +1,5 @@
 import LoginModal from "@/components/login/login-modal";
-import SyncButton from "../sync-button";
+import SyncButton from "./sync-button";
 import { useMetadataStore } from "@/store/metadata-store";
 import { supabase } from "@/utils/supabase";
 import { canEditBoard } from "@/lib/auth/can-edit-board";

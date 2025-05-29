@@ -1,13 +1,13 @@
 // DEPRECATED
 
-import ClaimBoardSection from "@/components/sidebar/claim-board-section";
-import LoginSection from "@/components/sidebar/login-section";
-import LoggedInSection from "@/components/sidebar/logged-in-section";
+import ClaimBoardSection from "@/components/sidebar/OLD-account/claim-board-section";
+import LoginSection from "@/components/sidebar/OLD-account/login-section";
+import LoggedInSection from "@/components/sidebar/OLD-account/logged-in-section";
 import { useMetadataStore } from "@/store/metadata-store";
 import SyncButton from "../sync-button";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 
-export default function OldAccountSyncSection() {
+export default function OLDAccountSyncSection() {
   const board = useMetadataStore((s) => s.board);
   const accessLevel = useMetadataStore((s) => s.accessLevel);
 

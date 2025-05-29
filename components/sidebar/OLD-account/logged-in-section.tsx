@@ -3,7 +3,7 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { clearBoardPassword } from "@/lib/auth/save-get-password";
 import { Board } from "@/types/board-types";
 
-export default function LoggedInSection({ board }: { board: Board }) {
+export default function OLDLoggedInSection({ board }: { board: Board }) {
   const setAccessLevel = useMetadataStore((s) => s.setAccessLevel);
 
   function handleLogout() {
