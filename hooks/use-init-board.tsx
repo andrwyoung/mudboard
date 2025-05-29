@@ -15,7 +15,8 @@ import { toast } from "sonner";
 export function useInitBoard(
   boardId: string,
   setFlatBlocks: (e: Block[]) => void,
-  setInitSections: (s: Section[]) => void
+  setInitSections: (s: Section[]) => void,
+  setIsExpired: (s: boolean) => void
 ) {
   const setSections = useMetadataStore((s) => s.setSections);
   const setBoard = useMetadataStore((s) => s.setBoard);
@@ -34,6 +35,11 @@ export function useInitBoard(
             // this is a UI thing
             sliderVal: board.saved_column_num,
           }));
+        }
+
+        if (board.deleted_at && new Date(board.deleted_at) <= new Date()) {
+          toast.error("This board has expired.");
+          setIsExpired(true);
         }
 
         const blocks = await fetchSupabaseBlocks(boardId);

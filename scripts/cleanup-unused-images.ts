@@ -1,83 +1,70 @@
-import "dotenv/config";
-import { createClient } from "@supabase/supabase-js";
+import 'dotenv/config';
+import promptSync from 'prompt-sync';
+import { createClient } from '@supabase/supabase-js';
+import { DEFAULT_FILE_EXT, IMAGE_VARIANT_MAP } from '../types/upload-settings.ts';
+import * as fs from 'fs';
+
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const bucketName = "mudboard-photos";
 
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+    supabaseUrl,
+    supabaseKey,
 );
 
-const BUCKET_NAME = "mudboard-photos";
-const shouldDelete =
-  process.argv.includes("-d") || process.argv.includes("--delete");
-
-async function runCleanup() {
-  const { data: images, error } = await supabase.from("images").select("*");
-
-  if (typeof window !== "undefined") {
-    throw new Error("This script should not be run in the browser.");
-  }
-
-  if (error || !images) {
-    console.error("Failed to fetch images:", error);
-    return;
-  }
-
-  let unusedImages: { id: string; path?: string }[] = [];
-
-  for (const image of images) {
-    const { data: blocks, error: blockErr } = await supabase
-      .from("blocks")
-      .select("block_id")
-      .eq("image_id", image.image_id)
-      .eq("deleted", false); // adjust this field to match your soft delete flag
-
-    if (blockErr) {
-      console.error(
-        `❌ Failed to check blocks for image ${image.id}:`,
-        blockErr
-      );
-      continue;
+async function cleanupOrphanedImages() {
+    if (typeof window !== "undefined") {
+        throw new Error("This script should not be run in the browser.");
     }
 
-    const isUnused = !blocks || blocks.length === 0;
+    // Step 1: Find orphaned images
+    // First, get all used image_ids
+    const { data: orphanedImages, error: queryError } = await supabase
+        .from('orphaned_images')
+        .select('*');
 
-    if (isUnused) {
-      const path = image.storage_path || image.path || image.file_path;
-      unusedImages.push({ id: image.id, path });
-    }
-  }
-
-  if (unusedImages.length === 0) {
-    console.log("✅ No unused images found.");
-    return;
-  }
-
-  console.log(`🕵️ Found ${unusedImages.length} unused images:`);
-  unusedImages.forEach((img) =>
-    console.log(`- ${img.id}${img.path ? ` [${img.path}]` : ""}`)
-  );
-
-  if (!shouldDelete) {
-    console.log("\n🧪 Dry run only. Pass `-d` to delete these files.\n");
-    return;
-  }
-
-  console.log("\n🧨 Deleting unused images...\n");
-
-  let deletedCount = 0;
-  for (const image of unusedImages) {
-    if (image.path) {
-      await supabase.storage.from(BUCKET_NAME).remove([image.path]);
+    if (queryError) {
+        console.error('Failed to fetch orphaned images:', queryError);
+        return;
     }
 
-    await supabase.from("images").delete().eq("id", image.id);
-    console.log(`🧹 Deleted ${image.id}`);
-    deletedCount++;
-  }
+    if (!orphanedImages || orphanedImages.length === 0) {
+        console.log('No orphaned images found.');
+        return;
+    }
 
-  console.log(`\n✅ Cleanup complete. Deleted ${deletedCount} images.\n`);
+    // Save to log
+    const previewImageIds = orphanedImages.slice(0, 10).map(img => img.image_id);
+    console.log("Preview of first 10 orphaned image IDs:");
+    console.table(previewImageIds);
+    fs.writeFileSync('orphaned-images-log.json', JSON.stringify(orphanedImages, null, 2));
+    // check we're good
+    const prompt = promptSync();
+    const shouldContinue = prompt(`Delete ${orphanedImages.length} images? (yes/no): `);
+    if (shouldContinue.toLowerCase() !== 'yes') return;
+
+
+    const idsToDelete = orphanedImages.map(img => img.image_id);
+    const variants = Object.keys(IMAGE_VARIANT_MAP) as Array<keyof typeof IMAGE_VARIANT_MAP>;
+    const pathsToDelete = idsToDelete.flatMap(id =>
+        variants.map(variant => `${id}/${variant}.${DEFAULT_FILE_EXT}`)
+    );
+
+    // Step 2: Delete image metadata from DB
+    await supabase.from('images').delete().in('image_id', idsToDelete);
+
+    // Step 3: Delete storage files
+    const { error: deleteError } = await supabase
+        .storage
+        .from(bucketName)
+        .remove(pathsToDelete);
+
+    if (deleteError) {
+        console.error('Failed to delete storage files:', deleteError);
+    } else {
+        console.log('Successfully deleted orphaned images and storage items.');
+    }
 }
 
-runCleanup().catch((err) => {
-  console.error("Script failed:", err);
-});
+cleanupOrphanedImages();

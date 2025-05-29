@@ -34,6 +34,7 @@ import Canvas from "./canvas";
 import { useInitBoard } from "@/hooks/use-init-board";
 import { useBoardListeners } from "@/hooks/gallery/use-global-listeners";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
+import BoardExpiredPopup from "@/components/board/board-expired-page";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -41,6 +42,7 @@ export const useIsMirror = () => useContext(MirrorContext);
 
 export default function Board({ boardId }: { boardId: string }) {
   const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
+  const [isExpired, setIsExpired] = useState(false);
 
   // when dragging new images from local computer
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -93,7 +95,7 @@ export default function Board({ boardId }: { boardId: string }) {
   // SECTION: On load. Initialize everything
   //
   //
-  useInitBoard(boardId, setFlatBlocks, setInitSections);
+  useInitBoard(boardId, setFlatBlocks, setInitSections, setIsExpired);
 
   //
   //
@@ -262,9 +264,14 @@ export default function Board({ boardId }: { boardId: string }) {
     })
   );
 
+  // if (isExpired) {
+  //   return <BoardExpiredPage />;
+  // }
+
   return (
     <div className="flex h-screen overflow-hidden relative">
-      {isDraggingFile && (
+      {isExpired && <BoardExpiredPopup />}
+      {isDraggingFile && !isExpired && (
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
           {canEdit ? (
             <>

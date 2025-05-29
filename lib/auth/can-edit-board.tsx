@@ -8,6 +8,10 @@ export function canEditBoard(): boolean {
   const user = useMetadataStore.getState().user;
   const board = useMetadataStore.getState().board;
 
+  // if board is expired then no
+  if (board?.deleted_at && new Date(board.deleted_at) <= new Date())
+    return false;
+
   // If unclaimed board, anyone can edit
   if (!board?.user_id) return true;
 

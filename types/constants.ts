@@ -19,3 +19,7 @@ export const DEFAULT_SECTION_NAME = "Untitled Section";
 
 // login constants
 export const DEFAULT_TIER : Enums<"tier_level"> = "free"
+
+
+// links constants
+export const NEW_BOARD_LINK = "/b/new"

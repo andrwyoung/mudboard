@@ -25,6 +25,11 @@ export function useUser() {
     // this is the first time a user is logging in
     // so we create a new profile for them
     if (!existing) {
+      if (!user.email) {
+        console.error("Error creating new profile. No email provided");
+        return;
+      }
+
       const newUserInsert: TablesInsert<"users"> = {
         user_id: user.id,
         email: user.email,

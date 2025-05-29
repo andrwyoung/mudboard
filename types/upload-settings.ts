@@ -96,3 +96,8 @@ export const mimeToExtension: Record<string, string> = {
   // concurrent uploads
   export const UPLOAD_THREADS = 3;
   export const COMPRESSION_THREADS = 3;
+
+
+
+  // cleaning up database
+  export const DECLUTTER_CHUNK_SIZE = 100;

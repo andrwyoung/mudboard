@@ -1,35 +1,21 @@
 // this component is the button you click to create a new board and then redirect to it
 
 "use client";
-import { createNewBoard } from "@/lib/db-actions/create-new-board";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { Button } from "../ui/button";
 import { FaPlus } from "react-icons/fa";
+import Link from "next/link";
+import { NEW_BOARD_LINK } from "@/types/constants";
 
 export default function NewBoardButton() {
-  const router = useRouter();
-
-  async function handleClick() {
-    try {
-      const res = await createNewBoard({});
-
-      router.push(`/b/${res.board_id}`);
-    } catch (err) {
-      console.error("Error creating new board:", err);
-      toast.error("Error creating board!");
-    }
-  }
-
   return (
-    <Button
-      onClick={handleClick}
+    <Link
+      href={NEW_BOARD_LINK}
       type="button"
-      variant="outline_accent"
-      className="text-xs font-bold tracking-wide"
+      className="text-xs font-bold tracking-wide bg-transparent outline-2 outline-white text-white 
+      hover:text-accent hover:outline-accent flex flex-row gap-1.5 items-center justify-center cursor-pointer
+      rounded-md transition-all px-3 py-1 duration-300"
     >
       <FaPlus className="size-2" />
       Create new board!
-    </Button>
+    </Link>
   );
 }

@@ -74,6 +74,13 @@ export type Database = {
             referencedColumns: ["image_id"]
           },
           {
+            foreignKeyName: "blocks_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "orphaned_images"
+            referencedColumns: ["image_id"]
+          },
+          {
             foreignKeyName: "blocks_section_id_fkey"
             columns: ["section_id"]
             isOneToOne: false
@@ -87,7 +94,7 @@ export type Database = {
           access_level: Database["public"]["Enums"]["access_type"]
           board_id: string
           created_at: string
-          marked_for_deletion: boolean
+          deleted_at: string | null
           password_hash: string | null
           saved_column_num: number | null
           shared_with: string[] | null
@@ -100,7 +107,7 @@ export type Database = {
           access_level?: Database["public"]["Enums"]["access_type"]
           board_id?: string
           created_at?: string
-          marked_for_deletion?: boolean
+          deleted_at?: string | null
           password_hash?: string | null
           saved_column_num?: number | null
           shared_with?: string[] | null
@@ -113,7 +120,7 @@ export type Database = {
           access_level?: Database["public"]["Enums"]["access_type"]
           board_id?: string
           created_at?: string
-          marked_for_deletion?: boolean
+          deleted_at?: string | null
           password_hash?: string | null
           saved_column_num?: number | null
           shared_with?: string[] | null
@@ -212,21 +219,21 @@ export type Database = {
       users: {
         Row: {
           created_at: string
-          email: string | null
+          email: string
           tier: Database["public"]["Enums"]["tier_level"]
           user_id: string
           username: string | null
         }
         Insert: {
           created_at?: string
-          email?: string | null
+          email: string
           tier?: Database["public"]["Enums"]["tier_level"]
           user_id?: string
           username?: string | null
         }
         Update: {
           created_at?: string
-          email?: string | null
+          email?: string
           tier?: Database["public"]["Enums"]["tier_level"]
           user_id?: string
           username?: string | null
@@ -235,7 +242,42 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      orphaned_images: {
+        Row: {
+          blurhash: string | null
+          caption: string | null
+          created_at: string | null
+          deleted: boolean | null
+          file_ext: string | null
+          image_id: string | null
+          modified_at: string | null
+          original_name: string | null
+          width: number | null
+        }
+        Insert: {
+          blurhash?: string | null
+          caption?: string | null
+          created_at?: string | null
+          deleted?: boolean | null
+          file_ext?: string | null
+          image_id?: string | null
+          modified_at?: string | null
+          original_name?: string | null
+          width?: number | null
+        }
+        Update: {
+          blurhash?: string | null
+          caption?: string | null
+          created_at?: string | null
+          deleted?: boolean | null
+          file_ext?: string | null
+          image_id?: string | null
+          modified_at?: string | null
+          original_name?: string | null
+          width?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       update_block_order: {
@@ -245,7 +287,7 @@ export type Database = {
     }
     Enums: {
       access_type: "private" | "shared_with" | "public"
-      tier_level: "free" | "beta" | "pro"
+      tier_level: "free" | "beta" | "pro" | "alpha"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -362,7 +404,7 @@ export const Constants = {
   public: {
     Enums: {
       access_type: ["private", "shared_with", "public"],
-      tier_level: ["free", "beta", "pro"],
+      tier_level: ["free", "beta", "pro", "alpha"],
     },
   },
 } as const

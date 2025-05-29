@@ -8,6 +8,7 @@ import PricingTable from "@/components/landing-page/pricing";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
+import { NEW_BOARD_LINK } from "@/types/constants";
 
 function FAQItem({
   question,
@@ -94,20 +95,19 @@ export default function Home() {
         <Logo />
         <div className="flex gap-3">
           <a
+            href={NEW_BOARD_LINK}
             className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-white text-sm font-header transition-all duration-500
-                hover:text-white hover:bg-white/30 ${
-                  scrolled ? "opacity-100" : "opacity-0"
-                }`}
+                hover:text-white hover:bg-white/30 
+                `}
           >
             Blank Board
           </a>
           <a
             className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
                 rounded-md text-primary text-lg font-header transition-all duration-500
-                hover:text-white hover:bg-accent/90 ${
-                  scrolled ? "opacity-100" : "opacity-0"
-                }`}
+                hover:text-white hover:bg-accent/90 
+                `}
           >
             Demo
           </a>
@@ -167,6 +167,7 @@ export default function Home() {
                   Try a Demo Board
                 </a>
                 <a
+                  href={NEW_BOARD_LINK}
                   className="font-header font-semibold hover:underline hover:text-accent 
                 cursor-pointer select-none transition-all duration-300 text-sm"
                 >

@@ -28,9 +28,9 @@ export default function AccountSyncSection() {
         </p>
       )}
 
-      {!user && !canEdit && (
+      {!boardUnclaimed && !user && !canEdit && (
         <p className="text-xs font-semibold text-center">
-          This board is claimed. Log in to see if you have access.
+          This Board is Claimed. Log in to see if you have access.
         </p>
       )}
 

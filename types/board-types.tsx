@@ -27,6 +27,7 @@ export type Board = {
   password_hash: string | null;
 
   saved_column_num: number;
+  deleted_at: string;
 };
 
 export type User = {
