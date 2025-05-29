@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 import { InputDark } from "../ui/input-dark";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { FaQuestionCircle } from "react-icons/fa";
+import { useMetadataStore } from "@/store/metadata-store";
 
 export const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -19,6 +20,7 @@ export default function LoginModal() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const board = useMetadataStore((s) => s.board);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,10 +39,18 @@ export default function LoginModal() {
     }
 
     // now send the email
+
+    const baseUrl =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : "https://www.mudboard.com";
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/logged-in`,
+        emailRedirectTo: board
+          ? `${baseUrl}/b/${board.board_id}`
+          : `${baseUrl}/logged-in`,
       },
     });
     if (error) {

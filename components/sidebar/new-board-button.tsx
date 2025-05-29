@@ -1,3 +1,5 @@
+// this component is the button that
+
 "use client";
 import { createNewBoard } from "@/lib/db-actions/create-new-board";
 import { useRouter } from "next/navigation";
