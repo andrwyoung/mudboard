@@ -34,7 +34,7 @@ export function ImageBlock({
 }) {
   const img = block.data as MudboardImage;
   const height = block.height;
-  const caption = img.caption;
+  const caption = block.caption;
 
   const showBlurImg = useLoadingStore((s) => s.showBlurImg);
   const numCols = useUIStore((s) => s.numCols);

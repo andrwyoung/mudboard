@@ -158,7 +158,6 @@ export async function uploadImages(
       image_id,
       file_ext: DEFAULT_FILE_EXT,
       original_name,
-      caption: null,
       width,
       blurhash,
 
@@ -196,6 +195,7 @@ export async function uploadImages(
         col_index: colIndex,
         row_index: rowIndex,
         order_index: 0,
+        caption: null,
       };
 
       const newCols = [...prevCols];

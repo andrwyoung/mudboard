@@ -14,6 +14,7 @@ export type Database = {
           block_id: string
           block_type: string
           board_id: string
+          caption: string | null
           col_index: number
           created_at: string
           data: Json | null
@@ -30,6 +31,7 @@ export type Database = {
           block_id?: string
           block_type: string
           board_id: string
+          caption?: string | null
           col_index?: number
           created_at?: string
           data?: Json | null
@@ -46,6 +48,7 @@ export type Database = {
           block_id?: string
           block_type?: string
           board_id?: string
+          caption?: string | null
           col_index?: number
           created_at?: string
           data?: Json | null
@@ -142,7 +145,6 @@ export type Database = {
       images: {
         Row: {
           blurhash: string | null
-          caption: string | null
           created_at: string
           deleted: boolean
           file_ext: string
@@ -153,7 +155,6 @@ export type Database = {
         }
         Insert: {
           blurhash?: string | null
-          caption?: string | null
           created_at?: string
           deleted?: boolean
           file_ext: string
@@ -164,7 +165,6 @@ export type Database = {
         }
         Update: {
           blurhash?: string | null
-          caption?: string | null
           created_at?: string
           deleted?: boolean
           file_ext?: string
@@ -245,7 +245,6 @@ export type Database = {
       orphaned_images: {
         Row: {
           blurhash: string | null
-          caption: string | null
           created_at: string | null
           deleted: boolean | null
           file_ext: string | null
@@ -256,7 +255,6 @@ export type Database = {
         }
         Insert: {
           blurhash?: string | null
-          caption?: string | null
           created_at?: string | null
           deleted?: boolean | null
           file_ext?: string | null
@@ -267,7 +265,6 @@ export type Database = {
         }
         Update: {
           blurhash?: string | null
-          caption?: string | null
           created_at?: string | null
           deleted?: boolean | null
           file_ext?: string | null

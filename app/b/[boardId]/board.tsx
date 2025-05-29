@@ -370,7 +370,7 @@ export default function Board({ boardId }: { boardId: string }) {
                   <Image
                     src={draggedBlocks[0].data.fileName}
                     alt={
-                      draggedBlocks[0].data.caption ??
+                      draggedBlocks[0].caption ??
                       draggedBlocks[0].data.original_name
                     }
                     width={draggedBlocks[0].data.width}

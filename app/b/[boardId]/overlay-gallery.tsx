@@ -272,7 +272,7 @@ export default function OverlayGallery({
                     "full"
                   )}
                   draggable={false}
-                  alt={imageBlock.caption ?? imageBlock.original_name}
+                  alt={selectedBlock.caption ?? imageBlock.original_name}
                   width={imageBlock.width}
                   height={selectedBlock.height}
                   className={`h-full w-full object-contain rounded-md shadow-lg ${

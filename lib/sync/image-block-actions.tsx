@@ -1,6 +1,6 @@
 import { supabase } from "@/utils/supabase";
 import { useLayoutStore } from "@/store/layout-store";
-import { Block, MudboardImage } from "@/types/block-types";
+import { Block } from "@/types/block-types";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function updateImageBlockCaption(
@@ -19,20 +19,13 @@ export async function updateImageBlockCaption(
     return;
   }
 
-  const image = block.data as MudboardImage;
-
   // update locally
-  const newData = {
-    ...image,
-    caption: newCaption,
-  } as MudboardImage;
-
   useLayoutStore.setState((s) => ({
     sectionColumns: {
       ...s.sectionColumns,
       [block.section_id]: s.sectionColumns[block.section_id].map((column) =>
         column.map((b) =>
-          b.block_id === block.block_id ? { ...b, data: newData } : b
+          b.block_id === block.block_id ? { ...b, caption: newCaption } : b
         )
       ),
     },
@@ -40,7 +33,7 @@ export async function updateImageBlockCaption(
 
   // update remotely
   await supabase
-    .from("images")
+    .from("blocks")
     .update({ caption: newCaption })
-    .eq("image_id", image.image_id);
+    .eq("block_id", block.block_id);
 }

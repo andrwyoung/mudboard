@@ -34,7 +34,7 @@ export function generatePositionedBlocks(
           height = columnWidth * aspect;
 
           // if it has a caption. need to add that
-          if (imageBlock.caption) {
+          if (block.caption) {
             height += CAPTION_HEIGHT;
           }
         }

@@ -30,6 +30,8 @@ export type Block = {
   row_index: number;
   order_index: number;
 
+  caption: string | null;
+
   deleted: boolean;
 };
 
@@ -40,7 +42,6 @@ export type MudboardImage = {
   original_name: string;
 
   width: number;
-  caption?: string | null;
   blurhash?: string;
 
   // defined by me on fetch

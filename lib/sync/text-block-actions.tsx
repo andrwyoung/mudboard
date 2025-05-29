@@ -35,6 +35,7 @@ export async function createTextBlock(
     height: TEXT_BLOCK_HEIGHT,
     col_index: colIndex,
     row_index: rowIndex,
+    caption: null, // text blocks don't have captions
     order_index: 0,
     deleted: false,
   };
