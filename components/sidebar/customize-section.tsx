@@ -1,3 +1,7 @@
+// this component is everything inside the "customize" dropdown
+// this is the "mirror mode" button and the slider to change column number
+// I really do need to come up with a better name for it
+
 import { useUIStore } from "@/store/ui-store";
 import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
 import { Slider } from "../ui/slider";

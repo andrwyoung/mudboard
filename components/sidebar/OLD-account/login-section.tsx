@@ -1,3 +1,5 @@
+// DEPRECATED
+
 import React from "react";
 import { Board } from "@/types/board-types";
 import { verifyPassword } from "@/lib/auth/encrypt-decrypt";

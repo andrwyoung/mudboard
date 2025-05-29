@@ -1,3 +1,5 @@
+// DEPRECATED
+
 import { toast } from "sonner";
 import { useMetadataStore } from "@/store/metadata-store";
 import { clearBoardPassword } from "@/lib/auth/save-get-password";

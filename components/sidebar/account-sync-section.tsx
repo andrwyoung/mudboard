@@ -1,3 +1,7 @@
+// this component is all the stuff on the bottom of the sidebar that has to do with
+// logging in and displaying the copywriting for all the types of access
+// it's the login buttons and the sync thing you see
+
 import LoginModal from "@/components/login/login-modal";
 import SyncButton from "./sync-button";
 import { useMetadataStore } from "@/store/metadata-store";

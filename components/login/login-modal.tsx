@@ -1,3 +1,4 @@
+"use client";
 import { supabase } from "@/utils/supabase";
 import React, { useState } from "react";
 import {
@@ -36,7 +37,12 @@ export default function LoginModal() {
     }
 
     // now send the email
-    const { error } = await supabase.auth.signInWithOtp({ email });
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/logged-in`,
+      },
+    });
     if (error) {
       setMessage("Something went wrong. Try again.");
       console.log("Signup Error: ", error);
