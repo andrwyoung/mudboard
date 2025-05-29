@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createNewBoard } from "@/lib/db-actions/create-new-board";
+import { useLayoutStore } from "@/store/layout-store";
+import { useMetadataStore } from "@/store/metadata-store";
 
 export default function NewBoardPage() {
   const router = useRouter();
@@ -10,6 +12,9 @@ export default function NewBoardPage() {
   useEffect(() => {
     const create = async () => {
       try {
+        useLayoutStore.getState().clearAll();
+        useMetadataStore.getState().clearAll();
+
         const board = await createNewBoard({});
         router.replace(`/b/${board.board_id}`);
       } catch (err) {

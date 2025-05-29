@@ -36,6 +36,7 @@ type LayoutStore = {
   setLayoutDirty: (d: boolean) => void;
 
   syncLayout: () => Promise<boolean>;
+  clearAll: () => void;
 };
 
 export const useLayoutStore = create<LayoutStore>((set, get) => ({
@@ -131,4 +132,9 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
     }
     return true;
   },
+
+  clearAll: () =>
+    set({
+      sectionColumns: {},
+    }),
 }));
