@@ -1,4 +1,6 @@
-import { useMetadataStore, useUserStore } from "@/store/metadata-store";
+// DEPRECATED
+
+import { useMetadataStore } from "@/store/metadata-store";
 import React from "react";
 import { hashPassword } from "@/lib/auth/encrypt-decrypt";
 import { supabase } from "@/utils/supabase";
@@ -7,9 +9,9 @@ import { saveBoardPassword } from "@/lib/auth/save-get-password";
 import { Board } from "@/types/board-types";
 import PasswordForm from "../ui/password";
 
-export default function ClaimBoardSection({ board }: { board: Board }) {
+export default function OLDClaimBoardSection({ board }: { board: Board }) {
   const setBoard = useMetadataStore((s) => s.setBoard);
-  const setUser = useUserStore((s) => s.setUser);
+  // const setUser = useShallowUserStore((s) => s.setUser);
 
   async function claimBoard(password: string) {
     if (!board) return;
@@ -49,7 +51,7 @@ export default function ClaimBoardSection({ board }: { board: Board }) {
         password_hash: passwordHash,
         user_id: user.user_id,
       });
-      setUser(user);
+      // setUser(user);
       // save the password locally so it's persistant
       saveBoardPassword(board.board_id, password);
 

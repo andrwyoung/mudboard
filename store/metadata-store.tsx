@@ -1,11 +1,18 @@
 import { verifyPassword } from "@/lib/auth/encrypt-decrypt";
 import { getBoardPassword } from "@/lib/auth/save-get-password";
-import { Board, BoardAccessLevel, Section, User } from "@/types/board-types";
+import { Board, BoardAccessLevel, Section } from "@/types/board-types";
 import { create } from "zustand";
+import { UserProfile } from "./user-store";
+import { User } from "@supabase/supabase-js";
 
 type MetadataStore = {
   board: Board | null;
   setBoard: (board: Board) => void;
+
+  user: User | null | undefined;
+  setUser: (user: User | null) => void;
+  profile: UserProfile | null;
+  setProfile: (profile: UserProfile | null) => void;
 
   accessLevel: BoardAccessLevel;
   setAccessLevel: (level: BoardAccessLevel) => void;
@@ -18,6 +25,11 @@ type MetadataStore = {
 export const useMetadataStore = create<MetadataStore>((set, get) => ({
   board: null,
   setBoard: (board: Board) => set({ board }),
+
+  user: undefined,
+  setUser: (user) => set({ user }),
+  profile: null,
+  setProfile: (profile) => set({ profile }),
 
   accessLevel: "UNCLAIMED",
   setAccessLevel: (accessLevel: BoardAccessLevel) => set({ accessLevel }),
@@ -50,13 +62,4 @@ export const useMetadataStore = create<MetadataStore>((set, get) => ({
 
   sections: [] as Section[],
   setSections: (sections: Section[]) => set({ sections }),
-}));
-
-type UserStore = {
-  user: User | null;
-  setUser: (user: User) => void;
-};
-export const useUserStore = create<UserStore>((set) => ({
-  user: null,
-  setUser: (user: User) => set({ user }),
 }));

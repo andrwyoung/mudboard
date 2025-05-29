@@ -1,8 +1,11 @@
+// this monster hook is the file that handles all the drag and drop
+// behavior of dragging and rearranging blocks
+
 import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block } from "@/types/block-types";
 import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
-import { CanvasScope, Section, SectionColumns } from "@/types/board-types";
+import { Section, SectionColumns } from "@/types/board-types";
 import { findShortestColumn } from "@/lib/columns/column-helpers";
 import { PositionedBlock } from "@/types/sync-types";
 

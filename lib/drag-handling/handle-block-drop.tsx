@@ -1,4 +1,4 @@
-import { getMovingItem } from "@/hooks/use-drag-handlers";
+import { getMovingItem } from "@/hooks/gallery/use-drag-handlers";
 import { Block } from "@/types/block-types";
 import { SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";

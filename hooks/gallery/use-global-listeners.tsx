@@ -1,11 +1,11 @@
-// /hooks/use-board-listeners.ts
+// this hook handles all the global keyboard shortcuts
+// and also the listener that detects when to deselect an image
+
 import { useEffect } from "react";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { useSelectionStore } from "@/store/selection-store";
-import { useUIStore } from "@/store/ui-store";
 import { useOverlayStore } from "@/store/overlay-store";
-import { useIsMirror } from "@/app/b/[boardId]/board";
-import { useGetScope } from "./use-get-scope";
+import { useGetScope } from "../use-get-scope";
 
 export function useBoardListeners() {
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);

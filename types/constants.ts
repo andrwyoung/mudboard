@@ -1,3 +1,5 @@
+import { Enums, Tables } from "./supabase";
+
 export const INDEX_MULTIPLIER = 10
 
 
@@ -12,3 +14,8 @@ export const DEFAULT_SPACING = 12;
 export const DEFAULT_GALLERY_SPACING = 12;
 
 export const DEFAULT_SECTION_NAME = "Untitled Section";
+
+
+
+// login constants
+export const DEFAULT_TIER : Enums<"tier_level"> = "free"

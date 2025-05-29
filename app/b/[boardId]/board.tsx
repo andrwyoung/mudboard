@@ -23,7 +23,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { useGalleryHandlers } from "@/hooks/use-drag-handlers";
+import { useGalleryHandlers } from "@/hooks/gallery/use-drag-handlers";
 import Image from "next/image";
 import { Section, SectionColumns } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
@@ -32,7 +32,7 @@ import { useLoadingStore } from "@/store/loading-store";
 import { useSelectionStore } from "@/store/selection-store";
 import Canvas from "./canvas";
 import { useInitBoard } from "@/hooks/use-init-board";
-import { useBoardListeners } from "@/hooks/use-global-listeners";
+import { useBoardListeners } from "@/hooks/gallery/use-global-listeners";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);

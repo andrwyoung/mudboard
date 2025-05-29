@@ -84,33 +84,39 @@ export type Database = {
       }
       boards: {
         Row: {
+          access_level: Database["public"]["Enums"]["access_type"]
           board_id: string
           created_at: string
           marked_for_deletion: boolean
           password_hash: string | null
           saved_column_num: number | null
+          shared_with: string[] | null
           slug: string | null
           title: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          access_level?: Database["public"]["Enums"]["access_type"]
           board_id?: string
           created_at?: string
           marked_for_deletion?: boolean
           password_hash?: string | null
           saved_column_num?: number | null
+          shared_with?: string[] | null
           slug?: string | null
           title?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          access_level?: Database["public"]["Enums"]["access_type"]
           board_id?: string
           created_at?: string
           marked_for_deletion?: boolean
           password_hash?: string | null
           saved_column_num?: number | null
+          shared_with?: string[] | null
           slug?: string | null
           title?: string | null
           updated_at?: string | null
@@ -207,18 +213,21 @@ export type Database = {
         Row: {
           created_at: string
           email: string | null
+          tier: Database["public"]["Enums"]["tier_level"]
           user_id: string
           username: string | null
         }
         Insert: {
           created_at?: string
           email?: string | null
+          tier?: Database["public"]["Enums"]["tier_level"]
           user_id?: string
           username?: string | null
         }
         Update: {
           created_at?: string
           email?: string | null
+          tier?: Database["public"]["Enums"]["tier_level"]
           user_id?: string
           username?: string | null
         }
@@ -235,7 +244,8 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      access_type: "private" | "shared_with" | "public"
+      tier_level: "free" | "beta" | "pro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -350,6 +360,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      access_type: ["private", "shared_with", "public"],
+      tier_level: ["free", "beta", "pro"],
+    },
   },
 } as const

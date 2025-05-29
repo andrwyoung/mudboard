@@ -1,13 +1,11 @@
 import NewBoardButton from "@/components/sidebar/new-board-button";
-import { useMetadataStore, useUserStore } from "@/store/metadata-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
-import React, { RefObject, useEffect } from "react";
-import AccountSyncSection, {
-  AccordianWrapper,
-} from "@/components/sidebar/account/account-section";
+import { RefObject } from "react";
 import SectionsSection from "@/components/sidebar/sections-section";
 import CustomizeSection from "@/components/sidebar/customize-section";
 import Logo from "@/components/ui/logo";
+import AccountSyncSection from "@/components/sidebar/account/account-sync-section";
+import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -18,14 +16,6 @@ export default function Sidebar({
 }: {
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
 }) {
-  const board = useMetadataStore((s) => s.board);
-  const user = useUserStore((s) => s.user);
-
-  // syncing access
-  useEffect(() => {
-    useMetadataStore.getState().getAndSyncAccessLevel();
-  }, [board, user]);
-
   return (
     <div
       className={`flex flex-col h-full w-full relative overflow-y-auto ${SCROLLBAR_STYLE}`}
@@ -91,7 +81,6 @@ export default function Sidebar({
       </div>
       <div className="flex flex-col gap-4 w-full px-8 pt-6">
         <AccountSyncSection />
-        {/* <NewBoardButton /> */}
       </div>
       <div
         className="flex flex-col items-center px-4 py-4 
