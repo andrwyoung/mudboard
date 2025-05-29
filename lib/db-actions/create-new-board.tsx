@@ -1,6 +1,10 @@
+// 1. create the board
+// 2. create the default section. Important because all boards need at least 1 section. but it's
+// ok if this fails to make a new section because on init-board we catch this edge case
+// 3. initialize section columns: which just creates a blank array for us depending on number of columns
+
 import { supabase } from "@/utils/supabase";
-import { Tables, TablesInsert } from "@/types/supabase";
-import { v4 as uuidv4 } from "uuid";
+import { Tables } from "@/types/supabase";
 import { createSupabaseSection } from "./create-new-section";
 import { initializeSectionColumns } from "../sync/new-section-columns";
 
@@ -9,16 +13,9 @@ export async function createNewBoard({
 }: {
   title?: string;
 }): Promise<Tables<"boards">> {
-  const newBoardId = uuidv4();
-
   const { data: boardData, error: boardError } = await supabase
     .from("boards")
-    .insert([
-      {
-        board_id: newBoardId,
-        title,
-      } as TablesInsert<"boards">,
-    ])
+    .insert([{ title }])
     .select()
     .single();
 

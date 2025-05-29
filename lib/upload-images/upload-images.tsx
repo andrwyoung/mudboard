@@ -19,7 +19,10 @@ import {
   MudboardImage,
 } from "@/types/block-types";
 import { generateBlurhashFromImage } from "./processing/blur-hash";
-import { findShortestColumn, getNextRowIndex } from "../columns/column-helpers";
+import {
+  findShortestColumn,
+  getNextRowIndex,
+} from "../columns/OLD-column-helpers";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";

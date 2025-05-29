@@ -1,3 +1,5 @@
+// feel like title is pretty self explanatory lol
+
 import { supabase } from "@/utils/supabase";
 
 export async function checkIfBoardExists(boardId: string) {

@@ -1,3 +1,7 @@
+// DEPRECATED: replaced by sync-order.tsx
+// this was the way we used to create a block map: the map between
+// block_id and where it was located in the columns
+
 import { SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
 

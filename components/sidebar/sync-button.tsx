@@ -1,3 +1,6 @@
+// this is the little sync button thing
+// most of the logic here is just so that it spins and looks cool
+
 import { useLayoutStore } from "@/store/layout-store";
 import { useState } from "react";
 import { MdSync } from "react-icons/md";

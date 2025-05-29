@@ -1,3 +1,6 @@
+// this is currently used after deleting a section
+// we want to rearrange the indexes of the section so they make sense
+
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
 import { Section } from "@/types/board-types";

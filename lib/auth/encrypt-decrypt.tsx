@@ -1,4 +1,5 @@
-// these are the functions that encrypt and compare hashes
+// DEPRECATED (for now)
+// these are the functions that encrypt and compare password hashes
 
 import { SALT_ROUNDS } from "@/types/upload-settings";
 import bcrypt from "bcryptjs"; // install with: npm install bcryptjs

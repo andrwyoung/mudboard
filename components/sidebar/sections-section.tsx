@@ -1,3 +1,6 @@
+// this is the component used to render the table of contents of each
+// of the sections on the sidebar. also renders the add section button
+
 import { useMetadataStore } from "@/store/metadata-store";
 import React, { RefObject, useState } from "react";
 import { DroppableSection } from "../drag/droppable-section";

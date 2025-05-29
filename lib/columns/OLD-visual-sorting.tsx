@@ -1,4 +1,8 @@
-// DEPRECATED. replaced by generate-block-position
+// DEPRECATED. replaced by generate-block-position and sync-order.tsx
+// this used to be used to visually sort the columns by rows instead of columns
+
+// it didn't even work that well anyway lol
+
 import { Block } from "@/types/block-types";
 
 type VisualBlock = {

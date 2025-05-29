@@ -1,3 +1,6 @@
+// nice. grab the board
+// if this fails we're screwed
+
 import { Board } from "@/types/board-types"; // adjust path as needed
 import { supabase } from "../../utils/supabase";
 

@@ -1,3 +1,5 @@
+// DEPRECATED: in favor of real auth use-user.tsx
+
 import { User } from "@/types/board-types";
 import { supabase } from "../../utils/supabase";
 

@@ -1,3 +1,7 @@
+// this helper is used to determine whether you can edit a board
+// technically I think it's supposed to be a hook, but it doesn't even do that much anyways
+// Also I use it in a lot of place and didn't want to deal with the hassle
+
 import { useMetadataStore } from "@/store/metadata-store";
 
 export function canEditBoard(): boolean {

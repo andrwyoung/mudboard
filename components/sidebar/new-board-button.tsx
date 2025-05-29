@@ -1,4 +1,4 @@
-// this component is the button that
+// this component is the button you click to create a new board and then redirect to it
 
 "use client";
 import { createNewBoard } from "@/lib/db-actions/create-new-board";

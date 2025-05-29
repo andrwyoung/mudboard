@@ -1,3 +1,7 @@
+// this component is the login modal that pops up
+// we use a magic link and that logic is all in here too
+// we want redirect to the board they're currently using
+
 "use client";
 import { supabase } from "@/utils/supabase";
 import React, { useState } from "react";

@@ -1,4 +1,5 @@
-// these functions save board passwords into local storage
+// DEPRECATED (for now)
+// these functions save passwords into the user's local storage
 
 export function saveBoardPassword(boardId: string, password: string) {
   localStorage.setItem(

@@ -1,3 +1,6 @@
+// this component is the thing that handles the title and description above
+// every section inside the gallery
+
 import { Section } from "@/types/board-types";
 import InlineEditText from "../ui/inline-edit";
 import {

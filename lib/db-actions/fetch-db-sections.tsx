@@ -1,3 +1,7 @@
+// grab all the sections
+// I was debating whether or not this should be the one responsible for
+// creating a new section if none exist but I decided against it
+
 import { Section } from "@/types/board-types";
 import { supabase } from "../../utils/supabase";
 
