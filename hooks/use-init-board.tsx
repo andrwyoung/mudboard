@@ -11,6 +11,7 @@ import { Block } from "@/types/block-types";
 import { Section } from "@/types/board-types";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useResetState } from "./user-reset-state";
 
 export function useInitBoard(
   boardId: string,
@@ -23,10 +24,13 @@ export function useInitBoard(
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
 
   const setNumCols = useUIStore((s) => s.setNumCols);
+  const resetState = useResetState();
 
   useEffect(() => {
     async function loadImages() {
       try {
+        resetState();
+
         const board = await fetchSupabaseBoard(boardId);
         setBoard(board);
         if (board.saved_column_num) {
@@ -38,7 +42,6 @@ export function useInitBoard(
         }
 
         if (board.deleted_at && new Date(board.deleted_at) <= new Date()) {
-          toast.error("This board has expired.");
           setIsExpired(true);
         }
 
