@@ -1,4 +1,3 @@
-import { MudboardImage } from "@/types/block-types";
 import { SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { getColumnWidth } from "./get-column-width";
@@ -28,9 +27,8 @@ export function generatePositionedBlocks(
         if (block.deleted) continue;
 
         let height = block.height;
-        if (block.block_type === "image" && block.data) {
-          const imageBlock = block.data as MudboardImage;
-          const aspect = block.height / imageBlock.width;
+        if (block.block_type === "image" && block.width) {
+          const aspect = block.height / block.width;
           height = columnWidth * aspect;
 
           // if it has a caption. need to add that

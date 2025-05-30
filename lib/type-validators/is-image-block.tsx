@@ -1,8 +1,8 @@
-export function isBlockWithWidth(data: unknown): data is { width: number } {
+export function isBlockWithWidth(data: unknown): data is { og_width: number } {
   return (
     typeof data === "object" &&
     data !== null &&
-    "width" in data &&
-    typeof (data as { width: number }).width === "number"
+    "og_width" in data &&
+    typeof (data as { og_width: number }).og_width === "number"
   );
 }

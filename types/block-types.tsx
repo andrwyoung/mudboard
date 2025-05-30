@@ -25,6 +25,7 @@ export type Block = {
   data: MudboardImage | TextBlockType | null;
 
   height: number;
+  width?: number;
 
   col_index: number;
   row_index: number;
@@ -41,7 +42,8 @@ export type MudboardImage = {
   file_ext: string;
   original_name: string;
 
-  width: number;
+  og_width: number;
+  og_height: number;
   blurhash?: string;
 
   // defined by me on fetch

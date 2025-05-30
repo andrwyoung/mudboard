@@ -24,7 +24,8 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
     *,
     image:images (
       image_id,
-      width,
+      og_width,
+      og_height,
       file_ext,
       original_name,
       blurhash
@@ -83,7 +84,6 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
             file_ext: image.file_ext,
             original_name: image.original_name,
 
-            width: image.width,
             blurhash: image.blurhash ?? undefined,
 
             // defined by me

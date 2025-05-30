@@ -24,22 +24,23 @@ export function useEyedropper(
     img.src = getImageUrl(imageBlock.image_id, imageBlock.file_ext, "full");
 
     img.onload = () => {
-      ctx.drawImage(img, 0, 0, imageBlock.width, selectedBlock.height);
+      if (!selectedBlock.width) return;
+      ctx.drawImage(img, 0, 0, selectedBlock.width, selectedBlock.height);
     };
   }, [
     imageBlock.image_id,
     imageBlock.file_ext,
-    imageBlock.width,
+    selectedBlock.width,
     selectedBlock.height,
   ]);
 
   // when the mouse moves in eyedropper mode! then sample
   function onMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !selectedBlock.width) return;
 
     const scaleFactorX =
-      imageBlock.width / (initialSize?.width ?? imageBlock.width);
+      selectedBlock.width / (initialSize?.width ?? selectedBlock.width);
     const scaleFactorY =
       selectedBlock.height / (initialSize?.height ?? selectedBlock.height);
 

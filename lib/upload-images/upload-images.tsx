@@ -152,13 +152,14 @@ export async function uploadImages(
     //
 
     const objectUrl = URL.createObjectURL(variants.full.file);
-    const { width, height } = variants.medium;
+    const { width, height } = variants.full;
 
     const newImage: MudboardImage = {
       image_id,
       file_ext: DEFAULT_FILE_EXT,
       original_name,
-      width,
+      og_width: width,
+      og_height: height,
       blurhash,
 
       fileName: objectUrl, // the local file
@@ -174,6 +175,7 @@ export async function uploadImages(
       board_id: boardId,
       block_type: "image" as BlockType,
       height,
+      width,
 
       deleted: false,
     };

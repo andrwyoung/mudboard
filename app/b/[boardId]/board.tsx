@@ -373,7 +373,7 @@ export default function Board({ boardId }: { boardId: string }) {
                       draggedBlocks[0].caption ??
                       draggedBlocks[0].data.original_name
                     }
-                    width={draggedBlocks[0].data.width}
+                    width={draggedBlocks[0].width}
                     height={draggedBlocks[0].height}
                     tabIndex={-1}
                     className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform

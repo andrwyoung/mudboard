@@ -150,8 +150,9 @@ export type Database = {
           file_ext: string
           image_id: string
           modified_at: string | null
+          og_height: number
+          og_width: number
           original_name: string
-          width: number
         }
         Insert: {
           blurhash?: string | null
@@ -160,8 +161,9 @@ export type Database = {
           file_ext: string
           image_id?: string
           modified_at?: string | null
+          og_height: number
+          og_width: number
           original_name: string
-          width: number
         }
         Update: {
           blurhash?: string | null
@@ -170,8 +172,9 @@ export type Database = {
           file_ext?: string
           image_id?: string
           modified_at?: string | null
+          og_height?: number
+          og_width?: number
           original_name?: string
-          width?: number
         }
         Relationships: []
       }

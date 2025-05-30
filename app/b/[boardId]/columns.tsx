@@ -6,7 +6,6 @@ import React from "react";
 import { MemoizedDropIndicator } from "@/components/drag/drag-indicator";
 import { useUIStore } from "@/store/ui-store";
 import { IMAGE_OVERSCAN_SIZE } from "@/types/upload-settings";
-import { isBlockWithWidth } from "@/lib/type-validators/is-image-block";
 import { useGetScope } from "@/hooks/use-get-scope";
 
 // virtualization
@@ -20,9 +19,9 @@ function getBlockLayout(
   const items = column.map((block) => {
     let height = block.height;
 
-    if (block.block_type === "image" && isBlockWithWidth(block.data)) {
+    if (block.block_type === "image" && block.width) {
       const width = columnWidth;
-      const aspectRatio = block.height / block.data.width;
+      const aspectRatio = block.height / block.width;
       height = Math.round(width * aspectRatio);
     }
 

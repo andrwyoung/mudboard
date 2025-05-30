@@ -30,8 +30,8 @@ export async function convertToWebP(
         return new Promise((res, rej) => {
           const { width: maxWidth, quality } = IMAGE_VARIANT_MAP[name];
           const scale = Math.min(1, maxWidth / img.width);
-          const width = Math.round(img.width * scale);
-          const height = Math.round(img.height * scale);
+          const width = img.width * scale;
+          const height = img.height * scale;
 
           canvas.width = width;
           canvas.height = height;

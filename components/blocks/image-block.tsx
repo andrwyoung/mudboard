@@ -34,6 +34,11 @@ export function ImageBlock({
 }) {
   const img = block.data as MudboardImage;
   const height = block.height;
+  const width =
+    block.width ??
+    (() => {
+      throw new Error(`Block width is missing for block ID: ${block.block_id}`);
+    })();
   const caption = block.caption;
 
   const showBlurImg = useLoadingStore((s) => s.showBlurImg);
@@ -61,7 +66,7 @@ export function ImageBlock({
   else if (numCols < 4) size = "full";
 
   const variant = IMAGE_VARIANT_MAP[size];
-  const aspectRatio = height / img.width;
+  const aspectRatio = height / width;
   const realWidth = variant.width;
   const realHeight = Math.round(realWidth * aspectRatio);
 
@@ -97,7 +102,10 @@ export function ImageBlock({
       {!isErrored ? (
         <>
           <div
-            style={{ aspectRatio: `${img.width} / ${height}`, width: "100%" }}
+            style={{
+              aspectRatio: `${width} / ${height}`,
+              width: "100%",
+            }}
             className={`relative overflow-hidden`}
           >
             {img.blurhash && (
@@ -179,7 +187,7 @@ export function ImageBlock({
         <div
           style={{
             width: "100%",
-            aspectRatio: `${img.width} / ${height}`,
+            aspectRatio: `${width} / ${height}`,
           }}
           className="bg-zinc-200 border border-zinc-300 rounded-sm shadow-md
           flex items-center justify-center relative text-center"

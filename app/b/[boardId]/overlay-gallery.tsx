@@ -88,15 +88,15 @@ export default function OverlayGallery({
   // calculate initial height and width
   useEffect(() => {
     const container = scrollContainerRef.current;
-    if (!container) return;
+    if (!container || !selectedBlock.width) return;
 
     const containerWidth = container.clientWidth - 24 * 4; // remove padding (px-12)
     const containerHeight = container.clientHeight - 24 * 4; // remove padding (py-12)
 
-    const imageAspect = imageBlock.width / selectedBlock.height;
+    const imageAspect = selectedBlock.width / selectedBlock.height;
     const containerAspect = containerWidth / containerHeight;
 
-    let width = imageBlock.width;
+    let width = selectedBlock.width;
     let height = selectedBlock.height;
 
     if (imageAspect > containerAspect) {
@@ -110,7 +110,7 @@ export default function OverlayGallery({
     setInitialSize({ width, height });
     // disable lint cause we want that scrollcontainerRef here with us
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageBlock.width, selectedBlock.height, scrollContainerRef.current]);
+  }, [selectedBlock.width, selectedBlock.height, scrollContainerRef.current]);
 
   // dragggin the image around
   useEffect(() => {
@@ -273,7 +273,7 @@ export default function OverlayGallery({
                   )}
                   draggable={false}
                   alt={selectedBlock.caption ?? imageBlock.original_name}
-                  width={imageBlock.width}
+                  width={selectedBlock.width}
                   height={selectedBlock.height}
                   className={`h-full w-full object-contain rounded-md shadow-lg ${
                     !showOverlayUI
@@ -418,7 +418,7 @@ export default function OverlayGallery({
 
       <canvas
         ref={canvasRef} //
-        width={imageBlock.width}
+        width={selectedBlock.width}
         height={selectedBlock.height}
         style={{ display: "none", visibility: "hidden" }} // hidden: just used for eyedropper
       />
