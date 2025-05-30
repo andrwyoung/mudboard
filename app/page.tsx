@@ -8,7 +8,8 @@ import PricingTable from "@/components/landing-page/pricing";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
-import { NEW_BOARD_LINK } from "@/types/constants";
+import { DEMO_BOARD_LINK, NEW_BOARD_LINK } from "@/types/constants";
+import Link from "next/link";
 
 function FAQItem({
   question,
@@ -94,7 +95,7 @@ export default function Home() {
       >
         <Logo />
         <div className="flex gap-3">
-          <a
+          <Link
             href={NEW_BOARD_LINK}
             className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-white text-sm font-header transition-all duration-500
@@ -102,15 +103,16 @@ export default function Home() {
                 `}
           >
             Blank Board
-          </a>
-          <a
+          </Link>
+          <Link
+            href={DEMO_BOARD_LINK}
             className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
                 rounded-md text-primary text-lg font-header transition-all duration-500
                 hover:text-white hover:bg-accent/90 
                 `}
           >
             Demo
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -157,22 +159,22 @@ export default function Home() {
 
               {/* CTA */}
               <div className="flex flex-col items-center justify-center gap-2">
-                <a
-                  href="/demo"
+                <Link
+                  href={DEMO_BOARD_LINK}
                   className="flex gap-2 items-center px-6 py-2 bg-accent justify-center
                 rounded-md text-primary text-lg font-header transition-all duration-300
                 hover:text-white hover:bg-accent/90"
                 >
                   <FaPlay className="size-4 translate-y-[1px]" />
                   Try a Demo Board
-                </a>
-                <a
+                </Link>
+                <Link
                   href={NEW_BOARD_LINK}
                   className="font-header font-semibold hover:underline hover:text-accent 
                 cursor-pointer select-none transition-all duration-300 text-sm"
                 >
                   Or Start a Blank Board
-                </a>
+                </Link>
               </div>
             </div>
           </div>

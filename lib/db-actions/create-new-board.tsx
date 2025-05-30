@@ -10,8 +10,10 @@ import { initializeSectionColumns } from "../sync/new-section-columns";
 
 export async function createNewBoard({
   title = "Untitled Board",
+  initializeSection = true,
 }: {
   title?: string;
+  initializeSection?: boolean;
 }): Promise<Tables<"boards">> {
   const { data: boardData, error: boardError } = await supabase
     .from("boards")
@@ -21,13 +23,16 @@ export async function createNewBoard({
 
   if (boardError) throw new Error("Failed to create board");
 
-  // always make a new section if we make a board
-  const newSection = await createSupabaseSection({
-    board_id: boardData.board_id,
-    order_index: 0,
-  });
+  // by default we make a new empty section, but we can disable for cloning
+  if (initializeSection) {
+    // always make a new section if we make a board
+    const newSection = await createSupabaseSection({
+      board_id: boardData.board_id,
+      order_index: 0,
+    });
 
-  initializeSectionColumns(newSection.section_id);
+    initializeSectionColumns(newSection.section_id);
+  }
 
   return boardData;
 }

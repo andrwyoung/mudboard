@@ -1,4 +1,4 @@
-import { Enums, Tables } from "./supabase";
+import { Enums } from "./supabase";
 
 export const INDEX_MULTIPLIER = 10
 
@@ -23,3 +23,4 @@ export const DEFAULT_TIER : Enums<"tier_level"> = "free"
 
 // links constants
 export const NEW_BOARD_LINK = "/b/new"
+export const DEMO_BOARD_LINK = "/demo"

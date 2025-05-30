@@ -2,7 +2,7 @@ import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
 import NextImage from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { FaAdjust, FaMinus, FaPlus } from "react-icons/fa";
+import { FaAdjust, FaArrowsAltH, FaMinus, FaPlus } from "react-icons/fa";
 import { FaChevronLeft, FaEyeDropper, FaXmark } from "react-icons/fa6";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useCenteredZoom } from "@/hooks/overlay-gallery.tsx/use-zoom";
@@ -29,6 +29,7 @@ export default function OverlayGallery({
   const imageBlock = selectedBlock.data as MudboardImage;
   const [overlayMode, setOverlayMode] = useState<OverlayModes>("drag");
   const [isGreyscale, setIsGreyscale] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   // const [direction, setDirection] = useState<"left" | "right">("right");
 
@@ -283,7 +284,8 @@ export default function OverlayGallery({
                       : isDragging
                       ? "cursor-grabbing"
                       : "cursor-grab"
-                  } ${isGreyscale ? "grayscale" : ""}`}
+                  } ${isGreyscale ? "grayscale" : ""}
+                  ${isFlipped ? "transform scale-x-[-1]" : ""}`}
                 />
               </div>
             )}
@@ -375,6 +377,19 @@ export default function OverlayGallery({
               greyscaleClicked ? "animate-spin-once" : ""
             }`}
           />
+        </button>
+        <button
+          onClick={() => {
+            setIsFlipped((g) => !g);
+            // setGreyscaleClicked(true);
+            // setTimeout(() => setGreyscaleClicked(false), 400); // match animation duration
+          }}
+          title="Flip Horizontally"
+          className={`p-2 rounded-lg cursor-pointer hover:text-accent hover:scale-110 active:scale-95 group transition-all  ${
+            isFlipped ? "bg-white text-stone-800/80" : ""
+          }`}
+        >
+          <FaArrowsAltH className={`transition-transform duration-400`} />
         </button>
       </div>
 

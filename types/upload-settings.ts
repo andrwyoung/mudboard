@@ -1,4 +1,4 @@
-export const DEFAULT_BOARD_ID = "06b0c345-35bd-4852-9e80-b4e8e698a1e0"
+export const DEMO_BOARD_ID = "a1a3474f-16c5-40eb-b3f5-224d517c0a7b"
 
 export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
 
