@@ -52,6 +52,7 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
         board_id,
         block_type,
         height,
+        width,
         col_index,
         row_index,
         order_index,
@@ -67,6 +68,7 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
         board_id,
         block_type: block_type as BlockType,
         height,
+        width: width ?? undefined,
         col_index: col_index,
         row_index: row_index,
         order_index: order_index,
@@ -84,6 +86,8 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
             file_ext: image.file_ext,
             original_name: image.original_name,
 
+            og_width: image.og_width,
+            og_height: image.og_height,
             blurhash: image.blurhash ?? undefined,
 
             // defined by me

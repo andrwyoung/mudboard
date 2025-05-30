@@ -26,6 +26,7 @@ export type Database = {
           row_index: number
           section_id: string
           updated_at: string | null
+          width: number | null
         }
         Insert: {
           block_id?: string
@@ -43,6 +44,7 @@ export type Database = {
           row_index?: number
           section_id: string
           updated_at?: string | null
+          width?: number | null
         }
         Update: {
           block_id?: string
@@ -60,6 +62,7 @@ export type Database = {
           row_index?: number
           section_id?: string
           updated_at?: string | null
+          width?: number | null
         }
         Relationships: [
           {
