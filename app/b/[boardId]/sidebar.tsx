@@ -71,7 +71,7 @@ export default function Sidebar({
 
           <div className="px-8">
             <AccordianWrapper
-              title="Customize!"
+              title="Viewing Options"
               titleClassName="font-header text-md px-2"
             >
               <CustomizeSection />

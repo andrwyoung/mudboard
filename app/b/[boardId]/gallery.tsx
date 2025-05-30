@@ -10,6 +10,7 @@ import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
 import { CanvasScope } from "@/types/board-types";
 import { useGetScope } from "@/hooks/use-get-scope";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export default function Gallery({
   sectionId,
@@ -36,6 +37,8 @@ export default function Gallery({
   const isMirror = useIsMirror();
   const canvasScope = isMirror ? "mirror" : "main";
   const scope = useGetScope();
+
+  const canEdit = canEditBoard();
 
   const numCols = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
@@ -110,7 +113,7 @@ export default function Gallery({
       aria-hidden={overlayGalleryIsOpen ? "true" : "false"}
     >
       {/* <p className="text-primary">hey there</p> */}
-      {isEmpty && (
+      {isEmpty && canEdit && (
         <>
           {fileInput}
           <div className="absolute inset-0 flex flex-col items-center justify-center ">

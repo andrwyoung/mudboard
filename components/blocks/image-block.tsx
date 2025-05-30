@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { updateImageBlockCaption } from "@/lib/sync/image-block-actions";
 import { useSelectionStore } from "@/store/selection-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export function getImageUrl(
   image_id: string,
@@ -53,11 +54,12 @@ export function ImageBlock({
   const selectedScope = useSelectionStore((s) => s.selectionScope);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const isMirror = useIsMirror();
+  const canEdit = canEditBoard();
   const isSelected = !!selectedBlocks[block.block_id];
   const isInScope = selectedScope === (isMirror ? "mirror" : "main");
   const isSoleSelected =
     isInScope && Object.keys(selectedBlocks).length === 1 && isSelected;
-  const captionIsActive = Boolean(caption) || isSoleSelected;
+  const captionIsActive = Boolean(caption) || (isSoleSelected && canEdit);
 
   // SECTION: filename and sizing
 
@@ -156,15 +158,16 @@ export function ImageBlock({
                   placeholder="Add a caption"
                   onChange={(e) => setCaptionDraft(e.target.value)}
                   className={`px-3 py-2 w-full text-sm 
-              border-none focus:outline-none rounded-b-sm
-           ${
-             isFocused
-               ? "text-primary bg-white"
-               : "text-primary-darker bg-transparent"
-           }`}
+                        border-none focus:outline-none rounded-b-sm
+                    ${
+                      isFocused
+                        ? "text-primary bg-white"
+                        : "text-primary-darker bg-transparent"
+                    }`}
                   style={{ height: CAPTION_HEIGHT }}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
+                  disabled={!canEdit}
                   onKeyDown={(e) => {
                     if (e.key === "Escape") {
                       setCaptionDraft(caption ?? "");

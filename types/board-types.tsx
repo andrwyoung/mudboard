@@ -1,4 +1,5 @@
 import { Block } from "./block-types";
+import { Enums } from "./supabase";
 
 export type CanvasScope = "main" | "mirror";
 
@@ -25,6 +26,7 @@ export type Board = {
 
   user_id: string | null;
   password_hash: string | null;
+  access_level: Enums<"access_type">;
 
   saved_column_num: number;
   deleted_at: string;

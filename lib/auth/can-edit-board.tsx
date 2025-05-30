@@ -12,10 +12,8 @@ export function canEditBoard(): boolean {
   if (board?.deleted_at && new Date(board.deleted_at) <= new Date())
     return false;
 
-  // If unclaimed board, anyone can edit
-  if (!board?.user_id) return true;
+  if (board?.access_level === "public") return true;
 
   // If claimed, only owner can edit (for now)
-  // TODO: here is where we add the access_level checks
-  return user?.id === board.user_id;
+  return user?.id === board?.user_id;
 }

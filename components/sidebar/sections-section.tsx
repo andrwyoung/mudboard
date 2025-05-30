@@ -22,6 +22,7 @@ import {
 import { Section } from "@/types/board-types";
 import { useSelectionStore } from "@/store/selection-store";
 import { softDeleteSection } from "@/lib/db-actions/soft-delete-section";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export default function SectionsSection({
   sectionRefs,
@@ -30,6 +31,7 @@ export default function SectionsSection({
 }) {
   const board = useMetadataStore((s) => s.board);
   const sections = useMetadataStore((s) => s.sections);
+  const canEdit = canEditBoard();
 
   const setEditingSectionId = useLoadingStore((s) => s.setEditingSectionId);
   const selectedSection = useSelectionStore((s) => s.selectedSection);
@@ -82,7 +84,7 @@ export default function SectionsSection({
                     </h2>
                   </div>
 
-                  {sections.length > 1 && (
+                  {sections.length > 1 && canEdit && (
                     <FaTrash
                       className="size-3.5 hover:rotate-24 text-accent transition-all duration-300 
                   opacity-0 group-hover:opacity-100 cursor-pointer flex-none"
@@ -132,36 +134,38 @@ export default function SectionsSection({
           </AlertDialog>
         )}
       </div>
-      <button
-        type="button"
-        className="text-primary-foreground hover:underline hover:underline-offset-2 
+      {canEdit && (
+        <button
+          type="button"
+          className="text-primary-foreground hover:underline hover:underline-offset-2 
             transition-all duration-300 cursor-pointer px-4
             flex gap-1 items-center text-sm"
-        onClick={async () => {
-          if (!board) return;
+          onClick={async () => {
+            if (!board) return;
 
-          const newSection = await addNewSection({
-            board_id: board?.board_id,
-            order_index: sections.length,
-          });
+            const newSection = await addNewSection({
+              board_id: board?.board_id,
+              order_index: sections.length,
+            });
 
-          if (newSection) {
-            setTimeout(() => {
-              const sectionEl = sectionRefs.current?.[newSection.section_id];
-              setEditingSectionId(newSection.section_id);
-              if (sectionEl) {
-                sectionEl.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-              }
-            }, 100);
-          }
-        }}
-      >
-        <FaPlus className="size-2" />
-        Add Section
-      </button>
+            if (newSection) {
+              setTimeout(() => {
+                const sectionEl = sectionRefs.current?.[newSection.section_id];
+                setEditingSectionId(newSection.section_id);
+                if (sectionEl) {
+                  sectionEl.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }
+              }, 100);
+            }
+          }}
+        >
+          <FaPlus className="size-2" />
+          Add Section
+        </button>
+      )}
     </div>
   );
 }

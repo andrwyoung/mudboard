@@ -8,6 +8,7 @@ import { useLoadingStore } from "@/store/loading-store";
 import { FaPlus } from "react-icons/fa";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { createTextBlock } from "@/lib/sync/text-block-actions";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
@@ -15,6 +16,7 @@ export default function SectionHeader({ section }: { section: Section }) {
     useLoadingStore.getState().editingSectionId === section.section_id;
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
+  const canEdit = canEditBoard();
 
   function handleAddImageBlock() {
     triggerImagePicker();
@@ -28,8 +30,11 @@ export default function SectionHeader({ section }: { section: Section }) {
     <div className="flex flex-row justify-between items-center pt-6 pb-0 px-3">
       <div className="flex w-xs md:w-sm">
         <InlineEditText
+          isEditable={canEdit}
           value={title && title.trim() != "" ? title : null}
-          unnamedPlaceholder="Click to add Title"
+          unnamedPlaceholder={
+            canEdit ? "Click to add Title" : "Untitled Section"
+          }
           autofocus={isEditing}
           placeholder="Add title"
           onChange={(newTitle) => {
@@ -55,33 +60,35 @@ export default function SectionHeader({ section }: { section: Section }) {
           </div>
         )} */}
         {/* <FaPlus className="text-primary hover:text-accent cursor-pointer" /> */}
-        <div className="group flex flex-row cursor-pointer text-primary">
-          {fileInput}
-          <div
-            className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
-            onClick={() => handleAddTextBlock()}
-          >
-            Text
-          </div>
-          <div
-            className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
+        {canEdit && (
+          <div className="group flex flex-row cursor-pointer text-primary">
+            {fileInput}
+            <div
+              className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
+              onClick={() => handleAddTextBlock()}
+            >
+              Text
+            </div>
+            <div
+              className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
             transition-transform duration-200 flex items-center justify-center"
-          >
-            {/* <div className="absolute inset-0 rounded-full border-4 border-primary" /> */}
-            <FaPlus className="z-2 size-4 text-primary group-hover:text-accent hover:primary transition-colors duration-300" />
-            {/* <div
+            >
+              {/* <div className="absolute inset-0 rounded-full border-4 border-primary" /> */}
+              <FaPlus className="z-2 size-4 text-primary group-hover:text-accent hover:primary transition-colors duration-300" />
+              {/* <div
               className="absolute inset-0 rounded-full bg-primary/40 z-1 group-hover:bg-background transition-all duration-300
               group-hover:scale-30"
             /> */}
-          </div>
+            </div>
 
-          <div
-            className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
-            onClick={() => handleAddImageBlock()}
-          >
-            Image
+            <div
+              className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
+              onClick={() => handleAddImageBlock()}
+            >
+              Image
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

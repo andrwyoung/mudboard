@@ -9,15 +9,19 @@ import { supabase } from "@/utils/supabase";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { claimBoard } from "@/lib/db-actions/claim-board";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
+import { CheckField } from "../ui/check-field";
+import { changeBoardPermissions } from "@/lib/db-actions/change-board-permissions";
 
 export default function AccountSyncSection() {
   const board = useMetadataStore((s) => s.board);
   const user = useMetadataStore((s) => s.user);
 
-  const boardUnclaimed = !board?.user_id;
+  const boardUnclaimed = board !== null && board.user_id === null;
   const boardIsYours = board?.user_id === user?.id;
 
   const canEdit = canEditBoard();
+
+  const openToPublic = board?.access_level === "public";
 
   return (
     <div className="flex flex-col gap-2">
@@ -30,7 +34,13 @@ export default function AccountSyncSection() {
 
       {!boardUnclaimed && !user && !canEdit && (
         <p className="text-xs font-semibold text-center">
-          This Board is Claimed. Log in to see if you have access.
+          This Board is Claimed. Log in if this board was shared with you.
+        </p>
+      )}
+
+      {!boardUnclaimed && !user && canEdit && (
+        <p className="text-xs font-semibold text-center">
+          This Board is Claimed. But Owner has allowed editing
         </p>
       )}
 
@@ -38,7 +48,16 @@ export default function AccountSyncSection() {
         <div className="flex flex-col w-full">
           {boardIsYours ? (
             <AccordianWrapper title="Board Options" titleClassName="text-sm">
-              null
+              <div className="flex flex-col mb-4">
+                <CheckField
+                  text="Make Public"
+                  title="Allow anyone to edit"
+                  isChecked={openToPublic}
+                  onChange={(checked) => {
+                    changeBoardPermissions(checked ? "public" : "private");
+                  }}
+                />
+              </div>
             </AccordianWrapper>
           ) : boardUnclaimed ? (
             <button

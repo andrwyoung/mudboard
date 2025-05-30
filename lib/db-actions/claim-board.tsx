@@ -17,7 +17,7 @@ export async function claimBoard() {
   // check that no one has already claimed the board
   const { error: claimError, data } = await supabase
     .from("boards")
-    .update({ user_id: user.id })
+    .update({ user_id: user.id, access_level: "private" })
     .eq("board_id", board.board_id)
     .is("user_id", null)
     .select();
