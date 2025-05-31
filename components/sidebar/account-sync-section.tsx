@@ -50,7 +50,7 @@ export default function AccountSyncSection() {
             <AccordianWrapper title="Board Options" titleClassName="text-sm">
               <div className="flex flex-col mb-4">
                 <CheckField
-                  text="Make Public"
+                  text="Allow anyone to edit"
                   title="Allow anyone to edit"
                   isChecked={openToPublic}
                   onChange={(checked) => {

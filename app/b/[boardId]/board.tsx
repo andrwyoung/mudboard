@@ -35,6 +35,7 @@ import { useInitBoard } from "@/hooks/use-init-board";
 import { useBoardListeners } from "@/hooks/gallery/use-global-listeners";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
+import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -52,9 +53,10 @@ export default function Board({ boardId }: { boardId: string }) {
   // when dragging blocks
   const [draggedBlocks, setDraggedBlocks] = useState<Block[] | null>(null);
 
+  // sidebar
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const numCols = useUIStore((s) => s.numCols);
-
   const mirrorMode = useUIStore((s) => s.mirrorMode);
 
   // sections
@@ -306,11 +308,23 @@ export default function Board({ boardId }: { boardId: string }) {
       >
         {/* Sidebar */}
         <aside
-          className="hidden lg:block w-1/6 min-w-[200px] max-w-[250px]
-      bg-primary"
+          className={`hidden lg:block 
+            ${
+              sidebarCollapsed
+                ? "w-[60px]"
+                : "w-1/6 min-w-[200px] max-w-[250px]"
+            }
+            bg-primary`}
           ref={sidebarRef}
         >
-          <Sidebar sectionRefs={sectionRefs} />
+          {sidebarCollapsed ? (
+            <CollapsedSidebar onExpand={() => setSidebarCollapsed(false)} />
+          ) : (
+            <Sidebar
+              sectionRefs={sectionRefs}
+              onCollapse={() => setSidebarCollapsed(true)}
+            />
+          )}
         </aside>
 
         {/* Gallery */}

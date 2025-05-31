@@ -10,6 +10,7 @@ export default function Logo({
     <Link
       className="cursor-pointer hover:scale-105 transition-transform duration-300"
       href={"/"}
+      title="Home Page"
     >
       <Image
         src={color === "white" ? "/full-logo-white.png" : "/full-logo.png"}
