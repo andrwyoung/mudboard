@@ -1,4 +1,7 @@
-Hi. This is Mudboard's repo
+Hi. This is Mudboard's repo! The drag and drop reference organizer for artists.
+![Mudboard Screenshot](./public/screenshot.png)
+
+### Directions
 
 The main entry point is /app/b/\[boardId\]/board.tsx
 
