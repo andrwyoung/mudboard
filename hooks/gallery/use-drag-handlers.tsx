@@ -6,7 +6,7 @@ import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block } from "@/types/block-types";
 import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
 import { Section, SectionColumns } from "@/types/board-types";
-import { findShortestColumn } from "@/lib/columns/OLD-column-helpers";
+import { findShortestColumn } from "@/lib/columns/column-helpers";
 import { PositionedBlock } from "@/types/sync-types";
 
 export function getMovingItem(

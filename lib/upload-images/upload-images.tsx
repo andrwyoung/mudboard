@@ -25,10 +25,7 @@ import {
   MudboardImage,
 } from "@/types/block-types";
 import { generateBlurhashFromImage } from "./processing/blur-hash";
-import {
-  findShortestColumn,
-  getNextRowIndex,
-} from "../columns/OLD-column-helpers";
+import { findShortestColumn } from "../columns/column-helpers";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
@@ -192,7 +189,7 @@ export async function uploadImages(
         files.length <= DROP_SPREAD_THRESHOLD && columnIndex !== undefined
           ? columnIndex
           : findShortestColumn(sectionId);
-      const rowIndex = getNextRowIndex(prevCols[colIndex] ?? []);
+      const rowIndex = prevCols[colIndex].length;
 
       const newBlock: Block = {
         block_id: tempBlockId,
@@ -218,7 +215,7 @@ export async function uploadImages(
       files.length <= DROP_SPREAD_THRESHOLD && columnIndex !== undefined
         ? columnIndex
         : findShortestColumn(sectionId);
-    const optimisticRowIndex = getNextRowIndex(cols[optimisticColIndex] ?? []);
+    const optimisticRowIndex = cols[optimisticColIndex].length;
     const bestEffortBlock: BlockInsert = {
       ...incompleteBlock,
 

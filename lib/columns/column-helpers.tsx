@@ -24,7 +24,7 @@ export function findShortestColumn(sectionId: string): number {
   return heights.indexOf(Math.min(...heights));
 }
 
-export function getNextRowIndex(col: Block[]): number {
+export function getNewTop(col: Block[]): number {
   if (col.length === 0) return 0;
   const spacing = useUIStore.getState().spacingSize;
 

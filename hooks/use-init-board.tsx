@@ -93,7 +93,7 @@ export function useInitBoard(
         for (const section of sections) {
           initColumns[section.section_id] = generateInitColumnsFromBlocks(
             grouped[section.section_id],
-            initNumCols ?? DEFAULT_COLUMNS
+            initNumCols
           );
         }
 
