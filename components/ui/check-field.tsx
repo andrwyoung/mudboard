@@ -1,3 +1,5 @@
+// this is the checkbox + label component
+
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 
 export function CheckField({

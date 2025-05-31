@@ -1,5 +1,5 @@
 import { useImagePicker } from "@/hooks/use-image-picker";
-import { createTextBlock } from "@/lib/sync/text-block-actions";
+import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
 import React from "react";
 import { FaPlus } from "react-icons/fa";
 

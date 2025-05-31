@@ -1,3 +1,6 @@
+// this is the thing where you can click on text and then it
+// turns into an input you can edit
+
 import { useLoadingStore } from "@/store/loading-store";
 import { useEffect, useRef, useState } from "react";
 

@@ -1,3 +1,5 @@
+// this is the little button on the sidebar to collapse the sidebar
+
 import { FaOutdent } from "react-icons/fa6";
 import { IoCaretBackOutline } from "react-icons/io5";
 

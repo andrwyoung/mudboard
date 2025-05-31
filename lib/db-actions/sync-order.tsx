@@ -1,3 +1,5 @@
+// this is the function that syncs the block order to supabase
+
 import { BlockInsert } from "@/types/block-types";
 import { supabase } from "../../utils/supabase";
 import { PositionedBlock } from "@/types/sync-types";

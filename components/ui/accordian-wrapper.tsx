@@ -1,3 +1,6 @@
+// this is the drop down component wrapper used in the sidebar
+// I mainly wanted it to handle the animation
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";

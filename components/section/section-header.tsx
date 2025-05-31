@@ -3,11 +3,11 @@
 
 import { Section } from "@/types/board-types";
 import InlineEditText from "../ui/inline-edit";
-import { updateSectionTitle } from "@/lib/sync/section-actions";
+import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-text";
 import { useLoadingStore } from "@/store/loading-store";
 import { FaPlus } from "react-icons/fa";
 import { useImagePicker } from "@/hooks/use-image-picker";
-import { createTextBlock } from "@/lib/sync/text-block-actions";
+import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export default function SectionHeader({ section }: { section: Section }) {

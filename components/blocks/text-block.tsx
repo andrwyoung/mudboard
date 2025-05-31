@@ -1,7 +1,7 @@
 import { Block, TextBlockType } from "@/types/block-types";
 import { TEXT_BLOCK_HEIGHT } from "@/types/upload-settings";
 import InlineEditText from "../ui/inline-edit";
-import { updateTextBlockText } from "@/lib/sync/text-block-actions";
+import { updateTextBlockText } from "@/lib/db-actions/sync-text/text-block-actions";
 
 export default function TextBlock({ block }: { block: Block }) {
   const textData = block.data as TextBlockType;

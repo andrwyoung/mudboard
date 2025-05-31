@@ -1,3 +1,6 @@
+// UNUSED for now
+// does the user exist?
+
 import { supabase } from "@/utils/supabase";
 
 export default async function checkUserExists() {

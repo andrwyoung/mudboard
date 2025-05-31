@@ -1,3 +1,6 @@
+// when an image is from a search engine, there is a url for the image
+// but it's hidden in the url. so this helps dig that "real url" out for us
+
 export function resolveProxiedImageUrl(rawUrl: string): string | null {
   try {
     const url = new URL(rawUrl);
@@ -28,19 +31,4 @@ export function resolveProxiedImageUrl(rawUrl: string): string | null {
   } catch {
     return null;
   }
-}
-
-export function upgradePinterestImage(urlString: string): string {
-  try {
-    const url = new URL(urlString);
-
-    if (url.hostname === "i.pinimg.com" && url.pathname.startsWith("/236x/")) {
-      url.pathname = url.pathname.replace("/236x/", "/736x/");
-      return url.toString();
-    }
-  } catch {
-    // if URL parsing fails, just return original
-  }
-
-  return urlString;
 }

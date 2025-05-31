@@ -1,3 +1,5 @@
+// mark a block deleted in the database and locally
+
 import { supabase } from "@/utils/supabase";
 import { useLayoutStore } from "@/store/layout-store";
 import { Block } from "@/types/block-types";

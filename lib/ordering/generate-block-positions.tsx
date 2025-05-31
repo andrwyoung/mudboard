@@ -1,3 +1,9 @@
+// KEY FILE: this is the file that generates the positioning
+// and ordering map + array that we use to
+// 1: figure out syncing
+// 2: what "next image" and "prev image" mean
+// 3: figure out the heights of each image for virtualization
+
 import { SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { getColumnWidth } from "./get-column-width";

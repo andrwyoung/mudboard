@@ -7,11 +7,9 @@ import { Section } from "@/types/board-types";
 import { toast } from "sonner";
 import { isImageUrl } from "@/utils/upload-helpers";
 import { getImageBlobSmart } from "@/lib/upload-images/url-handling/fetch-image-from-url";
-import {
-  resolveProxiedImageUrl,
-  upgradePinterestImage,
-} from "@/lib/upload-images/url-handling/resolve-image-links";
+import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 import { canEditBoard } from "../lib/auth/can-edit-board";
+import { upgradePinterestImage } from "@/lib/upload-images/url-handling/upgrade-pinterets-image";
 
 type PreparedImage = {
   image_id: string;

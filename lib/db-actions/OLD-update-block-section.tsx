@@ -1,3 +1,5 @@
+// DEPRECATED. we just let sync-order.tsx handle this
+
 import { supabase } from "@/utils/supabase";
 
 export async function updateBlockSectionId(

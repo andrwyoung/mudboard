@@ -68,13 +68,13 @@ export default function CustomizeSection() {
                   title={`Set columns to ${col}`}
                 >
                   <div
-                    className={`w-3.5 h-3.5 rounded-full border-2 transition-all 
+                    className={`w-3.5 h-3.5 rounded-full border-2 transition-all duration-200 
                       ${
                         isPicked
                           ? "scale-125 bg-accent border-accent"
                           : isActive
-                          ? "border-accent bg-transparent hover:bg-accent translate-y-1"
-                          : "bg-white group-hover:bg-accent border-primary translate-y-1"
+                          ? "border-primary bg-accent group-hover:border-accent"
+                          : "bg-white group-hover:bg-accent border-primary "
                       } `}
                   />
                   {isPicked && (

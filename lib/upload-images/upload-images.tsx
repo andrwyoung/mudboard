@@ -1,3 +1,9 @@
+// the monster file that deals with all the uploading of images
+
+// we multithread compress and blurhash FIRST. this is so that we immediately let people interact
+// with the images
+// only after that do we slowly upload the files in the background
+
 import {
   allowedMimeTypes,
   COMPRESSION_THREADS,

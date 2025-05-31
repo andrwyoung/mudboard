@@ -1,3 +1,5 @@
+// if a vector image is uploaded then we rasterize it
+
 import { MAX_IMAGE_WIDTH } from "@/types/upload-settings";
 
 export async function rasterizeVectorImage(file: File): Promise<File> {

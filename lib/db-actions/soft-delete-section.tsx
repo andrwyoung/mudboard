@@ -1,3 +1,5 @@
+// mark a section for deletion both in the database and locally
+
 import { Section } from "@/types/board-types";
 import { supabase } from "@/utils/supabase";
 import { toast } from "sonner";

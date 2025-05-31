@@ -1,3 +1,5 @@
+// generate blur hash placeholder
+
 import { encode } from "blurhash";
 
 export async function generateBlurhashFromImage(

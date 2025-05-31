@@ -12,7 +12,7 @@ import {
 import { useUIStore } from "@/store/ui-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { AnimatePresence, motion } from "framer-motion";
-import { updateImageBlockCaption } from "@/lib/sync/image-block-actions";
+import { updateImageBlockCaption } from "@/lib/db-actions/sync-text/update-caption";
 import { useSelectionStore } from "@/store/selection-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
 import { canEditBoard } from "@/lib/auth/can-edit-board";

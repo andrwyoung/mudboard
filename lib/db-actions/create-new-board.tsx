@@ -6,7 +6,7 @@
 import { supabase } from "@/utils/supabase";
 import { Tables } from "@/types/supabase";
 import { createSupabaseSection } from "./create-new-section";
-import { initializeSectionColumns } from "../sync/new-section-columns";
+import { initializeSectionColumns } from "../columns/new-section-columns";
 
 export async function createNewBoard({
   title = "Untitled Board",

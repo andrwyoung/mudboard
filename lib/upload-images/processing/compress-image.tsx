@@ -1,3 +1,5 @@
+// compress images based on the sizes we provide in IMAGE_VARIANT_MAP
+
 import { IMAGE_VARIANT_MAP, imageNames } from "@/types/upload-settings";
 
 export type CompressedImage = {

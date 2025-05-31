@@ -1,3 +1,7 @@
+// this is a helper function used by use-drag-handlers.tsx
+// when you drop a block over a block
+// it's mainly just all the math needed for recalculating a block's position
+
 import { getMovingItem } from "@/hooks/gallery/use-drag-handlers";
 import { Block } from "@/types/block-types";
 import { SectionColumns } from "@/types/board-types";

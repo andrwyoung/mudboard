@@ -1,3 +1,5 @@
+// this it the dark mode input
+
 import * as React from "react";
 
 import { cn } from "@/utils/utils";

@@ -1,3 +1,6 @@
+// this it the "mirror mode button"
+// I thought I would use it in multiple places....but it's only used once
+
 import { FiSidebar } from "react-icons/fi";
 import { useUIStore } from "@/store/ui-store";
 

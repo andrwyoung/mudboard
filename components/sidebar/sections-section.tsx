@@ -1,5 +1,5 @@
-// this is the component used to render the table of contents of each
-// of the sections on the sidebar. also renders the add section button
+// this is the component used to render the "table of contents" of each
+// of the sections on the sidebar. also renders the "add section" button
 
 import { useMetadataStore } from "@/store/metadata-store";
 import React, { RefObject, useState } from "react";
@@ -7,7 +7,6 @@ import { DroppableSection } from "../drag/droppable-section";
 import FillingDot from "../ui/filling-dot";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import { addNewSection } from "@/lib/sync/section-actions";
 import { useLoadingStore } from "@/store/loading-store";
 import {
   AlertDialog,
@@ -23,6 +22,7 @@ import { Section } from "@/types/board-types";
 import { useSelectionStore } from "@/store/selection-store";
 import { softDeleteSection } from "@/lib/db-actions/soft-delete-section";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
+import { addNewSection } from "@/lib/sidebar/add-new-section";
 
 export default function SectionsSection({
   sectionRefs,

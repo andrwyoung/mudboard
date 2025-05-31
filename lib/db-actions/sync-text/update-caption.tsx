@@ -1,3 +1,5 @@
+// all misc db-actions for an image block
+
 import { supabase } from "@/utils/supabase";
 import { useLayoutStore } from "@/store/layout-store";
 import { Block } from "@/types/block-types";

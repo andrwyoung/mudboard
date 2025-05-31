@@ -1,3 +1,6 @@
+// we need these helpers to calculate how wide each column is
+// so that we have an accurate height for virtualization
+
 import { useUIStore } from "@/store/ui-store";
 
 let cachedScrollbarWidth: number | null = null;

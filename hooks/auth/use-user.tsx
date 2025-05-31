@@ -1,3 +1,7 @@
+// this is the hook that detects when you're logged in
+// and then initiates the user in our database if it's the first
+// time logging in
+
 import { useMetadataStore } from "@/store/metadata-store";
 import { TablesInsert } from "@/types/supabase";
 import { supabase } from "@/utils/supabase";

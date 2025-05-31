@@ -1,3 +1,5 @@
+// DEPRECATED
+
 export function isBlockWithWidth(data: unknown): data is { og_width: number } {
   return (
     typeof data === "object" &&

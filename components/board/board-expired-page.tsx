@@ -1,4 +1,3 @@
-// components/board/BoardExpiredPage.tsx
 import { NEW_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
 
