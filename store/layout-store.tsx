@@ -15,22 +15,25 @@ type LayoutStore = {
     sectionId: string,
     fn: (prev: Block[][]) => Block[][]
   ) => void;
+  regenerateColumns: () => void;
 
   // SECTION 2
 
   positionedBlockMap: Map<string, PositionedBlock>;
   masterBlockOrder: PositionedBlock[];
-  regenerateLayout: (
-    sidebarWidth: number,
-    windowWidth: number,
-    spacingSize: number
-  ) => void;
+  regenerateOrdering: () => void;
 
   getBlockPosition: (blockId: string) => PositionedBlock | undefined;
   getNextImage: (currentId: string) => PositionedBlock | null;
   getPrevImage: (currentId: string) => PositionedBlock | null;
 
-  // SECTION 3
+  // SECTION 3. measuring
+  sidebarWidth: number;
+  setSidebarWidth: (width: number) => void;
+  windowWidth: number;
+  setWindowWidth: (width: number) => void;
+
+  // SECTION 4
 
   layoutDirty: boolean;
   setLayoutDirty: (d: boolean) => void;
@@ -60,6 +63,29 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
       };
     });
   },
+  regenerateColumns: () => {
+    const masterBlocks = get().masterBlockOrder;
+    const numCols = useUIStore.getState().numCols;
+
+    const newSectionColumns: SectionColumns = {};
+
+    let i = 0;
+    for (const posBlock of masterBlocks) {
+      const sectionId = posBlock.block.section_id;
+      if (!newSectionColumns[sectionId]) {
+        newSectionColumns[sectionId] = Array.from(
+          { length: numCols },
+          () => []
+        );
+      }
+
+      const index = i % numCols;
+      newSectionColumns[sectionId][index].push(posBlock.block);
+      i++;
+    }
+
+    set({ sectionColumns: newSectionColumns });
+  },
 
   // SECTION: figuring out positions
   //
@@ -67,13 +93,10 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
 
   positionedBlockMap: new Map(),
   masterBlockOrder: [],
-  regenerateLayout: (
-    sidebarWidth: number,
-    windowWidth: number,
-    spacingSize: number
-  ) => {
+  regenerateOrdering: () => {
     console.log("regenerating layout");
-    const columns = get().sectionColumns;
+    const { sectionColumns: columns, sidebarWidth, windowWidth } = get();
+    const spacingSize = useUIStore.getState().spacingSize;
     const { orderedBlocks, positionedBlockMap } = generatePositionedBlocks(
       columns,
       sidebarWidth,
@@ -110,6 +133,12 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
     );
   },
 
+  // SECTION: measuring
+  sidebarWidth: 0,
+  setSidebarWidth: (width: number) => set({ sidebarWidth: width }),
+  windowWidth: 0,
+  setWindowWidth: (width: number) => set({ windowWidth: width }),
+
   // SECTION: sycing to database
   //
   //
@@ -136,5 +165,7 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
   clearAll: () =>
     set({
       sectionColumns: {},
+      positionedBlockMap: new Map(),
+      masterBlockOrder: [],
     }),
 }));

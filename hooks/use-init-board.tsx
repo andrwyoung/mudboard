@@ -8,15 +8,16 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
-import { Section } from "@/types/board-types";
+import { Section, SectionColumns } from "@/types/board-types";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useResetState } from "./user-reset-state";
+import { DEFAULT_COLUMNS } from "@/types/constants";
+import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";
+import { useLayoutStore } from "@/store/layout-store";
 
 export function useInitBoard(
   boardId: string,
-  setFlatBlocks: (e: Block[]) => void,
-  setInitSections: (s: Section[]) => void,
   setIsExpired: (s: boolean) => void
 ) {
   const setSections = useMetadataStore((s) => s.setSections);
@@ -26,27 +27,30 @@ export function useInitBoard(
   const setNumCols = useUIStore((s) => s.setNumCols);
   const resetState = useResetState();
 
+  const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
+  const regenerateLayout = useLayoutStore((s) => s.regenerateOrdering);
+
   useEffect(() => {
     async function loadImages() {
       try {
-        resetState();
+        resetState(); // reset if we're coming from another board
+
+        //
+        // 1: grab the board first
+        //
 
         const board = await fetchSupabaseBoard(boardId);
         setBoard(board);
-        if (board.saved_column_num) {
-          setNumCols(board.saved_column_num);
-          useLoadingStore.setState(() => ({
-            // this is a UI thing
-            sliderVal: board.saved_column_num,
-          }));
-        }
+        const initNumCols = board.saved_column_num;
+        if (initNumCols) setNumCols(initNumCols);
 
         if (board.deleted_at && new Date(board.deleted_at) <= new Date()) {
           setIsExpired(true);
         }
 
-        const blocks = await fetchSupabaseBlocks(boardId);
-        setFlatBlocks(blocks);
+        //
+        // 2: grab the sections and figure that out
+        //
 
         let sections = await fetchSupabaseSections(boardId);
 
@@ -61,7 +65,8 @@ export function useInitBoard(
         console.log("Got sections: ", sections);
 
         setSections(sections);
-        setInitSections(sections);
+
+        // set selected section to the very first one
         const topSection = sections.reduce((min, curr) =>
           (curr.order_index ?? 0) < (min.order_index ?? 0) ? curr : min
         );
@@ -69,6 +74,33 @@ export function useInitBoard(
           setSelectedSection(topSection);
         }
         console.log("Set sections to:", sections);
+
+        //
+        // 3: grab blocks from supabase. and now that we have
+        // everything, we can generate the colums
+        //
+
+        const blocks = await fetchSupabaseBlocks(boardId);
+
+        const grouped: Record<string, Block[]> = {};
+        for (const block of blocks) {
+          const key = block.section_id ?? "unassigned";
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push(block);
+        }
+
+        const initColumns: SectionColumns = {};
+        for (const section of sections) {
+          initColumns[section.section_id] = generateInitColumnsFromBlocks(
+            grouped[section.section_id],
+            initNumCols ?? DEFAULT_COLUMNS
+          );
+        }
+
+        setSectionColumns(initColumns);
+        regenerateLayout();
+
+        // now we genrate the initial layout
       } catch (err) {
         console.error("Error loading sections:", err);
         toast.error("Error loading data! Try reloading");

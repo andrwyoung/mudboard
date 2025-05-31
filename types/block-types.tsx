@@ -27,6 +27,7 @@ export type Block = {
   height: number;
   width?: number;
 
+  // this is the initial order
   col_index: number;
   row_index: number;
   order_index: number;

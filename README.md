@@ -11,11 +11,9 @@ This is where you'll see how each board is created. A board is initialized using
 The file that handles all the drag/drop logic is
 /hooks/gallery/use-drag-handlers.tsx
 
-/hooks/use-import-images.tsx is also of note. It's what happens when you drop in an image from outside the app.
+<!-- /hooks/use-import-images.tsx is also of note. It's what happens when you drop in an image from outside the app. -->
 
-Lastly, /lib/db-actions is the folder with all the files we sync and make changes to the database
-
-![YAY](./public/yaya.png)
+Lastly, /lib/db-actions is where we sync and make changes to the database
 
 ### Setup
 
@@ -23,3 +21,5 @@ Lastly, /lib/db-actions is the folder with all the files we sync and make change
 2. npm i && npm run dev
 
 note: there is a secret repo where we host the proxy, but that's not required for setup
+
+![YAY](./public/yaya.png)

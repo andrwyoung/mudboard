@@ -11,12 +11,12 @@ import { useOverlayStore } from "@/store/overlay-store";
 import { CanvasScope } from "@/types/board-types";
 import { useGetScope } from "@/hooks/use-get-scope";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
+import { useLayoutStore } from "@/store/layout-store";
 
 export default function Gallery({
   sectionId,
   columns,
   draggedBlocks,
-  sidebarWidth,
   scrollY,
   selectedBlocks,
   setSelectedBlocks,
@@ -25,7 +25,6 @@ export default function Gallery({
   sectionId: string;
   columns: Block[][];
   draggedBlocks: Block[] | null;
-  sidebarWidth: number;
   scrollY: number;
   selectedBlocks: Record<string, Block>;
   setSelectedBlocks: (
@@ -43,6 +42,7 @@ export default function Gallery({
   const numCols = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
+  const sidebarWidth = useLayoutStore((s) => s.sidebarWidth);
 
   const { isOpen: overlayGalleryIsOpen, openOverlay: openOverlayGallery } =
     useOverlayStore(canvasScope);

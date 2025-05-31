@@ -13,7 +13,6 @@ import { useImageImport } from "@/hooks/use-import-images";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
-import { generateColumnsFromBlocks } from "@/lib/columns/generate-columns";
 import {
   DndContext,
   DragOverlay,
@@ -25,7 +24,7 @@ import {
 } from "@dnd-kit/core";
 import { useGalleryHandlers } from "@/hooks/gallery/use-drag-handlers";
 import Image from "next/image";
-import { Section, SectionColumns } from "@/types/board-types";
+import { Section } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 import { useLoadingStore } from "@/store/loading-store";
@@ -42,7 +41,6 @@ export const MirrorContext = createContext(false);
 export const useIsMirror = () => useContext(MirrorContext);
 
 export default function Board({ boardId }: { boardId: string }) {
-  const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
   const [isExpired, setIsExpired] = useState(false);
 
   // when dragging new images from local computer
@@ -55,13 +53,12 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // sidebar
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const mirrorMode = useUIStore((s) => s.mirrorMode);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const numCols = useUIStore((s) => s.numCols);
-  const mirrorMode = useUIStore((s) => s.mirrorMode);
 
   // sections
   const sections = useMetadataStore((s) => s.sections);
-  const [initSections, setInitSections] = useState<Section[]>([]);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // when blurring images
@@ -77,13 +74,13 @@ export default function Board({ boardId }: { boardId: string }) {
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   // virtualization
-  const [windowWidth, setWindowWidth] = useState(() => 0);
-  const [sidebarWidth, setSidebarWidth] = useState(0);
+  const windowWidth = useLayoutStore((s) => s.windowWidth);
+  const setWindowWidth = useLayoutStore((s) => s.setWindowWidth);
+  const setSidebarWidth = useLayoutStore((s) => s.setSidebarWidth);
+  const sidebarWidth = useLayoutStore((s) => s.sidebarWidth);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
-  // helper function (so I don't forget setting layout dirty)
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
-  const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
   const updateSectionColumns = useLayoutStore((s) => s.updateColumnsInASection);
 
   // for dragging and stuff
@@ -92,55 +89,20 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // ordering
   const positionedBlockMap = useLayoutStore((s) => s.positionedBlockMap);
-  const regenerateLayout = useLayoutStore((s) => s.regenerateLayout);
+  const regenerateOrdering = useLayoutStore((s) => s.regenerateOrdering);
+  const regenerateColumns = useLayoutStore((s) => s.regenerateColumns);
 
   // SECTION: On load. Initialize everything
   //
   //
-  useInitBoard(boardId, setFlatBlocks, setInitSections, setIsExpired);
+  useInitBoard(boardId, setIsExpired);
 
-  //
-  //
-
-  // group them into sectioned blocks
-  const blocksBySection = useMemo(() => {
-    const grouped: Record<string, Block[]> = {};
-    for (const block of flatBlocks) {
-      const key = block.section_id ?? "unassigned";
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(block);
-    }
-    return grouped;
-  }, [flatBlocks]);
-
-  // KEY SECTION:
-  // this is where we generate the columns everytime things change
-  useEffect(() => {
-    if (!initSections.length) return;
-    console.log("recreate column blocks!");
-
-    const nextColumns: SectionColumns = {};
-
-    for (const section of initSections) {
-      nextColumns[section.section_id] = generateColumnsFromBlocks(
-        blocksBySection[section.section_id],
-        numCols
-      );
-    }
-    setSectionColumns(nextColumns);
-    regenerateLayout(sidebarWidth, windowWidth, spacingSize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    blocksBySection,
-    initSections,
-    numCols,
-    setSectionColumns,
-    regenerateLayout,
-  ]);
+  // here is where we regenerate layout whenever things change
+  useEffect(() => regenerateColumns(), [regenerateColumns, numCols]);
 
   useEffect(
-    () => regenerateLayout(sidebarWidth, windowWidth, spacingSize),
-    [sectionColumns, spacingSize, regenerateLayout, sidebarWidth, windowWidth]
+    () => regenerateOrdering(),
+    [sectionColumns, regenerateOrdering, spacingSize, sidebarWidth, windowWidth]
   );
 
   const sectionMap = useMemo(() => {
@@ -163,8 +125,8 @@ export default function Board({ boardId }: { boardId: string }) {
   // SECTION: blur image when resizing window
   //
   useEffect(() => {
-    setWindowWidth(window.innerWidth); // now it's safe, runs only on client
-  }, []);
+    setWindowWidth(window.innerWidth); // grab window size on init
+  }, [setWindowWidth]);
   //
   useEffect(() => {
     let timeout: NodeJS.Timeout | null = null;
@@ -189,7 +151,7 @@ export default function Board({ boardId }: { boardId: string }) {
       window.removeEventListener("resize", handleResize);
       if (timeout) clearTimeout(timeout);
     };
-  }, [setShowBlurImg]);
+  }, [setShowBlurImg, setWindowWidth]);
 
   // SECTION: measurements and virtualization setup
   //
@@ -212,7 +174,7 @@ export default function Board({ boardId }: { boardId: string }) {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [setSidebarWidth]);
 
   // SECTION: hooks
   //
@@ -354,7 +316,6 @@ export default function Board({ boardId }: { boardId: string }) {
               selectedBlocks={selectedBlocks}
               setSelectedBlocks={setSelectedBlocks}
               dropIndicatorId={dropIndicatorId}
-              sidebarWidth={sidebarWidth}
             />
             {mirrorMode && (
               <div className="hidden lg:flex w-full h-full">
@@ -368,7 +329,6 @@ export default function Board({ boardId }: { boardId: string }) {
                   selectedBlocks={selectedBlocks}
                   setSelectedBlocks={setSelectedBlocks}
                   dropIndicatorId={dropIndicatorId}
-                  sidebarWidth={sidebarWidth}
                 />
               </div>
             )}

@@ -28,7 +28,7 @@ export type Board = {
   password_hash: string | null;
   access_level: Enums<"access_type">;
 
-  saved_column_num: number;
+  saved_column_num?: number;
   deleted_at: string;
 };
 

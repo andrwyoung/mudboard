@@ -27,8 +27,6 @@ type CanvasProps = {
   ) => void;
 
   dropIndicatorId: string | null;
-
-  sidebarWidth: number;
 };
 
 export default function Canvas({
@@ -41,7 +39,6 @@ export default function Canvas({
   selectedBlocks,
   setSelectedBlocks,
   dropIndicatorId,
-  sidebarWidth,
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
@@ -146,7 +143,6 @@ export default function Canvas({
                         sectionId={sectionId}
                         columns={columns}
                         draggedBlocks={draggedBlocks}
-                        sidebarWidth={sidebarWidth}
                         scrollY={scrollY}
                         selectedBlocks={selectedBlocks}
                         setSelectedBlocks={setSelectedBlocks}

@@ -5,7 +5,7 @@
 import { Block } from "@/types/block-types";
 
 // TODO: we needa redo this to generate the columns using colIndex and rowIndex
-export function generateColumnsFromBlocks(
+export function generateInitColumnsFromBlocks(
   blocks: Block[] | undefined,
   numCols: number
 ): Block[][] {
