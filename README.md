@@ -16,4 +16,4 @@ Lastly, this project is very hook heavy. The main one being
 1. you need our .env files to access the database
 2. npm i && npm run dev
 
-there is a secret repo where we host the proxy
+note: there is a secret repo where we host the proxy, but that's not required for setup
