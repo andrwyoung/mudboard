@@ -66,6 +66,10 @@ export async function uploadImages(
   //   let failedUploads = 0;
 
   console.time("🗜️ Compression phase");
+  const toastId = toast.loading("Uploading images...", {
+    duration: Infinity,
+  });
+
   useLoadingStore.setState({ isUploading: true });
 
   const compressionTasks = Array.from(files).map((file) => async () => {
@@ -314,6 +318,7 @@ export async function uploadImages(
   console.timeEnd("📤 Upload phase");
   useLoadingStore.setState({ isUploading: false });
 
+  toast.dismiss(toastId);
   if (successfulUploads > 0) {
     // we may have incorrect versions of the order, so trigger a sync
     useLayoutStore.setState({ layoutDirty: true });
@@ -322,5 +327,5 @@ export async function uploadImages(
     );
   }
 
-  console.log(`Trying to upload ${preparedImages.length} complete!`);
+  console.log(`Upload ${preparedImages.length} images complete!`);
 }

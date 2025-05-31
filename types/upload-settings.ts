@@ -93,6 +93,7 @@ export const mimeToExtension: Record<string, string> = {
 
   //uploading
   export const DROP_SPREAD_THRESHOLD = 3;
+  export const SYNC_BATCH_SIZE = 100;
   // concurrent uploads
   export const UPLOAD_THREADS = 3;
   export const COMPRESSION_THREADS = 3;

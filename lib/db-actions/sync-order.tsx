@@ -5,6 +5,7 @@ import { supabase } from "../../utils/supabase";
 import { PositionedBlock } from "@/types/sync-types";
 import { useUIStore } from "@/store/ui-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
+import { SYNC_BATCH_SIZE } from "@/types/upload-settings";
 
 function positionedBlocksToUpdates(
   blocks: PositionedBlock[]
@@ -36,22 +37,28 @@ export async function syncOrderToSupabase(
   console.log("Syncing block order to Supabase via update:", updates);
 
   // step 1: update block order
-  const updatePromises = updates.map(({ block_id, ...rest }) =>
-    supabase
-      .from("blocks")
-      .update(rest)
-      .eq("block_id", block_id)
-      .eq("board_id", board_id)
-  );
-  const results = await Promise.all(updatePromises);
-  const hasErrors = results.some((res) => res.error);
+  const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-  if (hasErrors) {
-    console.error("Error syncing block order:", results);
-    return false;
+  for (let i = 0; i < updates.length; i += SYNC_BATCH_SIZE) {
+    const batch = updates.slice(i, i + SYNC_BATCH_SIZE);
+    const batchPromises = batch.map(({ block_id, ...rest }) =>
+      supabase
+        .from("blocks")
+        .update(rest)
+        .eq("block_id", block_id)
+        .eq("board_id", board_id)
+    );
+    const results = await Promise.all(batchPromises);
+    if (results.some((r) => r.error)) {
+      console.error("Batch error:", results);
+      return false;
+    }
+
+    // trottle requests
+    await sleep(50);
   }
 
-  // update number of default columns
+  // step 2: update number of default columns
   await supabase
     .from("boards")
     .update({ saved_column_num: useUIStore.getState().numCols })
