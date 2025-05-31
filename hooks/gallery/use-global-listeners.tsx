@@ -38,12 +38,12 @@ export function useBoardListeners() {
 
       if (e.ctrlKey || e.metaKey) {
         if (e.key === "=" || e.key === "+") {
-          setNumCols(Math.min(MAX_COLUMNS, numCols + 1));
+          setNumCols(Math.max(MIN_COLUMNS, numCols - 1));
           return;
         }
 
         if (e.key === "-" || e.key === "_") {
-          setNumCols(Math.max(MIN_COLUMNS, numCols - 1));
+          setNumCols(Math.min(MAX_COLUMNS, numCols + 1));
           return;
         }
       }

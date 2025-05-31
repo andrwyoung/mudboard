@@ -3,19 +3,12 @@
 // I really do need to come up with a better name for it
 
 import { useUIStore } from "@/store/ui-store";
-import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
-import { Slider } from "../ui/slider";
-import { useLoadingStore } from "@/store/loading-store";
+import { MAX_COLUMNS } from "@/types/constants";
 import { MirrorModeToggle } from "../ui/sidebar/mirror-toggle";
 
 export default function CustomizeSection() {
   const setNumCols = useUIStore((s) => s.setNumCols);
-  const setShowBlurImg = useLoadingStore((s) => s.setShowBlurImg);
-
-  const setShowLoading = useLoadingStore((s) => s.setShowLoading);
-  const setFadeGallery = useLoadingStore((s) => s.setFadeGallery);
-  const sliderVal = useLoadingStore((s) => s.sliderVal);
-  const setSliderVal = useLoadingStore((s) => s.setSliderVal);
+  const numCols = useUIStore((s) => s.numCols);
 
   return (
     <div className=" flex flex-col gap-4 ">
@@ -23,9 +16,9 @@ export default function CustomizeSection() {
 
       <div className="flex flex-col gap-1 self-center w-full">
         {/* <div className="flex flex-col gap-1 max-w-42 self-center w-full"> */}
-        <h3 className="mb-1 text-xs font-semibold">Columns:</h3>
+        <h3 className="text-xs font-semibold">Columns:</h3>
 
-        <div className="flex flex-row justify-between px-1 items-center gap-3 text-sm font-bold">
+        {/* <div className="flex flex-row justify-between px-1 items-center gap-3 text-sm font-bold">
           <p className="font-bold">{MIN_COLUMNS}</p>
           <div
             className="w-full"
@@ -56,6 +49,43 @@ export default function CustomizeSection() {
           </div>
 
           <p className="font-bold">{MAX_COLUMNS}</p>
+        </div> */}
+        <div>
+          <div className="flex justify-center py-1">
+            {Array.from({ length: MAX_COLUMNS }, (_, i) => {
+              const col = i + 1;
+              const isActive = numCols > col;
+              const isPicked = numCols === col;
+
+              return (
+                <button
+                  key={col}
+                  className={`flex flex-col group cursor-pointer p-1`}
+                  onClick={() => {
+                    setNumCols(col);
+                  }}
+                  aria-label={`Set columns to ${col}`}
+                  title={`Set columns to ${col}`}
+                >
+                  <div
+                    className={`w-3.5 h-3.5 rounded-full border-2 transition-all 
+                      ${
+                        isPicked
+                          ? "scale-125 bg-accent border-accent"
+                          : isActive
+                          ? "border-accent bg-transparent hover:bg-accent translate-y-1"
+                          : "bg-white group-hover:bg-accent border-primary translate-y-1"
+                      } `}
+                  />
+                  {isPicked && (
+                    <p className="font-header text-xs font-bold mt-1">
+                      {i + 1}
+                    </p>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
