@@ -157,6 +157,7 @@ export function ImageBlock({
                   value={captionDraft}
                   placeholder="Add a caption"
                   onChange={(e) => setCaptionDraft(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
                   className={`px-3 py-2 w-full text-sm 
                         border-none focus:outline-none rounded-b-sm
                     ${

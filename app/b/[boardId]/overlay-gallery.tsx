@@ -52,6 +52,7 @@ export default function OverlayGallery({
   } | null>(null);
 
   // candy
+  const showDebug = false;
   const [greyscaleClicked, setGreyscaleClicked] = useState(false);
   const [blockOrder, setBlockOrder] = useState<number | undefined>(undefined);
   const [sectionOrder, setSectionOrder] = useState<number | undefined>(
@@ -309,15 +310,16 @@ export default function OverlayGallery({
         />
       )}
 
-      <div
-        className={`absolute top-4 left-4 z-62 bg-stone-800/80 backdrop-blur-sm 
+      {showDebug && (
+        <div
+          className={`absolute top-4 left-4 z-62 bg-stone-800/80 backdrop-blur-sm 
         rounded-lg flex px-2 py-1 items-center gap-2 text-xs w-fit font-bold`}
-      >
-        block {blockOrder !== undefined ? blockOrder + 1 : "unknown"}
-        <br />
-        section {sectionOrder !== undefined ? sectionOrder + 1 : "unknown"}
-      </div>
-
+        >
+          block {blockOrder !== undefined ? blockOrder + 1 : "unknown"}
+          <br />
+          section {sectionOrder !== undefined ? sectionOrder + 1 : "unknown"}
+        </div>
+      )}
       <div
         className={`absolute bottom-16 left-1/2 -translate-x-1/2 z-62 bg-stone-800/80 backdrop-blur-sm 
         rounded-lg flex px-4 py-2 items-center gap-2 text-sm w-fit ${overlayUIClass}`}

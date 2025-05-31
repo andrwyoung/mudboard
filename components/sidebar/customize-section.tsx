@@ -12,44 +12,13 @@ export default function CustomizeSection() {
 
   return (
     <div className=" flex flex-col gap-4 ">
-      <MirrorModeToggle />
+      <div className="px-4">
+        <MirrorModeToggle />
+      </div>
 
       <div className="flex flex-col gap-1 self-center w-full">
-        {/* <div className="flex flex-col gap-1 max-w-42 self-center w-full"> */}
-        <h3 className="text-xs font-semibold">Columns:</h3>
+        <h3 className="text-xs font-semibold px-4">Columns:</h3>
 
-        {/* <div className="flex flex-row justify-between px-1 items-center gap-3 text-sm font-bold">
-          <p className="font-bold">{MIN_COLUMNS}</p>
-          <div
-            className="w-full"
-            onPointerDown={() => {
-              setShowLoading(false);
-              setShowBlurImg(true);
-              setFadeGallery(true);
-            }}
-            onPointerUp={() => {
-              // setFadeGallery(false);
-              setShowLoading(true);
-              setTimeout(() => {
-                setNumCols(sliderVal);
-                setFadeGallery(false);
-                setTimeout(() => {
-                  setShowBlurImg(false);
-                }, 400);
-              }, 300); // small delay to let layout commit — tweak as needed
-            }}
-          >
-            <Slider
-              defaultValue={[sliderVal]}
-              min={MIN_COLUMNS}
-              max={MAX_COLUMNS}
-              onValueChange={(val) => setSliderVal(val[0])}
-              // orientation="vertical"
-            />
-          </div>
-
-          <p className="font-bold">{MAX_COLUMNS}</p>
-        </div> */}
         <div>
           <div className="flex justify-center py-1">
             {Array.from({ length: MAX_COLUMNS }, (_, i) => {
@@ -60,7 +29,7 @@ export default function CustomizeSection() {
               return (
                 <button
                   key={col}
-                  className={`flex flex-col group cursor-pointer p-1`}
+                  className={`flex flex-col group cursor-pointer px-[3px]`}
                   onClick={() => {
                     setNumCols(col);
                   }}
@@ -68,10 +37,10 @@ export default function CustomizeSection() {
                   title={`Set columns to ${col}`}
                 >
                   <div
-                    className={`w-3.5 h-3.5 rounded-full border-2 transition-all duration-200 
+                    className={`w-4 h-4 rounded-full border-2 transition-all duration-200 
                       ${
                         isPicked
-                          ? "scale-125 bg-accent border-accent"
+                          ? "scale-110 bg-accent border-accent"
                           : isActive
                           ? "border-primary bg-accent group-hover:border-accent"
                           : "bg-white group-hover:bg-accent border-primary "

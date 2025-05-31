@@ -76,10 +76,10 @@ export default function Sidebar({
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
 
-          <div className="px-8">
+          <div className="px-4">
             <AccordianWrapper
-              title="Viewing Options"
-              titleClassName="font-header text-md px-2"
+              title="Change Look"
+              titleClassName="font-header text-md px-4"
             >
               <CustomizeSection />
             </AccordianWrapper>
