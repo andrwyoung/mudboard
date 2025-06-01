@@ -143,7 +143,7 @@ export default function Home() {
               </h1>
               <div className="flex flex-col items-center">
                 <p className="max-w-lg text-sm text-accent font-bold">
-                  Open Beta • Special Access
+                  Open Alpha • Testing Phase
                 </p>
                 {/* <p className="text-md mb-14 w-full">
                   For illustrators who’d rather sketch than spend 30 minutes
@@ -227,7 +227,9 @@ export default function Home() {
           {/* PRICING */}
 
           <div className="mb-24 max-w-3xl">
-            <h2 className="text-2xl font-bold mb-6 text-center">Pricing</h2>
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              Planned Pricing (not implemented yet)
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2">
               <PricingTable />
             </div>
