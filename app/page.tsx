@@ -10,6 +10,8 @@ import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
 import { DEMO_BOARD_LINK, NEW_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
+import { FaPinterestP } from "react-icons/fa6";
+import { SiAdobephotoshop } from "react-icons/si";
 
 function FAQItem({
   question,
@@ -47,26 +49,30 @@ function FAQItem({
   );
 }
 
-type ComparisonTileProps = {
-  title: string;
-  children: React.ReactNode;
-  highlight?: boolean;
-};
-
 function ComparisonTile({
   title,
+  icon,
   children,
   highlight = false,
-}: ComparisonTileProps) {
+}: {
+  title: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+  highlight?: boolean;
+}) {
   return (
     <div
       className={`border rounded-lg p-4 ${
         highlight ? "border-accent bg-accent/10" : "border-border bg-primary/20"
       }`}
     >
-      <h3 className={`text-xl font-semibold mb-2 ${highlight ? "" : ""}`}>
-        {title}
-      </h3>
+      <div className="flex flex-row gap-3 items-center mb-2 ">
+        <div>{icon}</div>
+        <h3 className={`text-xl font-semibold ${highlight ? "" : ""}`}>
+          {title}
+        </h3>
+      </div>
+
       <p className="text-[0.9375rem]">{children}</p>
     </div>
   );
@@ -153,7 +159,7 @@ export default function Home() {
                 <p className="text-md mb-14 w-full">
                   For illustrators who’d rather spend 30 minutes sketching than
                   <br />
-                  wrestling with Pinterest, PureRef, or Figma
+                  wrestling with their references
                 </p>
               </div>
 
@@ -189,26 +195,54 @@ export default function Home() {
               What about other programs?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm sm:text-base">
-              <ComparisonTile title="Pinterest">
-                I still use Pinterest all the time. But it&apos;s hard to use it
-                as a reference board. Boards are nice, but the layout isn&apos;t
-                really meant for advanced viewing or rearranging. So many ads
-                too...
+              <ComparisonTile
+                title="Pinterest"
+                icon={<FaPinterestP className="size-5" />}
+              >
+                A bit hard to use it as a reference board. Saved boards are
+                nice, but the layout isn&apos;t really meant for advanced
+                viewing or rearranging. A lot of ads too...
               </ComparisonTile>
 
-              <ComparisonTile title="PureRef">
-                I loved using PureRef! Used it for a ton of projects. But as
-                with any freeform canvas program, building scenes takes a while.
-                Files are also stuck on one computer.
+              <ComparisonTile
+                title="PureRef"
+                icon={
+                  <Image
+                    src="/purref.png"
+                    alt="Mudboard M"
+                    height={18}
+                    width={18}
+                    className="-translate-y-[2px]"
+                  />
+                }
+              >
+                I love PureRef, and have used it for years! But as with any
+                freeform canvas program, building scenes takes a while. And I
+                didn't like how my files are stuck on one device.
               </ComparisonTile>
 
-              <ComparisonTile title="Photoshop (or your file explorer)">
+              <ComparisonTile
+                title="Photoshop (or file explorer)"
+                icon={<SiAdobephotoshop className="size-5" />}
+              >
                 This is what I was doing before: pasting images in to CSP or
                 even just clicking through photos in Preview. It...works. But
                 it&apos;s a mess, and hard to go back to something later on.
               </ComparisonTile>
 
-              <ComparisonTile title="Mudboard" highlight>
+              <ComparisonTile
+                title="Mudboard"
+                highlight
+                icon={
+                  <Image
+                    src="/M.png"
+                    alt="Mudboard M"
+                    height={22}
+                    width={22}
+                    className="-translate-y-[2px]"
+                  />
+                }
+              >
                 I built this because I just wanted something that let me drop in
                 images and draw. No setup, no shortcuts to memorize, no endless
                 rearranging. Hopefully it helps you too!
@@ -227,9 +261,15 @@ export default function Home() {
           {/* PRICING */}
 
           <div className="mb-24 max-w-3xl">
-            <h2 className="text-2xl font-bold mb-6 text-center">
+            <h2 className="text-2xl font-bold mb-2 text-center">
               Planned Pricing (not implemented yet)
             </h2>
+            <p className="text-center mb-8 text-sm font-semibold">
+              Pricing isn't final yet, but here's the ballpark estimate for what
+              I'll launch with. Later on I was going to probably do a $6 tier
+              with more limited features and a $12-15 tier. Really, the reason I
+              charge is to protect me from storage costs.
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2">
               <PricingTable />
             </div>
