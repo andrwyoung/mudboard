@@ -231,7 +231,7 @@ function ContextMenuShortcut({
     <span
       data-slot="context-menu-shortcut"
       className={cn(
-        "text-muted-foreground ml-auto text-xs tracking-widest",
+        "text-muted-foreground ml-auto text-xs data-[variant=destructive]:text-rose-400",
         className
       )}
       {...props}

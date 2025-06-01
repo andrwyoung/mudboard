@@ -4,6 +4,14 @@ import { Block } from "@/types/block-types";
 import { ImageBlock } from "./image-block";
 import TextBlock from "./text-block";
 import { useGetScope } from "@/hooks/use-get-scope";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+} from "../ui/context-menu";
 
 export function BlockChooser({
   block,
@@ -51,30 +59,59 @@ function BlockComponent({
   const scope = useGetScope();
 
   return (
-    <div
-      // layoutId={`block-${block.block_id}`} // for animating
-      data-id={`${scope}::block-${block.block_id}`} // for sortable
-      tabIndex={-1}
-      className={`flex flex-col rounded-sm object-cover transition-all duration-150 cursor-pointer shadow-md 
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <div
+          // layoutId={`block-${block.block_id}`} // for animating
+          data-id={`${scope}::block-${block.block_id}`} // for sortable
+          tabIndex={-1}
+          className={`flex flex-col rounded-sm object-cover transition-all duration-150 cursor-pointer shadow-md 
       hover:scale-101 hover:shadow-xl hover:opacity-100
       relative bg-background
         ${isDragging ? "opacity-30" : ""} 
         ${isSelected ? "outline-4 outline-secondary" : ""}`}
-      onClick={onClick}
-    >
-      <SortableItem id={`${scope}::block-${block.block_id}`}>
-        {/* <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
+          onClick={onClick}
+        >
+          <SortableItem id={`${scope}::block-${block.block_id}`}>
+            {/* <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
           y:{position?.colIndex}, x:{position?.rowIndex}, o:
           {position?.orderIndex}, t:{position?.top}, h:{position?.height}
         </h1> */}
 
-        <BlockChooser
-          block={block}
-          shouldEagerLoad={shouldEagerLoad}
-          columnWidth={columnWidth}
-        />
-      </SortableItem>
-    </div>
+            <BlockChooser
+              block={block}
+              shouldEagerLoad={shouldEagerLoad}
+              columnWidth={columnWidth}
+            />
+          </SortableItem>
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem onClick={() => console.log("hey")}>
+          Expand
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => console.log("hey")}>
+          Open In Mirror
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => console.log("hey")}>
+          Download
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={() => console.log("hey")}>
+          Group Selected
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onClick={() => console.log("hey")}
+          variant="destructive"
+        >
+          Delete
+          <ContextMenuShortcut>Del</ContextMenuShortcut>
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
 

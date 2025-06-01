@@ -66,7 +66,10 @@ export default function SectionHeader({ section }: { section: Section }) {
             transition-transform duration-200 flex items-center justify-center"
             >
               {/* <div className="absolute inset-0 rounded-full border-4 border-primary" /> */}
-              <FaPlus className="z-2 size-4 text-primary group-hover:text-accent hover:primary transition-colors duration-300" />
+              <FaPlus
+                className="z-2 size-4 text-primary group-hover:text-accent hover:primary transition-colors duration-300"
+                onClick={() => triggerImagePicker()}
+              />
               {/* <div
               className="absolute inset-0 rounded-full bg-primary/40 z-1 group-hover:bg-background transition-all duration-300
               group-hover:scale-30"

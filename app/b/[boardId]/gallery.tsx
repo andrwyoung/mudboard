@@ -119,7 +119,7 @@ export default function Gallery({
           <div className="absolute inset-0 flex flex-col items-center justify-center ">
             <div
               className="w-fit h-fit flex flex-col items-center
-        opacity-60 z-10 hover:opacity-90 transition-all duration-200 cursor-pointer"
+        opacity-60 z-10 hover:opacity-90 transition-all duration-200 cursor-pointer "
               onClick={triggerImagePicker}
             >
               <Image
@@ -136,6 +136,7 @@ export default function Gallery({
         </>
       )}
       {columns.map((column, columnIndex) => (
+        // <div className="bg-amber-50">
         <DroppableColumn
           id={`${scope}::col-${sectionId}-${columnIndex}`}
           paddingLeft={spacingSize / 2}
@@ -154,6 +155,7 @@ export default function Gallery({
             scrollY={scrollY}
           />
         </DroppableColumn>
+        // </div>
       ))}
     </div>
   );
