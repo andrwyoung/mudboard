@@ -218,7 +218,7 @@ export default function Home() {
               >
                 I love PureRef, and have used it for years! But as with any
                 freeform canvas program, building scenes takes a while. And I
-                didn't like how my files are stuck on one device.
+                didn&apos;t like how my files are stuck on one device.
               </ComparisonTile>
 
               <ComparisonTile
@@ -265,10 +265,11 @@ export default function Home() {
               Planned Pricing (not implemented yet)
             </h2>
             <p className="text-center mb-8 text-sm font-semibold">
-              Pricing isn't final yet, but here's the ballpark estimate for what
-              I'll launch with. Later on I was going to probably do a $6 tier
-              with more limited features and a $12-15 tier. Really, the reason I
-              charge is to protect me from storage costs.
+              Pricing isn&apos;t final yet, but here&apos;s the ballpark
+              estimate for what I&apos;ll launch with. Later on I was going to
+              probably do a $6 tier with more limited features and a $12-15
+              tier. Really, the reason I charge is to protect me from storage
+              costs.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2">
               <PricingTable />

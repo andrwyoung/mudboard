@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { SortableImageItem } from "@/components/drag/sortable-wrapper";
+import { SortableItem } from "@/components/drag/sortable-wrapper";
 import { Block } from "@/types/block-types";
 import { ImageBlock } from "./image-block";
 import TextBlock from "./text-block";
@@ -62,7 +62,7 @@ function BlockComponent({
         ${isSelected ? "outline-4 outline-secondary" : ""}`}
       onClick={onClick}
     >
-      <SortableImageItem id={`${scope}::block-${block.block_id}`}>
+      <SortableItem id={`${scope}::block-${block.block_id}`}>
         {/* <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
           y:{position?.colIndex}, x:{position?.rowIndex}, o:
           {position?.orderIndex}, t:{position?.top}, h:{position?.height}
@@ -73,7 +73,7 @@ function BlockComponent({
           shouldEagerLoad={shouldEagerLoad}
           columnWidth={columnWidth}
         />
-      </SortableImageItem>
+      </SortableItem>
     </div>
   );
 }

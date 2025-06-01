@@ -3,7 +3,7 @@
 
 import { useMetadataStore } from "@/store/metadata-store";
 import React, { RefObject, useState } from "react";
-import { DroppableSection } from "../drag/droppable-section";
+import { DroppableForImages } from "../drag/droppable-section";
 import FillingDot from "../ui/filling-dot";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { FaPlus, FaTrash } from "react-icons/fa";
@@ -38,19 +38,27 @@ export default function SectionsSection({
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
   const [sectionToDelete, setSectionToDelete] = useState<Section | null>(null);
 
+  // function handleSectionDragEnd() {}
+
   return (
     <div className="flex flex-col gap-1 items-start">
       <h1 className="text-2xl font-semibold px-4">Sections:</h1>
       <div className="w-full">
+        {/* <DndContext onDragEnd={handleSectionDragEnd}> */}
+        {/* <SortableContext items={sections.map((s) => s.section_id)}> */}
         {[...sections]
           .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
           .map((section, index) => {
             const titleExists = section.title && section.title.trim() != "";
 
             return (
-              <DroppableSection
-                id={`section-${index}`}
+              // <SortableItem
+              //   key={section.section_id}
+              //   id={`sidebar-section-${section.section_id}`}
+              // >
+              <DroppableForImages
                 key={section.section_id}
+                id={`section-${index}`}
               >
                 <div
                   className="grid group items-center w-full"
@@ -77,8 +85,8 @@ export default function SectionsSection({
                     />
                     <h2
                       className={`text-lg text-primary-foreground group-hover:text-accent transition-all duration-300 
-                         truncate whitespace-nowrap overflow-hidden min-w-0
-                    ${titleExists ? "" : "italic"}`}
+                             truncate whitespace-nowrap overflow-hidden min-w-0
+                          ${titleExists ? "" : "italic"}`}
                     >
                       {titleExists ? section.title : DEFAULT_SECTION_NAME}
                     </h2>
@@ -87,7 +95,7 @@ export default function SectionsSection({
                   {sections.length > 1 && canEdit && (
                     <FaTrash
                       className="size-3.5 hover:rotate-24 text-accent transition-all duration-300 
-                  opacity-0 group-hover:opacity-100 cursor-pointer flex-none"
+                            opacity-0 group-hover:opacity-100 cursor-pointer flex-none"
                       title="Delete Section"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -96,9 +104,12 @@ export default function SectionsSection({
                     />
                   )}
                 </div>
-              </DroppableSection>
+              </DroppableForImages>
+              // </SortableItem>
             );
           })}
+        {/* </SortableContext> */}
+        {/* </DndContext> */}
         {sectionToDelete && (
           <AlertDialog
             open={!!sectionToDelete}

@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 
-export function SortableImageItem({
+export function SortableItem({
   children,
   id,
 }: {

@@ -31,7 +31,7 @@ export default function Features() {
         without breaking your flow (or layout)
       </FeatureItem>
       <FeatureItem icon={<MdImage />} title="Make it yours">
-        Customize however you'd like! Rearrange blocks{" "}
+        Customize however you&apos;d like! Rearrange blocks{" "}
         <span className="font-bold">however you want</span>. Group by section.
         Add descriptions and captions.
       </FeatureItem>

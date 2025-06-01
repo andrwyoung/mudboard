@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 
-export function DroppableSection({
+export function DroppableForImages({
   id,
   children,
 }: {
@@ -8,6 +8,8 @@ export function DroppableSection({
   children: React.ReactNode;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id });
+
+  // const isSidebar =
 
   return (
     <div
