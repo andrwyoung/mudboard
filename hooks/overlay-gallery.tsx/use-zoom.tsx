@@ -46,13 +46,13 @@ export function useCenteredZoom(
     if (!container) return;
 
     const handleWheel = (e: WheelEvent) => {
-      if (e.metaKey || e.ctrlKey) {
-        e.preventDefault();
-        const direction = e.deltaY > 0 ? -1 : 1; // up = zoom in, down = zoom out
+      // if (e.metaKey || e.ctrlKey) {
+      e.preventDefault();
+      const direction = e.deltaY > 0 ? -1 : 1; // up = zoom in, down = zoom out
 
-        if (direction > 0) zoomIn();
-        else zoomOut();
-      }
+      if (direction > 0) zoomIn();
+      else zoomOut();
+      // }
     };
 
     container.addEventListener("wheel", handleWheel, { passive: false });

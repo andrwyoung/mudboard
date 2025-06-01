@@ -241,7 +241,7 @@ export default function OverlayGallery({
     <>
       <div
         ref={scrollContainerRef}
-        className={`absolute inset-0 bg-stone-700/90 z-50 overflow-auto 
+        className={`absolute inset-0 bg-stone-700/90 z-50 overflow-hidden
             scrollbar-none scrollbar-thumb-rounded scrollbar-thumb-background scrollbar-track-transparent
              ${!showOverlayUI ? "cursor-none" : ""}`}
         onClick={() => closeOverlayGallery()}
