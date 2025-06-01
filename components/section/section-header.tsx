@@ -18,17 +18,9 @@ export default function SectionHeader({ section }: { section: Section }) {
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
   const canEdit = canEditBoard();
 
-  function handleAddImageBlock() {
-    triggerImagePicker();
-  }
-
-  function handleAddTextBlock() {
-    createTextBlock(section.section_id);
-  }
-
   return (
     <div className="flex flex-row justify-between items-center pt-6 pb-0 px-3">
-      <div className="flex w-xs md:w-sm">
+      <div className="flex w-48 sm:w-xs md:w-sm">
         <InlineEditText
           isEditable={canEdit}
           value={title && title.trim() != "" ? title : null}
@@ -65,7 +57,7 @@ export default function SectionHeader({ section }: { section: Section }) {
             {fileInput}
             <div
               className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
-              onClick={() => handleAddTextBlock()}
+              onClick={() => createTextBlock(section.section_id)}
             >
               Text
             </div>
@@ -83,7 +75,7 @@ export default function SectionHeader({ section }: { section: Section }) {
 
             <div
               className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
-              onClick={() => handleAddImageBlock()}
+              onClick={() => triggerImagePicker()}
             >
               Image
             </div>

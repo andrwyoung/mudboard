@@ -13,7 +13,7 @@ export type Section = {
   section_id: string;
   board_id: string;
 
-  order_index?: number;
+  order_index: number;
   title?: string | null;
   description?: string | null;
 

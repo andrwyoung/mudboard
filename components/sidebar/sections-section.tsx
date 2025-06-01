@@ -46,8 +46,8 @@ export default function SectionsSection({
           .map((section, index) => (
             <SectionRow
               key={section.section_id}
-              section={section}
-              index={index}
+              thisSection={section}
+              thisIndex={index}
               sectionRefs={sectionRefs}
               setEditingSectionId={setEditingSectionId}
               setSectionToDelete={setSectionToDelete}

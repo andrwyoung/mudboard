@@ -3,6 +3,7 @@
 // 3. update locally
 
 import { useMetadataStore } from "@/store/metadata-store";
+import { Enums } from "@/types/supabase";
 import { supabase } from "@/utils/supabase";
 import { toast } from "sonner";
 
@@ -32,6 +33,7 @@ export async function claimBoard() {
   const updatedBoard = {
     ...board,
     user_id: user.id,
+    access_level: "private" as Enums<"access_type">,
   };
   useMetadataStore.setState({ board: updatedBoard });
 

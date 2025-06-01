@@ -188,7 +188,7 @@ export type Database = {
           deleted: boolean
           deleted_at: string | null
           description: string | null
-          order_index: number | null
+          order_index: number
           section_id: string
           title: string | null
         }
@@ -198,7 +198,7 @@ export type Database = {
           deleted?: boolean
           deleted_at?: string | null
           description?: string | null
-          order_index?: number | null
+          order_index: number
           section_id?: string
           title?: string | null
         }
@@ -208,7 +208,7 @@ export type Database = {
           deleted?: boolean
           deleted_at?: string | null
           description?: string | null
-          order_index?: number | null
+          order_index?: number
           section_id?: string
           title?: string | null
         }
