@@ -3,10 +3,8 @@
 
 import { useMetadataStore } from "@/store/metadata-store";
 import React, { RefObject, useState } from "react";
-import { DroppableForImages } from "../drag/droppable-section";
-import FillingDot from "../ui/filling-dot";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { useLoadingStore } from "@/store/loading-store";
 import {
   AlertDialog,
@@ -19,10 +17,11 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { Section } from "@/types/board-types";
-import { useSelectionStore } from "@/store/selection-store";
 import { softDeleteSection } from "@/lib/db-actions/soft-delete-section";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { addNewSection } from "@/lib/sidebar/add-new-section";
+
+import SectionRow from "./section-sections/section-title";
 
 export default function SectionsSection({
   sectionRefs,
@@ -34,82 +33,26 @@ export default function SectionsSection({
   const canEdit = canEditBoard();
 
   const setEditingSectionId = useLoadingStore((s) => s.setEditingSectionId);
-  const selectedSection = useSelectionStore((s) => s.selectedSection);
-  const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
   const [sectionToDelete, setSectionToDelete] = useState<Section | null>(null);
 
   // function handleSectionDragEnd() {}
 
   return (
     <div className="flex flex-col gap-1 items-start">
-      <h1 className="text-2xl font-semibold px-4">Sections:</h1>
+      <h1 className="text-2xl font-semibold px-6">Sections:</h1>
       <div className="w-full">
-        {/* <DndContext onDragEnd={handleSectionDragEnd}> */}
-        {/* <SortableContext items={sections.map((s) => s.section_id)}> */}
         {[...sections]
           .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
-          .map((section, index) => {
-            const titleExists = section.title && section.title.trim() != "";
-
-            return (
-              // <SortableItem
-              //   key={section.section_id}
-              //   id={`sidebar-section-${section.section_id}`}
-              // >
-              <DroppableForImages
-                key={section.section_id}
-                id={`section-${index}`}
-              >
-                <div
-                  className="grid group items-center w-full"
-                  style={{ gridTemplateColumns: "1fr auto" }}
-                >
-                  <div
-                    className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
-                    onClick={() => {
-                      const sectionEl =
-                        sectionRefs.current?.[section.section_id];
-                      setSelectedSection(section);
-                      if (sectionEl) {
-                        sectionEl.scrollIntoView({
-                          behavior: "smooth",
-                          block: "start",
-                        });
-                      }
-                    }}
-                  >
-                    <FillingDot
-                      selected={
-                        selectedSection?.section_id === section.section_id
-                      }
-                    />
-                    <h2
-                      className={`text-lg text-primary-foreground group-hover:text-accent transition-all duration-300 
-                             truncate whitespace-nowrap overflow-hidden min-w-0
-                          ${titleExists ? "" : "italic"}`}
-                    >
-                      {titleExists ? section.title : DEFAULT_SECTION_NAME}
-                    </h2>
-                  </div>
-
-                  {sections.length > 1 && canEdit && (
-                    <FaTrash
-                      className="size-3.5 hover:rotate-24 text-accent transition-all duration-300 
-                            opacity-0 group-hover:opacity-100 cursor-pointer flex-none"
-                      title="Delete Section"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSectionToDelete(section);
-                      }}
-                    />
-                  )}
-                </div>
-              </DroppableForImages>
-              // </SortableItem>
-            );
-          })}
-        {/* </SortableContext> */}
-        {/* </DndContext> */}
+          .map((section, index) => (
+            <SectionRow
+              key={section.section_id}
+              section={section}
+              index={index}
+              sectionRefs={sectionRefs}
+              setEditingSectionId={setEditingSectionId}
+              setSectionToDelete={setSectionToDelete}
+            />
+          ))}
         {sectionToDelete && (
           <AlertDialog
             open={!!sectionToDelete}

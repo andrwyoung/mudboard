@@ -3,9 +3,11 @@ import { useDroppable } from "@dnd-kit/core";
 export function DroppableForImages({
   id,
   children,
+  highlighted,
 }: {
   id: string;
   children: React.ReactNode;
+  highlighted: boolean;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id });
 
@@ -15,8 +17,10 @@ export function DroppableForImages({
     <div
       ref={setNodeRef}
       data-id={id}
-      className={`rounded transition-colors duration-150 w-full ${
-        isOver ? "bg-accent/40 border border-accent" : "bg-transparent"
+      className={`border  rounded transition-colors duration-150 w-full px-1 ${
+        isOver || highlighted
+          ? "bg-accent/40 border border-accent"
+          : "bg-transparent border-transparent"
       }`}
     >
       {children}

@@ -36,43 +36,8 @@ export default function Sidebar({
       </div>
 
       <div className="flex flex-col flex-grow justify-center gap-24">
-        {/*  <div className="flex flex-col px-8 items-center gap-1">
-         <h1 className="text-3xl font-bold">Hi there!</h1>
-          <p className="text-xs font-semibold text-center mb-3">
-            This board is <strong>fully customizable</strong>.<br />
-            <br />
-            Play around with this board, <br />
-            drop in new images, or
-          </p> */}
-
-        {/* <div className="flex flex-col gap-1">
-            <p className={`${fontClass}`}>
-              •{" "}
-              <a
-                href="https://www.jonadrew.com/"
-                target="_blank"
-                rel="noreferrer"
-                className={`${refClass} ${fontClass}`}
-              >
-                My Art Portfolio
-              </a>
-            </p>
-            <p className={`${fontClass}`}>
-              •{" "}
-              <a
-                href="https://blog.jonadrew.com/profile"
-                target="_blank"
-                rel="noreferrer"
-                className={`${refClass} ${fontClass}`}
-              >
-                How this is being built
-              </a>
-            </p>
-          </div> 
-        </div> */}
-
         <div className="flex flex-col gap-12">
-          <div className="px-6">
+          <div className="px-4">
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
 
