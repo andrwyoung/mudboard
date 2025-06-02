@@ -42,7 +42,10 @@ export function useInitBoard(
         const board = await fetchSupabaseBoard(boardId);
         setBoard(board);
         const initNumCols = board.saved_column_num;
-        if (initNumCols) setNumCols(initNumCols);
+        if (initNumCols) {
+          setNumCols(initNumCols);
+          toast(`Number of columns: ${initNumCols}`);
+        }
 
         if (board.expired_at && new Date(board.expired_at) <= new Date()) {
           setIsExpired(true);

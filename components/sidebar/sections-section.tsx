@@ -3,7 +3,7 @@
 
 import { useMetadataStore } from "@/store/metadata-store";
 import React, { RefObject, useState } from "react";
-import { DEFAULT_SECTION_NAME } from "@/types/constants";
+import { DEFAULT_BOARD_TITLE, DEFAULT_SECTION_NAME } from "@/types/constants";
 import { FaPlus } from "react-icons/fa";
 import { useLoadingStore } from "@/store/loading-store";
 import {
@@ -39,7 +39,9 @@ export default function SectionsSection({
 
   return (
     <div className="flex flex-col gap-1 items-start">
-      <h1 className="text-2xl font-semibold px-6">Sections:</h1>
+      <h1 className="text-2xl font-semibold px-4">
+        {board?.title ?? DEFAULT_BOARD_TITLE}
+      </h1>
       <div className="w-full">
         {[...sections]
           .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))

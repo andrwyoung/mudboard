@@ -9,7 +9,9 @@ import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const { email, setEmail, loading, message, sendMagicLink } = useMagicLogin();
+  const { email, setEmail, loading, message, sendMagicLink } = useMagicLogin({
+    redirectToDashboard: true,
+  });
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {

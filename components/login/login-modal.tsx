@@ -18,7 +18,9 @@ export const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export default function LoginModal() {
-  const { email, setEmail, loading, message, sendMagicLink } = useMagicLogin();
+  const { email, setEmail, loading, message, sendMagicLink } = useMagicLogin(
+    {}
+  );
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

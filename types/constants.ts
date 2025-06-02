@@ -14,6 +14,7 @@ export const DEFAULT_SPACING = 12;
 export const DEFAULT_GALLERY_SPACING = 12;
 
 export const DEFAULT_SECTION_NAME = "Untitled Section";
+export const DEFAULT_BOARD_TITLE= "Untitled Board";
 
 
 

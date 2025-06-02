@@ -5,7 +5,11 @@ import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
 import { isValidEmail } from "@/components/login/login-modal"; // or move this too
 
-export function useMagicLogin() {
+export function useMagicLogin({
+  redirectToDashboard = false,
+}: {
+  redirectToDashboard?: boolean;
+}) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -28,12 +32,14 @@ export function useMagicLogin() {
     }
 
     const baseUrl = window.location.origin;
+    const redirectTo =
+      board?.board_id && !redirectToDashboard
+        ? `${baseUrl}/b/${board.board_id}`
+        : `${baseUrl}/dashboard`;
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: board
-          ? `${baseUrl}/b/${board.board_id}`
-          : `${baseUrl}/dashboard`,
+        emailRedirectTo: redirectTo,
       },
     });
 
