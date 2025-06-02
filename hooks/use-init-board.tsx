@@ -3,16 +3,14 @@ import { createSupabaseSection } from "@/lib/db-actions/create-new-section";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
-import { useLoadingStore } from "@/store/loading-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
-import { Section, SectionColumns } from "@/types/board-types";
+import { SectionColumns } from "@/types/board-types";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useResetState } from "./user-reset-state";
-import { DEFAULT_COLUMNS } from "@/types/constants";
 import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";
 import { useLayoutStore } from "@/store/layout-store";
 
@@ -44,7 +42,7 @@ export function useInitBoard(
         const initNumCols = board.saved_column_num;
         if (initNumCols) {
           setNumCols(initNumCols);
-          toast(`Number of columns: ${initNumCols}`);
+          // toast(`Number of columns: ${initNumCols}`);
         }
 
         if (board.expired_at && new Date(board.expired_at) <= new Date()) {

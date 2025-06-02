@@ -204,6 +204,7 @@ export default function Board({ boardId }: { boardId: string }) {
           updateSectionColumns(sectionId, fn);
         }
       },
+      draggedBlocks,
       setDraggedBlocks,
       dropIndicatorId,
       setDropIndicatorId,

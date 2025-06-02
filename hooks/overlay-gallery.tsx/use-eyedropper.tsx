@@ -7,7 +7,8 @@ export function useEyedropper(
   imageBlock: MudboardImage,
   selectedBlock: Block,
   initialSize: { width: number; height: number } | null,
-  zoomLevel: number
+  zoomLevel: number,
+  isFlipped: boolean
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [hoveredColor, setHoveredColor] = useState<string | null>(null);
@@ -24,14 +25,32 @@ export function useEyedropper(
     img.src = getImageUrl(imageBlock.image_id, imageBlock.file_ext, "full");
 
     img.onload = () => {
-      if (!selectedBlock.width) return;
+      if (!selectedBlock.width || !selectedBlock.height) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      canvas.width = selectedBlock.width;
+      canvas.height = selectedBlock.height;
+
+      if (isFlipped) {
+        // Flip horizontally
+        ctx.translate(selectedBlock.width, 0);
+        ctx.scale(-1, 1);
+      }
+
       ctx.drawImage(img, 0, 0, selectedBlock.width, selectedBlock.height);
+
+      if (isFlipped) {
+        // Reset transform so it doesn't affect future drawings
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
     };
   }, [
     imageBlock.image_id,
     imageBlock.file_ext,
     selectedBlock.width,
     selectedBlock.height,
+    isFlipped,
   ]);
 
   // when the mouse moves in eyedropper mode! then sample

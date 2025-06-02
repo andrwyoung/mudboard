@@ -9,6 +9,7 @@ import { PositionedBlock } from "@/types/sync-types";
 
 export function handleBlockDrop({
   activeId,
+  // activeBlocksWithPos,
   positionedBlockMap,
   sectionColumns,
   updateSections,
@@ -17,6 +18,7 @@ export function handleBlockDrop({
   toSectionId,
 }: {
   activeId: string;
+  activeBlocksWithPos: PositionedBlock[];
   positionedBlockMap: Map<string, PositionedBlock>;
   sectionColumns: SectionColumns;
   updateSections: (

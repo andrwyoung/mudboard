@@ -8,6 +8,8 @@ import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
 import { Section, SectionColumns } from "@/types/board-types";
 import { findShortestColumn } from "@/lib/columns/column-helpers";
 import { PositionedBlock } from "@/types/sync-types";
+import { handleSectionDrop } from "@/lib/drag-handling/handle-section-drop";
+import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 
 export function getMovingItem(
   activeId: string,
@@ -37,6 +39,7 @@ type UseGalleryHandlersProps = {
   updateSections: (
     updates: Record<string, (prev: Block[][]) => Block[][]>
   ) => void;
+  draggedBlocks: Block[] | null;
   setDraggedBlocks: (img: Block[] | null) => void;
   dropIndicatorId: string | null;
   setDropIndicatorId: (id: string | null) => void;
@@ -50,6 +53,7 @@ export function useGalleryHandlers({
   sections,
   positionedBlockMap,
   updateSections,
+  draggedBlocks,
   setDraggedBlocks,
   dropIndicatorId,
   setDropIndicatorId,
@@ -198,6 +202,12 @@ export function useGalleryHandlers({
       const activeId =
         active.id.toString().match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
 
+      // convert all draggedBlocks into positionedBlocks
+      const activeBlocksWithPos: PositionedBlock[] =
+        draggedBlocks
+          ?.map((block) => positionedBlockMap.get(block.block_id))
+          .filter((b): b is PositionedBlock => b != null) ?? [];
+
       const unscopedDropId = String(dropIndicatorId).split("::")[1] ?? "";
       const dropMatch = unscopedDropId.match(
         /^drop-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-(\d+)-(\d+)$/
@@ -209,13 +219,31 @@ export function useGalleryHandlers({
       console.log("ActiveId ", activeId);
 
       // first we deal with block reorganization
+
       if (dropMatch) {
         const toSectionId = String(dropMatch[1]);
         const toColumnIndex = Number(dropMatch[2]);
         const insertIndex = Number(dropMatch[3]);
 
+        // the case where we're dragging too many blocks
+        if (draggedBlocks && draggedBlocks.length > MAX_DRAGGED_ITEMS) {
+          const targetSection = sections.find(
+            (s) => s.section_id === toSectionId
+          );
+
+          if (!targetSection) return;
+          handleSectionDrop({
+            activeBlocksWithPos,
+            sectionColumns,
+            updateSections,
+            targetSection,
+          });
+          return;
+        }
+
         handleBlockDrop({
           activeId,
+          activeBlocksWithPos,
           positionedBlockMap,
           sectionColumns,
           updateSections,
@@ -229,42 +257,11 @@ export function useGalleryHandlers({
         const sectionIndex = Number(sectionMatch[1]);
         const targetSection = sections[sectionIndex];
 
-        if (!targetSection) return;
-
-        const result = getMovingItem(
-          activeId,
-          positionedBlockMap,
-          sectionColumns
-        );
-        if (!result) return;
-        const { item: movingItem, fromPos } = result;
-
-        if (movingItem.section_id === targetSection.section_id) {
-          return;
-        }
-
-        updateSections({
-          [fromPos.sectionId]: (prev) => {
-            const cols = [...prev];
-            const fromCol = [...cols[fromPos.colIndex]];
-            fromCol.splice(fromPos.rowIndex, 1);
-            cols[fromPos.colIndex] = fromCol;
-            return cols;
-          },
-          [targetSection.section_id]: (prev) => {
-            const toColIndex = findShortestColumn(targetSection.section_id);
-            const toCol = [
-              ...prev[toColIndex],
-              {
-                ...movingItem,
-                section_id: targetSection.section_id,
-              },
-            ];
-            const newCols = prev.map((col, i) =>
-              i === toColIndex ? toCol : col
-            );
-            return newCols;
-          },
+        handleSectionDrop({
+          activeBlocksWithPos,
+          sectionColumns,
+          updateSections,
+          targetSection,
         });
       }
 

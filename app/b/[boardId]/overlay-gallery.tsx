@@ -201,7 +201,7 @@ export default function OverlayGallery({
 
   // eyedropper
   const { canvasRef, hoveredColor, onMouseMove, handleEyedropClick } =
-    useEyedropper(imageBlock, selectedBlock, initialSize, zoomLevel);
+    useEyedropper(imageBlock, selectedBlock, initialSize, zoomLevel, isFlipped);
 
   // keyboard nav
   useEffect(() => {
