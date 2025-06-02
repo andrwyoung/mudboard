@@ -66,19 +66,20 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
   regenerateColumns: () => {
     const masterBlocks = get().masterBlockOrder;
     const numCols = useUIStore.getState().numCols;
+    const sections = useMetadataStore.getState().sections;
 
     const newSectionColumns: SectionColumns = {};
+
+    for (const section of sections) {
+      newSectionColumns[section.section_id] = Array.from(
+        { length: numCols },
+        () => []
+      );
+    }
 
     let i = 0;
     for (const posBlock of masterBlocks) {
       const sectionId = posBlock.block.section_id;
-      if (!newSectionColumns[sectionId]) {
-        newSectionColumns[sectionId] = Array.from(
-          { length: numCols },
-          () => []
-        );
-      }
-
       const index = i % numCols;
       newSectionColumns[sectionId][index].push(posBlock.block);
       i++;

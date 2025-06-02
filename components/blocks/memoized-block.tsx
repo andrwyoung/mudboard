@@ -83,8 +83,8 @@ function BlockComponent({
           data-id={`${scope}::block-${block.block_id}`} // for sortable
           tabIndex={-1}
           className={`flex flex-col rounded-sm object-cover transition-all duration-150 cursor-pointer shadow-md 
-      hover:scale-101 hover:shadow-xl hover:opacity-100
-      relative bg-background
+              hover:scale-101 hover:shadow-xl hover:opacity-100
+              relative bg-background
         ${isDragging ? "opacity-30" : ""} 
         ${isSelected ? "outline-4 outline-secondary" : ""}`}
           onClick={onClick}
