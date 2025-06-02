@@ -5,8 +5,12 @@ import { Block } from "@/types/block-types";
 import React from "react";
 import { MemoizedDropIndicator } from "@/components/drag/drag-indicator";
 import { useUIStore } from "@/store/ui-store";
-import { IMAGE_OVERSCAN_SIZE } from "@/types/upload-settings";
+import {
+  IMAGE_OVERSCAN_SIZE,
+  MAX_DRAGGED_ITEMS,
+} from "@/types/upload-settings";
 import { useGetScope } from "@/hooks/use-get-scope";
+import { useIsMirror } from "./board";
 
 // virtualization
 function getBlockLayout(
@@ -57,7 +61,7 @@ function ColumnComponent({
   columnWidth,
   columnIndex,
   overId,
-  draggedBlocks: draggedBlocks,
+  draggedBlocks,
   selectedBlocks,
   handleItemClick,
   scrollY,
@@ -68,6 +72,11 @@ function ColumnComponent({
   const viewportHeight = window.innerHeight;
   // const isEmpty = column.length === 0;
 
+  const enableDragIndicators =
+    draggedBlocks !== null &&
+    draggedBlocks.length > 0 &&
+    draggedBlocks.length <= MAX_DRAGGED_ITEMS;
+  const isMirror = useIsMirror();
   const scope = useGetScope();
 
   const { items } = getBlockLayout(
@@ -100,7 +109,12 @@ function ColumnComponent({
         {column.length > 0 && (
           <MemoizedDropIndicator
             id={`${scope}::drop-${sectionId}-${columnIndex}-0`}
-            isActive={overId === `${scope}::drop-${sectionId}-${columnIndex}-0`}
+            isActive={
+              enableDragIndicators &&
+              overId === `${scope}::drop-${sectionId}-${columnIndex}-0`
+            }
+            sectionId={sectionId}
+            isMirror={isMirror}
             padding="above"
             // style={{
             //   position: "absolute",
@@ -148,9 +162,12 @@ function ColumnComponent({
                   key={`${scope}::drop-${sectionId}-${columnIndex}-${index}`}
                   id={`${scope}::drop-${sectionId}-${columnIndex}-${index}`}
                   isActive={
+                    enableDragIndicators &&
                     overId ===
-                    `${scope}::drop-${sectionId}-${columnIndex}-${index}`
+                      `${scope}::drop-${sectionId}-${columnIndex}-${index}`
                   }
+                  sectionId={sectionId}
+                  isMirror={isMirror}
                   // style={{
                   //   position: "absolute",
                   //   top,
@@ -177,9 +194,12 @@ function ColumnComponent({
         <MemoizedDropIndicator
           id={`${scope}::drop-${sectionId}-${columnIndex}-${column.length}`}
           isActive={
+            enableDragIndicators &&
             overId ===
-            `${scope}::drop-${sectionId}-${columnIndex}-${column.length}`
+              `${scope}::drop-${sectionId}-${columnIndex}-${column.length}`
           }
+          sectionId={sectionId}
+          isMirror={isMirror}
           padding="bottom"
           // style={{
           //   position: "absolute",

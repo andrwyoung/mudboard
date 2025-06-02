@@ -8,10 +8,12 @@ import { useIsMirror } from "./board";
 import Image from "next/image";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
-import { CanvasScope } from "@/types/board-types";
 import { useGetScope } from "@/hooks/use-get-scope";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { useLayoutStore } from "@/store/layout-store";
+import { useSelectionStore } from "@/store/selection-store";
+import { toast } from "sonner";
+import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 
 export default function Gallery({
   sectionId,
@@ -19,7 +21,6 @@ export default function Gallery({
   draggedBlocks,
   scrollY,
   selectedBlocks,
-  setSelectedBlocks,
   overId,
 }: {
   sectionId: string;
@@ -27,10 +28,6 @@ export default function Gallery({
   draggedBlocks: Block[] | null;
   scrollY: number;
   selectedBlocks: Record<string, Block>;
-  setSelectedBlocks: (
-    scope: CanvasScope,
-    blocks: Record<string, Block>
-  ) => void;
   overId: string | null;
 }) {
   const isMirror = useIsMirror();
@@ -43,6 +40,10 @@ export default function Gallery({
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const sidebarWidth = useLayoutStore((s) => s.sidebarWidth);
+
+  const lastSelectedBlock = useSelectionStore((s) => s.lastSelectedBlock);
+  const setSelectedBlocks = useSelectionStore((s) => s.setSelectedBlocks);
+  const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
 
   const { isOpen: overlayGalleryIsOpen, openOverlay: openOverlayGallery } =
     useOverlayStore(canvasScope);
@@ -79,14 +80,38 @@ export default function Gallery({
 
       if (event.detail === 2) {
         console.log("Double clicked:", block);
-        setSelectedBlocks(canvasScope, { [block.block_id]: block });
+        setSelectedBlocks(canvasScope, { [block.block_id]: block }, block);
         openOverlayGallery(block);
         return;
       }
 
       let newSelected: Record<string, Block> = {};
 
-      if (event.metaKey || event.ctrlKey) {
+      // shift behavior
+      if (
+        event.shiftKey &&
+        lastSelectedBlock?.block_id &&
+        selectedBlocks[lastSelectedBlock.block_id]
+      ) {
+        toast("here");
+        const currentIndex = masterBlockOrder.findIndex(
+          (b) => b.block.block_id === block.block_id
+        );
+        const lastIndex = masterBlockOrder.findIndex(
+          (b) => b.block.block_id === lastSelectedBlock.block_id
+        );
+
+        console.log("grabbing items from");
+
+        if (currentIndex !== -1 && lastIndex !== -1) {
+          const [start, end] = [currentIndex, lastIndex].sort((a, b) => a - b);
+          const inRange = masterBlockOrder.slice(start, end + 1);
+          newSelected = { ...selectedBlocks };
+          inRange.forEach((b) => {
+            newSelected[b.block.block_id] = b.block;
+          });
+        }
+      } else if (event.metaKey || event.ctrlKey) {
         newSelected = { ...selectedBlocks };
         if (newSelected[block.block_id]) {
           delete newSelected[block.block_id];
@@ -97,15 +122,26 @@ export default function Gallery({
         newSelected = { [block.block_id]: block };
       }
 
-      setSelectedBlocks(canvasScope, newSelected);
+      setSelectedBlocks(canvasScope, newSelected, block);
     },
-    [setSelectedBlocks, openOverlayGallery, selectedBlocks, canvasScope]
+    [
+      setSelectedBlocks,
+      openOverlayGallery,
+      selectedBlocks,
+      canvasScope,
+      lastSelectedBlock,
+      masterBlockOrder,
+    ]
   );
 
   return (
     <div
       className={`grid h-full relative ${
         draggedBlocks ? "cursor-grabbing" : "cursor-default"
+      } ${
+        draggedBlocks?.length && draggedBlocks.length > MAX_DRAGGED_ITEMS
+          ? ""
+          : ""
       } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
       style={{
         gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
@@ -142,6 +178,8 @@ export default function Gallery({
           paddingLeft={spacingSize / 2}
           paddingRight={spacingSize / 2}
           key={`${sectionId}-${columnIndex}`}
+          sectionId={sectionId}
+          isMirror={isMirror}
         >
           <MemoizedDroppableColumn
             sectionId={sectionId}

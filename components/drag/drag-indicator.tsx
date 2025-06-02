@@ -7,16 +7,24 @@ function DropIndicator({
   isActive,
   padding,
   style,
+  sectionId,
+  isMirror,
 }: {
   id: string;
   isActive: boolean;
   padding?: "bottom" | "above";
   style?: React.CSSProperties;
+  isMirror: boolean;
+  sectionId: string;
 }) {
   const spacingSize = useUIStore((s) => s.spacingSize);
 
   const { setNodeRef } = useDroppable({
     id,
+    data: {
+      sectionId,
+      isMirror,
+    },
   });
 
   const isPaddingBlock = padding ? true : false;

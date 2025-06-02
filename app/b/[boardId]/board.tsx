@@ -70,7 +70,6 @@ export default function Board({ boardId }: { boardId: string }) {
   // selection stuff
   const selectedSection = useSelectionStore((s) => s.selectedSection);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
-  const setSelectedBlocks = useSelectionStore((s) => s.setSelectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   // virtualization
@@ -314,7 +313,6 @@ export default function Board({ boardId }: { boardId: string }) {
               sectionMap={sectionMap}
               draggedBlocks={draggedBlocks}
               selectedBlocks={selectedBlocks}
-              setSelectedBlocks={setSelectedBlocks}
               dropIndicatorId={dropIndicatorId}
             />
             {mirrorMode && (
@@ -327,7 +325,6 @@ export default function Board({ boardId }: { boardId: string }) {
                   sectionMap={sectionMap}
                   draggedBlocks={draggedBlocks}
                   selectedBlocks={selectedBlocks}
-                  setSelectedBlocks={setSelectedBlocks}
                   dropIndicatorId={dropIndicatorId}
                 />
               </div>

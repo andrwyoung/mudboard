@@ -9,9 +9,11 @@ type SelectionStore = {
   setSelectedSection: (section: Section) => void;
 
   selectedBlocks: Record<string, Block>;
+  lastSelectedBlock: Block | null;
   setSelectedBlocks: (
     scope: CanvasScope,
-    blocks: Record<string, Block>
+    blocks: Record<string, Block>,
+    lastSelected: Block
   ) => void;
   deselectBlocks: () => void;
 };
@@ -23,11 +25,13 @@ export const useSelectionStore = create<SelectionStore>((set, get) => ({
   setSelectedSection: (s: Section) => set({ selectedSection: s }),
 
   selectedBlocks: {},
-  setSelectedBlocks: (scope, blocks) =>
+  lastSelectedBlock: null,
+  setSelectedBlocks: (scope, blocks, lastSelected) =>
     set({
       selectionScope: scope,
       selectedBlocks: blocks,
+      lastSelectedBlock: lastSelected,
     }),
 
-  deselectBlocks: () => set({ selectedBlocks: {} }),
+  deselectBlocks: () => set({ selectedBlocks: {}, lastSelectedBlock: null }),
 }));

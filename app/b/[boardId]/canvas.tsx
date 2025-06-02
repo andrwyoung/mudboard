@@ -5,11 +5,13 @@ import { SCROLLBAR_STYLE } from "@/types/constants";
 import { MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
 import Gallery from "./gallery";
-import { CanvasScope, Section, SectionColumns } from "@/types/board-types";
+import { Section, SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useEffect, useRef, useState } from "react";
 import { useSelectionStore } from "@/store/selection-store";
+import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
+import DroppableGallerySection from "@/components/drag/droppable-gallery-section";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -21,10 +23,6 @@ type CanvasProps = {
 
   draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
-  setSelectedBlocks: (
-    scope: CanvasScope,
-    blocks: Record<string, Block>
-  ) => void;
 
   dropIndicatorId: string | null;
 };
@@ -37,14 +35,14 @@ export default function Canvas({
   sectionMap,
   draggedBlocks,
   selectedBlocks,
-  setSelectedBlocks,
   dropIndicatorId,
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
+  const mirrorKey = isMirror ? "mirror" : "main";
   // overlay gallery stuff
   const { isOpen: overlayGalleryIsOpen, overlayBlock: overlayGalleryBlock } =
-    useOverlayStore(isMirror ? "mirror" : "main");
+    useOverlayStore(mirrorKey);
 
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
 
@@ -136,7 +134,17 @@ export default function Canvas({
                       const key = isMirror ? `mirror-${sectionId}` : sectionId;
                       sectionRefs.current[key] = el;
                     }}
+                    className="relative"
                   >
+                    <DroppableGallerySection
+                      sectionId={section.section_id}
+                      isMirror={isMirror}
+                      isActive={
+                        draggedBlocks !== null &&
+                        draggedBlocks !== undefined &&
+                        draggedBlocks.length > MAX_DRAGGED_ITEMS
+                      }
+                    />
                     <SectionHeader section={sectionMap[sectionId]} />
                     {columns && (
                       <Gallery
@@ -145,7 +153,6 @@ export default function Canvas({
                         draggedBlocks={draggedBlocks}
                         scrollY={scrollY}
                         selectedBlocks={selectedBlocks}
-                        setSelectedBlocks={setSelectedBlocks}
                         overId={dropIndicatorId}
                       />
                     )}

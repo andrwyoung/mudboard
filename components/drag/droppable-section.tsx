@@ -4,12 +4,19 @@ export function DroppableForImages({
   id,
   children,
   highlighted,
+  sectionId,
 }: {
   id: string;
   children: React.ReactNode;
   highlighted: boolean;
+  sectionId: string;
 }) {
-  const { setNodeRef, isOver } = useDroppable({ id });
+  const { setNodeRef, isOver } = useDroppable({
+    id,
+    data: {
+      sectionId,
+    },
+  });
 
   // const isSidebar =
 

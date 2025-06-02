@@ -5,14 +5,22 @@ export function DroppableColumn({
   children,
   paddingLeft,
   paddingRight,
+  sectionId,
+  isMirror,
 }: {
   id: string;
   children: React.ReactNode;
   paddingLeft: number;
   paddingRight: number;
+  sectionId: string;
+  isMirror: boolean;
 }) {
   const { setNodeRef } = useDroppable({
     id,
+    data: {
+      sectionId,
+      isMirror,
+    },
   });
 
   return (

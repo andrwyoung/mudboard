@@ -16,6 +16,7 @@ import { useOverlayStore } from "@/store/overlay-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { useUIStore } from "@/store/ui-store";
+import { useIsMirror } from "@/app/b/[boardId]/board";
 
 export function BlockChooser({
   block,
@@ -60,6 +61,7 @@ function BlockComponent({
   columnWidth: number;
 }) {
   // const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
+  const isMirror = useIsMirror();
   const scope = useGetScope();
 
   const { openOverlay } = useOverlayStore(scope);
@@ -89,7 +91,11 @@ function BlockComponent({
         ${isSelected ? "outline-4 outline-secondary" : ""}`}
           onClick={onClick}
         >
-          <SortableItem id={`${scope}::block-${block.block_id}`}>
+          <SortableItem
+            id={`${scope}::block-${block.block_id}`}
+            isMirror={isMirror}
+            sectionId={block.section_id}
+          >
             {/* <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
           y:{position?.colIndex}, x:{position?.rowIndex}, o:
           {position?.orderIndex}, t:{position?.top}, h:{position?.height}
