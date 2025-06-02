@@ -78,6 +78,7 @@ export default function SectionRow({
         key={thisSection.section_id}
         id={`section-${thisIndex}`}
         highlighted={highlighted}
+        sectionId={thisSection.section_id}
       >
         <ContextMenu
           onOpenChange={(isOpen) => {
