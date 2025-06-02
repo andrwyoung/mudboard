@@ -23,13 +23,15 @@ export type Section = {
 export type Board = {
   board_id: string;
   title: string | null;
+  created_at: string;
+  updated_at: string | null;
 
   user_id: string | null;
   password_hash: string | null;
   access_level: Enums<"access_type">;
 
   saved_column_num?: number;
-  deleted_at: string;
+  expired_at: string;
 };
 
 export type User = {

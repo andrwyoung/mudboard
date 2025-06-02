@@ -100,7 +100,7 @@ export type Database = {
           access_level: Database["public"]["Enums"]["access_type"]
           board_id: string
           created_at: string
-          deleted_at: string | null
+          expired_at: string | null
           password_hash: string | null
           saved_column_num: number | null
           shared_with: string[] | null
@@ -113,7 +113,7 @@ export type Database = {
           access_level?: Database["public"]["Enums"]["access_type"]
           board_id?: string
           created_at?: string
-          deleted_at?: string | null
+          expired_at?: string | null
           password_hash?: string | null
           saved_column_num?: number | null
           shared_with?: string[] | null
@@ -126,7 +126,7 @@ export type Database = {
           access_level?: Database["public"]["Enums"]["access_type"]
           board_id?: string
           created_at?: string
-          deleted_at?: string | null
+          expired_at?: string | null
           password_hash?: string | null
           saved_column_num?: number | null
           shared_with?: string[] | null

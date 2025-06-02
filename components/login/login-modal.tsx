@@ -3,8 +3,6 @@
 // we want redirect to the board they're currently using
 
 "use client";
-import { supabase } from "@/utils/supabase";
-import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,53 +11,18 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { InputDark } from "../ui/input-dark";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { FaQuestionCircle } from "react-icons/fa";
-import { useMetadataStore } from "@/store/metadata-store";
+import { useMagicLogin } from "@/lib/db-actions/user/magic-link-login";
+import InfoTooltip from "../ui/info-tooltip";
 
 export const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export default function LoginModal() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const board = useMetadataStore((s) => s.board);
+  const { email, setEmail, loading, message, sendMagicLink } = useMagicLogin();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    if (email.trim() === "") {
-      setMessage("Please Enter an email address");
-      setLoading(false);
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      setMessage("Please Enter a Valid Email Address");
-      setLoading(false);
-      return;
-    }
-
-    // now send the email
-
-    const baseUrl = window.location.origin;
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: board
-          ? `${baseUrl}/b/${board.board_id}`
-          : `${baseUrl}/logged-in`,
-      },
-    });
-    if (error) {
-      setMessage("Something went wrong. Try again.");
-      console.log("Signup Error: ", error);
-    } else {
-      setMessage("Check your email for a login link!");
-    }
-    setLoading(false);
+    sendMagicLink();
   };
 
   return (
@@ -79,16 +42,7 @@ export default function LoginModal() {
           Sign in to Mudboard
           <div className="flex flex-row gap-1 text-xs items-center text-primary pt-1.5">
             We&apos;ll email you a magic link.
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <FaQuestionCircle className="size-3.5 text-primary translate-y-[1px]" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs text-sm">
-                We use password-free signups! Just enter your email and
-                we&apos;ll send you a magic link. Clicking that link will sign
-                you in instantly — no password needed.
-              </TooltipContent>
-            </Tooltip>
+            <InfoTooltip text="We use password-free signups! Just enter your email and we'll send you a magic link. Clicking that link will sign you in instantly — no password needed." />
           </div>
         </DialogTitle>
         <form onSubmit={handleLogin} className="flex flex-col gap-4 pt-4 pb-2">

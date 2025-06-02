@@ -165,7 +165,7 @@ export default function SectionRow({
               Rename
             </ContextMenuItem>
             <ContextMenuSub>
-              <ContextMenuSubTrigger>Add</ContextMenuSubTrigger>
+              <ContextMenuSubTrigger>Add Block</ContextMenuSubTrigger>
               <ContextMenuSubContent>
                 <ContextMenuItem onClick={() => triggerImagePicker()}>
                   Image
@@ -173,7 +173,7 @@ export default function SectionRow({
                 <ContextMenuItem
                   onClick={() => createTextBlock(thisSection.section_id)}
                 >
-                  Text Block
+                  Text
                 </ContextMenuItem>
               </ContextMenuSubContent>
             </ContextMenuSub>
@@ -181,13 +181,13 @@ export default function SectionRow({
               disabled={thisIndex === 0}
               onClick={() => handleMoveSection("up")}
             >
-              Move Up
+              Reorder Up
             </ContextMenuItem>
             <ContextMenuItem
               disabled={thisIndex === allSections.length - 1}
               onClick={() => handleMoveSection("down")}
             >
-              Move Down
+              Reorder Down
             </ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem

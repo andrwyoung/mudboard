@@ -9,7 +9,7 @@ export function canEditBoard(): boolean {
   const board = useMetadataStore.getState().board;
 
   // if board is expired then no
-  if (board?.deleted_at && new Date(board.deleted_at) <= new Date())
+  if (board?.expired_at && new Date(board.expired_at) <= new Date())
     return false;
 
   if (board?.access_level === "public") return true;

@@ -8,10 +8,16 @@ import PricingTable from "@/components/landing-page/pricing";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
-import { DEMO_BOARD_LINK, NEW_BOARD_LINK } from "@/types/constants";
+import {
+  DASHBOARD_LINK,
+  DEMO_BOARD_LINK,
+  LOGIN_LINK,
+  NEW_BOARD_LINK,
+} from "@/types/constants";
 import Link from "next/link";
 import { FaPinterestP } from "react-icons/fa6";
 import { SiAdobephotoshop } from "react-icons/si";
+import { useMetadataStore } from "@/store/metadata-store";
 
 function FAQItem({
   question,
@@ -80,6 +86,7 @@ function ComparisonTile({
 
 export default function Home() {
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const user = useMetadataStore((s) => s.user);
 
   const [scrolled, setScrolled] = useState(false);
 
@@ -101,15 +108,27 @@ export default function Home() {
       >
         <Logo />
         <div className="flex gap-3">
-          <Link
-            href={NEW_BOARD_LINK}
-            className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
+          {!user ? (
+            <Link
+              href={LOGIN_LINK}
+              className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-white text-sm font-header transition-all duration-500
                 hover:text-white hover:bg-white/30 
                 `}
-          >
-            Blank Board
-          </Link>
+            >
+              Log In
+            </Link>
+          ) : (
+            <Link
+              href={DASHBOARD_LINK}
+              className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
+                rounded-md text-white text-sm font-header transition-all duration-500
+                hover:text-white hover:bg-white/30 
+                `}
+            >
+              Dashboard
+            </Link>
+          )}
           <Link
             href={DEMO_BOARD_LINK}
             className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
@@ -139,7 +158,7 @@ export default function Home() {
         >
           {/* HERO */}
 
-          <div className="flex flex-col items-center justify-center min-h-[90vh] pt-[25vh] text-center">
+          <div className="flex flex-col items-center justify-center min-h-[90vh] pt-[10vh] sm:pt-[25vh] text-center">
             <div
               className=" self-center w-full text-center
             rounded-lg p-2 mb-48"

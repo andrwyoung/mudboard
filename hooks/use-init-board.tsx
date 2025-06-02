@@ -44,7 +44,7 @@ export function useInitBoard(
         const initNumCols = board.saved_column_num;
         if (initNumCols) setNumCols(initNumCols);
 
-        if (board.deleted_at && new Date(board.deleted_at) <= new Date()) {
+        if (board.expired_at && new Date(board.expired_at) <= new Date()) {
           setIsExpired(true);
         }
 
