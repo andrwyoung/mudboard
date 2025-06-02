@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { SortableItem } from "@/components/drag/sortable-wrapper";
-import { Block } from "@/types/block-types";
-import { ImageBlock } from "./image-block";
+import { Block, MudboardImage } from "@/types/block-types";
+import { getImageUrl, ImageBlock } from "./image-block";
 import TextBlock from "./text-block";
 import { useGetScope } from "@/hooks/use-get-scope";
 import {
@@ -12,6 +12,10 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from "../ui/context-menu";
+import { useOverlayStore } from "@/store/overlay-store";
+import { useSelectionStore } from "@/store/selection-store";
+import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
+import { useUIStore } from "@/store/ui-store";
 
 export function BlockChooser({
   block,
@@ -58,6 +62,19 @@ function BlockComponent({
   // const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
   const scope = useGetScope();
 
+  const { openOverlay } = useOverlayStore(scope);
+  const { openOverlay: otherOpenOverlay } = useOverlayStore(
+    scope === "main" ? "mirror" : "main"
+  );
+
+  const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
+  const selectedBlocksLength = Object.entries(selectedBlocks).length;
+  const currentBlockSelected = !!selectedBlocks[block.block_id];
+
+  // throw to other screen
+  const mirrorMode = useUIStore((s) => s.mirrorMode);
+  const toggleMirrorMode = useUIStore((s) => s.toggleMirrorMode);
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
@@ -87,27 +104,79 @@ function BlockComponent({
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem onClick={() => console.log("hey")}>
-          Expand
-        </ContextMenuItem>
-        <ContextMenuItem onClick={() => console.log("hey")}>
-          Open In Mirror
-        </ContextMenuItem>
-        <ContextMenuItem onClick={() => console.log("hey")}>
-          Download
-        </ContextMenuItem>
+        {block.block_type === "image" && (
+          <>
+            <ContextMenuItem onClick={() => openOverlay(block)}>
+              Expand
+            </ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                // if mirror mode not active. first do that:
+                if (!mirrorMode) {
+                  toggleMirrorMode();
+                }
 
-        <ContextMenuSeparator />
-        <ContextMenuItem onClick={() => console.log("hey")}>
-          Group Selected
-        </ContextMenuItem>
+                otherOpenOverlay(block);
+                // then set the overlay to selected image
+              }}
+            >
+              View In Mirror
+            </ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                if (block.data) {
+                  const image = block.data as MudboardImage;
 
-        <ContextMenuSeparator />
+                  const url = getImageUrl(
+                    image.image_id,
+                    image.file_ext,
+                    "full"
+                  );
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }
+              }}
+            >
+              Open in new Tab
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+          </>
+        )}
+
+        {selectedBlocksLength > 1 && currentBlockSelected && (
+          <>
+            <ContextMenuItem onClick={() => console.log("hey")}>
+              Group Selected
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => console.log("hey")}>
+              Download Selected
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => console.log("hey")}>
+              Deselect
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+          </>
+        )}
+
         <ContextMenuItem
-          onClick={() => console.log("hey")}
+          onClick={() => {
+            // default to deleting the current block
+            let blocksToDelete = [block];
+
+            const selectedBlockIds = Object.keys(selectedBlocks);
+
+            // but if there are multiple selected and current block is in there, then delete all
+            if (selectedBlockIds.length > 1 && currentBlockSelected) {
+              blocksToDelete = Object.values(selectedBlocks);
+            }
+
+            softDeleteBlocks(blocksToDelete);
+          }}
           variant="destructive"
         >
-          Delete
+          Delete{" "}
+          {currentBlockSelected &&
+            selectedBlocksLength !== 1 &&
+            selectedBlocksLength}
           <ContextMenuShortcut>Del</ContextMenuShortcut>
         </ContextMenuItem>
       </ContextMenuContent>
