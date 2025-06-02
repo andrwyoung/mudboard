@@ -31,7 +31,7 @@ export default function LoginModal() {
         <button
           type="button"
           title="Login Button"
-          className="w-full py-0.5 rounded-lg bg-white text-primary font-header text-sm
+          className="w-full py-0.5 rounded-lg bg-background text-primary font-header text-sm
              cursor-pointer hover:bg-accent transition-all duration-200"
         >
           Log In

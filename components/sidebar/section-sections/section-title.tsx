@@ -181,13 +181,13 @@ export default function SectionRow({
               disabled={thisIndex === 0}
               onClick={() => handleMoveSection("up")}
             >
-              Reorder Up
+              Move Up
             </ContextMenuItem>
             <ContextMenuItem
               disabled={thisIndex === allSections.length - 1}
               onClick={() => handleMoveSection("down")}
             >
-              Reorder Down
+              Move Down
             </ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem

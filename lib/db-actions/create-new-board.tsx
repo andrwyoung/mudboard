@@ -9,15 +9,17 @@ import { createSupabaseSection } from "./create-new-section";
 import { initializeSectionColumns } from "../columns/new-section-columns";
 
 export async function createNewBoard({
-  title = "Untitled Board",
+  title,
+  claimedBy,
   initializeSection = true,
 }: {
   title?: string;
+  claimedBy?: string;
   initializeSection?: boolean;
 }): Promise<Tables<"boards">> {
   const { data: boardData, error: boardError } = await supabase
     .from("boards")
-    .insert([{ title }])
+    .insert([{ title, user_id: claimedBy }])
     .select()
     .single();
 

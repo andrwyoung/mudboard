@@ -11,6 +11,10 @@ import { claimBoard } from "@/lib/db-actions/claim-board";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { CheckField } from "../ui/check-field";
 import { changeBoardPermissions } from "@/lib/db-actions/change-board-permissions";
+import { DASHBOARD_LINK } from "@/types/constants";
+import Link from "next/link";
+import { FiLogOut } from "react-icons/fi";
+import { FaHome } from "react-icons/fa";
 
 export default function AccountSyncSection() {
   const board = useMetadataStore((s) => s.board);
@@ -81,14 +85,25 @@ export default function AccountSyncSection() {
 
       <div className=" mt-2">
         {user ? (
-          <div className="flex flex-col w-full items-center">
+          <div className="flex flex-col w-full bg-background px-4 py-2 rounded-lg">
+            <Link
+              href={DASHBOARD_LINK}
+              className="flex gap-2 items-center
+              text-primary cursor-pointer hover:text-accent 
+            transition-all duration-300 font-header text-sm font-bold"
+            >
+              <FaHome />
+              Dashboard
+            </Link>
             <button
               type="button"
               title="Logout Button"
               onClick={() => supabase.auth.signOut()}
-              className="text-white text-sm font-bold font-header
+              className="flex gap-2 items-center
+              text-primary text-sm font-bold font-header
              cursor-pointer hover:text-accent transition-all duration-200"
             >
+              <FiLogOut />
               Logout
             </button>
           </div>
