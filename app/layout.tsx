@@ -1,5 +1,7 @@
 import "./globals.css";
 import { Recursive, Gantari, Overpass_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import Head from "next/head";
@@ -126,6 +128,8 @@ export default function RootLayout({
         <LoginDetector />
         {children}
         <Toaster />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

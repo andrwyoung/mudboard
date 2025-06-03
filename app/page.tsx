@@ -239,16 +239,16 @@ export default function Home() {
               >
                 PureRef is amazing for custom layouts. Mudboard trades
                 flexibility for speed, so it&apos;s designed to get you started
-                instantly and works from any device.
+                faster and works from any device.
               </ComparisonTile>
 
               <ComparisonTile
                 title="Photoshop (or CSP)"
                 icon={<SiAdobephotoshop className="size-5" />}
               >
-                Mudboard isn't meant to replace these, but rather helps to keeps
-                your images organized outside your canvas that you don't have to
-                manage your references in the same program.
+                Mudboard isn&apos;t meant to replace these, but rather helps to
+                keeps your images organized outside your canvas that you
+                don&apos;t have to manage your references in the same program.
               </ComparisonTile>
 
               <ComparisonTile
