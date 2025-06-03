@@ -1,4 +1,10 @@
-// /hooks/use-blocks-by-section.ts
+// this is the hook used to initiaze a board
+// O: clear the previous data....this is pretty important
+// 1: grab the board itself
+// 2: grab the sections (initialize 1 if there's none...which should never be)
+// 3: grab all the blocks
+// 4: shove blocks into their sections/columns
+
 import { createSupabaseSection } from "@/lib/db-actions/create-new-section";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";

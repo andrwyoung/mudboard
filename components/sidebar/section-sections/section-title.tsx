@@ -1,3 +1,8 @@
+// you know in the sidebar, there's a list of sections you can click?
+// this component is one of those rows
+
+// sorry. component naming
+
 import { useSelectionStore } from "@/store/selection-store";
 import { Section } from "@/types/board-types";
 import React, { RefObject, useRef, useState } from "react";

@@ -1,4 +1,5 @@
 // types for boards
+// NOTE: look at types/supabase.ts because that's where we keep the database accurate types
 
 import { Block } from "./block-types";
 import { Enums } from "./supabase";

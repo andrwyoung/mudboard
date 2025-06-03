@@ -1,7 +1,7 @@
+// here's the file we use to import images, but mainly here to handle the drag and drop behaviors.
+// upload-images.tsx (which is called here) is the one handling the meat of the logic/uploading
+
 import { useEffect } from "react";
-import { CompressedImage } from "@/lib/upload-images/processing/compress-image";
-import { imageNames } from "@/types/upload-settings";
-import { BlockInsert, MudboardImage } from "@/types/block-types";
 import { uploadImages } from "@/lib/upload-images/upload-images";
 import { Section } from "@/types/board-types";
 import { toast } from "sonner";
@@ -10,20 +10,6 @@ import { getImageBlobSmart } from "@/lib/upload-images/url-handling/fetch-image-
 import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 import { canEditBoard } from "../lib/auth/can-edit-board";
 import { upgradePinterestImage } from "@/lib/upload-images/url-handling/upgrade-pinterets-image";
-
-type PreparedImage = {
-  image_id: string;
-  original_name: string;
-  fileExt: string;
-
-  variants: Record<imageNames, CompressedImage>;
-  blurhash?: string;
-
-  objectUrl: string;
-  newImage: MudboardImage;
-  bestEffortBlock: BlockInsert;
-  tempBlockId: string;
-};
 
 export function useImageImport({
   selectedSection,

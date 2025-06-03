@@ -1,3 +1,6 @@
+// this is the helper that helps bring up the file selector whenever we
+// click on a "add image" button
+
 import { useRef } from "react";
 import { uploadImages } from "@/lib/upload-images/upload-images";
 

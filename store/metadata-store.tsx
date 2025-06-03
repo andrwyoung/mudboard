@@ -3,8 +3,10 @@
 
 import { Board, Section } from "@/types/board-types";
 import { create } from "zustand";
-import { UserProfile } from "./user-store";
 import { User } from "@supabase/supabase-js";
+import { Tables } from "@/types/supabase";
+
+export type UserProfile = Tables<"users">;
 
 type MetadataStore = {
   board: Board | null;

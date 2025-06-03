@@ -1,3 +1,5 @@
+// I'm really bad at remembering to use this
+
 import { useIsMirror } from "@/app/b/[boardId]/board";
 import { CanvasScope } from "@/types/board-types";
 

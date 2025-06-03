@@ -1,4 +1,5 @@
 // when a user drags in an image from another website
+
 // first try using frontend to grab it (usually fails)
 // if not then we go through our proxy
 

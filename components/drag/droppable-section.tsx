@@ -1,5 +1,5 @@
-// the title is confusing, but you know how you can drop images into the
-// section headers in the sidebar? well this is the thing that lets you do that
+// the title is confusing, but you know how in the sidebar you can drop images into the
+// section headers? well this is the thing that lets you do that
 
 import { useDroppable } from "@dnd-kit/core";
 

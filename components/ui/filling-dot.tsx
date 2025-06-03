@@ -1,3 +1,5 @@
+// the cool dot thing. when you hover it fills itself in lol
+
 import React from "react";
 
 export default function FillingDot({

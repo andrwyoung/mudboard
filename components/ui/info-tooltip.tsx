@@ -1,3 +1,5 @@
+// tooltip. with text. nice
+
 "use client";
 import {
   Tooltip,

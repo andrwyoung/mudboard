@@ -1,3 +1,5 @@
+// NOT USED (for now). this is the simple password thing we have
+
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { toast } from "sonner";

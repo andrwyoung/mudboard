@@ -1,4 +1,4 @@
-// this action is PURELY creating a section in the database.
+// this funcion PURELY create a section in the database.
 // since there are a lot of different scenarios where we create a section
 // this is just a utility function for others to use
 
