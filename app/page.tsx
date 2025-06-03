@@ -87,7 +87,7 @@ function ComparisonTile({
 }
 
 export default function Home() {
-  const [copiedEmail, setCopiedEmail] = useState(false);
+  // const [copiedEmail, setCopiedEmail] = useState(false);
   const user = useMetadataStore((s) => s.user);
 
   const [scrolled, setScrolled] = useState(false);
@@ -306,24 +306,22 @@ export default function Home() {
               <FAQItem question="Do I need to sign up to use the app?">
                 <span className="text-accent font-bold">No sign-up needed</span>{" "}
                 to make and share boards! Signup is only neccesary if want to{" "}
-                <strong>claim</strong> a board so that no one else can edit it.
-                Note that unclaimed boards will be deleted in 7 days.
+                <strong>save</strong> a board. Note that unsaved boards will be
+                deleted in 7 days.
               </FAQItem>
-              <FAQItem question="What does it mean to claim a board?">
+              {/* <FAQItem question="What does it mean to claim a board?">
                 Claiming a board means that it&apos;s linked to your account and
                 no one can else edit it. Note that claiming does not neccesarily
                 mean that it won&apos;t expire, since Free accounts can only
                 keep 1 board around permanently.
-              </FAQItem>
+              </FAQItem> */}
               <FAQItem question="Who can see or edit my board?">
                 All boards are{" "}
                 <span className="text-accent font-bold">
                   private by default
                 </span>
-                , meaning they’re unlisted and can’t be found unless you share
-                the link. When you do share a board, anyone with the link can
-                view and edit it <strong>unless</strong> you’ve signed in and
-                claimed it.
+                . They can&apos;t be found unless you share the link, and
+                can&apos;t be edited unless you allow it in your settings.
               </FAQItem>
               <FAQItem question="How does Free Tier work?">
                 Free users get{" "}
@@ -342,19 +340,19 @@ export default function Home() {
                 uncompressed uploads), but this won&apos;t affect your current
                 tier.
               </FAQItem>
-              <FAQItem question="Do you provide one time payment options?">
+              {/* <FAQItem question="Do you provide one time payment options?">
                 I really love how Clip Studio Paint and Procreate are one time
                 payments. But since we&apos;re on the cloud and have ongoing
                 storage/hosting costs on our end, we&apos;ve gone with a monthly
                 model to keep things simple (and so we don&apos;t need to run
                 ads).
-              </FAQItem>
+              </FAQItem> */}
               <FAQItem question="What happens to my boards if I cancel?">
                 To keep storage costs manageable (and protect against abuse),
                 boards are deleted 7 days after cancellation. But feel free to
                 reach out if you would like to work something out!
               </FAQItem>
-              <FAQItem question="What's the best way to reach out?">
+              {/* <FAQItem question="What's the best way to reach out?">
                 We would love to hear from you:{" "}
                 <button
                   type="button"
@@ -369,6 +367,20 @@ export default function Home() {
                 >
                   {copiedEmail ? "Email Copied!" : "Click to Copy Email"}
                 </button>
+              </FAQItem> */}
+              <FAQItem question="How do I reach out or get involved?">
+                Great question! We’re always looking for early testers and folks
+                to help shape the direction of this app. You can find out{" "}
+                <Link
+                  href="/get-involved"
+                  className="text-accent underline hover:text-white transition-all duration-200 font-bold"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  more info here
+                </Link>
+                .
               </FAQItem>
             </div>
           </div>
