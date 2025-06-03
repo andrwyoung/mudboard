@@ -2,6 +2,7 @@
 
 import { JSX } from "react";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 type Plan = {
   name: string;
@@ -27,9 +28,9 @@ const plans: Plan[] = [
     ctaHref: "/demo",
   },
   {
-    name: "Run Wild",
+    name: "Early Supporter",
     price: "$5 / month",
-    description: "Pricing is for first 250 users in beta.",
+    description: "Pricing is for early supporters in Beta",
     features: [
       <span className="font-header " key="unlimited">
         <span className="font-header font-bold text-accent">Unlimited</span>{" "}
@@ -40,18 +41,20 @@ const plans: Plan[] = [
       "Lock in price forever",
       "Early supporter street cred",
     ],
-    ctaText: "Start Creating",
-    ctaHref: "/app",
+    ctaText: "Join Waitlist",
+    ctaHref: "/get-involved",
     highlight: true,
   },
   {
     name: "More Coming Soon",
     price: "TBD",
-    description: "More features. More tools.",
+    description: "Here are some of my ideas:",
     features: [
+      "Collaboration + Versioning",
+      "Timed Gesture Drawings",
+      "Portfolio features",
       "Video support",
       "Uncompressed file uploads",
-      "Collaboration + Versioning",
     ],
   },
 ];
@@ -84,13 +87,16 @@ export default function PricingTable() {
             </ul>
           </div>
           {plan.ctaHref && plan.ctaText && (
-            <Button
-              // href={plan.ctaHref}
-              variant={"secondary"}
-              className={`font-header ${plan.highlight && "bg-secondary"}`}
-            >
-              {plan.ctaText}
-            </Button>
+            <Link href={plan.ctaHref} className="w-full">
+              <Button
+                variant={"secondary"}
+                className={`w-full font-header ${
+                  plan.highlight && "bg-secondary"
+                }`}
+              >
+                {plan.ctaText}
+              </Button>
+            </Link>
           )}
         </div>
       ))}

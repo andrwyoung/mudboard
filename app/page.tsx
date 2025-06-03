@@ -170,7 +170,7 @@ export default function Home() {
               </h1>
               <div className="flex flex-col items-center">
                 <p className="max-w-lg text-sm text-accent font-bold">
-                  Open Alpha • Testing Phase
+                  Early testing • Come try it!
                 </p>
                 {/* <p className="text-md mb-14 w-full">
                   For illustrators who’d rather sketch than spend 30 minutes
@@ -185,19 +185,21 @@ export default function Home() {
               </div>
 
               {/* CTA */}
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-2">
                 <Link
                   href={DEMO_BOARD_LINK}
-                  className="flex gap-2 items-center px-6 py-2 bg-accent justify-center
-                rounded-md text-primary text-lg font-header transition-all duration-300
+                  className="flex flex-col px-6 py-2 bg-accent justify-center
+                rounded-md text-primary text-xl font-header transition-all duration-300
                 hover:text-white hover:bg-accent/90"
                 >
-                  <FaPlay className="size-4 translate-y-[1px]" />
-                  Try a Demo Board
+                  <div className="flex gap-2 items-center">
+                    <FaPlay className="size-4 translate-y-[1px]" />
+                    <h1>Try the Demo Board</h1>
+                  </div>
+                  <p className="text-xs font-semibold -translate-y-[2px]">
+                    (No Signup Required)
+                  </p>
                 </Link>
-                <p className="text-xs font-semibold mt-1 mb-3">
-                  No Signup Required
-                </p>
 
                 <Link
                   href={NEW_BOARD_LINK}
@@ -250,9 +252,9 @@ export default function Home() {
                 title="Photoshop (or CSP)"
                 icon={<SiAdobephotoshop className="size-5" />}
               >
-                Mudboard isn&apos;t meant to replace these, but rather helps to
-                keeps your images organized outside your canvas that you
-                don&apos;t have to manage your references in the same program.
+                Mudboard isn&apos;t meant to replace these, but rather helps you
+                keep your references organized outside your canvas so you
+                don&apos;t have to manage them in the same program.
               </ComparisonTile>
 
               <ComparisonTile
@@ -289,12 +291,11 @@ export default function Home() {
             <h2 className="text-2xl font-bold mb-2 text-center">
               Planned Pricing (not implemented yet)
             </h2>
-            <p className="text-center mb-8 text-sm font-semibold">
+            <p className="text-center mb-8 text-sm">
               Pricing isn&apos;t final yet, but here&apos;s the ballpark
-              estimate for what I&apos;ll launch with. Later on I was going to
-              probably do a $6 tier with more limited features and a $12-15
-              tier. Really, the reason I charge is to protect me from storage
-              costs.
+              estimate for what I&apos;ll launch with. Later I was probably
+              gonna do a $6-7 tier with more limited features and a $12-15 tier.
+              Really, the reason I charge is to protect me from storage costs.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2">
               <PricingTable />
@@ -351,13 +352,14 @@ export default function Home() {
                 ads).
               </FAQItem> */}
               <FAQItem question="Will my boards be deleted?">
-                Right now no (also cause I haven&apos;t implemented that yet).
-                But to keep storage costs manageable, and protect against abuse,
-                I plan to delete unsaved boards after 7 days from creation.
+                Right now no (mainly cause I haven&apos;t implemented that yet
+                lol). But to keep storage costs manageable, and protect against
+                abuse, I plan to delete <strong>unsaved boards</strong> after 7
+                days of creation.
                 <br /> If you create a board before I implement the limits, you
                 can keep it forever (
                 <span className="text-accent font-bold">within reason</span>
-                ...so don&apos;t go making 100 boards)
+                ...so don&apos;t go making like 30 boards)
               </FAQItem>
               {/* <FAQItem question="What happens to my boards if I cancel?">
                 To keep storage costs manageable (and protect against abuse),
