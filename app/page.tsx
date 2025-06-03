@@ -180,12 +180,12 @@ export default function Home() {
                 <p className="text-md mb-14 w-full">
                   For illustrators who’d rather spend 30 minutes sketching than
                   <br />
-                  wrestling with their references
+                  wrangling their reference library
                 </p>
               </div>
 
               {/* CTA */}
-              <div className="flex flex-col items-center justify-center gap-2">
+              <div className="flex flex-col items-center justify-center">
                 <Link
                   href={DEMO_BOARD_LINK}
                   className="flex gap-2 items-center px-6 py-2 bg-accent justify-center
@@ -195,6 +195,10 @@ export default function Home() {
                   <FaPlay className="size-4 translate-y-[1px]" />
                   Try a Demo Board
                 </Link>
+                <p className="text-xs font-semibold mt-1 mb-3">
+                  No Signup Required
+                </p>
+
                 <Link
                   href={NEW_BOARD_LINK}
                   className="font-header font-semibold hover:underline hover:text-accent 
@@ -306,8 +310,7 @@ export default function Home() {
               <FAQItem question="Do I need to sign up to use the app?">
                 <span className="text-accent font-bold">No sign-up needed</span>{" "}
                 to make and share boards! Signup is only neccesary if want to{" "}
-                <strong>save</strong> a board. Note that unsaved boards will be
-                deleted in 7 days.
+                <strong>save</strong> a board.
               </FAQItem>
               {/* <FAQItem question="What does it mean to claim a board?">
                 Claiming a board means that it&apos;s linked to your account and
@@ -323,7 +326,7 @@ export default function Home() {
                 . They can&apos;t be found unless you share the link, and
                 can&apos;t be edited unless you allow it in your settings.
               </FAQItem>
-              <FAQItem question="How does Free Tier work?">
+              {/* <FAQItem question="How does Free Tier work?">
                 Free users get{" "}
                 <span className="text-accent font-bold">full access</span> to
                 all features. You can create any number of boards, but only 1 of
@@ -339,7 +342,7 @@ export default function Home() {
                 We may add limits when we support larger files (like video or
                 uncompressed uploads), but this won&apos;t affect your current
                 tier.
-              </FAQItem>
+              </FAQItem> */}
               {/* <FAQItem question="Do you provide one time payment options?">
                 I really love how Clip Studio Paint and Procreate are one time
                 payments. But since we&apos;re on the cloud and have ongoing
@@ -347,11 +350,20 @@ export default function Home() {
                 model to keep things simple (and so we don&apos;t need to run
                 ads).
               </FAQItem> */}
-              <FAQItem question="What happens to my boards if I cancel?">
+              <FAQItem question="Will my boards be deleted?">
+                Right now no (also cause I haven&apos;t implemented that yet).
+                But to keep storage costs manageable, and protect against abuse,
+                I plan to delete unsaved boards after 7 days from creation.
+                <br /> If you create a board before I implement the limits, you
+                can keep it forever (
+                <span className="text-accent font-bold">within reason</span>
+                ...so don&apos;t go making 100 boards)
+              </FAQItem>
+              {/* <FAQItem question="What happens to my boards if I cancel?">
                 To keep storage costs manageable (and protect against abuse),
                 boards are deleted 7 days after cancellation. But feel free to
                 reach out if you would like to work something out!
-              </FAQItem>
+              </FAQItem> */}
               {/* <FAQItem question="What's the best way to reach out?">
                 We would love to hear from you:{" "}
                 <button
