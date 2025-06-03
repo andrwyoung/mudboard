@@ -194,7 +194,7 @@ export default function Home() {
                 >
                   <div className="flex gap-2 items-center">
                     <FaPlay className="size-4 translate-y-[1px]" />
-                    <h1>Try the Demo Board</h1>
+                    <h1>Try Demo Board</h1>
                   </div>
                   <p className="text-xs font-semibold -translate-y-[2px]">
                     (No Signup Required)
@@ -310,8 +310,8 @@ export default function Home() {
             <div className="space-y-4">
               <FAQItem question="Do I need to sign up to use the app?">
                 <span className="text-accent font-bold">No sign-up needed</span>{" "}
-                to make and share boards! Signup is only neccesary if want to{" "}
-                <strong>save</strong> a board.
+                to make and share boards! You only need to sign up if you want
+                to <strong>save</strong> a board.
               </FAQItem>
               {/* <FAQItem question="What does it mean to claim a board?">
                 Claiming a board means that it&apos;s linked to your account and

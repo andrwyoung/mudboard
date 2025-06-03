@@ -18,10 +18,11 @@ const plans: Plan[] = [
   {
     name: "Free",
     price: "$0",
-    description: "Try it out!",
+    description:
+      "Try it out! These limits aren't implemented yet. It's just what I was thinking of doing",
     features: [
       "Access all features",
-      "1 forever board",
+      "2 forever board",
       "All other boards are deleted after 7 days",
     ],
     ctaText: "Try the Demo",
@@ -54,7 +55,7 @@ const plans: Plan[] = [
       "Timed Gesture Drawings",
       "Portfolio features",
       "Video support",
-      "Uncompressed file uploads",
+      "Uncompressed file uploads + sharing",
     ],
   },
 ];

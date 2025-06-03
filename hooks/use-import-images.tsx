@@ -6,10 +6,9 @@ import { uploadImages } from "@/lib/upload-images/upload-images";
 import { Section } from "@/types/board-types";
 import { toast } from "sonner";
 import { isImageUrl } from "@/utils/upload-helpers";
-import { getImageBlobSmart } from "@/lib/upload-images/url-handling/fetch-image-from-url";
 import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 import { canEditBoard } from "../lib/auth/can-edit-board";
-import { upgradePinterestImage } from "@/lib/upload-images/url-handling/upgrade-pinterets-image";
+import { tryImportImageFromUrl } from "@/lib/upload-images/url-handling/import-image-from-url";
 
 export function useImageImport({
   selectedSection,
@@ -121,24 +120,41 @@ export function useImageImport({
       console.log("this is the url we are trying to get: ", imageUrl);
 
       if (imageUrl) {
-        // Pinterest 236x → 736x upgrade
-        const upgradedUrl = upgradePinterestImage(imageUrl);
+        tryImportImageFromUrl(imageUrl, selectedSection.section_id);
+      }
+    }
 
-        // grab the image itself
-        // Try high-res version first
-        let blob = await getImageBlobSmart(upgradedUrl);
+    function handlePaste(e: ClipboardEvent) {
+      if (!canEditBoard()) {
+        console.log("Can't edit board. Not allowing paste");
+        return;
+      }
 
-        // If that fails, fallback to original 236x
-        if (!blob && upgradedUrl !== imageUrl) {
-          blob = await getImageBlobSmart(imageUrl);
+      if (!selectedSection || selectedSection.section_id.trim() === "") {
+        toast.error("No Selected Section");
+        return;
+      }
+
+      const clipboardItems = e.clipboardData?.items;
+      if (!clipboardItems) return;
+
+      for (const item of clipboardItems) {
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          if (file) {
+            uploadImages([file], selectedSection.section_id);
+            return;
+          }
         }
 
-        if (blob) {
-          const filename = imageUrl.split("/").pop() ?? "image.jpg";
-          const file = new File([blob], filename, { type: blob.type });
-          uploadImages([file], selectedSection.section_id);
-        } else {
-          toast.error("Failed to load image — source may block downloads.");
+        if (item.kind === "string" && item.type === "text/plain") {
+          item.getAsString(async (text) => {
+            const maybeImage = resolveProxiedImageUrl(text);
+            const imageUrl = maybeImage || text;
+
+            if (!isImageUrl(imageUrl)) return;
+            tryImportImageFromUrl(text, selectedSection.section_id);
+          });
         }
       }
     }
@@ -147,12 +163,14 @@ export function useImageImport({
     window.addEventListener("dragover", handleDragOver);
     window.addEventListener("drop", handleDrop);
     window.addEventListener("dragleave", handleDragLeave);
+    window.addEventListener("paste", handlePaste);
 
     return () => {
       window.removeEventListener("dragenter", handleDragEnter);
       window.removeEventListener("dragover", handleDragOver);
       window.removeEventListener("drop", handleDrop);
       window.removeEventListener("dragleave", handleDragLeave);
+      window.removeEventListener("paste", handlePaste);
     };
   }, [selectedSection]);
 }
