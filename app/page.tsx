@@ -213,16 +213,16 @@ export default function Home() {
 
           <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-0 mb-24">
             <h2 className="text-2xl font-bold mb-6 text-center">
-              What about other programs?
+              How is Mudboard different?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm sm:text-base">
               <ComparisonTile
                 title="Pinterest"
                 icon={<FaPinterestP className="size-5" />}
               >
-                A bit hard to use it as a reference board. Saved boards are
-                nice, but the layout isn&apos;t really meant for advanced
-                viewing or rearranging. A lot of ads too...
+                Great for inspiration and reference gathering. Mudboard focuses
+                specifically on organizing and viewing your reference images in
+                a clear, distraction-free layout.
               </ComparisonTile>
 
               <ComparisonTile
@@ -237,18 +237,18 @@ export default function Home() {
                   />
                 }
               >
-                I love PureRef, and have used it for years! But as with any
-                freeform canvas program, building scenes takes a while. And I
-                didn&apos;t like how my files are stuck on one device.
+                PureRef is amazing for custom layouts. Mudboard trades
+                flexibility for speed, so it&apos;s designed to get you started
+                instantly and works from any device.
               </ComparisonTile>
 
               <ComparisonTile
-                title="Photoshop (or file explorer)"
+                title="Photoshop (or CSP)"
                 icon={<SiAdobephotoshop className="size-5" />}
               >
-                This is what I was doing before: pasting images in to CSP or
-                even just clicking through photos in Preview. It...works. But
-                it&apos;s a mess, and hard to go back to something later on.
+                Mudboard isn't meant to replace these, but rather helps to keeps
+                your images organized outside your canvas that you don't have to
+                manage your references in the same program.
               </ComparisonTile>
 
               <ComparisonTile
