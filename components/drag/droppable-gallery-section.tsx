@@ -1,3 +1,6 @@
+// this is the green overlay when you drag 2 or more images over a section
+// it's important only because it lets people know that you can drop into sections
+
 import { useGetScope } from "@/hooks/use-get-scope";
 import { useDroppable } from "@dnd-kit/core";
 import React from "react";

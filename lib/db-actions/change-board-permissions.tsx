@@ -1,3 +1,6 @@
+// here's the function that let's people change the board permissions
+// at time of writing it's only public/private
+
 import { useMetadataStore } from "@/store/metadata-store";
 import { Enums } from "@/types/supabase";
 import { supabase } from "@/utils/supabase";

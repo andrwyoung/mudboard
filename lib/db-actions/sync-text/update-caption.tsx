@@ -1,4 +1,4 @@
-// all misc db-actions for an image block
+// this is how we add a caption
 
 import { supabase } from "@/utils/supabase";
 import { useLayoutStore } from "@/store/layout-store";

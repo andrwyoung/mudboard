@@ -1,3 +1,6 @@
+// not to be confused with sidebar.tsx
+// this is just the minimized sidebar component
+
 import Image from "next/image";
 import Link from "next/link";
 import { CollapseArrow } from "../ui/sidebar/collapse-arrow";

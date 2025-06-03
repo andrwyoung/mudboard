@@ -1,5 +1,6 @@
-"use client";
+// this is the function that sends the magic link for people to log in
 
+"use client";
 import { useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";

@@ -1,3 +1,6 @@
+// this is how we render the image blocks
+// it's in charge of which resolution size to fetch and how to handle the blurhash
+
 import { Block, MudboardImage } from "@/types/block-types";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";

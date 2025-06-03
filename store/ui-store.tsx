@@ -1,3 +1,7 @@
+// this is mostly just how the gallery looks, but it's also very
+// very important because we need these numbers to measure the columns widths
+// for virtualization
+
 import {
   DEFAULT_COLUMNS,
   DEFAULT_GALLERY_SPACING,

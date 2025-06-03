@@ -1,3 +1,5 @@
+// landing page stuff. the pricing tiers
+
 import { JSX } from "react";
 import { Button } from "../ui/button";
 

@@ -1,6 +1,4 @@
-// DEPRECATED
 // these functions used to be used to determine where we insert new blocks in a column
-// but sync-order.tsx takes care of that now
 
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";

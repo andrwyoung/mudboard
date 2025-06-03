@@ -1,3 +1,5 @@
+// this is mostly ui stuff. half of it is not used anyways lol
+
 import { DEFAULT_COLUMNS } from "@/types/constants";
 import { create } from "zustand";
 

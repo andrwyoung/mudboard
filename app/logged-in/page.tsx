@@ -1,3 +1,6 @@
+// DEPRECATED: this was the page we used to redirect people to
+// once they logged in successfully. now we just direct them to /dashboard
+
 "use client";
 
 import Logo from "@/components/ui/logo";

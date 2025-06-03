@@ -2,6 +2,9 @@
 // 2. if board has not been claimed already, then claim it
 // 3. update locally
 
+// note that this function is really only used if you're not logged in
+// we automatically assign a board to a user if they make a new baord logged in
+
 import { useMetadataStore } from "@/store/metadata-store";
 import { Enums } from "@/types/supabase";
 import { supabase } from "@/utils/supabase";

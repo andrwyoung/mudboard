@@ -1,3 +1,5 @@
+// NOT USED
+
 import { allowedOrigins } from '@/types/upload-settings';
 import { NextResponse } from 'next/server';
 

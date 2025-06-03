@@ -1,3 +1,5 @@
+// this is the entry point for when we want to see a board
+
 import { notFound } from "next/navigation";
 import Board from "./board";
 import { checkIfBoardExists } from "@/lib/db-actions/check-board-exist";

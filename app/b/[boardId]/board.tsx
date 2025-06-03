@@ -1,3 +1,20 @@
+// a board is composed of:
+// 1: sidebar in sidebar.tsx
+// 2: one or 2 canvases depending if mirror mode is active
+
+// structure breakdown:
+// board -> 1 sidebar + 1 canvas + 1 additional canvas if mirror is active
+// canvas -> 1 gallery per section
+// gallery -> 1 section header + columns
+// column -> blocks
+// block -> text block or image block
+
+// the board is in charge of initializing all the data
+// and then dealing with the drag and drop logic
+
+// board.tsx doesn't really handle regenerating and syncing things whenever
+// things change. rather, layout-store does the lion's share of that
+
 "use client";
 import {
   createContext,

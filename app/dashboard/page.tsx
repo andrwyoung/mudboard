@@ -1,5 +1,6 @@
-"use client";
+// this is the dashboard that shows all the boards you have
 
+"use client";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase";
 import Logo from "@/components/ui/logo";
@@ -93,7 +94,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background text-primary p-6 relative">
       {/* Logo */}
       <div className="absolute top-4 left-6">
-        <Logo color="brown" />
+        <Logo color="brown" enforceHome={true} />
       </div>
 
       {/* Header */}

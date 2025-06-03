@@ -1,5 +1,8 @@
-"use client";
+// this it the full login page. after successful login here, they're redirected to /dashboard
+// note that login-modal.tsx contains the popup login
+// modal for if they want to log in on the spot
 
+"use client";
 import { useMagicLogin } from "@/lib/db-actions/user/magic-link-login";
 import { InputDark } from "@/components/ui/input-dark";
 import { Button } from "@/components/ui/button";

@@ -1,3 +1,5 @@
+// this what a text block looks like
+
 import { Block, TextBlockType } from "@/types/block-types";
 import { TEXT_BLOCK_HEIGHT } from "@/types/upload-settings";
 import InlineEditText from "../ui/inline-edit";

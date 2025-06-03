@@ -1,3 +1,6 @@
+// DEPRECATED for the newer cleanup-unused-images.ts
+// this didn't work anyways lol....
+
 import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 

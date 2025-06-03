@@ -1,3 +1,8 @@
+// KEY FILE: delete any images that aren't associated with any blocks
+// this means it's no longer being used
+
+// do "npm run declutter" to use this
+
 import 'dotenv/config';
 import promptSync from 'prompt-sync';
 import { createClient } from '@supabase/supabase-js';

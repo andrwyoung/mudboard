@@ -1,3 +1,6 @@
+// types for blocks
+// NOTE: look at types/supabase.ts because that's where we keep the database accurate types
+
 import { Tables, TablesInsert } from "./supabase";
 
 export type ImageInsert = TablesInsert<"images">;

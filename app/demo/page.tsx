@@ -1,3 +1,5 @@
+// this is the link we go through to create a demo board
+
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";

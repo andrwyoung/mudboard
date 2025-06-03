@@ -1,3 +1,5 @@
+// this is what a block is
+
 import { memo } from "react";
 import { SortableItem } from "@/components/drag/sortable-wrapper";
 import { Block, MudboardImage } from "@/types/block-types";

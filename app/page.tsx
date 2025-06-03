@@ -1,3 +1,5 @@
+// landing page
+
 "use client";
 
 import Logo from "@/components/ui/logo";
@@ -106,7 +108,7 @@ export default function Home() {
           scrolled ? "bg-primary/95 backdrop-blur-md" : "bg-transparent"
         }`}
       >
-        <Logo />
+        <Logo enforceHome={true} />
         <div className="flex gap-3">
           {!user ? (
             <Link

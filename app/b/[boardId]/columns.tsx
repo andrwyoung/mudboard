@@ -1,3 +1,5 @@
+// a single column in a gallery
+
 import { memo } from "react";
 import { SortableContext } from "@dnd-kit/sortable";
 import { MemoizedBlock } from "@/components/blocks/memoized-block";

@@ -1,3 +1,6 @@
+// here is where we keep info about the board, sections and user
+// the blocks and columns (the more important stuff) are kept in layout-store.tsx
+
 import { Board, Section } from "@/types/board-types";
 import { create } from "zustand";
 import { UserProfile } from "./user-store";

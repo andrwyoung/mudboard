@@ -1,3 +1,5 @@
+// this is the link we go through to create a new board
+
 "use client";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";

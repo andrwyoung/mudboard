@@ -1,3 +1,5 @@
+// this is the wrapper that allows things to be dropped into columns
+
 import { useDroppable } from "@dnd-kit/core";
 
 export function DroppableColumn({

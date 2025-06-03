@@ -1,3 +1,6 @@
+// this is the brown sidebar people see whenever they have a board open
+// note that collapsed-sidebar.tsx is different, and has it's own file
+
 import NewBoardButton from "@/components/sidebar/new-board-button";
 import { SCROLLBAR_STYLE } from "@/types/constants";
 import { RefObject } from "react";

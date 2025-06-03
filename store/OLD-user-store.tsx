@@ -1,4 +1,6 @@
-// storing user profile info globally
+// NOT USED. we just moved this stuff to metadata-store.tsx
+//
+
 import { create } from "zustand";
 import { User } from "@supabase/supabase-js";
 import { Tables } from "@/types/supabase";

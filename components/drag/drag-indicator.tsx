@@ -1,3 +1,9 @@
+// these are the green lines that show up between images when you drag things around
+
+// it's important because these things are actually how we keep track of where we want
+// to drop an image somewhere. look at use-drag-handlers.tsx and notice that we keep
+// these ids in dropID
+
 import { useUIStore } from "@/store/ui-store";
 import { useDroppable } from "@dnd-kit/core";
 import React from "react";

@@ -1,3 +1,9 @@
+// KEY SECTION: this is the file that generates and regeneraets block layouts
+// positions and syncing
+// it's basically the master file for how we are keeping the columns around
+
+// board, sections and user info is kept in metadata-store.tsx
+
 import { create } from "zustand";
 import { useMetadataStore } from "./metadata-store";
 import { useUIStore } from "./ui-store";

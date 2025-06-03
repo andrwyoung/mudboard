@@ -1,3 +1,5 @@
+// this is the wrapper that lets you drag and drop a block
+
 import { useSortable } from "@dnd-kit/sortable";
 
 export function SortableItem({

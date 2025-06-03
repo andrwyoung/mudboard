@@ -1,3 +1,8 @@
+// this is a gallery. it's the thing that is in charge of rendering all the columns
+
+// it's a bit confusing with the wording sorry
+// look at the comment on top of board.tsx to see the whole structure
+
 "use client";
 import { DroppableColumn } from "@/components/drag/droppable-column";
 import { useUIStore } from "@/store/ui-store";

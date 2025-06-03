@@ -1,3 +1,6 @@
+// this is the overlay thing that happens when you double click an image
+// or if you right-click -> Expand an image
+
 import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
 import NextImage from "next/image";

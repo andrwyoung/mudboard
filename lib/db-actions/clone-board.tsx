@@ -1,3 +1,6 @@
+// here's how we duplicate the main board for the demo board
+// I still don't know if I want this function public for others to use
+
 import { supabase } from "@/utils/supabase";
 import { createNewBoard } from "./create-new-board";
 import { checkIfBoardExists } from "./check-board-exist";

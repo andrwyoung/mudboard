@@ -1,6 +1,5 @@
-// this component is the login modal that pops up
-// we use a magic link and that logic is all in here too
-// we want redirect to the board they're currently using
+// this component is the login modal that pops up when you click "log in" through the sidebar
+// not to be confused with /login/page.tsx which is the full page login
 
 "use client";
 import {

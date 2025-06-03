@@ -1,3 +1,6 @@
+// when we first grab all the data from the database, this is the function
+// that organizes it and actually generates the columns
+
 import { Block } from "@/types/block-types";
 import { DEFAULT_COLUMNS } from "@/types/constants";
 

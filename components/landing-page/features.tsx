@@ -1,3 +1,5 @@
+// landing page stuff
+
 import React from "react";
 import { FaCloud } from "react-icons/fa";
 import { MdPalette, MdImage } from "react-icons/md";

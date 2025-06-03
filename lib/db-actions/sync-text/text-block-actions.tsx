@@ -1,3 +1,5 @@
+// these are the database actions that help to create and update text blocks
+
 import { useMetadataStore } from "@/store/metadata-store";
 import { Block, BlockInsert, TextBlockType } from "@/types/block-types";
 import { TEXT_BLOCK_HEIGHT } from "@/types/upload-settings";

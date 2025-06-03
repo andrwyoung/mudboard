@@ -1,3 +1,5 @@
+// NOT USED
+
 import { createNewBoard } from "@/lib/db-actions/create-new-board";
 import { NextResponse } from "next/server";
 

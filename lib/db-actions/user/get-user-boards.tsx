@@ -1,3 +1,8 @@
+// get all the boards that belong to 1 user
+
+// TODO: hmmm we should probably double check that the userId really is the one
+// we're logged in as
+
 import { Board } from "@/types/board-types";
 import { supabase } from "@/utils/supabase";
 

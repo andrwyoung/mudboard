@@ -1,3 +1,6 @@
+// here is where we keep track of the overlay galleries
+// (the thing that shows up when you double click or expand an image)
+
 import { Block } from "@/types/block-types";
 import { CanvasScope } from "@/types/board-types";
 import { create, StateCreator } from "zustand";

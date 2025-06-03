@@ -1,3 +1,5 @@
+// types for boards
+
 import { Block } from "./block-types";
 import { Enums } from "./supabase";
 

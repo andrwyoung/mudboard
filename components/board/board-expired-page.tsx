@@ -1,3 +1,5 @@
+// when boards are expired, we show this overlay
+
 import { NEW_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
 

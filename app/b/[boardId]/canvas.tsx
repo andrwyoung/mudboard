@@ -1,3 +1,6 @@
+// a board is made up of a canvas. or if mirror mode is active, then it's 2 side by side canvases
+// canvas is in charge of scrolling behavior
+
 import { AnimatePresence, motion } from "framer-motion";
 import OverlayGallery from "./overlay-gallery";
 import { useUIStore } from "@/store/ui-store";

@@ -1,3 +1,6 @@
+// here's where we keep track of what is selected
+// note that we have only 1 selecteion store (we don't keep 2 around for the mirror),
+
 import { Block } from "@/types/block-types";
 import { CanvasScope, Section } from "@/types/board-types";
 import { create } from "zustand";

@@ -6,15 +6,17 @@ import { DASHBOARD_LINK } from "@/types/constants";
 
 export default function Logo({
   color = "white",
+  enforceHome = false,
 }: {
   color?: "white" | "brown";
+  enforceHome?: boolean;
 }) {
   const user = useMetadataStore((s) => s.user);
 
   return (
     <Link
       className="cursor-pointer hover:scale-105 transition-transform duration-300"
-      href={user ? DASHBOARD_LINK : "/"}
+      href={user && !enforceHome ? DASHBOARD_LINK : "/"}
       title="Home Page"
     >
       <Image

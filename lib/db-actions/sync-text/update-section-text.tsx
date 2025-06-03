@@ -1,3 +1,5 @@
+// these are the actions we use to update the a section's title or description
+
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
