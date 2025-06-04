@@ -160,7 +160,7 @@ export default function Home() {
         >
           {/* HERO */}
 
-          <div className="flex flex-col items-center justify-center min-h-[90vh] pt-[10vh] sm:pt-[25vh] text-center">
+          <div className="flex flex-col items-center justify-center min-h-[90vh] pt-[25vh] sm:pt-[25vh] text-center">
             <div
               className=" self-center w-full text-center
             rounded-lg p-2 mb-48"
