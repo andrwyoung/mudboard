@@ -12,7 +12,19 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { formatCreationDate, formatUpdateTime } from "@/utils/time-formatters";
 import { FaArrowRight } from "react-icons/fa6";
 import Link from "next/link";
-import { NEW_BOARD_LINK } from "@/types/constants";
+import { DEFAULT_BOARD_TITLE, NEW_BOARD_LINK } from "@/types/constants";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { FaTrashAlt } from "react-icons/fa";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -21,6 +33,7 @@ export default function DashboardPage() {
     Record<string, { sectionCount: number; blockCount: number }>
   >({});
   const user = useMetadataStore((s) => s.user);
+  const [boardToDelete, setBoardToDelete] = useState<Board | null>(null);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -65,7 +78,7 @@ export default function DashboardPage() {
     initBoards();
   }, [user]);
 
-  // // update board title
+  // update board title
   // async function updateBoardTitle(boardId: string, newTitle: string | null) {
   //   // Optimistically update local state
   //   setUserBoards((prevBoards) =>
@@ -89,6 +102,23 @@ export default function DashboardPage() {
   //     );
   //   }
   // }
+
+  async function softDeleteBoard(boardId: string) {
+    const { error } = await supabase
+      .from("boards")
+      .update({ deleted: true, deleted_at: new Date().toISOString() })
+      .eq("board_id", boardId);
+
+    if (error) {
+      console.error("Failed to delete board:", error.message);
+      toast.error("Something went wrong deleting the board.");
+      return;
+    }
+
+    // Remove board from UI state
+    setUserBoards((prev) => prev.filter((b) => b.board_id !== boardId));
+    toast.success("Board deleted.");
+  }
 
   return (
     <div className="min-h-screen bg-background text-primary p-6 relative">
@@ -145,13 +175,30 @@ export default function DashboardPage() {
                     }}
                     className="text-xl text-primary max-w-64"
                   /> */}
-                  <Link
-                    href={`/b/${board.board_id}`}
-                    className="text-xl text-primary ml-3.5 font-header cursor-pointer hover:text-accent transition-all duration-300"
-                  >
-                    {board.title ?? "Untitled Board"}
-                  </Link>
-                  <p className="text-xs text-primary ml-3.5 font-bold">
+                  <div className="flex items-center justify-between mx-4">
+                    <Link
+                      href={`/b/${board.board_id}`}
+                      className="text-xl text-primary  font-header cursor-pointer hover:text-accent transition-all duration-300"
+                    >
+                      {board.title ?? "Untitled Board"}
+                    </Link>
+                    <div className="flex gap-2 items-center shrink-0">
+                      <FaTrashAlt
+                        onClick={() => setBoardToDelete(board)}
+                        title="Delete Board"
+                        className="text-primary hover:text-rose-400 transition-colors cursor-pointer"
+                      />
+                      {/* <RiEdit2Fill
+                        onClick={() => {
+                          handleEditBoardTitle(board.board_id)
+                        }}
+                        title="Edit Board Title"
+                        className="text-primary hover:text-accent transition-colors size-5 cursor-pointer"
+                      /> */}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-primary ml-4 font-bold">
                     {boardCounts[board.board_id]?.sectionCount ?? 0} sections •{" "}
                     {boardCounts[board.board_id]?.blockCount ?? 0} blocks
                   </p>
@@ -188,6 +235,41 @@ export default function DashboardPage() {
           <div className="w-full self-center">No Boards to show</div>
         )}
       </div>
+
+      {boardToDelete && (
+        <AlertDialog
+          open={!!boardToDelete}
+          onOpenChange={(open) => !open && setBoardToDelete(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-2xl text-primary">
+                Delete &quot;
+                {boardToDelete.title ?? DEFAULT_BOARD_TITLE}
+                &quot;?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                This will remove the board and everything inside it. This action
+                cannot be undone (as of now).
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="font-semibold">
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="font-bold"
+                onClick={() => {
+                  softDeleteBoard(boardToDelete.board_id);
+                  setBoardToDelete(null);
+                }}
+              >
+                Delete Section
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 }

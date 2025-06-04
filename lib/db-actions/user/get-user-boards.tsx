@@ -11,7 +11,7 @@ export async function getUserBoards(userId: string): Promise<Board[]> {
     .from("boards")
     .select("*")
     .eq("user_id", userId)
-    .is("is_deleted", false) // optional, only non-deleted boards
+    .is("deleted", false) // only non-deleted boards
     .order("created_at", { ascending: false });
 
   if (error) {

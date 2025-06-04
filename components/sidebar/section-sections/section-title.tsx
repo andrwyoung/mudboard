@@ -5,7 +5,7 @@
 
 import { useSelectionStore } from "@/store/selection-store";
 import { Section } from "@/types/board-types";
-import React, { RefObject, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -25,19 +25,18 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { swapSectionOrder } from "@/lib/db-actions/swap-section-order";
 import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
 import { useImagePicker } from "@/hooks/use-image-picker";
+import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-text";
 
 export default function SectionRow({
   thisSection,
   thisIndex,
   sectionRefs,
   setSectionToDelete,
-  setEditingSectionId,
 }: {
   thisSection: Section;
   thisIndex: number;
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
   setSectionToDelete: (section: Section) => void;
-  setEditingSectionId: (id: string) => void;
 }) {
   const [highlightedSection, setHighlightedSection] = useState<string | null>(
     null
@@ -58,6 +57,10 @@ export default function SectionRow({
   const highlighted = highlightedSection === thisSection.section_id;
   const triggerRef = useRef<HTMLDivElement>(null);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(thisSection.title ?? "");
+  const inputRef = useRef<HTMLInputElement>(null);
+
   function handleMoveSection(direction: "up" | "down") {
     const offset = direction === "up" ? -1 : 1;
     const target = Object.values(allSections).find(
@@ -73,6 +76,23 @@ export default function SectionRow({
         }
       }
     });
+  }
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  function handleRenameSubmit() {
+    if (editValue.trim() === "") {
+      setIsEditing(false);
+      return;
+    }
+
+    updateSectionTitle(thisSection.section_id, editValue);
+    setIsEditing(false);
   }
 
   return (
@@ -104,6 +124,12 @@ export default function SectionRow({
             >
               <div
                 className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
+                onDoubleClick={() => {
+                  if (canEdit) {
+                    setEditValue(thisSection.title ?? "");
+                    setIsEditing(true);
+                  }
+                }}
                 onClick={() => {
                   const sectionEl =
                     sectionRefs.current?.[thisSection.section_id];
@@ -117,13 +143,28 @@ export default function SectionRow({
                 }}
               >
                 <FillingDot selected={selected} />
-                <h2
-                  className={`text-lg group-hover:text-accent transition-all duration-300 
-                     truncate whitespace-nowrap overflow-hidden min-w-0
-                  ${titleExists ? "" : "italic"} `}
-                >
-                  {titleExists ? thisSection.title : DEFAULT_SECTION_NAME}
-                </h2>
+                {isEditing ? (
+                  <input
+                    ref={inputRef}
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={() => setIsEditing(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleRenameSubmit();
+                      if (e.key === "Escape") setIsEditing(false);
+                    }}
+                    className="text-lg bg-transparent border border-accent 
+                    focus:outline-none focus:ring-2 focus:ring-accent/80  font-header rounded w-full"
+                  />
+                ) : (
+                  <h2
+                    className={`text-lg group-hover:text-accent transition-all duration-300 
+                    truncate whitespace-nowrap overflow-hidden min-w-0
+                    ${titleExists ? "" : "italic"} `}
+                  >
+                    {titleExists ? thisSection.title : DEFAULT_SECTION_NAME}
+                  </h2>
+                )}
               </div>
 
               {canEdit && (
@@ -165,7 +206,11 @@ export default function SectionRow({
           <ContextMenuContent className="">
             <ContextMenuItem
               onClick={() => {
-                setEditingSectionId(thisSection.section_id);
+                setEditValue(thisSection.title ?? "");
+                console.log("hey");
+                setTimeout(() => {
+                  setIsEditing(true);
+                }, 100);
               }}
             >
               Rename

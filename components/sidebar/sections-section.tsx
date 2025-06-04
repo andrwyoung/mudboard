@@ -2,7 +2,7 @@
 // of the sections on the sidebar. also renders the "add section" button
 
 import { useMetadataStore } from "@/store/metadata-store";
-import React, { RefObject, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { DEFAULT_BOARD_TITLE, DEFAULT_SECTION_NAME } from "@/types/constants";
 import { FaPlus } from "react-icons/fa";
 import { useLoadingStore } from "@/store/loading-store";
@@ -22,6 +22,8 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { addNewSection } from "@/lib/sidebar/add-new-section";
 
 import SectionRow from "./section-sections/section-title";
+import { toast } from "sonner";
+import { supabase } from "@/utils/supabase";
 
 export default function SectionsSection({
   sectionRefs,
@@ -35,13 +37,80 @@ export default function SectionsSection({
   const setEditingSectionId = useLoadingStore((s) => s.setEditingSectionId);
   const [sectionToDelete, setSectionToDelete] = useState<Section | null>(null);
 
+  const [isEditingBoardTitle, setIsEditingBoardTitle] = useState(false);
+  const [editBoardTitle, setEditBoardTitle] = useState(board?.title ?? "");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (isEditingBoardTitle && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditingBoardTitle]);
+
+  const handleBoardTitleSubmit = async () => {
+    if (!board || !editBoardTitle.trim()) return;
+
+    const newTitle = editBoardTitle.trim();
+
+    try {
+      const { error } = await supabase
+        .from("boards")
+        .update({ title: newTitle })
+        .eq("board_id", board.board_id);
+
+      if (error) {
+        toast.error("Failed to update board title");
+      } else {
+        useMetadataStore.getState().setBoard({
+          ...board,
+          title: newTitle,
+        });
+      }
+    } catch (e) {
+      toast.error("Something went wrong updating the title");
+      console.error("Erorr updating board title: ", e);
+    } finally {
+      setIsEditingBoardTitle(false);
+    }
+  };
+
   // function handleSectionDragEnd() {}
 
   return (
     <div className="flex flex-col gap-1 items-start">
-      <h1 className="text-2xl font-semibold px-4">
-        {board?.title ?? DEFAULT_BOARD_TITLE}
-      </h1>
+      <div className="px-2 text-2xl font-semibold font-header">
+        {isEditingBoardTitle ? (
+          <input
+            ref={inputRef}
+            value={editBoardTitle}
+            onChange={(e) => setEditBoardTitle(e.target.value)}
+            placeholder="Board Name"
+            onBlur={() => setIsEditingBoardTitle(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleBoardTitleSubmit();
+              if (e.key === "Escape") setIsEditingBoardTitle(false);
+            }}
+            className="w-full bg-transparent rounded-lg border border-accent 
+            focus:outline-none focus:ring-2 focus:ring-accent/60 font-header
+             px-2 py-0.5"
+          />
+        ) : (
+          <div
+            onClick={() => {
+              if (canEdit) {
+                setEditBoardTitle(board?.title ?? "");
+                setIsEditingBoardTitle(true);
+              }
+            }}
+            title={canEdit ? "Double-click to rename" : ""}
+            className="truncate cursor-pointer px-2 py-0.5 border border-transparent ring-2 ring-transparent
+             hover:text-accent transition-all duration-300 font-header"
+          >
+            {board?.title ?? DEFAULT_BOARD_TITLE}
+          </div>
+        )}
+      </div>
       <div className="w-full">
         {[...sections]
           .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
@@ -51,7 +120,6 @@ export default function SectionsSection({
               thisSection={section}
               thisIndex={index}
               sectionRefs={sectionRefs}
-              setEditingSectionId={setEditingSectionId}
               setSectionToDelete={setSectionToDelete}
             />
           ))}
