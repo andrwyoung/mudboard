@@ -177,10 +177,9 @@ export default function Home() {
                   <br />
                   building a ref board.
                 </p> */}
-                <p className="text-md mb-14 w-full">
-                  For illustrators who’d rather spend 30 minutes sketching than
-                  <br />
-                  wrangling their reference library
+                <p className="text-lg mb-14 w-full font-semibold">
+                  For illustrators who’d rather draw than organize reference
+                  images
                 </p>
               </div>
 
@@ -217,6 +216,18 @@ export default function Home() {
             <Features />
           </div>
 
+          <div className="flex flex-col items-center gap-2 mb-32">
+            <h1 className="font-semibold text-lg">A Mudboard in the wild</h1>
+            <div className="max-w-4xl rounded-lg overflow-hidden border-3 border-secondary">
+              <Image
+                src={"/screeny.png"}
+                alt={"Mudboard Screenshot"}
+                width={1860}
+                height={971}
+              />
+            </div>
+          </div>
+
           <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-0 mb-24">
             <h2 className="text-2xl font-bold mb-6 text-center">
               How is Mudboard different?
@@ -226,9 +237,8 @@ export default function Home() {
                 title="Pinterest"
                 icon={<FaPinterestP className="size-5" />}
               >
-                Great for inspiration and reference gathering. Mudboard focuses
-                specifically on organizing and viewing your reference images in
-                a clear, distraction-free layout.
+                Great for collecting and discovering ideas. Mudboard focuses on{" "}
+                <strong>organizing and viewing</strong> your images.
               </ComparisonTile>
 
               <ComparisonTile
@@ -243,18 +253,17 @@ export default function Home() {
                   />
                 }
               >
-                PureRef is amazing for custom layouts. Mudboard trades
-                flexibility for speed, so it&apos;s designed to get you started
-                faster and works from any device.
+                Amazing for custom layouts. But Mudboard trades flexibility for
+                speed, so is designed to <strong>get you going faster</strong>.
               </ComparisonTile>
 
               <ComparisonTile
-                title="Photoshop (or CSP)"
+                title="Drawing Apps"
                 icon={<SiAdobephotoshop className="size-5" />}
               >
-                Mudboard isn&apos;t meant to replace these, but rather helps you
-                keep your references organized outside your canvas so you
-                don&apos;t have to manage them in the same program.
+                Mudboard doesn&apos;t replace these. Instead, it helps organize
+                references outside your canvas so you can{" "}
+                <strong> focus on drawing</strong>.
               </ComparisonTile>
 
               <ComparisonTile
@@ -270,9 +279,9 @@ export default function Home() {
                   />
                 }
               >
-                I built this because I just wanted something that let me drop in
-                images and draw. No setup, no shortcuts to memorize, no endless
-                rearranging. Hopefully it helps you too!
+                I wanted something to drop in images and draw. No setup, no
+                shortcuts to memorize, no endless rearranging. Hopefully it
+                helps you too!
               </ComparisonTile>
             </div>
           </div>

@@ -10,7 +10,7 @@ type Feature = {
 type Plan = {
   name: string;
   description?: string;
-  price: string;
+  price?: string;
   oldPrice?: string;
   features: Feature[];
   ctaText?: string;
@@ -75,7 +75,7 @@ const plans: Plan[] = [
   {
     name: "More Coming Soon",
     // description: "For professionals and teams (Coming Soon)",
-    price: "TBD",
+    // price: "TBD",
     features: [
       // { label: "Unlimited images", status: "neutral" },
       { label: "Timed Gesture Drawings", status: "neutral" },
@@ -179,7 +179,12 @@ export default function PricingTable() {
               )}
             </div>
             {plan.ctaText && plan.ctaHref && (
-              <Link href={plan.ctaHref} className="w-full mt-4 block">
+              <Link
+                href={plan.ctaHref}
+                className="w-full mt-4 block"
+                target={plan.highlight ? "_blank" : undefined}
+                rel={plan.highlight ? "noopener noreferrer" : undefined}
+              >
                 <Button
                   variant="secondary"
                   className={`w-full font-header ${
