@@ -36,7 +36,7 @@ const plans: Plan[] = [
     ctaHref: "/demo",
   },
   {
-    name: "License",
+    name: "Lifetime",
     description: "Buy once. Keep forever",
     price: "$20 one-time",
     oldPrice: "$25",
@@ -198,7 +198,7 @@ export default function PricingTable() {
       <div className="mt-10 text-center text-muted">
         <h2 className="mb text-xl font-semibold">Want more images?</h2>
         <p className="text-xs mb-4 text-muted font-semibold">
-          *More storage can only be bought with a license
+          *More storage can only be bought with a lifetime license
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left text-primary-text">
           <StorageBox title="1,000 Images" price="$6" />

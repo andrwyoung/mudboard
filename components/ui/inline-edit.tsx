@@ -9,7 +9,7 @@ export default function InlineEditText({
   onChange,
   isEditable = true,
   className,
-  unnamedPlaceholder = "Click to Edit",
+  unnamedPlaceholder = "Double click to Edit",
   placeholder,
   autofocus = false,
 }: // multilineDisplay = false,
@@ -55,7 +55,7 @@ export default function InlineEditText({
         font-header ${className} text-primary w-full ${
         isEditing ? "border-input shadow-sm" : "border-transparent"
       }`}
-      onClick={() => {
+      onDoubleClick={() => {
         if (!isEditable) return;
         setDraft(value ?? "");
         setIsEditing(true);
@@ -68,9 +68,12 @@ export default function InlineEditText({
           value={draft}
           placeholder={placeholder}
           onChange={(e) => setDraft(e.target.value)}
-          onBlur={confirm}
+          onBlur={() => setIsEditing(false)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") e.currentTarget.blur();
+            if (e.key === "Enter") {
+              e.preventDefault();
+              confirm();
+            }
             if (e.key === "Escape") setIsEditing(false);
           }}
           className={`w-full bg-transparent ${className} focus:outline-none `}
@@ -79,15 +82,11 @@ export default function InlineEditText({
         <h1
           className={`
             ${!value ? "italic opacity-50" : ""}
-            ${
-              isEditable
-                ? "cursor-pointer hover:text-accent"
-                : "cursor-default "
-            }
+            ${isEditable ? "cursor-pointer" : "cursor-default "}
             transition-colors 
             overflow-hidden text-ellipsis whitespace-nowrap block
         `}
-          title={isEditable ? "Click to rename" : "This list can’t be renamed"}
+          title={isEditable ? "Double click to rename" : ""}
         >
           {value && value.trim() !== "" ? value : unnamedPlaceholder}
         </h1>

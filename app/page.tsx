@@ -70,7 +70,7 @@ function ComparisonTile({
 }) {
   return (
     <div
-      className={`border rounded-lg p-4 ${
+      className={`border-2 rounded-lg p-4 ${
         highlight ? "border-accent bg-accent/10" : "border-border bg-primary/20"
       }`}
     >
