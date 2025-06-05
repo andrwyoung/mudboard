@@ -356,15 +356,16 @@ export default function Home() {
                 model to keep things simple (and so we don&apos;t need to run
                 ads).
               </FAQItem> */}
-              <FAQItem question="Will my boards be deleted?">
-                Right now no (mainly cause I haven&apos;t implemented that yet
-                lol). But to keep storage costs manageable, and protect against
-                abuse, I plan to delete <strong>unsaved boards</strong> after 7
-                days of creation.
-                <br /> If you create a board before I implement the limits, you
-                can keep it forever (
-                <span className="text-accent font-bold">within reason</span>
-                ...so don&apos;t go making like 30 boards)
+              <FAQItem question="Will my boards be deleted after pricing is implemented?">
+                Right now no (mainly cause I haven&apos;t built the
+                deletion/limit part yet lol). I do delete{" "}
+                <strong>unsaved boards</strong> after 7 days of creation, but if
+                you create and save a board before limits are in place, I
+                probably won&apos;t mess with it (
+                <span className="text-accent font-bold">
+                  but be reasonable please
+                </span>
+                ...don&apos;t go making like 20 test boards)
               </FAQItem>
               {/* <FAQItem question="What happens to my boards if I cancel?">
                 To keep storage costs manageable (and protect against abuse),
@@ -387,6 +388,9 @@ export default function Home() {
                   {copiedEmail ? "Email Copied!" : "Click to Copy Email"}
                 </button>
               </FAQItem> */}
+              <FAQItem question="Will you train AI or sell my artwork/data?">
+                No.
+              </FAQItem>
               <FAQItem question="How do I reach out or get involved?">
                 Great question! We’re always looking for early testers and folks
                 to help shape the direction of this app. You can find out{" "}
