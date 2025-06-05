@@ -6,7 +6,7 @@ import Logo from "@/components/ui/logo";
 
 import { useEffect, useState } from "react";
 import FillingDot from "@/components/ui/filling-dot";
-import PricingTable from "@/components/landing-page/pricing";
+import PricingTable from "@/components/landing-page/pricing-v2";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
@@ -288,16 +288,21 @@ export default function Home() {
           {/* PRICING */}
 
           <div className="mb-24 max-w-3xl">
-            <h2 className="text-2xl font-bold mb-2 text-center">
+            <h2 className="text-2xl font-bold text-center">
               Planned Pricing (not implemented yet)
             </h2>
-            <p className="text-center mb-8 text-sm">
+            {/* <p className="text-center mb-8 text-sm">
               Pricing isn&apos;t final yet, but here&apos;s the ballpark
               estimate for what I&apos;ll launch with. Later I was probably
               gonna do a $6-7 tier with more limited features and a $12-15 tier.
               Really, the reason I charge is to protect me from storage costs.
+            </p> */}
+            <p className="text-center text-sm text-muted mb-6 font-semibold">
+              Firsts 300 users get the Lifetime license for <strong>$20</strong>{" "}
+              (normally $25) + an extra 200 images.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2">
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2"> */}
+            <div>
               <PricingTable />
             </div>
             {/* <p className="text-center text-sm font-semibold">
