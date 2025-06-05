@@ -250,7 +250,7 @@ export default function DashboardPage() {
               </AlertDialogTitle>
               <AlertDialogDescription>
                 This will remove the board and everything inside it. This action
-                cannot be undone (as of now).
+                cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -264,7 +264,7 @@ export default function DashboardPage() {
                   setBoardToDelete(null);
                 }}
               >
-                Delete Section
+                Delete Board
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

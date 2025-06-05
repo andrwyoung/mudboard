@@ -83,7 +83,7 @@ export default function Gallery({
     (block: Block, event: React.MouseEvent<Element, MouseEvent>) => {
       console.log("Clicked? ", event, block);
 
-      if (event.detail === 2) {
+      if (event.detail === 2 && block.block_type === "image") {
         console.log("Double clicked:", block);
         setSelectedBlocks(canvasScope, { [block.block_id]: block }, block);
         openOverlayGallery(block);

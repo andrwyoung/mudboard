@@ -71,6 +71,17 @@ export function useGalleryHandlers({
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
+      const target = event.activatorEvent?.target as HTMLElement | null;
+
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.closest("input, textarea, [contenteditable='true']"))
+      ) {
+        return; // Cancel drag if starting from an input or textarea
+      }
+
       document.body.classList.add("cursor-grabbing");
       // deselectBlocks();
 

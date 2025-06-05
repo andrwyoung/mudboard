@@ -56,7 +56,7 @@ export default function InlineEditText({
         isEditing ? "border-input shadow-sm" : "border-transparent"
       }`}
       onDoubleClick={() => {
-        if (!isEditable) return;
+        if (!isEditable || isEditing) return;
         setDraft(value ?? "");
         setIsEditing(true);
       }}
@@ -68,7 +68,7 @@ export default function InlineEditText({
           value={draft}
           placeholder={placeholder}
           onChange={(e) => setDraft(e.target.value)}
-          onBlur={() => setIsEditing(false)}
+          onBlur={() => confirm()}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -83,7 +83,7 @@ export default function InlineEditText({
           className={`
             ${!value ? "italic opacity-50" : ""}
             ${isEditable ? "cursor-pointer" : "cursor-default "}
-            transition-colors 
+            transition-colors select-none
             overflow-hidden text-ellipsis whitespace-nowrap block
         `}
           title={isEditable ? "Double click to rename" : ""}

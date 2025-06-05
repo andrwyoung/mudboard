@@ -93,7 +93,7 @@ export default function SectionHeader({ section }: { section: Section }) {
         </div>
       </div>
 
-      <div className="px-3">
+      <div className=" px-1 sm:px-3">
         <InlineEditTextarea
           isEditable={canEdit}
           value={description && description.trim() != "" ? description : null}
@@ -102,6 +102,7 @@ export default function SectionHeader({ section }: { section: Section }) {
           onChange={(newDesc) => {
             updateSectionDescription(section.section_id, newDesc);
           }}
+          className="leading-relaxed"
         />
       </div>
     </div>

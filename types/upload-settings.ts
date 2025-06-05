@@ -1,4 +1,4 @@
-export const DEMO_BOARD_ID = "a1a3474f-16c5-40eb-b3f5-224d517c0a7b"
+export const DEMO_BOARD_ID = "2c7a54d8-9770-476a-afce-cf831ebebd29"
 
 export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
 
@@ -6,7 +6,7 @@ export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/stor
 export const OVERSCAN_SIZE = 1000;
 export const IMAGE_OVERSCAN_SIZE = 600;
 // fixed heights
-export const TEXT_BLOCK_HEIGHT = 120;
+export const TEXT_BLOCK_HEIGHT = 196;
 export const CAPTION_HEIGHT = 28;
 
 // syncing

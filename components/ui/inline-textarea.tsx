@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useLoadingStore } from "@/store/loading-store";
 
 export default function InlineEditTextarea({
   value,
@@ -7,7 +6,6 @@ export default function InlineEditTextarea({
   isEditable = true,
   unnamedPlaceholder = "Double click to add text",
   placeholder,
-  autofocus = false,
   className,
 }: {
   value: string | null;
@@ -15,7 +13,6 @@ export default function InlineEditTextarea({
   isEditable?: boolean;
   unnamedPlaceholder?: string;
   placeholder?: string;
-  autofocus?: boolean;
   className?: string;
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -27,13 +24,6 @@ export default function InlineEditTextarea({
       textareaRef.current.select();
     }
   }, [isEditing]);
-
-  useEffect(() => {
-    if (autofocus && textareaRef.current) {
-      textareaRef.current.focus();
-      useLoadingStore.getState().setEditingSectionId(null);
-    }
-  }, [autofocus]);
 
   const confirm = () => {
     const trimmed = draft.trim();
@@ -53,11 +43,11 @@ export default function InlineEditTextarea({
 
   return (
     <div
-      className={`border py-1 px-3 text-sm rounded-md leading-relaxed text-primary w-full transition-all ${
+      className={`border py-1 px-3 text-sm rounded-md  text-primary w-full transition-all ${
         isEditing ? "border-input shadow-sm" : "border-transparent"
       } ${className}`}
       onDoubleClick={() => {
-        if (!isEditable) return;
+        if (!isEditable || isEditing) return;
         setDraft(value ?? "");
         setIsEditing(true);
       }}
@@ -75,7 +65,7 @@ export default function InlineEditTextarea({
             el.style.height = "auto"; // reset first
             el.style.height = `${el.scrollHeight}px`; // match content height
           }}
-          onBlur={() => setIsEditing(false)}
+          onBlur={() => confirm()}
           onKeyDown={(e) => {
             if (e.key === "Escape") {
               setIsEditing(false);
@@ -85,19 +75,24 @@ export default function InlineEditTextarea({
               confirm();
             }
           }}
-          className="w-full p-0 align-top bg-transparent resize-none focus:outline-none"
+          className={`w-full p-0 align-top bg-transparent resize-none focus:outline-none`}
         />
       ) : (
-        <p
-          className={`
-            ${!value ? "italic opacity-50" : ""}
-            ${isEditable ? "cursor-pointer " : "cursor-default"}  
-            whitespace-pre-wrap transition-colors
-        `}
-          title={isEditable ? "Double click to rename" : ""}
-        >
-          {value && value.trim() !== "" ? value : unnamedPlaceholder}
-        </p>
+        <>
+          {(isEditable || value) && (
+            <p
+              style={{ wordBreak: "break-word", overflowWrap: "break-word" }}
+              className={`
+                ${!value ? "italic opacity-50" : ""}
+                ${isEditable ? "cursor-pointer " : "cursor-default"}  
+                whitespace-pre-wrap transition-colors select-none w-full
+             `}
+              title={isEditable ? "Double click to rename" : ""}
+            >
+              {value && value.trim() !== "" ? value : unnamedPlaceholder}
+            </p>
+          )}
+        </>
       )}
     </div>
   );
