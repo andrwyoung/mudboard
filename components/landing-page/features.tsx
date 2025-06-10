@@ -41,7 +41,7 @@ export default function Features() {
       </FeatureItem>
 
       <FeatureItem
-        title="Mirror Mode"
+        title="Split Screen"
         icon={<TbLayoutSidebarFilled className="size-4.5" />}
       >
         Keep one image open while browsing the rest. It’s like having a{" "}

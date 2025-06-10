@@ -1,6 +1,6 @@
 // this is the little button on the sidebar to collapse the sidebar
 
-import { FaOutdent } from "react-icons/fa6";
+import { FiSidebar } from "react-icons/fi";
 import { IoCaretBackOutline } from "react-icons/io5";
 
 export function CollapseArrow({
@@ -19,7 +19,7 @@ export function CollapseArrow({
       title={!left ? "Collapse Sidebar" : "Open Sidebar"}
     >
       {left ? (
-        <FaOutdent className="size-5" />
+        <FiSidebar className="size-5.5" />
       ) : (
         <IoCaretBackOutline className="size-5" />
       )}

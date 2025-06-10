@@ -46,7 +46,7 @@ export default function Sidebar({
 
           <div className="px-4">
             <AccordianWrapper
-              title="Change Look"
+              title="Board Layout"
               titleClassName="font-header text-md px-4"
             >
               <CustomizeSection />

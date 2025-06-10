@@ -4,8 +4,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CollapseArrow } from "../ui/sidebar/collapse-arrow";
-import { FiSidebar } from "react-icons/fi";
 import { useUIStore } from "@/store/ui-store";
+import { MdViewColumn } from "react-icons/md";
 
 export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
   const toggleMirrorMode = useUIStore((s) => s.toggleMirrorMode);
@@ -26,11 +26,11 @@ export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
         type="button"
         className="flex items-center gap-1 cursor-pointer group"
         onClick={toggleMirrorMode}
-        title="Toggle Mirror Mode"
+        title="Toggle Split Screen"
       >
-        <FiSidebar
+        <MdViewColumn
           className={`hover:text-accent hover:scale-110 transition-all duration-200 
-            size-5.5 ${mirrorMode ? "text-accent" : "text-white"}`}
+            size-6 ${mirrorMode ? "text-accent" : "text-white"}`}
         />
       </button>
     </div>

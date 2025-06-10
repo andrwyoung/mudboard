@@ -20,9 +20,9 @@ export function MirrorModeToggle({ showText = true }: { showText?: boolean }) {
           className={`transition-all duration-300 group-hover:underline ${
             mirrorMode ? "text-accent" : "text-white group-hover:text-accent"
           }`}
-          title="Toggle Mirror Mode"
+          title="Toggle Split Screen"
         >
-          Mirror Mode
+          Split Screen
         </h3>
       )}
     </button>
