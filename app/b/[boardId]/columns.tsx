@@ -13,6 +13,7 @@ import {
 } from "@/types/upload-settings";
 import { useGetScope } from "@/hooks/use-get-scope";
 import { useIsMirror } from "./board";
+import BlockAdder from "@/components/blocks/add-a-block";
 
 // virtualization
 function getBlockLayout(
@@ -210,7 +211,7 @@ function ColumnComponent({
           // }}
         />
       </SortableContext>
-      {/* <BlockAdder sectionId={sectionId} columnIndex={columnIndex} /> */}
+      <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
     </div>
   );
 }

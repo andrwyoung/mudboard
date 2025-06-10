@@ -31,13 +31,16 @@ export default function BlockAdder({
     <>
       {fileInput}
       <div className="relative h-12 w-full group ">
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          onClick={() => handleAddImageBlock()}
+        >
           <div
-            className="flex-shrink-0 relative size-8 group cursor-pointer hover:scale-95 
+            className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
             transition-transform duration-200 flex items-center justify-center"
           >
             {/* <div className="absolute inset-0 rounded-full border-4 border-primary" /> */}
-            <FaPlus className="z-2 size-5 text-background group-hover:text-primary transition-colors duration-500" />
+            <FaPlus className="z-2 size-4 text-background group-hover:text-primary transition-colors duration-500" />
             <div
               className="absolute inset-0 rounded-full bg-primary/20 z-1 group-hover:bg-background transition-all duration-300
               group-hover:scale-30"
@@ -46,23 +49,23 @@ export default function BlockAdder({
         </div>
 
         <button
-          onClick={() => handleAddImageBlock()}
+          onClick={() => handleAddTextBlock()}
           className="absolute left-0 top-0 bottom-0 w-1/2 group/button pointer-events-auto cursor-pointer"
         >
           <span
             className={`absolute top-1/2 right-[calc(20%)] -translate-y-1/2 text-right ${buttonClass}`}
           >
-            image
+            text
           </span>
         </button>
         <button
-          onClick={() => handleAddTextBlock()}
+          onClick={() => handleAddImageBlock()}
           className="absolute right-0 top-0 bottom-0 w-1/2 group/button pointer-events-auto cursor-pointer"
         >
           <span
             className={`absolute top-1/2 left-[calc(20%)] -translate-y-1/2 text-left ${buttonClass}`}
           >
-            text
+            image
           </span>
         </button>
       </div>

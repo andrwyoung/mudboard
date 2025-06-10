@@ -142,20 +142,8 @@ function BlockComponent({
             >
               View In Mirror
             </ContextMenuItem>
-            {selectedBlocksLength === 1 && (
+            {selectedBlocksLength === 1 ? (
               <ContextMenuItem
-                // onClick={() => {
-                //   if (block.data) {
-                //     const image = block.data as MudboardImage;
-
-                //     const url = getImageUrl(
-                //       image.image_id,
-                //       image.file_ext,
-                //       "full"
-                //     );
-                //     window.open(url, "_blank", "noopener,noreferrer");
-                //   }
-                // }}
                 onClick={() => {
                   if (block.data) {
                     const image = block.data as MudboardImage;
@@ -179,31 +167,24 @@ function BlockComponent({
               >
                 Download Image
               </ContextMenuItem>
+            ) : (
+              <>
+                {/* <ContextMenuItem onClick={() => console.log("hey")}>
+                Group Selected
+              </ContextMenuItem> */}
+                <ContextMenuItem
+                  onClick={() => {
+                    const selected = Object.values(selectedBlocks);
+                    downloadImagesAsZip(selected);
+                  }}
+                >
+                  Download Selected
+                </ContextMenuItem>
+              </>
             )}
           </>
         )}
 
-        {selectedBlocksLength > 1 && (
-          <>
-            {/* <ContextMenuItem onClick={() => console.log("hey")}>
-              Group Selected
-            </ContextMenuItem> */}
-            <ContextMenuItem
-              onClick={() => {
-                console.log("selectedBlocks: ", selectedBlocks);
-                const selectedImages = Object.values(selectedBlocks)
-                  .filter((b) => b.block_type === "image")
-                  .map((b) => b.data as MudboardImage);
-
-                if (selectedImages.length === 0) return;
-
-                downloadImagesAsZip(selectedImages);
-              }}
-            >
-              Download Selected
-            </ContextMenuItem>
-          </>
-        )}
         <ContextMenuItem onClick={() => deselectBlocks()}>
           Deselect
         </ContextMenuItem>
