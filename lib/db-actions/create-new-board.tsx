@@ -19,7 +19,13 @@ export async function createNewBoard({
 }): Promise<Tables<"boards">> {
   const { data: boardData, error: boardError } = await supabase
     .from("boards")
-    .insert([{ title, user_id: claimedBy }])
+    .insert([
+      {
+        title,
+        user_id: claimedBy,
+        access_level: claimedBy ? "private" : undefined,
+      },
+    ])
     .select()
     .single();
 
