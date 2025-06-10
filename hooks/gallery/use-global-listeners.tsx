@@ -72,12 +72,10 @@ export function useBoardListeners() {
       const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
       const rawId = clickedId?.split("::")[1];
 
-      if (
-        !rawId ||
-        rawId.startsWith("drop-") ||
-        rawId.startsWith("col-") ||
-        rawId.startsWith("section-")
-      ) {
+      const isBlockItem = clickedId?.includes("::block-");
+      const isContextMenu = clickedId === "context-menu";
+
+      if (!isBlockItem && !isContextMenu) {
         deselectBlocks();
       }
     }

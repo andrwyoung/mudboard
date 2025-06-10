@@ -19,6 +19,7 @@ import { useSelectionStore } from "@/store/selection-store";
 import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { useUIStore } from "@/store/ui-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
+import { downloadImagesAsZip } from "../download-images/zip-images";
 
 export function BlockChooser({
   block,
@@ -72,6 +73,8 @@ function BlockComponent({
   );
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
+  const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
+  const setSelectedBlock = useSelectionStore((s) => s.setSelectedBlocks);
   const selectedBlocksLength = Object.entries(selectedBlocks).length;
   const currentBlockSelected = !!selectedBlocks[block.block_id];
 
@@ -81,7 +84,16 @@ function BlockComponent({
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger asChild>
+      <ContextMenuTrigger
+        asChild
+        onContextMenu={() => {
+          const alreadySelected = !!selectedBlocks[block.block_id];
+          if (!alreadySelected) {
+            deselectBlocks();
+            setSelectedBlock(scope, { [block.block_id]: block }, block);
+          }
+        }}
+      >
         <div
           // layoutId={`block-${block.block_id}`} // for animating
           data-id={`${scope}::block-${block.block_id}`} // for sortable
@@ -89,8 +101,8 @@ function BlockComponent({
           className={`flex flex-col rounded-sm object-cover transition-all duration-150 cursor-pointer shadow-md 
               hover:scale-101 hover:shadow-xl hover:opacity-100
               relative bg-background
-        ${isDragging ? "opacity-30" : ""} 
-        ${isSelected ? "outline-4 outline-secondary" : ""}`}
+          ${isDragging ? "opacity-30" : ""} 
+          ${isSelected ? "outline-4 outline-secondary" : ""}`}
           onClick={onClick}
         >
           <SortableItem
@@ -130,40 +142,72 @@ function BlockComponent({
             >
               View In Mirror
             </ContextMenuItem>
+            {selectedBlocksLength === 1 && (
+              <ContextMenuItem
+                // onClick={() => {
+                //   if (block.data) {
+                //     const image = block.data as MudboardImage;
+
+                //     const url = getImageUrl(
+                //       image.image_id,
+                //       image.file_ext,
+                //       "full"
+                //     );
+                //     window.open(url, "_blank", "noopener,noreferrer");
+                //   }
+                // }}
+                onClick={() => {
+                  if (block.data) {
+                    const image = block.data as MudboardImage;
+
+                    const url = getImageUrl(
+                      image.image_id,
+                      image.file_ext,
+                      "full"
+                    );
+                    const filename = image.original_name ?? "image";
+
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = filename;
+                    link.target = "_blank"; // optional: in case browser blocks download
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }
+                }}
+              >
+                Download Image
+              </ContextMenuItem>
+            )}
+          </>
+        )}
+
+        {selectedBlocksLength > 1 && (
+          <>
+            {/* <ContextMenuItem onClick={() => console.log("hey")}>
+              Group Selected
+            </ContextMenuItem> */}
             <ContextMenuItem
               onClick={() => {
-                if (block.data) {
-                  const image = block.data as MudboardImage;
+                console.log("selectedBlocks: ", selectedBlocks);
+                const selectedImages = Object.values(selectedBlocks)
+                  .filter((b) => b.block_type === "image")
+                  .map((b) => b.data as MudboardImage);
 
-                  const url = getImageUrl(
-                    image.image_id,
-                    image.file_ext,
-                    "full"
-                  );
-                  window.open(url, "_blank", "noopener,noreferrer");
-                }
+                if (selectedImages.length === 0) return;
+
+                downloadImagesAsZip(selectedImages);
               }}
             >
-              Open in new Tab
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-          </>
-        )}
-
-        {selectedBlocksLength > 1 && currentBlockSelected && (
-          <>
-            <ContextMenuItem onClick={() => console.log("hey")}>
-              Group Selected
-            </ContextMenuItem>
-            <ContextMenuItem onClick={() => console.log("hey")}>
               Download Selected
             </ContextMenuItem>
-            <ContextMenuItem onClick={() => console.log("hey")}>
-              Deselect
-            </ContextMenuItem>
-            <ContextMenuSeparator />
           </>
         )}
+        <ContextMenuItem onClick={() => deselectBlocks()}>
+          Deselect
+        </ContextMenuItem>
+        <ContextMenuSeparator />
 
         <ContextMenuItem
           onClick={() => {
