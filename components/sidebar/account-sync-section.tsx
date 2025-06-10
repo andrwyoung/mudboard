@@ -15,6 +15,8 @@ import { DASHBOARD_LINK } from "@/types/constants";
 import Link from "next/link";
 import { FiLogOut } from "react-icons/fi";
 import { FaHome } from "react-icons/fa";
+import { FaShare } from "react-icons/fa6";
+import { toast } from "sonner";
 
 export default function AccountSyncSection() {
   const board = useMetadataStore((s) => s.board);
@@ -82,6 +84,22 @@ export default function AccountSyncSection() {
       )}
 
       {canEdit && <SyncButton />}
+      <button
+        type="button"
+        title="Share Board"
+        onClick={() => {
+          const url = `https://mudboard.com/b/${board?.board_id}`;
+          navigator.clipboard.writeText(url).then(() => {
+            console.log("Copied to clipboard:", url);
+          });
+          toast.success("Copied Board Link!");
+        }}
+        className="flex items-center gap-2 text-white text-sm font-bold font-header
+                    cursor-pointer hover:text-accent transition-all duration-300"
+      >
+        <FaShare />
+        Share (Copy Link)
+      </button>
 
       <div className=" mt-2">
         {user ? (

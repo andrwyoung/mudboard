@@ -16,7 +16,7 @@ export default function TextBlock({ block }: { block: Block }) {
         onChange={(newTitle) => {
           updateTextBlockText(block, newTitle);
         }}
-        unnamedPlaceholder="Click to add Text!"
+        unnamedPlaceholder="Double Click to add Text!"
         className="text-sm sm:text-md md:text-lg"
       />
     </div>

@@ -48,6 +48,7 @@ function getBlockLayout(
 
 type Props = {
   sectionId: string;
+  wholeGalleryEmpty: boolean;
   column: Block[];
   columnWidth: number;
   columnIndex: number;
@@ -59,7 +60,8 @@ type Props = {
 };
 
 function ColumnComponent({
-  sectionId: sectionId,
+  sectionId,
+  wholeGalleryEmpty,
   column,
   columnWidth,
   columnIndex,
@@ -211,7 +213,9 @@ function ColumnComponent({
           // }}
         />
       </SortableContext>
-      <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
+      {!wholeGalleryEmpty && (
+        <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
+      )}
     </div>
   );
 }

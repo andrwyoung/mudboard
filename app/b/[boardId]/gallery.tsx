@@ -188,6 +188,7 @@ export default function Gallery({
         >
           <MemoizedDroppableColumn
             sectionId={sectionId}
+            wholeGalleryEmpty={isEmpty}
             column={column}
             columnWidth={columnWidth}
             columnIndex={columnIndex}
