@@ -121,12 +121,14 @@ export default function Home() {
                 rounded-md text-white text-sm font-header transition-all duration-500
                 hover:text-white hover:bg-white/30 
                 `}
+              data-umami-event={`Landing page: Login`}
             >
               Log In
             </Link>
           ) : (
             <Link
               href={DASHBOARD_LINK}
+              data-umami-event={`Landing page: Dashboard`}
               className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-white text-sm font-header transition-all duration-500
                 hover:text-white hover:bg-white/30 
@@ -137,6 +139,7 @@ export default function Home() {
           )}
           <Link
             href={DEMO_BOARD_LINK}
+            data-umami-event={`Landing page: Demo Board Navbar`}
             className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
                 rounded-md text-primary text-lg font-header transition-all duration-500
                 hover:text-white hover:bg-accent/90 
@@ -194,6 +197,7 @@ export default function Home() {
                   className="flex flex-col px-6 py-2 bg-accent justify-center
                 rounded-md text-primary text-xl font-header transition-all duration-300
                 hover:text-white hover:bg-accent/90"
+                  data-umami-event={`Landing page: Demo Board CTA`}
                 >
                   <div className="flex gap-2 items-center">
                     <FaPlay className="size-4 translate-y-[1px]" />
@@ -208,6 +212,7 @@ export default function Home() {
                   href={NEW_BOARD_LINK}
                   className="font-header font-semibold hover:underline hover:text-accent 
                 cursor-pointer select-none transition-all duration-300 text-sm"
+                  data-umami-event={`Landing page: Blank Board`}
                 >
                   Or Start a Blank Board
                 </Link>

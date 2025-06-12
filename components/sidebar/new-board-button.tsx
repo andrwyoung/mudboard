@@ -14,6 +14,7 @@ export default function NewBoardButton() {
       hover:text-accent hover:outline-accent flex flex-row gap-1.5 items-center justify-center cursor-pointer
       rounded-md transition-all px-3 py-1 duration-300"
       title="Create a new Board"
+      data-umami-event={`App: Create New Board`}
     >
       <FaPlus className="size-2" />
       Create new board!

@@ -184,6 +184,7 @@ export default function PricingTable() {
                 className="w-full mt-4 block"
                 target={plan.highlight ? "_blank" : undefined}
                 rel={plan.highlight ? "noopener noreferrer" : undefined}
+                data-umami-event={`Landing page: Pricing CTA ${plan.name}`}
               >
                 <Button
                   variant="secondary"

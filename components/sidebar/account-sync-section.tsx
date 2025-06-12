@@ -87,6 +87,7 @@ export default function AccountSyncSection() {
       <button
         type="button"
         title="Share Board"
+        data-umami-event={`App: Share (Copy Link)`}
         onClick={() => {
           const url = `https://mudboard.com/b/${board?.board_id}`;
           navigator.clipboard.writeText(url).then(() => {

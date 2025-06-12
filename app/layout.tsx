@@ -4,7 +4,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
-import Head from "next/head";
 import LoginDetector from "./login-detector";
 
 const headerFont = Recursive({
@@ -100,7 +99,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
+      <head>
         <script
           defer
           src="https://cloud.umami.is/script.js"
@@ -126,7 +125,7 @@ export default function RootLayout({
             }),
           }}
         />
-      </Head>
+      </head>
       <body
         className={`${headerFont.variable} ${bodyFont.variable} ${monoFont.variable} antialiased`}
       >
