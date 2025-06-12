@@ -1,4 +1,4 @@
-export const SHOW_GLOBAL_ANNOUNCEMENT = true;
+export const SHOW_GLOBAL_ANNOUNCEMENT = false;
 
 export const GlobalAnnouncement = (
   <p className="">
