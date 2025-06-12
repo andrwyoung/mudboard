@@ -26,7 +26,7 @@ export async function createNewBoard({
         title,
         user_id: claimedBy,
         access_level: claimedBy ? "private" : "public",
-        isDemo,
+        is_demo: isDemo,
       },
     ])
     .select()
