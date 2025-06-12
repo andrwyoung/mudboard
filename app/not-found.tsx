@@ -4,6 +4,10 @@ import { FaChevronLeft } from "react-icons/fa";
 import Image from "next/image";
 import { useMetadataStore } from "@/store/metadata-store";
 import { DASHBOARD_LINK } from "@/types/constants";
+import {
+  GlobalAnnouncement,
+  SHOW_GLOBAL_ANNOUNCEMENT,
+} from "@/types/constants/error-message";
 
 export default function NotFound() {
   const user = useMetadataStore((s) => s.user);
@@ -16,21 +20,11 @@ export default function NotFound() {
         The board you&apos;re looking for doesn&apos;t exist or has been
         deleted.
       </p>
-      <p className="text-sm text-muted-foreground mb-4 max-w-sm">
-        <strong>June 12, 11:36AM PST:</strong> We&apos;re currently experiencing
-        issues loading this board due to an ongoing outage with our database
-        provider (
-        <a
-          href="https://status.supabase.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          Supabase Status
-        </a>
-        ). We&apos;re monitoring the situation closely. No boards have been
-        deleted.
-      </p>
+      {SHOW_GLOBAL_ANNOUNCEMENT && (
+        <div className="text-sm text-muted-foreground mb-4 max-w-sm">
+          {GlobalAnnouncement}
+        </div>
+      )}
       <Link
         href={user ? DASHBOARD_LINK : "/"}
         className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary-lighter 

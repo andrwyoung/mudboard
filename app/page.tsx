@@ -20,6 +20,10 @@ import Link from "next/link";
 import { FaPinterestP } from "react-icons/fa6";
 import { SiAdobephotoshop } from "react-icons/si";
 import { useMetadataStore } from "@/store/metadata-store";
+import {
+  GlobalAnnouncement,
+  SHOW_GLOBAL_ANNOUNCEMENT,
+} from "@/types/constants/error-message";
 
 function FAQItem({
   question,
@@ -209,23 +213,13 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="p-4 rounded-lg mt-6  max-w-sm mx-auto">
-                <p className="text-xs text-white text-center ">
-                  <strong>June 12, 11:36AM PST:</strong> We&apos;re currently
-                  experiencing issues with loading boards due to an ongoing
-                  outage with our database provider (
-                  <a
-                    href="https://status.supabase.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline"
-                  >
-                    Supabase Status
-                  </a>
-                  ). We&apos;re monitoring the situation closely. No boards have
-                  been deleted.
-                </p>
-              </div>
+              {SHOW_GLOBAL_ANNOUNCEMENT && (
+                <div className="p-2 rounded-lg mt-12  max-w-sm mx-auto border-2 border-yellow-300 bg-primary/80">
+                  <div className="text-xs text-white text-center ">
+                    {GlobalAnnouncement}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
