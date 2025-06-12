@@ -11,10 +11,12 @@ import { initializeSectionColumns } from "../columns/new-section-columns";
 export async function createNewBoard({
   title,
   claimedBy,
+  isDemo,
   initializeSection = true,
 }: {
   title?: string;
   claimedBy?: string;
+  isDemo?: boolean;
   initializeSection?: boolean;
 }): Promise<Tables<"boards">> {
   const { data: boardData, error: boardError } = await supabase
@@ -24,6 +26,7 @@ export async function createNewBoard({
         title,
         user_id: claimedBy,
         access_level: claimedBy ? "private" : "public",
+        isDemo,
       },
     ])
     .select()

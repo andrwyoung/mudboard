@@ -6,10 +6,15 @@ import { createNewBoard } from "./create-new-board";
 import { checkIfBoardExists } from "./check-board-exist";
 import { toast } from "sonner";
 
-export async function cloneBoard(
-  boardIdToClone: string,
-  claimedBy?: string
-): Promise<string | null> {
+export async function cloneBoard({
+  boardIdToClone,
+  isDemo,
+  claimedBy,
+}: {
+  boardIdToClone: string;
+  isDemo?: boolean;
+  claimedBy?: string;
+}): Promise<string | null> {
   const boardExists = await checkIfBoardExists(boardIdToClone);
 
   if (!boardExists) {
@@ -22,6 +27,7 @@ export async function cloneBoard(
     const board = await createNewBoard({
       title: "Demo Board",
       initializeSection: false,
+      isDemo,
       claimedBy,
     });
 

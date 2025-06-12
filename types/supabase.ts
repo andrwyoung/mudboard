@@ -73,6 +73,13 @@ export type Database = {
             referencedColumns: ["board_id"]
           },
           {
+            foreignKeyName: "blocks_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "expired_boards"
+            referencedColumns: ["board_id"]
+          },
+          {
             foreignKeyName: "blocks_image_id_fkey"
             columns: ["image_id"]
             isOneToOne: false
@@ -100,7 +107,10 @@ export type Database = {
           access_level: Database["public"]["Enums"]["access_type"]
           board_id: string
           created_at: string
+          deleted: boolean | null
+          deleted_at: string | null
           expired_at: string | null
+          is_demo: boolean | null
           password_hash: string | null
           saved_column_num: number | null
           shared_with: string[] | null
@@ -113,7 +123,10 @@ export type Database = {
           access_level?: Database["public"]["Enums"]["access_type"]
           board_id?: string
           created_at?: string
+          deleted?: boolean | null
+          deleted_at?: string | null
           expired_at?: string | null
+          is_demo?: boolean | null
           password_hash?: string | null
           saved_column_num?: number | null
           shared_with?: string[] | null
@@ -126,7 +139,10 @@ export type Database = {
           access_level?: Database["public"]["Enums"]["access_type"]
           board_id?: string
           created_at?: string
+          deleted?: boolean | null
+          deleted_at?: string | null
           expired_at?: string | null
+          is_demo?: boolean | null
           password_hash?: string | null
           saved_column_num?: number | null
           shared_with?: string[] | null
@@ -220,12 +236,20 @@ export type Database = {
             referencedRelation: "boards"
             referencedColumns: ["board_id"]
           },
+          {
+            foreignKeyName: "sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "expired_boards"
+            referencedColumns: ["board_id"]
+          },
         ]
       }
       users: {
         Row: {
           created_at: string
           email: string
+          role: Database["public"]["Enums"]["admin_level"] | null
           tier: Database["public"]["Enums"]["tier_level"]
           user_id: string
           username: string | null
@@ -233,6 +257,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
+          role?: Database["public"]["Enums"]["admin_level"] | null
           tier?: Database["public"]["Enums"]["tier_level"]
           user_id?: string
           username?: string | null
@@ -240,6 +265,7 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string
+          role?: Database["public"]["Enums"]["admin_level"] | null
           tier?: Database["public"]["Enums"]["tier_level"]
           user_id?: string
           username?: string | null
@@ -248,6 +274,41 @@ export type Database = {
       }
     }
     Views: {
+      expired_boards: {
+        Row: {
+          age: unknown | null
+          board_expired: boolean | null
+          board_id: string | null
+          created_at: string | null
+          current_time: string | null
+          user_id: string | null
+        }
+        Insert: {
+          age?: never
+          board_expired?: never
+          board_id?: string | null
+          created_at?: string | null
+          current_time?: never
+          user_id?: string | null
+        }
+        Update: {
+          age?: never
+          board_expired?: never
+          board_id?: string | null
+          created_at?: string | null
+          current_time?: never
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       orphaned_images: {
         Row: {
           blurhash: string | null
@@ -290,6 +351,7 @@ export type Database = {
     }
     Enums: {
       access_type: "private" | "shared_with" | "public"
+      admin_level: "admin" | "sudo"
       tier_level: "free" | "beta" | "pro" | "alpha"
     }
     CompositeTypes: {
@@ -407,6 +469,7 @@ export const Constants = {
   public: {
     Enums: {
       access_type: ["private", "shared_with", "public"],
+      admin_level: ["admin", "sudo"],
       tier_level: ["free", "beta", "pro", "alpha"],
     },
   },

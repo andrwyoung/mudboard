@@ -51,7 +51,11 @@ export function useInitBoard(
           // toast(`Number of columns: ${initNumCols}`);
         }
 
-        if (board.expired_at && new Date(board.expired_at) <= new Date()) {
+        if (
+          board.expired_at &&
+          new Date(board.expired_at) <= new Date() &&
+          board.user_id === null
+        ) {
           setIsExpired(true);
         }
 

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "optimize": "node scripts/optimize-images.mjs",
-    "declutter": "ts-node scripts/cleanup-unused-images.ts"
+    "declutter": "ts-node scripts/cleanup-unused-images.ts",
+    "declutter_boards": "ts-node scripts/cleanup-unclaimed-boards.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
