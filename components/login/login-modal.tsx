@@ -2,22 +2,22 @@
 // not to be confused with /login/page.tsx which is the full page login
 
 "use client";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { InputDark } from "../ui/input-dark";
 import { useMagicLogin } from "@/lib/db-actions/user/magic-link-login";
 import InfoTooltip from "../ui/info-tooltip";
-import { LuLogIn } from "react-icons/lu";
 
 export const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-export default function LoginModal() {
+export default function LoginModal({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: (val: boolean) => void;
+}) {
   const { email, setEmail, loading, message, sendMagicLink } = useMagicLogin(
     {}
   );
@@ -28,19 +28,7 @@ export default function LoginModal() {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          title="Login Button"
-          className="rounded-lg bg-background text-primary font-header text-xs
-          flex items-center gap-1
-             cursor-pointer hover:text-accent transition-all duration-200 font-bold"
-        >
-          <LuLogIn className="size-4" />
-          Log In
-        </button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="rounded-md bg-background p-6 shadow-lg max-w-md w-full">
         <DialogTitle className="text-2xl text-primary">
           Sign in to Mudboard
