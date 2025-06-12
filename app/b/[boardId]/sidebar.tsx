@@ -10,6 +10,7 @@ import Logo from "@/components/ui/logo";
 import AccountSyncSection from "@/components/sidebar/account-sync-section";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
+import { MirrorModeToggle } from "@/components/ui/sidebar/mirror-toggle";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -44,10 +45,14 @@ export default function Sidebar({
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
 
-          <div className="px-4">
+          <div className="px-4 flex flex-col gap-4">
+            <div className="px-4">
+              <MirrorModeToggle />
+            </div>
+
             <AccordianWrapper
-              title="Board Layout"
-              titleClassName="font-header text-md px-4"
+              title="Board Options"
+              titleClassName="font-header text-sm px-4"
             >
               <CustomizeSection />
             </AccordianWrapper>
@@ -57,12 +62,17 @@ export default function Sidebar({
       <div className="flex flex-col gap-4 w-full px-8 pt-6">
         <AccountSyncSection />
       </div>
-      <div
+      <a
         className="flex flex-col items-center px-4 py-4 
-      font-mono font-semibold mt-auto text-xs pt-6 text-primary-foreground"
+      font-mono font-semibold mt-auto text-xs pt-6 text-primary-foreground
+      hover:underline"
+        href="https://www.andrwyoung.com/"
+        title="Andrew's website"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         &copy; {new Date().getFullYear()} Andrew Yong
-      </div>
+      </a>
     </div>
   );
 }

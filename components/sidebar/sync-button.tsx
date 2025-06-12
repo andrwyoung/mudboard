@@ -32,7 +32,7 @@ export default function SyncButton() {
         className={`h-4.5 w-4.5 group-hover:scale-105 font-semibold
     ${isSpinning ? "animate-spin-twice" : "group-hover:rotate-12"}`}
       />
-      <p className="font-semibold ">
+      <p className="font-semibold font-header">
         {isSpinning
           ? "Syncing..."
           : layoutDirty

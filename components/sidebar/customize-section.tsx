@@ -6,19 +6,35 @@
 
 import { useUIStore } from "@/store/ui-store";
 import { MAX_COLUMNS } from "@/types/constants";
-import { MirrorModeToggle } from "../ui/sidebar/mirror-toggle";
+import { CheckField } from "../ui/check-field";
+import { changeBoardPermissions } from "@/lib/db-actions/change-board-permissions";
+import { useMetadataStore } from "@/store/metadata-store";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export default function CustomizeSection() {
   const setNumCols = useUIStore((s) => s.setNumCols);
   const numCols = useUIStore((s) => s.numCols);
 
+  const board = useMetadataStore((s) => s.board);
+  const canEdit = canEditBoard();
+  const openToPublic = board?.access_level === "public";
+
   return (
     <div className=" flex flex-col gap-4 ">
-      <div className="px-4">
-        <MirrorModeToggle />
-      </div>
-
       <div className="flex flex-col gap-1 self-center w-full">
+        {canEdit && (
+          <div className="px-2">
+            <CheckField
+              text="Allow anyone to edit"
+              title="Allow anyone to edit"
+              isChecked={openToPublic}
+              onChange={(checked) => {
+                changeBoardPermissions(checked ? "public" : "private");
+              }}
+            />
+          </div>
+        )}
+
         <h3 className="text-xs font-semibold px-4">Columns:</h3>
 
         <div>

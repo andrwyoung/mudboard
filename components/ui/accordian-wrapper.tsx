@@ -19,7 +19,8 @@ export function AccordianWrapper({
     <div className="flex flex-col gap-2">
       <div
         className={`flex flex-row gap-1 items-center transition-all duration-200
-              font-semibold cursor-pointer hover:underline hover:underline-offset-2 ${titleClassName}`}
+              font-semibold cursor-pointer hover:underline hover:underline-offset-2 ${titleClassName}
+              ${showForm ? "underline" : ""}`}
         onClick={() => setShowForm((prev) => !prev)}
       >
         {title}

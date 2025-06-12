@@ -443,9 +443,16 @@ export default function Home() {
         </div>
         {/* FOOTER */}
         <footer className="mb-8">
-          <p className="font-mono tracking-tightest text-xs font-semibold">
-            Built by Andrew Yong.
-          </p>
+          <a
+            href="https://www.andrwyoung.com/"
+            className="font-mono tracking-tightest text-xs font-semibold
+            hover:underline"
+            title="Andrew's website"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Built by Andrew Yong
+          </a>
         </footer>
       </div>
     </div>

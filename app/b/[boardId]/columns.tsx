@@ -14,6 +14,7 @@ import {
 import { useGetScope } from "@/hooks/use-get-scope";
 import { useIsMirror } from "./board";
 import BlockAdder from "@/components/blocks/add-a-block";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 // virtualization
 function getBlockLayout(
@@ -83,6 +84,8 @@ function ColumnComponent({
     draggedBlocks.length <= MAX_DRAGGED_ITEMS;
   const isMirror = useIsMirror();
   const scope = useGetScope();
+
+  const canEdit = canEditBoard();
 
   const { items } = getBlockLayout(
     column,
@@ -213,7 +216,7 @@ function ColumnComponent({
           // }}
         />
       </SortableContext>
-      {!wholeGalleryEmpty && (
+      {!wholeGalleryEmpty && canEdit && (
         <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
       )}
     </div>

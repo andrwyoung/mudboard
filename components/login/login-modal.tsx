@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { InputDark } from "../ui/input-dark";
 import { useMagicLogin } from "@/lib/db-actions/user/magic-link-login";
 import InfoTooltip from "../ui/info-tooltip";
+import { LuLogIn } from "react-icons/lu";
 
 export const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -32,9 +33,11 @@ export default function LoginModal() {
         <button
           type="button"
           title="Login Button"
-          className="w-full py-0.5 rounded-lg bg-background text-primary font-header text-sm
-             cursor-pointer hover:bg-accent transition-all duration-200"
+          className="rounded-lg bg-background text-primary font-header text-xs
+          flex items-center gap-1
+             cursor-pointer hover:text-accent transition-all duration-200 font-bold"
         >
+          <LuLogIn className="size-4" />
           Log In
         </button>
       </DialogTrigger>
