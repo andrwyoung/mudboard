@@ -16,6 +16,21 @@ export default function NotFound() {
         The board you&apos;re looking for doesn&apos;t exist or has been
         deleted.
       </p>
+      <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+        <strong>June 12, 11:36AM PST:</strong> We&apos;re currently experiencing
+        issues loading this board due to an ongoing outage with our database
+        provider (
+        <a
+          href="https://status.supabase.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+        >
+          Supabase Status
+        </a>
+        ). We&apos;re monitoring the situation closely. No boards have been
+        deleted.
+      </p>
       <Link
         href={user ? DASHBOARD_LINK : "/"}
         className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary-lighter 

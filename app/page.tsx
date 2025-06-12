@@ -208,6 +208,24 @@ export default function Home() {
                   Or Start a Blank Board
                 </Link>
               </div>
+
+              <div className="p-4 rounded-lg mt-6  max-w-sm mx-auto">
+                <p className="text-xs text-white text-center ">
+                  <strong>June 12, 11:36AM PST:</strong> We&apos;re currently
+                  experiencing issues with loading boards due to an ongoing
+                  outage with our database provider (
+                  <a
+                    href="https://status.supabase.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    Supabase Status
+                  </a>
+                  ). We&apos;re monitoring the situation closely. No boards have
+                  been deleted.
+                </p>
+              </div>
             </div>
           </div>
 
