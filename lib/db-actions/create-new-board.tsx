@@ -23,13 +23,16 @@ export async function createNewBoard({
       {
         title,
         user_id: claimedBy,
-        access_level: claimedBy ? "private" : undefined,
+        access_level: claimedBy ? "private" : "public",
       },
     ])
     .select()
     .single();
 
-  if (boardError) throw new Error("Failed to create board");
+  if (boardError) {
+    console.log("Failed to create board: ", boardError);
+    throw new Error("Failed to create board");
+  }
 
   // by default we make a new empty section, but we can disable for cloning
   if (initializeSection) {
