@@ -3,6 +3,52 @@ import { Block, MudboardImage } from "@/types/block-types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+function getLuminance(hex: string): number {
+  const [r, g, b] = hex
+    .replace("#", "")
+    .match(/.{2}/g)!
+    .map((c) => parseInt(c, 16) / 255);
+
+  const a = [r, g, b].map((v) =>
+    v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)
+  );
+
+  return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+}
+
+function hexToHSV(hex: string): { h: number; s: number; v: number } {
+  const [r, g, b] = hex
+    .replace("#", "")
+    .match(/.{2}/g)!
+    .map((c) => parseInt(c, 16) / 255);
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const delta = max - min;
+
+  let h = 0;
+  if (delta !== 0) {
+    if (max === r) {
+      h = 60 * (((g - b) / delta) % 6);
+    } else if (max === g) {
+      h = 60 * ((b - r) / delta + 2);
+    } else {
+      h = 60 * ((r - g) / delta + 4);
+    }
+  }
+
+  if (h < 0) h += 360;
+
+  const s = max === 0 ? 0 : (delta / max) * 100;
+  const v = max * 100;
+
+  return {
+    h: Math.round(h),
+    s: Math.round(s),
+    v: Math.round(v),
+  };
+}
+
 export function useEyedropper(
   imageBlock: MudboardImage,
   selectedBlock: Block,
@@ -12,6 +58,9 @@ export function useEyedropper(
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [hoveredColor, setHoveredColor] = useState<string | null>(null);
+
+  const isColorLight = hoveredColor ? getLuminance(hoveredColor) > 0.5 : true;
+  const hoveredHSV = hoveredColor ? hexToHSV(hoveredColor) : null;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -80,7 +129,7 @@ export function useEyedropper(
 
   function handleEyedropClick() {
     if (!hoveredColor) return;
-    const hexUpper = hoveredColor.toUpperCase();
+    const hexUpper = hoveredColor.replace("#", "").toUpperCase();
     navigator.clipboard.writeText(hexUpper).then(() => {
       toast.success(`Copied ${hexUpper} to Clipboard`);
     });
@@ -92,5 +141,7 @@ export function useEyedropper(
     setHoveredColor,
     onMouseMove,
     handleEyedropClick,
+    isColorLight,
+    hoveredHSV,
   };
 }

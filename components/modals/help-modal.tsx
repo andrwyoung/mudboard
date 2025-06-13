@@ -14,23 +14,23 @@ export default function HelpModal({
         <DialogTitle className="text-2xl text-primary">Need Help?</DialogTitle>
 
         <div className="space-y-3 text-sm text-primary pt-2">
-          {/* <p>
-            Press <kbd className="kbd">⌘</kbd>/<kbd className="kbd">Ctrl</kbd> +{" "}
-            <kbd className="kbd">Z</kbd> to undo, and{" "}
-            <kbd className="kbd">⇧</kbd> + <kbd className="kbd">⌘</kbd> +{" "}
-            <kbd className="kbd">Z</kbd> or <kbd className="kbd">Ctrl</kbd> +{" "}
-            <kbd className="kbd">Y</kbd> to redo.
+          <p>
+            <strong>FAQ: My colors look wierd when uploading Images</strong>
           </p>
           <p>
-            You can drag images between sections, delete blocks, and even change
-            the layout with column settings.
-          </p> 
+            Some images, especially those exported in <em>CMYK</em> (print color
+            mode), may look off after uploading — usually dull or with strange
+            colors. This happens due to how browsers handle image compression.
+          </p>
           <p>
-            Changes are saved in real-time. Use undo to explore freely without
-            fear.
-          </p> */}
+            To avoid this, export your images in <strong>sRGB</strong> color
+            mode. PNGs also tend to preserve color better than JPEGs.
+          </p>
           <p>
-            Stuck? Reach out via email at{" "}
+            <strong>Something Else?</strong>
+          </p>
+          <p>
+            Reach out via email at{" "}
             <a
               href="mailto:andrew@jonadrew.com"
               className="underline hover:text-accent duration-200 transition-all"

@@ -45,6 +45,11 @@ export default function OverlayGallery({
       : "opacity-0 pointer-events-none"
   }`;
 
+  const [eyedropperPos, setEyedropperPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
@@ -203,8 +208,20 @@ export default function OverlayGallery({
   );
 
   // eyedropper
-  const { canvasRef, hoveredColor, onMouseMove, handleEyedropClick } =
-    useEyedropper(imageBlock, selectedBlock, initialSize, zoomLevel, isFlipped);
+  const {
+    canvasRef,
+    hoveredColor,
+    onMouseMove,
+    handleEyedropClick,
+    isColorLight,
+    hoveredHSV,
+  } = useEyedropper(
+    imageBlock,
+    selectedBlock,
+    initialSize,
+    zoomLevel,
+    isFlipped
+  );
 
   // keyboard nav
   useEffect(() => {
@@ -267,8 +284,12 @@ export default function OverlayGallery({
                   }
                 }}
                 onMouseMove={(e) => {
-                  if (overlayMode === "eyedropper") onMouseMove(e);
+                  if (overlayMode === "eyedropper") {
+                    onMouseMove(e);
+                    setEyedropperPos({ x: e.clientX, y: e.clientY });
+                  }
                 }}
+                onMouseLeave={() => setEyedropperPos(null)}
               >
                 <NextImage
                   src={getImageUrl(
@@ -305,12 +326,89 @@ export default function OverlayGallery({
         <FaXmark />
       </div>
       {overlayMode === "eyedropper" && hoveredColor && (
-        <div
-          className="absolute top-16 right-4 z-70 rounded-lg shadow h-8 w-8"
-          style={{
-            backgroundColor: hoveredColor,
-          }}
-        />
+        <>
+          {hoveredHSV && (
+            <div className="absolute bottom-4 right-4 z-60 flex flex-col items-center ">
+              <p className="text-xs font-mono text-stone-200 font-bold text-center">
+                {hoveredColor.replace("#", "").toUpperCase()}
+              </p>
+
+              <div className="relative w-24 h-24 rounded-t-md overflow-hidden shadow-inner ">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `hsl(${hoveredHSV.h}, 100%, 50%)`,
+                    maskImage: `linear-gradient(to right, black, white)`,
+                    WebkitMaskImage: `linear-gradient(to right, black, white)`,
+                  }}
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to top, black, transparent), linear-gradient(to left, transparent, white)",
+                  }}
+                />
+                <div
+                  className={`absolute w-3 h-3 rounded-full border-2 ${
+                    isColorLight ? "border-stone-800" : "border-white"
+                  }`}
+                  style={{
+                    left: `${hoveredHSV.s}%`,
+                    top: `${100 - hoveredHSV.v}%`,
+                    transform: "translate(-50%, -50%)",
+                  }}
+                />
+              </div>
+              {/* Hue bar */}
+              <div className="relative w-24 h-4  rounded-b-md overflow-hidden shadow-inner">
+                {/* Gradient bar */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)",
+                  }}
+                />
+                {/* Pointer */}
+                <div
+                  className="absolute top-1/2 w-[2px] h-4 bg-white"
+                  style={{
+                    left: `${(hoveredHSV.h / 360) * 100}%`,
+                    transform: "translate(-50%, -50%)",
+                  }}
+                />
+              </div>
+              {/* <div className="absolute top-0 left-[-4.5rem] text-xs font-mono text-stone-200 leading-tight space-y-0.5">
+                <p>H: {hoveredHSV.h}°</p>
+                <p>S: {hoveredHSV.s}%</p>
+                <p>V: {hoveredHSV.v}%</p>
+              </div> */}
+            </div>
+          )}
+          {eyedropperPos && (
+            <div
+              className={`fixed pointer-events-none z-70 flex items-baseline gap-2 px-2 py-1 
+                rounded-md shadow border-2
+              ${isColorLight ? "border-stone-700/80" : "border-white/70"}`}
+              style={{
+                left: eyedropperPos.x + 10,
+                top: eyedropperPos.y + 10,
+                backgroundColor: hoveredColor,
+              }}
+            >
+              <div className="w-3 h-5" />
+              {/* <p
+                className={`text-xs font-mono font-bold translate-y-[1px] ${
+                  isColorLight ? "text-stone-800" : "text-white"
+                }`}
+              >
+                {" "}
+                {hoveredColor.toUpperCase()}
+              </p> */}
+            </div>
+          )}
+        </>
       )}
 
       {showDebug && (

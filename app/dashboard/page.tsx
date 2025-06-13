@@ -61,11 +61,13 @@ export default function DashboardPage() {
               supabase
                 .from("sections")
                 .select("*", { count: "exact", head: true })
-                .eq("board_id", board.board_id),
+                .eq("board_id", board.board_id)
+                .eq("deleted", false),
               supabase
                 .from("blocks")
                 .select("*", { count: "exact", head: true })
-                .eq("board_id", board.board_id),
+                .eq("board_id", board.board_id)
+                .eq("deleted", false),
             ]);
 
           counts[board.board_id] = {
