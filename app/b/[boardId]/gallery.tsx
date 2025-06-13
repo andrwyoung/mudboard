@@ -17,7 +17,6 @@ import { useGetScope } from "@/hooks/use-get-scope";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { useLayoutStore } from "@/store/layout-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { toast } from "sonner";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 
 export default function Gallery({

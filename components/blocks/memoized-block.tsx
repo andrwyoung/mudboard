@@ -16,7 +16,6 @@ import {
 } from "../ui/context-menu";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { useUIStore } from "@/store/ui-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
 import { downloadImagesAsZip } from "../download-images/zip-images";

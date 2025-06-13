@@ -53,6 +53,8 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
 import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
 import WelcomeModal from "@/components/modals/welcome-modal";
+import HelpModal from "@/components/modals/help-modal";
+import { FaQuestion } from "react-icons/fa6";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -61,6 +63,7 @@ export const useIsMirror = () => useContext(MirrorContext);
 export default function Board({ boardId }: { boardId: string }) {
   const [isExpired, setIsExpired] = useState(false);
   const [welcomeModalOpen, setWelcomeModalOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   // when dragging new images from local computer
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -253,6 +256,16 @@ export default function Board({ boardId }: { boardId: string }) {
 
   return (
     <div className="flex h-screen overflow-hidden relative">
+      <button
+        onClick={() => setHelpOpen(true)}
+        type="button"
+        title="Help / Support"
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
+         border-primary text-primary-darker rounded-full hover:border-accent
+        shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
+      >
+        <FaQuestion />
+      </button>
       {isExpired && <BoardExpiredPopup />}
       {isDraggingFile && !isExpired && (
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
@@ -384,6 +397,7 @@ export default function Board({ boardId }: { boardId: string }) {
           )}
         </DragOverlay>
       </DndContext>
+      <HelpModal open={helpOpen} setOpen={setHelpOpen} />
       <WelcomeModal open={welcomeModalOpen} setOpen={setWelcomeModalOpen} />
     </div>
   );
