@@ -20,6 +20,7 @@ import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { useUIStore } from "@/store/ui-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
 import { downloadImagesAsZip } from "../download-images/zip-images";
+import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
 
 export function BlockChooser({
   block,
@@ -202,7 +203,7 @@ function BlockComponent({
               blocksToDelete = Object.values(selectedBlocks);
             }
 
-            softDeleteBlocks(blocksToDelete);
+            deleteBlocksWithUndo(blocksToDelete);
           }}
           variant="destructive"
         >

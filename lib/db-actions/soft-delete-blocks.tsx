@@ -17,19 +17,10 @@ export async function softDeleteBlocks(blocks: Block[]) {
 
   const deletedIds = blocks.map((b) => b.block_id);
 
-  // first put it in db
-  const { error } = await supabase
-    .from("blocks")
-    .update({ deleted: true, deleted_at: new Date().toISOString() })
-    .in("block_id", deletedIds);
+  // Take snapshot of layout so we can revert it
+  const prevSectionColumns = useLayoutStore.getState().sectionColumns;
 
-  if (error) {
-    console.error("Failed to delete blocks:", error);
-    toast.error("Failed to Delete Blocks");
-    return false;
-  }
-
-  // then if that's successful then update locally
+  // STEP 1: delete locally
   useLayoutStore.setState((s) => {
     const newSectionColumns = { ...s.sectionColumns };
 
@@ -46,6 +37,22 @@ export async function softDeleteBlocks(blocks: Block[]) {
       sectionColumns: newSectionColumns,
     };
   });
+
+  // STEP 2: reflect on DB
+  const { error } = await supabase
+    .from("blocks")
+    .update({ deleted: true, deleted_at: new Date().toISOString() })
+    .in("block_id", deletedIds);
+
+  if (error) {
+    console.error("Failed to delete blocks:", error);
+    toast.error("Failed to Delete Blocks");
+
+    // Step 3: rollback local layout if DB fails
+    useLayoutStore.setState({ sectionColumns: prevSectionColumns });
+
+    return false;
+  }
 
   toast.success(
     `Deleted ${blocks.length} block${blocks.length > 1 ? "s" : ""}`

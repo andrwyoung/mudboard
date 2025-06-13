@@ -8,6 +8,8 @@ import { useOverlayStore } from "@/store/overlay-store";
 import { useGetScope } from "../use-get-scope";
 import { useUIStore } from "@/store/ui-store";
 import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
+import { useUndoStore } from "@/store/undo-store";
+import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
 
 export function useBoardListeners() {
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
@@ -36,6 +38,7 @@ export function useBoardListeners() {
         e.preventDefault();
       }
 
+      // ZOOM IN/OUT
       if (e.ctrlKey || e.metaKey) {
         if (e.key === "=" || e.key === "+") {
           setNumCols(Math.max(MIN_COLUMNS, numCols - 1));
@@ -48,11 +51,24 @@ export function useBoardListeners() {
         }
       }
 
+      // DELETES
       if (e.key === "Backspace" || e.key === "Delete") {
         const blocksToDelete = Object.values(selectedBlocks);
         if (blocksToDelete.length > 0) {
-          softDeleteBlocks(blocksToDelete);
+          deleteBlocksWithUndo(blocksToDelete);
         }
+      }
+
+      // UNDO
+      const isUndo = (e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === "z";
+      const isRedoMac = e.metaKey && e.shiftKey && e.key === "z";
+      const isRedoWin = e.ctrlKey && e.key === "y";
+      if (isUndo) {
+        e.preventDefault();
+        useUndoStore.getState().undo();
+      } else if (isRedoMac || isRedoWin) {
+        e.preventDefault();
+        useUndoStore.getState().redo();
       }
 
       if (e.key === "Escape") {
