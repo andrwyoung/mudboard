@@ -22,7 +22,8 @@ import { useLayoutStore } from "@/store/layout-store";
 
 export function useInitBoard(
   boardId: string,
-  setIsExpired: (s: boolean) => void
+  setIsExpired: (s: boolean) => void,
+  setWelcomeModalOpen: (s: boolean) => void
 ) {
   const setSections = useMetadataStore((s) => s.setSections);
   const setBoard = useMetadataStore((s) => s.setBoard);
@@ -57,6 +58,10 @@ export function useInitBoard(
           board.user_id === null
         ) {
           setIsExpired(true);
+        }
+
+        if (board.is_demo && board.user_id === null) {
+          setWelcomeModalOpen(true);
         }
 
         //

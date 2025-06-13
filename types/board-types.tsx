@@ -35,6 +35,7 @@ export type Board = {
 
   saved_column_num?: number;
   expired_at: string;
+  is_demo: boolean;
 };
 
 export type User = {

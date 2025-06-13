@@ -19,10 +19,12 @@ export default function CustomizeSection() {
   const canEdit = canEditBoard();
   const openToPublic = board?.access_level === "public";
 
+  const boardUnclaimed = board !== null && board.user_id === null;
+
   return (
     <div className=" flex flex-col gap-4 ">
       <div className="flex flex-col gap-1 self-center w-full">
-        {canEdit && (
+        {canEdit && !boardUnclaimed && (
           <div className="px-2">
             <CheckField
               text="Allow anyone to edit"

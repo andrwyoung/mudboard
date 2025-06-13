@@ -120,11 +120,16 @@ function AlertDialogDescription({
 
 function AlertDialogAction({
   className,
+  good = false,
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Action>) {
+}: React.ComponentProps<typeof AlertDialogPrimitive.Action> & {
+  good?: boolean;
+}) {
+  const computedVariant = good ? "good" : "destructive";
+
   return (
     <AlertDialogPrimitive.Action
-      className={cn(buttonVariants({ variant: "destructive" }), className)}
+      className={cn(buttonVariants({ variant: computedVariant }), className)}
       {...props}
     />
   );
@@ -137,6 +142,7 @@ function AlertDialogCancel({
   return (
     <AlertDialogPrimitive.Cancel
       className={cn(buttonVariants({ variant: "outline_primary" }), className)}
+      title="Nah...Nevermind Button"
       {...props}
     />
   );

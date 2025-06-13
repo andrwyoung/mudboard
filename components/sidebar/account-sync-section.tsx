@@ -2,7 +2,7 @@
 // logging in and displaying the copywriting for all the types of access
 // it's the login buttons and the sync thing you see
 
-import LoginModal from "@/components/login/login-modal";
+import LoginModal from "@/components/modals/login-modal";
 import SyncButton from "./sync-button";
 import { useMetadataStore } from "@/store/metadata-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";

@@ -52,6 +52,7 @@ import { useBoardListeners } from "@/hooks/gallery/use-global-listeners";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
 import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
+import WelcomeModal from "@/components/modals/welcome-modal";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -59,6 +60,7 @@ export const useIsMirror = () => useContext(MirrorContext);
 
 export default function Board({ boardId }: { boardId: string }) {
   const [isExpired, setIsExpired] = useState(false);
+  const [welcomeModalOpen, setWelcomeModalOpen] = useState(false);
 
   // when dragging new images from local computer
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -111,7 +113,7 @@ export default function Board({ boardId }: { boardId: string }) {
   // SECTION: On load. Initialize everything
   //
   //
-  useInitBoard(boardId, setIsExpired);
+  useInitBoard(boardId, setIsExpired, setWelcomeModalOpen);
 
   // here is where we regenerate layout whenever things change
   useEffect(() => regenerateColumns(), [regenerateColumns, numCols]);
@@ -382,6 +384,7 @@ export default function Board({ boardId }: { boardId: string }) {
           )}
         </DragOverlay>
       </DndContext>
+      <WelcomeModal open={welcomeModalOpen} setOpen={setWelcomeModalOpen} />
     </div>
   );
 }

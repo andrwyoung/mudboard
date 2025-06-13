@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
-import { isValidEmail } from "@/components/login/login-modal"; // or move this too
+import { isValidEmail } from "@/components/modals/login-modal"; // or move this too
 
 export function useMagicLogin({
   redirectToDashboard = false,
