@@ -12,6 +12,8 @@ import { useCenteredZoom } from "@/hooks/overlay-gallery.tsx/use-zoom";
 import { useEyedropper } from "@/hooks/overlay-gallery.tsx/use-eyedropper";
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
+import ColorWheel from "@/components/overlay-gallery/color-wheel";
+import GreyscaleWheel from "@/components/overlay-gallery/gs-color-wheel";
 
 type OverlayModes = "drag" | "eyedropper";
 
@@ -220,7 +222,8 @@ export default function OverlayGallery({
     selectedBlock,
     initialSize,
     zoomLevel,
-    isFlipped
+    isFlipped,
+    isGreyscale
   );
 
   // keyboard nav
@@ -325,68 +328,24 @@ export default function OverlayGallery({
       >
         <FaXmark />
       </div>
-      {overlayMode === "eyedropper" && hoveredColor && (
-        <>
-          {hoveredHSV && (
-            <div className="absolute bottom-4 right-4 z-60 flex flex-col items-center ">
-              <p className="text-xs font-mono text-stone-200 font-bold text-center">
-                {hoveredColor.replace("#", "").toUpperCase()}
-              </p>
+      {overlayMode === "eyedropper" &&
+        hoveredColor &&
+        hoveredHSV &&
+        eyedropperPos && (
+          <>
+            {isGreyscale ? (
+              <GreyscaleWheel
+                hoveredColor={hoveredColor}
+                luminance={hoveredHSV.v}
+              />
+            ) : (
+              <ColorWheel
+                hoveredColor={hoveredColor}
+                hoveredHSV={hoveredHSV}
+                isColorLight={isColorLight}
+              />
+            )}
 
-              <div className="relative w-24 h-24 rounded-t-md overflow-hidden shadow-inner ">
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: `hsl(${hoveredHSV.h}, 100%, 50%)`,
-                    maskImage: `linear-gradient(to right, black, white)`,
-                    WebkitMaskImage: `linear-gradient(to right, black, white)`,
-                  }}
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(to top, black, transparent), linear-gradient(to left, transparent, white)",
-                  }}
-                />
-                <div
-                  className={`absolute w-3 h-3 rounded-full border-2 ${
-                    isColorLight ? "border-stone-800" : "border-white"
-                  }`}
-                  style={{
-                    left: `${hoveredHSV.s}%`,
-                    top: `${100 - hoveredHSV.v}%`,
-                    transform: "translate(-50%, -50%)",
-                  }}
-                />
-              </div>
-              {/* Hue bar */}
-              <div className="relative w-24 h-4  rounded-b-md overflow-hidden shadow-inner">
-                {/* Gradient bar */}
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)",
-                  }}
-                />
-                {/* Pointer */}
-                <div
-                  className="absolute top-1/2 w-[2px] h-4 bg-white"
-                  style={{
-                    left: `${(hoveredHSV.h / 360) * 100}%`,
-                    transform: "translate(-50%, -50%)",
-                  }}
-                />
-              </div>
-              {/* <div className="absolute top-0 left-[-4.5rem] text-xs font-mono text-stone-200 leading-tight space-y-0.5">
-                <p>H: {hoveredHSV.h}°</p>
-                <p>S: {hoveredHSV.s}%</p>
-                <p>V: {hoveredHSV.v}%</p>
-              </div> */}
-            </div>
-          )}
-          {eyedropperPos && (
             <div
               className={`fixed pointer-events-none z-70 flex items-baseline gap-2 px-2 py-1 
                 rounded-md shadow border-2
@@ -407,9 +366,8 @@ export default function OverlayGallery({
                 {hoveredColor.toUpperCase()}
               </p> */}
             </div>
-          )}
-        </>
-      )}
+          </>
+        )}
 
       {showDebug && (
         <div

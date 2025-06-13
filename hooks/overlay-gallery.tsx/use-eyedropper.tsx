@@ -54,7 +54,8 @@ export function useEyedropper(
   selectedBlock: Block,
   initialSize: { width: number; height: number } | null,
   zoomLevel: number,
-  isFlipped: boolean
+  isFlipped: boolean,
+  isGreyscale: boolean
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [hoveredColor, setHoveredColor] = useState<string | null>(null);
@@ -121,9 +122,13 @@ export function useEyedropper(
     if (!pixel) return;
 
     const [r, g, b] = pixel;
-    const hex = `#${[r, g, b]
-      .map((v) => v.toString(16).padStart(2, "0"))
-      .join("")}`;
+    const hex = isGreyscale
+      ? (() => {
+          const v = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b); // luminance
+          const greyHex = v.toString(16).padStart(2, "0");
+          return `#${greyHex}${greyHex}${greyHex}`;
+        })()
+      : `#${[r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("")}`;
     setHoveredColor(hex);
   }
 
