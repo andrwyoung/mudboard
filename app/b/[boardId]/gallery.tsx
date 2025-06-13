@@ -98,7 +98,6 @@ export default function Gallery({
         lastSelectedBlock?.block_id &&
         selectedBlocks[lastSelectedBlock.block_id]
       ) {
-        toast("here");
         const currentIndex = masterBlockOrder.findIndex(
           (b) => b.block.block_id === block.block_id
         );
