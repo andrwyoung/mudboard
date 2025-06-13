@@ -1,7 +1,7 @@
 // here's the file we use to import images, but mainly here to handle the drag and drop behaviors.
 // upload-images.tsx (which is called here) is the one handling the meat of the logic/uploading
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { uploadImages } from "@/lib/upload-images/upload-images";
 import { Section } from "@/types/board-types";
 import { toast } from "sonner";
@@ -9,19 +9,28 @@ import { isImageUrl } from "@/utils/upload-helpers";
 import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 import { canEditBoard } from "../lib/auth/can-edit-board";
 import { tryImportImageFromUrl } from "@/lib/upload-images/url-handling/import-image-from-url";
+import { ExtFileDropTarget } from "@/app/b/[boardId]/board";
 
 export function useImageImport({
   selectedSection,
-  setIsDraggingFile,
-  setDraggedFileCount,
+  setIsDraggingExtFile,
+  setDraggedExtFileCount,
+  extFileOverSection,
+  setExtFileOverSection,
 }: {
   selectedSection: Section | null;
-  setIsDraggingFile: (isDragging: boolean) => void;
-  setDraggedFileCount: (count: number | null) => void;
+  setIsDraggingExtFile: (isDragging: boolean) => void;
+  setDraggedExtFileCount: (count: number | null) => void;
+  extFileOverSection: ExtFileDropTarget;
+  setExtFileOverSection: (s: ExtFileDropTarget) => void;
 }) {
+  const extFileOverSectionRef = useRef<ExtFileDropTarget>(extFileOverSection);
+  useEffect(() => {
+    extFileOverSectionRef.current = extFileOverSection;
+  }, [extFileOverSection]);
+
   // handling importing images
   useEffect(() => {
-    if (!selectedSection) return;
     let dragCounter = 0;
 
     function handleDragEnter(e: DragEvent) {
@@ -38,13 +47,13 @@ export function useImageImport({
 
       if (isFile || isLinkOrHtml) {
         dragCounter++;
-        setIsDraggingFile(true);
+        setIsDraggingExtFile(true);
 
         // Only set count if we're dragging files
         if (isFile && items) {
-          setDraggedFileCount(items.length);
+          setDraggedExtFileCount(items.length);
         } else {
-          setDraggedFileCount(null); // we don’t know count for link/image drag
+          setDraggedExtFileCount(null); // we don’t know count for link/image drag
         }
       }
     }
@@ -53,7 +62,8 @@ export function useImageImport({
       e.preventDefault();
       dragCounter--;
       if (dragCounter === 0) {
-        setIsDraggingFile(false);
+        setIsDraggingExtFile(false);
+        setExtFileOverSection(null);
       }
     }
 
@@ -64,8 +74,12 @@ export function useImageImport({
     async function handleDrop(e: DragEvent) {
       e.preventDefault();
       dragCounter = 0;
-      setIsDraggingFile(false);
-      setDraggedFileCount(null);
+      setIsDraggingExtFile(false);
+      setExtFileOverSection(null);
+      setDraggedExtFileCount(null);
+
+      // this the section we want to drop into
+      const section = extFileOverSectionRef.current;
 
       if (!canEditBoard()) {
         console.log("Can't edit board. Not allowing drop");
@@ -77,14 +91,14 @@ export function useImageImport({
       const files = e.dataTransfer?.files;
 
       // checks
-      if (!selectedSection || selectedSection.section_id.trim() === "") {
+      if (!section || section.section.section_id.trim() === "") {
         toast.error("No Selected Section");
         return;
       }
 
       // first check if these files are from local. handle that first
       if (files && files.length > 0) {
-        uploadImages(Array.from(files), selectedSection.section_id);
+        uploadImages(Array.from(files), section.section.section_id);
         return;
       }
 
@@ -120,7 +134,7 @@ export function useImageImport({
       console.log("this is the url we are trying to get: ", imageUrl);
 
       if (imageUrl) {
-        tryImportImageFromUrl(imageUrl, selectedSection.section_id);
+        tryImportImageFromUrl(imageUrl, section.section.section_id);
       }
     }
 

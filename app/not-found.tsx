@@ -16,7 +16,7 @@ export default function NotFound() {
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-4">
       <Image src="/2.png" alt="Board not found" width={375} height={150} />
       <h1 className="text-3xl font-bold mb-2 text-primary">Board not found</h1>
-      <div className="text-muted-foreground mb-6 text-sm max-w-md">
+      <div className="text-muted-foreground mb-8 text-sm max-w-md">
         <p className="mb-1">
           The board you&apos;re looking for doesn&apos;t exist or has been
           deleted.

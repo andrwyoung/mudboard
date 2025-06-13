@@ -9,10 +9,12 @@ export default function DroppableGallerySection({
   sectionId,
   isMirror,
   isActive,
+  isExternalDrag,
 }: {
   sectionId: string;
   isMirror: boolean;
   isActive: boolean;
+  isExternalDrag: boolean;
 }) {
   const scope = useGetScope();
 
@@ -28,8 +30,8 @@ export default function DroppableGallerySection({
   return (
     <div
       ref={setNodeRef}
-      className={`absolute inset-0 z-50 pointer-events-none rounded-xl border-2 opacity-30 ${
-        realIsOver && isActive
+      className={`absolute inset-0 z-50 pointer-events-none rounded-sm border-2 opacity-30 ${
+        (realIsOver && isActive) || isExternalDrag
           ? "bg-accent  border-accent"
           : "border-transparent"
       }`}

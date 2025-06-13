@@ -29,7 +29,6 @@ import { Block } from "@/types/block-types";
 import { useImageImport } from "@/hooks/use-import-images";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
-import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import {
   DndContext,
   DragOverlay,
@@ -60,14 +59,24 @@ import { FaQuestion } from "react-icons/fa6";
 export const MirrorContext = createContext(false);
 export const useIsMirror = () => useContext(MirrorContext);
 
+export type ExtFileDropTarget = {
+  section: Section;
+  mirror: "main" | "mirror";
+} | null;
+
 export default function Board({ boardId }: { boardId: string }) {
   const [isExpired, setIsExpired] = useState(false);
   const [welcomeModalOpen, setWelcomeModalOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
 
   // when dragging new images from local computer
-  const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const [draggedFileCount, setDraggedFileCount] = useState<number | null>(null);
+  const [isDraggingExtFile, setIsDraggingExtFile] = useState(false);
+  const [extFileOverSection, setExtFileOverSection] =
+    useState<ExtFileDropTarget>(null);
+  const [draggedExtFileCount, setDraggedExtFileCount] = useState<number | null>(
+    null
+  );
+  console.log(draggedExtFileCount);
   const canEdit = canEditBoard();
 
   // when dragging blocks
@@ -209,8 +218,10 @@ export default function Board({ boardId }: { boardId: string }) {
   // handling importing images
   useImageImport({
     selectedSection,
-    setIsDraggingFile,
-    setDraggedFileCount,
+    setIsDraggingExtFile,
+    setDraggedExtFileCount,
+    extFileOverSection,
+    setExtFileOverSection,
   });
 
   // handling drag and droping blocks
@@ -267,28 +278,9 @@ export default function Board({ boardId }: { boardId: string }) {
         <FaQuestion />
       </button>
       {isExpired && <BoardExpiredPopup />}
-      {isDraggingFile && !isExpired && (
+      {isDraggingExtFile && !isExpired && !canEdit && (
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
-          {canEdit ? (
-            <>
-              <div className="text-3xl font-header">
-                {draggedFileCount
-                  ? `Drop ${draggedFileCount} file${
-                      draggedFileCount > 1 ? "s" : ""
-                    }!`
-                  : "Drop your file!"}
-              </div>
-              <div className="text-md">
-                {/* {draggedFileCount &&
-              draggedFileCount > DROP_SPREAD_THRESHOLD &&
-              `Adding more than ${DROP_SPREAD_THRESHOLD} spreads over all columns
-          `} */}
-                {`Adding to ${selectedSection?.title ?? DEFAULT_SECTION_NAME}`}
-              </div>
-            </>
-          ) : (
-            <div className="text-3xl font-header">Editing Disabled</div>
-          )}
+          <div className="text-3xl font-header">Editing Disabled</div>
         </div>
       )}
 
@@ -347,6 +339,9 @@ export default function Board({ boardId }: { boardId: string }) {
               draggedBlocks={draggedBlocks}
               selectedBlocks={selectedBlocks}
               dropIndicatorId={dropIndicatorId}
+              isDraggingExtFile={isDraggingExtFile}
+              setExtFileOverSection={setExtFileOverSection}
+              extFileOverSection={extFileOverSection}
             />
             {mirrorMode && (
               <div className="hidden lg:flex w-full h-full">
@@ -359,6 +354,9 @@ export default function Board({ boardId }: { boardId: string }) {
                   draggedBlocks={draggedBlocks}
                   selectedBlocks={selectedBlocks}
                   dropIndicatorId={dropIndicatorId}
+                  isDraggingExtFile={isDraggingExtFile}
+                  extFileOverSection={extFileOverSection}
+                  setExtFileOverSection={setExtFileOverSection}
                 />
               </div>
             )}

@@ -27,7 +27,7 @@ export function DroppableForImages({
     <div
       ref={setNodeRef}
       data-id={id}
-      className={`border  rounded transition-colors duration-150 w-full px-1 ${
+      className={`border rounded-sm transition-colors duration-150 w-full px-1 ${
         isOver || highlighted
           ? "bg-accent/40 border border-accent"
           : "bg-transparent border-transparent"

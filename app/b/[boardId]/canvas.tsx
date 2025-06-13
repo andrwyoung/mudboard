@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import OverlayGallery from "./overlay-gallery";
 import { useUIStore } from "@/store/ui-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
-import { MirrorContext } from "./board";
+import { ExtFileDropTarget, MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
 import Gallery from "./gallery";
 import { Section, SectionColumns } from "@/types/board-types";
@@ -28,6 +28,9 @@ type CanvasProps = {
   selectedBlocks: Record<string, Block>;
 
   dropIndicatorId: string | null;
+  isDraggingExtFile: boolean;
+  extFileOverSection: ExtFileDropTarget;
+  setExtFileOverSection: (s: ExtFileDropTarget) => void;
 };
 
 export default function Canvas({
@@ -39,6 +42,9 @@ export default function Canvas({
   draggedBlocks,
   selectedBlocks,
   dropIndicatorId,
+  isDraggingExtFile,
+  extFileOverSection,
+  setExtFileOverSection,
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
 
@@ -138,14 +144,25 @@ export default function Canvas({
                       sectionRefs.current[key] = el;
                     }}
                     className="relative"
+                    onDragOver={() => {
+                      if (isDraggingExtFile) {
+                        setExtFileOverSection({ section, mirror: mirrorKey });
+                      }
+                    }}
                   >
                     <DroppableGallerySection
                       sectionId={section.section_id}
                       isMirror={isMirror}
                       isActive={
-                        draggedBlocks !== null &&
-                        draggedBlocks !== undefined &&
+                        draggedBlocks != null &&
+                        draggedBlocks != undefined &&
                         draggedBlocks.length > MAX_DRAGGED_ITEMS
+                      }
+                      isExternalDrag={
+                        isDraggingExtFile &&
+                        extFileOverSection?.section.section_id ===
+                          section.section_id &&
+                        extFileOverSection.mirror === mirrorKey
                       }
                     />
                     <SectionHeader section={sectionMap[sectionId]} />

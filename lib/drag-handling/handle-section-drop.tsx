@@ -28,7 +28,7 @@ export function handleSectionDrop({
   const isSameTargetSection =
     activeBlocksWithPos[0].sectionId === targetSection.section_id;
   if (allFromSameSection && isSameTargetSection) {
-    toast("Blocks moved to bottom of section!");
+    toast("Blocks moved to bottom of Section");
   }
 
   // Step 1: prep a map. initialize all involved sections with a copy of current columns
