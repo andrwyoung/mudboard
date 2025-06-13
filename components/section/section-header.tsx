@@ -27,6 +27,7 @@ import {
 } from "../ui/alert-dialog";
 import { useState } from "react";
 import { Block, MudboardImage } from "@/types/block-types";
+import { useUIStore } from "@/store/ui-store";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
@@ -40,6 +41,8 @@ export default function SectionHeader({ section }: { section: Section }) {
   const [downloadConfirmOpen, setDownloadConfirmOpen] = useState(false);
   const [imagesToDownload, setImagesToDownload] = useState<Block[]>([]);
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
+
+  const mirrorMode = useUIStore((s) => s.mirrorMode);
 
   return (
     <div className="flex flex-col">
@@ -59,57 +62,43 @@ export default function SectionHeader({ section }: { section: Section }) {
             className="text-lg sm:text-xl md:text-2xl text-left"
           />
         </div>
-        <div className="flex flex-row gap-2 items-center">
-          <div className="flex flex-row gap-2 items-center">
-            {/* {!mirrorMode && (
-          <div className="hidden lg:flex w-xs">
-            <InlineEditText
-              value={
-                description && description.trim() != "" ? description : null
-              }
-              unnamedPlaceholder="Click to add a Description"
-              placeholder="Add a Description"
-              onChange={(newDesc) => {
-                updateSectionDescription(section.section_id, newDesc);
-              }}
-              className="text-sm text-right"
-            />
-          </div>
-        )} */}
-            {/* <FaPlus className="text-primary hover:text-accent cursor-pointer" /> */}
-            {canEdit && (
-              <div className="group flex flex-row cursor-pointer text-primary">
-                {fileInput}
-                <div
-                  className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
-                  onClick={() => createTextBlock(section.section_id)}
-                >
-                  Text
-                </div>
-                <div
-                  className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
-            transition-transform duration-200 flex items-center justify-center"
-                >
-                  {/* <div className="absolute inset-0 rounded-full border-4 border-primary" /> */}
-                  <FaPlus
-                    className="z-2 size-4 text-primary group-hover:text-accent hover:primary transition-colors duration-300"
-                    onClick={() => triggerImagePicker()}
-                  />
-                  {/* <div
-              className="absolute inset-0 rounded-full bg-primary/40 z-1 group-hover:bg-background transition-all duration-300
-              group-hover:scale-30"
-            /> */}
-                </div>
-
-                <div
-                  className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
-                  onClick={() => triggerImagePicker()}
-                >
-                  Image
-                </div>
+        <div
+          className={`flex flex-row gap-2 items-center ${
+            mirrorMode && "opacity-50"
+          }`}
+        >
+          {canEdit && (
+            <div className="group flex flex-row cursor-pointer text-primary">
+              {fileInput}
+              <div
+                className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
+                onClick={() => createTextBlock(section.section_id)}
+              >
+                Text
               </div>
-            )}
-          </div>
+              <div
+                className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
+                  transition-transform duration-200 flex items-center justify-center"
+              >
+                {/* <div className="absolute inset-0 rounded-full border-4 border-primary" /> */}
+                <FaPlus
+                  className="z-2 size-4 text-primary group-hover:text-accent hover:primary transition-colors duration-300"
+                  onClick={() => triggerImagePicker()}
+                />
+                {/* <div
+                      className="absolute inset-0 rounded-full bg-primary/40 z-1 group-hover:bg-background transition-all duration-300
+                      group-hover:scale-30"
+                    /> */}
+              </div>
+
+              <div
+                className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
+                onClick={() => triggerImagePicker()}
+              >
+                Image
+              </div>
+            </div>
+          )}
 
           <button
             title="Download Images in Section"

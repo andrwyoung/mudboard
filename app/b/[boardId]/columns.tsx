@@ -74,6 +74,7 @@ function ColumnComponent({
 }: Props) {
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
+  const mirrorMode = useUIStore((s) => s.mirrorMode);
   // const overscan = OVERSCAN_SIZE;
   const viewportHeight = window.innerHeight;
   // const isEmpty = column.length === 0;
@@ -216,7 +217,7 @@ function ColumnComponent({
           // }}
         />
       </SortableContext>
-      {!wholeGalleryEmpty && canEdit && (
+      {!wholeGalleryEmpty && canEdit && !mirrorMode && (
         <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
       )}
     </div>
