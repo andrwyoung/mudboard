@@ -64,7 +64,7 @@ export default function SectionHeader({ section }: { section: Section }) {
         </div>
         <div
           className={`flex flex-row gap-2 items-center ${
-            mirrorMode && "opacity-50"
+            mirrorMode ? "opacity-50" : "opacity-80"
           }`}
         >
           {canEdit && (

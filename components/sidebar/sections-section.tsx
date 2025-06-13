@@ -79,7 +79,7 @@ export default function SectionsSection({
 
   return (
     <div className="flex flex-col gap-1 items-start">
-      <div className="px-2 text-2xl font-semibold font-header">
+      <div className="px-2 text-2xl font-semibold font-header mb-1">
         {isEditingBoardTitle ? (
           <input
             ref={inputRef}
@@ -97,14 +97,14 @@ export default function SectionsSection({
           />
         ) : (
           <div
-            onClick={() => {
+            onDoubleClick={() => {
               if (canEdit) {
                 setEditBoardTitle(board?.title ?? "");
                 setIsEditingBoardTitle(true);
               }
             }}
             title={canEdit ? "Double-click to rename" : ""}
-            className="truncate cursor-pointer px-2 py-0.5 border border-transparent ring-2 ring-transparent
+            className="cursor-pointer px-2 py-0.5 border border-transparent ring-2 ring-transparent
              hover:text-accent transition-all duration-300 font-header"
           >
             {board?.title ?? DEFAULT_BOARD_TITLE}
