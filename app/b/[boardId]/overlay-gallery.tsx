@@ -80,11 +80,20 @@ export default function OverlayGallery({
     setSectionOrder(section?.order_index);
   }, [selectedBlock, getBlockPosition, sections]);
 
+  // reset modes
+  const resetModes = () => {
+    setZoomLevel(1);
+    setInitialSize(null);
+    setIsFlipped(false);
+    setIsGreyscale(false);
+    setOverlayMode("drag");
+  };
+
   // flipping to next and prev block
   const goToNextBlock = React.useCallback(() => {
     const next = getNextImage(selectedBlock.block_id);
     if (next) {
-      setInitialSize(null);
+      resetModes();
       setSelectedBlock(next.block);
     }
   }, [getNextImage, selectedBlock.block_id, setSelectedBlock]);
@@ -92,7 +101,7 @@ export default function OverlayGallery({
   const goToPrevBlock = React.useCallback(() => {
     const prev = getPrevImage(selectedBlock.block_id);
     if (prev) {
-      setInitialSize(null);
+      resetModes();
       setSelectedBlock(prev.block);
     }
   }, [getPrevImage, selectedBlock.block_id, setSelectedBlock]);
