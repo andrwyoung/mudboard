@@ -26,7 +26,6 @@ import {
 } from "@/types/block-types";
 import { generateBlurhashFromImage } from "./processing/blur-hash";
 import { findShortestColumn } from "../columns/column-helpers";
-import { useMetadataStore } from "@/store/metadata-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { rasterizeVectorImage } from "./processing/rasterize-vectors";
@@ -50,9 +49,6 @@ export async function uploadImages(
   sectionId: string,
   columnIndex?: number
 ) {
-  const boardId = useMetadataStore.getState().board?.board_id;
-  if (!boardId) return;
-
   if (!files || files.length === 0) return;
 
   const updateColumnsInASection =
@@ -179,7 +175,6 @@ export async function uploadImages(
     const tempBlockId = `temp-${uuidv4()}`;
     const incompleteBlock = {
       section_id: sectionId,
-      board_id: boardId,
       block_type: "image" as BlockType,
       height,
       width,

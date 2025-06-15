@@ -2,14 +2,14 @@
 // note that we have only 1 selecteion store (we don't keep 2 around for the mirror),
 
 import { Block } from "@/types/block-types";
-import { CanvasScope, Section } from "@/types/board-types";
+import { BoardSection, CanvasScope, Section } from "@/types/board-types";
 import { create } from "zustand";
 
 type SelectionStore = {
   selectionScope: CanvasScope;
 
-  selectedSection: Section | null;
-  setSelectedSection: (section: Section) => void;
+  selectedSection: BoardSection | null;
+  setSelectedSection: (section: BoardSection) => void;
 
   selectedBlocks: Record<string, Block>;
   lastSelectedBlock: Block | null;
@@ -25,7 +25,7 @@ export const useSelectionStore = create<SelectionStore>((set, get) => ({
   selectionScope: "main",
 
   selectedSection: null,
-  setSelectedSection: (s: Section) => set({ selectedSection: s }),
+  setSelectedSection: (s: BoardSection) => set({ selectedSection: s }),
 
   selectedBlocks: {},
   lastSelectedBlock: null,

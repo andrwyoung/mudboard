@@ -24,7 +24,6 @@ export function useInitBoard(
   setIsExpired: (s: boolean) => void,
   setWelcomeModalOpen: (s: boolean) => void
 ) {
-  const setSections = useMetadataStore((s) => s.setSections);
   const setBoardSections = useMetadataStore((s) => s.setBoardSections);
   const setBoard = useMetadataStore((s) => s.setBoard);
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
@@ -68,31 +67,29 @@ export function useInitBoard(
         // 2: grab the sections and figure that out
         //
 
-        const boardSections = await fetchSupabaseSections(boardId);
-        let sections = boardSections.map((bs) => bs.section);
+        let boardSections = await fetchSupabaseSections(boardId);
 
         // TODO. create it correctly
-        if (sections.length === 0) {
+        if (boardSections.length === 0) {
           console.log("No sections, creating one");
           const fallback = await createSupabaseSection({
             board_id: boardId,
             order_index: 0,
           });
-          sections = [fallback];
+          boardSections = [fallback];
         }
-        console.log("Got sections: ", sections);
+        console.log("Got sections: ", boardSections);
 
-        setSections(sections);
+        // set sections and selectedSection
         setBoardSections(boardSections);
-
-        // set selected section to the very first one
-        setSelectedSection(boardSections[0].section);
-        console.log("Set sections to:", sections);
+        setSelectedSection(boardSections[0]);
 
         //
         // 3: grab blocks from supabase. and now that we have
         // everything, we can generate the colums
         //
+        const sections = boardSections.map((bs) => bs.section);
+
         const sectionIds = sections.map((s) => s.section_id);
         const blocksBySection = await fetchSupabaseBlocks(sectionIds);
 
@@ -115,5 +112,5 @@ export function useInitBoard(
     }
 
     loadImages();
-  }, [boardId, setSections, setBoard, setSelectedSection]);
+  }, [boardId, setBoardSections, setBoard, setSelectedSection]);
 }

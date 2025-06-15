@@ -1,17 +1,17 @@
 // mark a section for deletion both in the database and locally
 
-import { Section } from "@/types/board-types";
+import { BoardSection } from "@/types/board-types";
 import { supabase } from "@/utils/supabase";
 import { toast } from "sonner";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { useLayoutStore } from "@/store/layout-store";
-import { createSupabaseSection } from "./create-new-section";
 import { reindexSections } from "./reindex-sections";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
+import { createSupabaseSection } from "./create-new-section";
 
-export async function softDeleteSection(section: Section) {
+export async function softDeleteBoardSection(boardSection: BoardSection) {
   // check if access
   const canWrite = canEditBoard();
   if (!canWrite) {
@@ -25,16 +25,16 @@ export async function softDeleteSection(section: Section) {
   // else this is not the last section. just delete it
   // soft delete both blocks and section from db
   const { error } = await supabase
-    .from("sections")
+    .from("board_sections")
     .update({ deleted: true, deleted_at: new Date().toISOString() })
-    .eq("section_id", section.section_id);
+    .eq("board_section_id", boardSection.board_section_id);
 
-  const { error: blockErr } = await supabase
-    .from("blocks")
-    .update({ deleted: true, deleted_at: new Date().toISOString() })
-    .eq("section_id", section.section_id);
+  // const { error: blockErr } = await supabase
+  //   .from("blocks")
+  //   .update({ deleted: true, deleted_at: new Date().toISOString() })
+  //   .eq("section_id", section.section_id);
 
-  if (error || blockErr) {
+  if (error) {
     console.error("Failed to delete section:", error);
     toast.error("Failed to delete section");
     return false;
@@ -42,30 +42,32 @@ export async function softDeleteSection(section: Section) {
 
   // if successfully then delete both section and blocks locally too
   useMetadataStore.setState((s) => ({
-    sections: s.sections.filter((s) => s.section_id !== section.section_id),
+    boardSections: s.boardSections.filter(
+      (bs) => bs.board_section_id !== boardSection.board_section_id
+    ),
   }));
 
   useLayoutStore.setState((s) => {
     const updated = { ...s.sectionColumns };
-    delete updated[section.section_id];
+    delete updated[boardSection.section.section_id];
     return { sectionColumns: updated };
   });
 
   // SPECIAL CASE: if it was selected
-  const allSections = useMetadataStore.getState().sections;
+  const allBoardSections = useMetadataStore.getState().boardSections;
   const isSelected =
-    section.section_id ===
-    useSelectionStore.getState().selectedSection?.section_id;
+    boardSection.section.section_id ===
+    useSelectionStore.getState().selectedSection?.section.section_id;
 
-  if (isSelected && allSections.length > 0) {
+  if (isSelected && allBoardSections.length > 0) {
     useSelectionStore.setState(() => ({
-      selectedSection: allSections[0],
+      selectedSection: allBoardSections[0],
     }));
   }
 
   // SPECIAL CASE: if section is the only one left, then
   // immediately make a blank section
-  if (allSections.length <= 0) {
+  if (allBoardSections.length <= 0) {
     console.log("Last section, creating new one");
     const fallback = await createSupabaseSection({
       board_id: boardId,
@@ -73,12 +75,12 @@ export async function softDeleteSection(section: Section) {
     });
 
     useMetadataStore.setState(() => ({
-      sections: [fallback],
+      boardSections: [fallback],
     }));
 
     useLayoutStore.setState(() => ({
       sectionColumns: {
-        [fallback.section_id]: [],
+        [fallback.section.section_id]: [],
       },
     }));
 
@@ -89,6 +91,8 @@ export async function softDeleteSection(section: Section) {
   await reindexSections();
 
   // toast
-  toast.success(`Deleted section: ${section.title ?? DEFAULT_SECTION_NAME}`);
+  toast.success(
+    `Deleted section: ${boardSection.section.title ?? DEFAULT_SECTION_NAME}`
+  );
   return true;
 }

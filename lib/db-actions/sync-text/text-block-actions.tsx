@@ -1,6 +1,5 @@
 // these are the database actions that help to create and update text blocks
 
-import { useMetadataStore } from "@/store/metadata-store";
 import { Block, BlockInsert, TextBlockType } from "@/types/block-types";
 import { TEXT_BLOCK_HEIGHT } from "@/types/upload-settings";
 import { v4 as uuidv4 } from "uuid";
@@ -13,9 +12,6 @@ export async function createTextBlock(
   sectionId: string,
   columnIndex?: number
 ): Promise<Block> {
-  const board = useMetadataStore.getState().board;
-  if (!board) throw new Error("Board does not exist");
-
   const columns = useLayoutStore.getState().sectionColumns[sectionId] ?? [];
   const colIndex = columnIndex ?? findShortestColumn(sectionId);
   const rowIndex = columns[colIndex].length;
@@ -56,7 +52,9 @@ export async function createTextBlock(
       .single();
 
     if (blockInsertError) {
-      throw new Error(`DB block insert failed: ${blockInsertError.message}`);
+      throw new Error(
+        `DB text block insert failed: ${blockInsertError.message}`
+      );
     }
 
     console.log("Uploaded Text Block");

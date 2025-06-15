@@ -76,7 +76,9 @@ export async function uploadImageToSupabase(
     .single();
 
   if (blockInsertError) {
-    throw new Error(`DB block insert failed: ${blockInsertError.message}`);
+    throw new Error(
+      `DB image block insert failed: ${blockInsertError.message}`
+    );
   }
 
   console.log("Uploaded: ", file);

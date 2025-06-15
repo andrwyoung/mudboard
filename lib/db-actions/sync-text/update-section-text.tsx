@@ -17,10 +17,13 @@ export async function updateSectionTitle(
 
   // update locally
   useMetadataStore.setState((s) => ({
-    sections: s.sections.map((section) =>
-      section.section_id === sectionId
-        ? { ...section, title: newTitle }
-        : section
+    boardSections: s.boardSections.map((bs) =>
+      bs.section.section_id === sectionId
+        ? {
+            ...bs,
+            section: { ...bs.section, title: newTitle },
+          }
+        : bs
     ),
   }));
 
@@ -44,10 +47,13 @@ export async function updateSectionDescription(
 
   // update locally
   useMetadataStore.setState((s) => ({
-    sections: s.sections.map((section) =>
-      section.section_id === sectionId
-        ? { ...section, description: newDescription }
-        : section
+    boardSections: s.boardSections.map((bs) =>
+      bs.section.section_id === sectionId
+        ? {
+            ...bs,
+            section: { ...bs.section, description: newDescription },
+          }
+        : bs
     ),
   }));
 

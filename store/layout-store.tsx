@@ -72,12 +72,12 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
   regenerateColumns: () => {
     const masterBlocks = get().masterBlockOrder;
     const numCols = useUIStore.getState().numCols;
-    const sections = useMetadataStore.getState().sections;
+    const boardSections = useMetadataStore.getState().boardSections;
 
     const newSectionColumns: SectionColumns = {};
 
-    for (const section of sections) {
-      newSectionColumns[section.section_id] = Array.from(
+    for (const boardSection of boardSections) {
+      newSectionColumns[boardSection.section.section_id] = Array.from(
         { length: numCols },
         () => []
       );

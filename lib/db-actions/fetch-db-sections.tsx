@@ -12,11 +12,15 @@ export async function fetchSupabaseSections(
     .from("board_sections")
     .select("*, section:sections(*)")
     .eq("board_id", boardId)
+    .eq("deleted", false) // Filter on board_sections
+    .filter("section.deleted", "eq", false) // Filter on joined section
     .order("order_index", { ascending: true });
 
   if (error) {
     throw new Error("Failed to fetch board_sections: " + error.message);
   }
+
+  console.log("fetched board sections: ", data);
 
   return data as BoardSection[];
 }

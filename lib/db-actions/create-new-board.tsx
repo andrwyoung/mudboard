@@ -43,12 +43,12 @@ export async function createNewBoard({
   // by default we make a new empty section, but we can disable for cloning
   if (initializeSection) {
     // always make a new section if we make a board
-    const newSection = await createSupabaseSection({
+    const newBoardSection = await createSupabaseSection({
       board_id: boardData.board_id,
       order_index: 0,
     });
 
-    initializeSectionColumns(newSection.section_id);
+    initializeSectionColumns(newBoardSection.section.section_id);
   }
 
   return boardData;

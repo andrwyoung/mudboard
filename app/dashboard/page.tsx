@@ -36,6 +36,7 @@ export default function DashboardPage() {
   const [boardCounts, setBoardCounts] = useState<
     Record<string, { sectionCount: number; blockCount: number }>
   >({});
+  console.log(boardCounts);
   const user = useMetadataStore((s) => s.user);
   const [boardToDelete, setBoardToDelete] = useState<Board | null>(null);
 
@@ -204,10 +205,10 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-primary ml-4 font-bold">
+                  {/* <p className="text-xs text-primary ml-4 font-bold">
                     {boardCounts[board.board_id]?.sectionCount ?? 0} sections •{" "}
                     {boardCounts[board.board_id]?.blockCount ?? 0} blocks
-                  </p>
+                  </p> */}
                 </div>
 
                 <div className="flex flex-row-reverse justify-between mb-4 mx-6">

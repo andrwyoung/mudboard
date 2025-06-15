@@ -4,7 +4,7 @@
 // sorry. component naming
 
 import { useSelectionStore } from "@/store/selection-store";
-import { Section } from "@/types/board-types";
+import { BoardSection } from "@/types/board-types";
 import React, { RefObject, useEffect, useRef, useState } from "react";
 import {
   ContextMenu,
@@ -28,15 +28,13 @@ import { useImagePicker } from "@/hooks/use-image-picker";
 import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-text";
 
 export default function SectionRow({
-  thisSection,
-  thisIndex,
+  thisBoardSection,
   sectionRefs,
-  setSectionToDelete,
+  setBoardSectionToDelete,
 }: {
-  thisSection: Section;
-  thisIndex: number;
+  thisBoardSection: BoardSection;
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
-  setSectionToDelete: (section: Section) => void;
+  setBoardSectionToDelete: (section: BoardSection) => void;
 }) {
   const [highlightedSection, setHighlightedSection] = useState<string | null>(
     null
@@ -46,31 +44,41 @@ export default function SectionRow({
 
   const selectedSection = useSelectionStore((s) => s.selectedSection);
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
-  const allSections = useMetadataStore((s) => s.sections);
+  const allBoardSections = useMetadataStore((s) => s.boardSections);
 
   const { triggerImagePicker, fileInput } = useImagePicker(
-    thisSection.section_id
+    thisBoardSection.section.section_id
   );
 
-  const titleExists = thisSection.title && thisSection.title.trim() != "";
-  const selected = selectedSection?.section_id === thisSection.section_id;
-  const highlighted = highlightedSection === thisSection.section_id;
+  const titleExists =
+    thisBoardSection.section.title &&
+    thisBoardSection.section.title.trim() != "";
+  const selected =
+    selectedSection?.section.section_id === thisBoardSection.section.section_id;
+  const highlighted =
+    highlightedSection === thisBoardSection.section.section_id;
   const triggerRef = useRef<HTMLDivElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(thisSection.title ?? "");
+  const [editValue, setEditValue] = useState(
+    thisBoardSection.section.title ?? ""
+  );
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleMoveSection(direction: "up" | "down") {
     const offset = direction === "up" ? -1 : 1;
-    const target = Object.values(allSections).find(
-      (s) => s.order_index === thisSection.order_index + offset
+    const target = Object.values(allBoardSections).find(
+      (s) => s.order_index === thisBoardSection.order_index + offset
     );
-    if (!target) return;
+    if (!target) {
+      console.error("Could not find target to delete");
+      return;
+    }
+    console.log("swapping, ", target, "with, ", thisBoardSection);
 
-    swapSectionOrder(thisSection, target).then((success) => {
+    swapSectionOrder(thisBoardSection, target).then((success) => {
       if (success) {
-        const el = sectionRefs.current?.[thisSection.section_id];
+        const el = sectionRefs.current?.[thisBoardSection.section.section_id];
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
@@ -91,7 +99,7 @@ export default function SectionRow({
       return;
     }
 
-    updateSectionTitle(thisSection.section_id, editValue);
+    updateSectionTitle(thisBoardSection.section.section_id, editValue);
     setIsEditing(false);
   }
 
@@ -100,19 +108,21 @@ export default function SectionRow({
       {fileInput}
 
       <DroppableForImages
-        key={thisSection.section_id}
-        id={`section-${thisIndex}`}
+        key={thisBoardSection.section.section_id}
+        id={`section-${thisBoardSection.order_index}`}
         highlighted={highlighted}
-        sectionId={thisSection.section_id}
+        sectionId={thisBoardSection.section.section_id}
       >
         <ContextMenu
           onOpenChange={(isOpen) => {
-            setHighlightedSection(isOpen ? thisSection.section_id : null);
+            setHighlightedSection(
+              isOpen ? thisBoardSection.section.section_id : null
+            );
 
             // this is here to wait for context menu to close first
             if (!isOpen && pendingDelete) {
               setPendingDelete(false);
-              setSectionToDelete(thisSection);
+              setBoardSectionToDelete(thisBoardSection);
             }
           }}
         >
@@ -126,14 +136,14 @@ export default function SectionRow({
                 className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
                 onDoubleClick={() => {
                   if (canEdit) {
-                    setEditValue(thisSection.title ?? "");
+                    setEditValue(thisBoardSection.section.title ?? "");
                     setIsEditing(true);
                   }
                 }}
                 onClick={() => {
                   const sectionEl =
-                    sectionRefs.current?.[thisSection.section_id];
-                  setSelectedSection(thisSection);
+                    sectionRefs.current?.[thisBoardSection.section.section_id];
+                  setSelectedSection(thisBoardSection);
                   if (sectionEl) {
                     sectionEl.scrollIntoView({
                       behavior: "smooth",
@@ -162,7 +172,9 @@ export default function SectionRow({
                     truncate whitespace-nowrap overflow-hidden min-w-0
                     ${titleExists ? "" : "italic"} `}
                   >
-                    {titleExists ? thisSection.title : DEFAULT_SECTION_NAME}
+                    {titleExists
+                      ? thisBoardSection.section.title
+                      : DEFAULT_SECTION_NAME}
                   </h2>
                 )}
               </div>
@@ -206,7 +218,7 @@ export default function SectionRow({
           <ContextMenuContent className="">
             <ContextMenuItem
               onClick={() => {
-                setEditValue(thisSection.title ?? "");
+                setEditValue(thisBoardSection.section.title ?? "");
                 console.log("hey");
                 setTimeout(() => {
                   setIsEditing(true);
@@ -222,20 +234,24 @@ export default function SectionRow({
                   Image
                 </ContextMenuItem>
                 <ContextMenuItem
-                  onClick={() => createTextBlock(thisSection.section_id)}
+                  onClick={() =>
+                    createTextBlock(thisBoardSection.section.section_id)
+                  }
                 >
                   Text
                 </ContextMenuItem>
               </ContextMenuSubContent>
             </ContextMenuSub>
             <ContextMenuItem
-              disabled={thisIndex === 0}
+              disabled={thisBoardSection.order_index === 0}
               onClick={() => handleMoveSection("up")}
             >
               Move Up
             </ContextMenuItem>
             <ContextMenuItem
-              disabled={thisIndex === allSections.length - 1}
+              disabled={
+                thisBoardSection.order_index === allBoardSections.length - 1
+              }
               onClick={() => handleMoveSection("down")}
             >
               Move Down

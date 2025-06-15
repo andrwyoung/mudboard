@@ -1,20 +1,22 @@
 import { supabase } from "@/utils/supabase";
-import { Section } from "@/types/board-types";
+import { BoardSection } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 
 // Assumes both sections are on the same board
-export async function swapSectionOrder(a: Section, b: Section) {
+export async function swapSectionOrder(a: BoardSection, b: BoardSection) {
   if (a.order_index === b.order_index) return;
 
   const { error: errorA } = await supabase
-    .from("sections")
+    .from("board_sections")
     .update({ order_index: b.order_index })
-    .eq("section_id", a.section_id);
+    .eq("board_id", a.board_id)
+    .eq("section_id", a.section.section_id);
 
   const { error: errorB } = await supabase
-    .from("sections")
+    .from("board_sections")
     .update({ order_index: a.order_index })
-    .eq("section_id", b.section_id);
+    .eq("board_id", b.board_id)
+    .eq("section_id", b.section.section_id);
 
   if (errorA || errorB) {
     console.error("Failed to swap section order:", errorA || errorB);
@@ -23,16 +25,16 @@ export async function swapSectionOrder(a: Section, b: Section) {
 
   // Update locally
   useMetadataStore.setState((s) => {
-    const newSections = [...s.sections].map((sec) => {
-      if (sec.section_id === a.section_id)
-        return { ...sec, order_index: b.order_index };
-      if (sec.section_id === b.section_id)
-        return { ...sec, order_index: a.order_index };
-      return sec;
+    const newBoardSections = [...s.boardSections].map((bs) => {
+      if (bs.section.section_id === a.section.section_id)
+        return { ...bs, order_index: b.order_index };
+      if (bs.section.section_id === b.section.section_id)
+        return { ...bs, order_index: a.order_index };
+      return bs;
     });
 
     return {
-      sections: newSections,
+      boardSections: newBoardSections,
     };
   });
 

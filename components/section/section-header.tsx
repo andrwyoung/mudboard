@@ -28,6 +28,7 @@ import {
 import { useState } from "react";
 import { Block, MudboardImage } from "@/types/block-types";
 import { useUIStore } from "@/store/ui-store";
+import { toast } from "sonner";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
@@ -160,12 +161,18 @@ export default function SectionHeader({ section }: { section: Section }) {
               className="font-bold"
               good
               title="Download Images"
-              onClick={() => {
+              onClick={async () => {
                 setDownloadConfirmOpen(false);
-                downloadImagesAsZip(
+
+                const toastId = toast.loading(
+                  "Zipping images. This may take a while"
+                );
+                await downloadImagesAsZip(
                   imagesToDownload,
                   section.title ?? undefined
                 );
+                toast.dismiss(toastId);
+                toast.success("Download ready");
               }}
             >
               Download

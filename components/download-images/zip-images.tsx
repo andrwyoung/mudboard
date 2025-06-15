@@ -11,14 +11,25 @@ export async function downloadImagesAsZip(blocks: Block[], title?: string) {
       b.block_type === "image" && !!b.data
   );
 
-  for (const block of imageBlocks) {
+  for (let i = 0; i < imageBlocks.length; i++) {
+    const block = imageBlocks[i];
     const image = block.data;
-    const url = getImageUrl(image.image_id, image.file_ext, "full");
+
+    const paddedIndex = String(i + 1).padStart(3, "0");
+    const rawTitle = (title ?? "section").toLowerCase();
+    const safeTitle = rawTitle
+      .replace(/[^\w\d]+/g, "-") // Replace symbols with "-"
+      .replace(/-+$/, "") // Remove trailing dash if present
+      .replace(/^-+/, "") // Remove leading dash if present
+      .replace(/-+/g, "-") // Collapse multiple dashes
+      .slice(0, 40); // Limit filename length
+
+    const filename = `${safeTitle}_${paddedIndex}.${image.file_ext}`;
 
     try {
+      const url = getImageUrl(image.image_id, image.file_ext, "full");
       const response = await fetch(url);
       const blob = await response.blob();
-      const filename = `${image.original_name}.${image.file_ext}`;
       zip.file(filename, blob);
     } catch (err) {
       console.error(`Failed to fetch image ${image.image_id}:`, err);

@@ -5,8 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block } from "@/types/block-types";
 import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
-import { Section, SectionColumns } from "@/types/board-types";
-import { findShortestColumn } from "@/lib/columns/column-helpers";
+import { BoardSection, SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { handleSectionDrop } from "@/lib/drag-handling/handle-section-drop";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
@@ -34,7 +33,7 @@ export function getMovingItem(
 
 type UseGalleryHandlersProps = {
   sectionColumns: SectionColumns;
-  sections: Section[];
+  boardSections: BoardSection[];
   positionedBlockMap: Map<string, PositionedBlock>;
   updateSections: (
     updates: Record<string, (prev: Block[][]) => Block[][]>
@@ -50,7 +49,7 @@ type UseGalleryHandlersProps = {
 
 export function useGalleryHandlers({
   sectionColumns,
-  sections,
+  boardSections,
   positionedBlockMap,
   updateSections,
   draggedBlocks,
@@ -238,9 +237,10 @@ export function useGalleryHandlers({
 
         // the case where we're dragging too many blocks
         if (draggedBlocks && draggedBlocks.length > MAX_DRAGGED_ITEMS) {
-          const targetSection = sections.find(
-            (s) => s.section_id === toSectionId
+          const targetBoardSection = boardSections.find(
+            (bs) => bs.section.section_id === toSectionId
           );
+          const targetSection = targetBoardSection?.section;
 
           if (!targetSection) return;
           handleSectionDrop({
@@ -266,7 +266,7 @@ export function useGalleryHandlers({
         // then we handle section matches
       } else if (sectionMatch) {
         const sectionIndex = Number(sectionMatch[1]);
-        const targetSection = sections[sectionIndex];
+        const targetSection = boardSections[sectionIndex].section;
 
         handleSectionDrop({
           activeBlocksWithPos,

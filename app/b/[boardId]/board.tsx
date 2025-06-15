@@ -40,7 +40,6 @@ import {
 } from "@dnd-kit/core";
 import { useGalleryHandlers } from "@/hooks/gallery/use-drag-handlers";
 import Image from "next/image";
-import { Section } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 import { useLoadingStore } from "@/store/loading-store";
@@ -54,6 +53,7 @@ import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
 import WelcomeModal from "@/components/modals/welcome-modal";
 import HelpModal from "@/components/modals/help-modal";
 import { FaQuestion } from "react-icons/fa6";
+import { BoardSection, Section } from "@/types/board-types";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -89,7 +89,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const numCols = useUIStore((s) => s.numCols);
 
   // sections
-  const sections = useMetadataStore((s) => s.sections);
+  const boardSections = useMetadataStore((s) => s.boardSections);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // when blurring images
@@ -136,12 +136,12 @@ export default function Board({ boardId }: { boardId: string }) {
   );
 
   const sectionMap = useMemo(() => {
-    const map: Record<string, Section> = {};
-    for (const section of sections) {
-      map[section.section_id] = section;
+    const map: Record<string, BoardSection> = {};
+    for (const boardSection of boardSections) {
+      map[boardSection.section.section_id] = boardSection;
     }
     return map;
-  }, [sections]);
+  }, [boardSections]);
 
   // syncing block order to database
   useEffect(() => {
@@ -217,7 +217,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // handling importing images
   useImageImport({
-    selectedSection,
+    selectedSection: selectedSection?.section ?? null,
     setIsDraggingExtFile,
     setDraggedExtFileCount,
     extFileOverSection,
@@ -228,7 +228,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const { handleDragStart, handleDragMove, handleDragEnd } = useGalleryHandlers(
     {
       sectionColumns,
-      sections,
+      boardSections,
       positionedBlockMap,
       updateSections: (
         updates: Record<string, (prev: Block[][]) => Block[][]>
@@ -332,7 +332,7 @@ export default function Board({ boardId }: { boardId: string }) {
           >
             <Canvas
               isMirror={false}
-              sections={sections}
+              boardSections={boardSections}
               sectionColumns={sectionColumns}
               sectionRefs={sectionRefs}
               sectionMap={sectionMap}
@@ -347,7 +347,7 @@ export default function Board({ boardId }: { boardId: string }) {
               <div className="hidden lg:flex w-full h-full">
                 <Canvas
                   isMirror={true}
-                  sections={sections}
+                  boardSections={boardSections}
                   sectionColumns={sectionColumns}
                   sectionRefs={sectionRefs}
                   sectionMap={sectionMap}

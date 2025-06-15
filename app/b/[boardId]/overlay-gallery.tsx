@@ -69,16 +69,18 @@ export default function OverlayGallery({
     undefined
   );
   const getBlockPosition = useLayoutStore((s) => s.getBlockPosition);
-  const sections = useMetadataStore((s) => s.sections);
+  const boardSections = useMetadataStore((s) => s.boardSections);
 
   // debug info
   useEffect(() => {
     const blockPos = getBlockPosition(selectedBlock.block_id);
     setBlockOrder(blockPos?.orderIndex);
 
-    const section = sections.find((s) => s.section_id === blockPos?.sectionId);
+    const section = boardSections.find(
+      (s) => s.section.section_id === blockPos?.sectionId
+    );
     setSectionOrder(section?.order_index);
-  }, [selectedBlock, getBlockPosition, sections]);
+  }, [selectedBlock, getBlockPosition, boardSections]);
 
   // reset modes
   const resetModes = () => {

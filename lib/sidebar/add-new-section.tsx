@@ -20,20 +20,20 @@ export async function addNewSection({
   }
 
   // create one in the database
-  const newSection = await createSupabaseSection({
+  const newBoardSection = await createSupabaseSection({
     board_id,
     title,
     order_index,
   });
 
   // update locally
-  useMetadataStore.setState((s) => ({
-    sections: [...s.sections, newSection],
+  useMetadataStore.setState((bs) => ({
+    boardSections: [...bs.boardSections, newBoardSection],
   }));
 
   // create a new array of columns to use
-  initializeSectionColumns(newSection.section_id);
+  initializeSectionColumns(newBoardSection.section.section_id);
 
   toast.success("Successfully created new section");
-  return newSection;
+  return newBoardSection;
 }

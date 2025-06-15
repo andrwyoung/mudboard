@@ -3,21 +3,21 @@
 
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
-import { Section } from "@/types/board-types";
+import { BoardSection } from "@/types/board-types";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 // reindexes sections and syncs with Supabase if it's allowed
 export async function reindexSections(): Promise<void> {
   // first reindex locally
-  const reorderedSections: Section[] = useMetadataStore
+  const reorderedSections: BoardSection[] = useMetadataStore
     .getState()
-    .sections.map((section, index) => ({
-      ...section,
+    .boardSections.map((boardSection, index) => ({
+      ...boardSection,
       order_index: index,
     }));
 
   useMetadataStore.setState(() => ({
-    sections: reorderedSections,
+    boardSections: reorderedSections,
   }));
 
   // sync with database only if has access
@@ -28,11 +28,11 @@ export async function reindexSections(): Promise<void> {
   }
 
   await Promise.all(
-    reorderedSections.map((section) =>
+    reorderedSections.map((boardSection) =>
       supabase
-        .from("sections")
-        .update({ order_index: section.order_index })
-        .eq("section_id", section.section_id)
+        .from("board_sections")
+        .update({ order_index: boardSection.order_index })
+        .eq("board_section_id", boardSection.board_section_id)
     )
   );
 }

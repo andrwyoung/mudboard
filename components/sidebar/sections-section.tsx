@@ -16,8 +16,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
-import { Section } from "@/types/board-types";
-import { softDeleteSection } from "@/lib/db-actions/soft-delete-section";
+import { BoardSection } from "@/types/board-types";
+import { softDeleteBoardSection } from "@/lib/db-actions/soft-delete-board-section";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { addNewSection } from "@/lib/sidebar/add-new-section";
 
@@ -31,11 +31,12 @@ export default function SectionsSection({
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
 }) {
   const board = useMetadataStore((s) => s.board);
-  const sections = useMetadataStore((s) => s.sections);
+  const boardSections = useMetadataStore((s) => s.boardSections);
   const canEdit = canEditBoard();
 
   const setEditingSectionId = useLoadingStore((s) => s.setEditingSectionId);
-  const [sectionToDelete, setSectionToDelete] = useState<Section | null>(null);
+  const [boardSectionToDelete, setBoardSectionToDelete] =
+    useState<BoardSection | null>(null);
 
   const [isEditingBoardTitle, setIsEditingBoardTitle] = useState(false);
   const [editBoardTitle, setEditBoardTitle] = useState(board?.title ?? "");
@@ -112,27 +113,26 @@ export default function SectionsSection({
         )}
       </div>
       <div className="w-full">
-        {[...sections]
-          .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
-          .map((section, index) => (
+        {[...boardSections]
+          .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)) //redundant. but ok
+          .map((boardSection) => (
             <SectionRow
-              key={section.section_id}
-              thisSection={section}
-              thisIndex={index}
+              key={boardSection.section.section_id}
+              thisBoardSection={boardSection}
               sectionRefs={sectionRefs}
-              setSectionToDelete={setSectionToDelete}
+              setBoardSectionToDelete={setBoardSectionToDelete}
             />
           ))}
-        {sectionToDelete && (
+        {boardSectionToDelete && (
           <AlertDialog
-            open={!!sectionToDelete}
-            onOpenChange={(open) => !open && setSectionToDelete(null)}
+            open={!!boardSectionToDelete}
+            onOpenChange={(open) => !open && setBoardSectionToDelete(null)}
           >
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-2xl text-primary">
                   Delete &quot;
-                  {sectionToDelete.title ?? DEFAULT_SECTION_NAME}
+                  {boardSectionToDelete.section.title ?? DEFAULT_SECTION_NAME}
                   &quot;?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
@@ -147,8 +147,8 @@ export default function SectionsSection({
                 <AlertDialogAction
                   className="font-bold"
                   onClick={() => {
-                    softDeleteSection(sectionToDelete);
-                    setSectionToDelete(null);
+                    softDeleteBoardSection(boardSectionToDelete);
+                    setBoardSectionToDelete(null);
                   }}
                 >
                   Delete Section
@@ -169,13 +169,14 @@ export default function SectionsSection({
 
             const newSection = await addNewSection({
               board_id: board?.board_id,
-              order_index: sections.length,
+              order_index: boardSections.length,
             });
 
             if (newSection) {
               setTimeout(() => {
-                const sectionEl = sectionRefs.current?.[newSection.section_id];
-                setEditingSectionId(newSection.section_id);
+                const sectionEl =
+                  sectionRefs.current?.[newSection.section.section_id];
+                setEditingSectionId(newSection.section.section_id);
                 if (sectionEl) {
                   sectionEl.scrollIntoView({
                     behavior: "smooth",

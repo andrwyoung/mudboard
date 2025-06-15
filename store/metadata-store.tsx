@@ -17,8 +17,8 @@ type MetadataStore = {
   profile: UserProfile | null;
   setProfile: (profile: UserProfile | null) => void;
 
-  sections: Section[];
-  setSections: (section: Section[]) => void;
+  // sections: Section[];
+  // setSections: (section: Section[]) => void;
 
   boardSections: BoardSection[];
   setBoardSections: (bs: BoardSection[]) => void;
@@ -35,11 +35,11 @@ export const useMetadataStore = create<MetadataStore>((set, get) => ({
   profile: null,
   setProfile: (profile) => set({ profile }),
 
-  sections: [] as Section[],
-  setSections: (sections: Section[]) => set({ sections }),
+  // sections: [] as Section[],
+  // setSections: (sections: Section[]) => set({ sections }),
 
   boardSections: [] as BoardSection[],
   setBoardSections: (boardSections: BoardSection[]) => set({ boardSections }),
 
-  clearAll: () => set({ sections: [] as Section[], board: null }),
+  clearAll: () => set({ boardSections: [] as BoardSection[], board: null }),
 }));

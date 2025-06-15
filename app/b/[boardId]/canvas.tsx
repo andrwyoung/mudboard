@@ -8,7 +8,7 @@ import { SCROLLBAR_STYLE } from "@/types/constants";
 import { ExtFileDropTarget, MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
 import Gallery from "./gallery";
-import { Section, SectionColumns } from "@/types/board-types";
+import { BoardSection, SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useEffect, useRef, useState } from "react";
@@ -19,10 +19,10 @@ import DroppableGallerySection from "@/components/drag/droppable-gallery-section
 type CanvasProps = {
   isMirror: boolean;
 
-  sections: Section[];
+  boardSections: BoardSection[];
   sectionColumns: SectionColumns;
   sectionRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
-  sectionMap: Record<string, Section>;
+  sectionMap: Record<string, BoardSection>;
 
   draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
@@ -35,7 +35,7 @@ type CanvasProps = {
 
 export default function Canvas({
   isMirror,
-  sections,
+  boardSections,
   sectionColumns,
   sectionRefs,
   sectionMap,
@@ -130,9 +130,9 @@ export default function Canvas({
       >
         <div style={{ direction: "ltr" }}>
           <MirrorContext.Provider value={isMirror}>
-            {sections
+            {boardSections
               .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
-              .map((section) => {
+              .map(({ section }) => {
                 const sectionId = section.section_id;
                 const columns = sectionColumns[sectionId];
 
@@ -165,7 +165,7 @@ export default function Canvas({
                         extFileOverSection.mirror === mirrorKey
                       }
                     />
-                    <SectionHeader section={sectionMap[sectionId]} />
+                    <SectionHeader section={sectionMap[sectionId].section} />
                     {columns && (
                       <Gallery
                         sectionId={sectionId}
