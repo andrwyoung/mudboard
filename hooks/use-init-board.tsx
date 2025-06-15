@@ -12,7 +12,6 @@ import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { useUIStore } from "@/store/ui-store";
-import { Block } from "@/types/block-types";
 import { SectionColumns } from "@/types/board-types";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -26,6 +25,7 @@ export function useInitBoard(
   setWelcomeModalOpen: (s: boolean) => void
 ) {
   const setSections = useMetadataStore((s) => s.setSections);
+  const setBoardSections = useMetadataStore((s) => s.setBoardSections);
   const setBoard = useMetadataStore((s) => s.setBoard);
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
 
@@ -68,8 +68,10 @@ export function useInitBoard(
         // 2: grab the sections and figure that out
         //
 
-        let sections = await fetchSupabaseSections(boardId);
+        const boardSections = await fetchSupabaseSections(boardId);
+        let sections = boardSections.map((bs) => bs.section);
 
+        // TODO. create it correctly
         if (sections.length === 0) {
           console.log("No sections, creating one");
           const fallback = await createSupabaseSection({
@@ -81,14 +83,10 @@ export function useInitBoard(
         console.log("Got sections: ", sections);
 
         setSections(sections);
+        setBoardSections(boardSections);
 
         // set selected section to the very first one
-        const topSection = sections.reduce((min, curr) =>
-          (curr.order_index ?? 0) < (min.order_index ?? 0) ? curr : min
-        );
-        if (topSection) {
-          setSelectedSection(topSection);
-        }
+        setSelectedSection(boardSections[0].section);
         console.log("Set sections to:", sections);
 
         //

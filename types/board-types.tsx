@@ -23,6 +23,15 @@ export type Section = {
   deleted: boolean;
 };
 
+export type BoardSection = {
+  section: Section;
+  board_section_id: string;
+  board_id: string;
+  order_index: number;
+
+  deleted: boolean;
+};
+
 export type Board = {
   board_id: string;
   title: string | null;

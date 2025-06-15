@@ -1,7 +1,7 @@
 // here is where we keep info about the board, sections and user
 // the blocks and columns (the more important stuff) are kept in layout-store.tsx
 
-import { Board, Section } from "@/types/board-types";
+import { Board, BoardSection, Section } from "@/types/board-types";
 import { create } from "zustand";
 import { User } from "@supabase/supabase-js";
 import { Tables } from "@/types/supabase";
@@ -20,6 +20,9 @@ type MetadataStore = {
   sections: Section[];
   setSections: (section: Section[]) => void;
 
+  boardSections: BoardSection[];
+  setBoardSections: (bs: BoardSection[]) => void;
+
   clearAll: () => void;
 };
 
@@ -34,6 +37,9 @@ export const useMetadataStore = create<MetadataStore>((set, get) => ({
 
   sections: [] as Section[],
   setSections: (sections: Section[]) => set({ sections }),
+
+  boardSections: [] as BoardSection[],
+  setBoardSections: (boardSections: BoardSection[]) => set({ boardSections }),
 
   clearAll: () => set({ sections: [] as Section[], board: null }),
 }));

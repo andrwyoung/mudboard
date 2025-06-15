@@ -88,6 +88,61 @@ export type Database = {
           },
         ]
       }
+      board_sections: {
+        Row: {
+          board_id: string
+          board_sections_id: string
+          created_at: string
+          deleted: boolean
+          deleted_at: string | null
+          order_index: number
+          section_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          board_id: string
+          board_sections_id?: string
+          created_at?: string
+          deleted?: boolean
+          deleted_at?: string | null
+          order_index: number
+          section_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          board_id?: string
+          board_sections_id?: string
+          created_at?: string
+          deleted?: boolean
+          deleted_at?: string | null
+          order_index?: number
+          section_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "expired_boards"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+        ]
+      }
       boards: {
         Row: {
           access_level: Database["public"]["Enums"]["access_type"]
@@ -190,6 +245,7 @@ export type Database = {
           deleted: boolean
           deleted_at: string | null
           description: string | null
+          forked_from: string | null
           order_index: number
           section_id: string
           title: string | null
@@ -200,6 +256,7 @@ export type Database = {
           deleted?: boolean
           deleted_at?: string | null
           description?: string | null
+          forked_from?: string | null
           order_index: number
           section_id?: string
           title?: string | null
@@ -210,6 +267,7 @@ export type Database = {
           deleted?: boolean
           deleted_at?: string | null
           description?: string | null
+          forked_from?: string | null
           order_index?: number
           section_id?: string
           title?: string | null
@@ -228,6 +286,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "expired_boards"
             referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["section_id"]
           },
         ]
       }
