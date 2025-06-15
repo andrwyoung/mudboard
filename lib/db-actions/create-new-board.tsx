@@ -13,11 +13,13 @@ export async function createNewBoard({
   claimedBy,
   isDemo,
   initializeSection = true,
+  savedColumnNumber,
 }: {
   title?: string;
   claimedBy?: string;
   isDemo?: boolean;
   initializeSection?: boolean;
+  savedColumnNumber?: number;
 }): Promise<Tables<"boards">> {
   const { data: boardData, error: boardError } = await supabase
     .from("boards")
@@ -27,6 +29,7 @@ export async function createNewBoard({
         user_id: claimedBy,
         access_level: claimedBy ? "private" : "public",
         is_demo: isDemo,
+        saved_column_num: savedColumnNumber,
       },
     ])
     .select()

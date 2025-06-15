@@ -14,7 +14,9 @@ import {
 import { supabase } from "../../utils/supabase";
 import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
 
-export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
+export async function fetchSupabaseBlocks(
+  sectionIds: string[]
+): Promise<Record<string, Block[]>> {
   console.log("Fetching images from Supabase DB...");
 
   const { data: blocks, error } = await supabase
@@ -32,7 +34,7 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
     )
   `
     )
-    .eq("board_id", boardId)
+    .in("section_id", sectionIds)
     .eq("deleted", false) // don't serve deleted blocks
     .order("col_index", { ascending: true })
     .order("row_index", { ascending: true });
@@ -107,5 +109,13 @@ export async function fetchSupabaseBlocks(boardId: string): Promise<Block[]> {
     }
   );
 
-  return blocksArray;
+  // group by section_id
+  const grouped: Record<string, Block[]> = {};
+  for (const block of blocksArray) {
+    const key = block.section_id;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(block);
+  }
+
+  return grouped;
 }

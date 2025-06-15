@@ -15,9 +15,9 @@ export async function cloneBoard({
   isDemo?: boolean;
   claimedBy?: string;
 }): Promise<string | null> {
-  const boardExists = await checkIfBoardExists(boardIdToClone);
+  const boardToClone = await checkIfBoardExists(boardIdToClone);
 
-  if (!boardExists) {
+  if (!boardToClone) {
     toast.error("Board does not exist");
     return null;
   }
@@ -29,6 +29,7 @@ export async function cloneBoard({
       initializeSection: false,
       isDemo,
       claimedBy,
+      savedColumnNumber: boardToClone.saved_column_num,
     });
 
     // 1a: get sections

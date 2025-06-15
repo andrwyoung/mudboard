@@ -86,7 +86,7 @@ export default function OverlayGallery({
     setInitialSize(null);
     setIsFlipped(false);
     setIsGreyscale(false);
-    setOverlayMode("drag");
+    // setOverlayMode("drag");
   };
 
   // flipping to next and prev block

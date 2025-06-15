@@ -95,20 +95,13 @@ export function useInitBoard(
         // 3: grab blocks from supabase. and now that we have
         // everything, we can generate the colums
         //
-
-        const blocks = await fetchSupabaseBlocks(boardId);
-
-        const grouped: Record<string, Block[]> = {};
-        for (const block of blocks) {
-          const key = block.section_id ?? "unassigned";
-          if (!grouped[key]) grouped[key] = [];
-          grouped[key].push(block);
-        }
+        const sectionIds = sections.map((s) => s.section_id);
+        const blocksBySection = await fetchSupabaseBlocks(sectionIds);
 
         const initColumns: SectionColumns = {};
         for (const section of sections) {
           initColumns[section.section_id] = generateInitColumnsFromBlocks(
-            grouped[section.section_id],
+            blocksBySection[section.section_id] ?? [],
             initNumCols
           );
         }
