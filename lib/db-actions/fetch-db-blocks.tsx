@@ -35,9 +35,7 @@ export async function fetchSupabaseBlocks(
   `
     )
     .in("section_id", sectionIds)
-    .eq("deleted", false) // don't serve deleted blocks
-    .order("col_index", { ascending: true })
-    .order("row_index", { ascending: true });
+    .eq("deleted", false); // don't serve deleted blocks
 
   if (error) {
     throw new Error("Failed to fetch Blocks: " + error.message);
@@ -51,7 +49,6 @@ export async function fetchSupabaseBlocks(
       const {
         block_id,
         section_id,
-        board_id,
         block_type,
         height,
         width,
@@ -67,7 +64,6 @@ export async function fetchSupabaseBlocks(
       const incompleteImageBlock: Omit<Block, "data"> = {
         block_id,
         section_id,
-        board_id,
         block_type: block_type as BlockType,
         height,
         width: width ?? undefined,

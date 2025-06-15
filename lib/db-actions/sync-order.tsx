@@ -42,11 +42,7 @@ export async function syncOrderToSupabase(
   for (let i = 0; i < updates.length; i += SYNC_BATCH_SIZE) {
     const batch = updates.slice(i, i + SYNC_BATCH_SIZE);
     const batchPromises = batch.map(({ block_id, ...rest }) =>
-      supabase
-        .from("blocks")
-        .update(rest)
-        .eq("block_id", block_id)
-        .eq("board_id", board_id)
+      supabase.from("blocks").update(rest).eq("block_id", block_id)
     );
     const results = await Promise.all(batchPromises);
     if (results.some((r) => r.error)) {

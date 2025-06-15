@@ -28,7 +28,6 @@ export async function createTextBlock(
   const block: Block = {
     block_id: uuidv4(),
     section_id: sectionId,
-    board_id: board.board_id,
     block_type: "text",
     data: textBlock,
     height: TEXT_BLOCK_HEIGHT,

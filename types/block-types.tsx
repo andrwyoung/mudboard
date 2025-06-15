@@ -21,7 +21,6 @@ export type BlockType = "image" | "text" | "spacer";
 export type Block = {
   block_id: string;
   section_id: string;
-  board_id: string;
 
   block_type: BlockType;
   image_id?: string;

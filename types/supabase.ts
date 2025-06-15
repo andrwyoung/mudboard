@@ -13,7 +13,6 @@ export type Database = {
         Row: {
           block_id: string
           block_type: string
-          board_id: string
           caption: string | null
           col_index: number
           created_at: string
@@ -22,6 +21,7 @@ export type Database = {
           deleted_at: string | null
           height: number
           image_id: string | null
+          OLD_board_id: string | null
           order_index: number
           row_index: number
           section_id: string
@@ -31,7 +31,6 @@ export type Database = {
         Insert: {
           block_id?: string
           block_type: string
-          board_id: string
           caption?: string | null
           col_index?: number
           created_at?: string
@@ -40,6 +39,7 @@ export type Database = {
           deleted_at?: string | null
           height: number
           image_id?: string | null
+          OLD_board_id?: string | null
           order_index?: number
           row_index?: number
           section_id: string
@@ -49,7 +49,6 @@ export type Database = {
         Update: {
           block_id?: string
           block_type?: string
-          board_id?: string
           caption?: string | null
           col_index?: number
           created_at?: string
@@ -58,6 +57,7 @@ export type Database = {
           deleted_at?: string | null
           height?: number
           image_id?: string | null
+          OLD_board_id?: string | null
           order_index?: number
           row_index?: number
           section_id?: string
@@ -65,20 +65,6 @@ export type Database = {
           width?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "blocks_board_id_fkey"
-            columns: ["board_id"]
-            isOneToOne: false
-            referencedRelation: "boards"
-            referencedColumns: ["board_id"]
-          },
-          {
-            foreignKeyName: "blocks_board_id_fkey"
-            columns: ["board_id"]
-            isOneToOne: false
-            referencedRelation: "expired_boards"
-            referencedColumns: ["board_id"]
-          },
           {
             foreignKeyName: "blocks_image_id_fkey"
             columns: ["image_id"]
