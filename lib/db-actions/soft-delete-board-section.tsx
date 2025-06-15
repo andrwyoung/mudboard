@@ -67,11 +67,13 @@ export async function softDeleteBoardSection(boardSection: BoardSection) {
 
   // SPECIAL CASE: if section is the only one left, then
   // immediately make a blank section
+  const user = useMetadataStore.getState().user;
   if (allBoardSections.length <= 0) {
     console.log("Last section, creating new one");
     const fallback = await createSupabaseSection({
       board_id: boardId,
       order_index: 0,
+      claimedBy: user?.id ?? null,
     });
 
     useMetadataStore.setState(() => ({

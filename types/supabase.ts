@@ -240,35 +240,38 @@ export type Database = {
       }
       sections: {
         Row: {
-          board_id: string | null
           created_at: string
           deleted: boolean
           deleted_at: string | null
           description: string | null
           forked_from: string | null
+          OLD_board_id: string | null
           order_index: number | null
+          owned_by: string | null
           section_id: string
           title: string | null
         }
         Insert: {
-          board_id?: string | null
           created_at?: string
           deleted?: boolean
           deleted_at?: string | null
           description?: string | null
           forked_from?: string | null
+          OLD_board_id?: string | null
           order_index?: number | null
+          owned_by?: string | null
           section_id?: string
           title?: string | null
         }
         Update: {
-          board_id?: string | null
           created_at?: string
           deleted?: boolean
           deleted_at?: string | null
           description?: string | null
           forked_from?: string | null
+          OLD_board_id?: string | null
           order_index?: number | null
+          owned_by?: string | null
           section_id?: string
           title?: string | null
         }

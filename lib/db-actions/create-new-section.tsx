@@ -14,15 +14,17 @@ export async function createSupabaseSection({
   board_id,
   title,
   order_index,
+  claimedBy,
 }: {
   board_id: string;
   title?: string;
   order_index: number;
+  claimedBy: string | null;
 }): Promise<BoardSection> {
   // Step 1: create a section (no board_id!)
   const { data: section, error: sectionError } = await supabase
     .from("sections")
-    .insert([{ title } as TablesInsert<"sections">])
+    .insert([{ title, owned_by: claimedBy } as TablesInsert<"sections">])
     .select()
     .single();
 

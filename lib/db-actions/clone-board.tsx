@@ -16,7 +16,7 @@ export async function cloneBoard({
 }: {
   boardIdToClone: string;
   isDemo?: boolean;
-  claimedBy?: string;
+  claimedBy: string | null;
 }): Promise<string | null> {
   const boardToClone = await checkIfBoardExists(boardIdToClone);
 
@@ -55,10 +55,15 @@ export async function cloneBoard({
         if (!originalSection) return;
 
         // 2a: first insert to sections
-        const { section_id: _, ...rest } = originalSection;
+        const sectionInsert: TablesInsert<"sections"> = {
+          title: originalSection.title,
+          description: originalSection.description,
+          forked_from: originalSection.section_id,
+          owned_by: claimedBy,
+        };
         const { data: newSection, error: sectionInsertErr } = await supabase
           .from("sections")
-          .insert([{ ...rest }])
+          .insert([sectionInsert])
           .select()
           .single();
 

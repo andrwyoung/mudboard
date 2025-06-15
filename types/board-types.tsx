@@ -14,13 +14,15 @@ export type BoardAccessLevel =
 
 export type Section = {
   section_id: string;
-  board_id: string;
 
-  order_index: number;
   title?: string | null;
   description?: string | null;
 
   deleted: boolean;
+  deleted_at?: Date;
+
+  forked_from?: string;
+  owned_by?: string;
 };
 
 export type BoardSection = {

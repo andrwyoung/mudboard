@@ -69,12 +69,15 @@ export function useInitBoard(
 
         let boardSections = await fetchSupabaseSections(boardId);
 
-        // TODO. create it correctly
+        // please never happen lol
         if (boardSections.length === 0) {
-          console.log("No sections, creating one");
+          console.error("ERROR: No sections, creating one");
+          const user = useMetadataStore.getState().user;
+
           const fallback = await createSupabaseSection({
             board_id: boardId,
             order_index: 0,
+            claimedBy: user?.id ?? null,
           });
           boardSections = [fallback];
         }

@@ -16,7 +16,7 @@ export async function createNewBoard({
   savedColumnNumber,
 }: {
   title?: string;
-  claimedBy?: string;
+  claimedBy: string | null;
   isDemo?: boolean;
   initializeSection?: boolean;
   savedColumnNumber?: number;
@@ -46,6 +46,7 @@ export async function createNewBoard({
     const newBoardSection = await createSupabaseSection({
       board_id: boardData.board_id,
       order_index: 0,
+      claimedBy: claimedBy,
     });
 
     initializeSectionColumns(newBoardSection.section.section_id);

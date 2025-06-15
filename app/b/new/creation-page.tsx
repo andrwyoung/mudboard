@@ -24,11 +24,12 @@ export default function CreateBoardPage({ type }: { type: "new" | "demo" }) {
 
         if (type === "new") {
           const { board_id } = await createNewBoard({
-            claimedBy: user?.id ?? undefined,
+            claimedBy: user?.id ?? null,
           });
           boardId = board_id;
         } else {
           boardId = await cloneBoard({
+            claimedBy: null, // always null
             boardIdToClone: DEMO_BOARD_ID,
             isDemo: true,
           });

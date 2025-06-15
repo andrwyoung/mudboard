@@ -19,11 +19,14 @@ export async function addNewSection({
     return null;
   }
 
+  const user = useMetadataStore.getState().user;
+
   // create one in the database
   const newBoardSection = await createSupabaseSection({
     board_id,
     title,
     order_index,
+    claimedBy: user?.id ?? null,
   });
 
   // update locally

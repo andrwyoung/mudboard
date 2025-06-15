@@ -12,13 +12,14 @@ import { toast } from "sonner";
 
 export async function claimBoard() {
   const board = useMetadataStore.getState().board;
+  const boardSections = useMetadataStore.getState().boardSections;
   const user = useMetadataStore.getState().user;
 
   // board must exist and user must be logged in
   if (!board || !user) return;
 
-  // race condition check
-  // check that no one has already claimed the board
+  // race condition safe
+  // STEP 1: claim the board itself
   const { error: claimError, data } = await supabase
     .from("boards")
     .update({ user_id: user.id, access_level: "private" })
@@ -32,13 +33,53 @@ export async function claimBoard() {
     return;
   }
 
-  // update locally
+  // STEP 2: update all the section's owned_by to the user
+  const sectionIds = boardSections
+    .map((bs) => bs.section.section_id)
+    .filter(Boolean);
+
+  if (sectionIds.length === 0) {
+    console.warn("No section IDs found for this board.");
+  } else {
+    const { error: sectionClaimError, data: updatedSections } = await supabase
+      .from("sections")
+      .update({ owned_by: user.id })
+      .in("section_id", sectionIds)
+      .is("owned_by", null) // only claim unowned
+      .select("section_id");
+
+    if (sectionClaimError) {
+      toast.error("Failed to claim sections.");
+      console.error("Section claim error:", sectionClaimError);
+      return;
+    }
+
+    if (!updatedSections || updatedSections.length === 0) {
+      console.warn(
+        "No sections were updated. They may have already been claimed."
+      );
+    } else {
+      console.info(`Claimed ${updatedSections.length} sections`);
+    }
+  }
+
+  // STEP 3: Update  locally
   const updatedBoard = {
     ...board,
     user_id: user.id,
     access_level: "private" as Enums<"access_type">,
   };
-  useMetadataStore.setState({ board: updatedBoard });
+
+  useMetadataStore.setState((state) => ({
+    board: updatedBoard,
+    boardSections: state.boardSections.map((bs) => ({
+      ...bs,
+      section: {
+        ...bs.section,
+        user_id: user.id,
+      },
+    })),
+  }));
 
   toast.success("Board claimed successfully!");
 }
