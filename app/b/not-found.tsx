@@ -1,5 +1,5 @@
 import NotFoundComponent from "@/components/not-found-page";
 
 export default function NotFound() {
-  return <NotFoundComponent />;
+  return <NotFoundComponent boardPage={true} />;
 }
