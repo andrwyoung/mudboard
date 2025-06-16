@@ -37,6 +37,7 @@ export type Block = {
   caption: string | null;
 
   deleted: boolean;
+  subsection_id?: string;
 };
 
 export type MudboardImage = {

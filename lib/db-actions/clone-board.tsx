@@ -109,12 +109,23 @@ export async function cloneBoard({
     const blocks = blockData as Block[];
 
     // STEP 4: insert the new blocks
-    const newBlocks: TablesInsert<"blocks">[] = blocks.map(
-      ({ block_id: _, ...rest }) => ({
-        ...rest,
-        section_id: sectionMap[rest.section_id],
-      })
-    );
+    const newBlocks: TablesInsert<"blocks">[] = blocks.map((block) => ({
+      block_type: block.block_type,
+      image_id: block.image_id,
+      data: block.data,
+
+      col_index: block.col_index,
+      row_index: block.row_index,
+      order_index: block.order_index,
+
+      height: block.height,
+      width: block.width,
+
+      caption: block.caption,
+
+      section_id: sectionMap[block.section_id], // IMPORTANT
+      subsection_id: block.subsection_id ?? null,
+    }));
 
     const { error: blockInsertError } = await supabase
       .from("blocks")

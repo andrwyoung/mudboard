@@ -25,6 +25,7 @@ export type Database = {
           order_index: number
           row_index: number
           section_id: string
+          subsection_id: string | null
           updated_at: string | null
           width: number | null
         }
@@ -43,6 +44,7 @@ export type Database = {
           order_index?: number
           row_index?: number
           section_id: string
+          subsection_id?: string | null
           updated_at?: string | null
           width?: number | null
         }
@@ -61,6 +63,7 @@ export type Database = {
           order_index?: number
           row_index?: number
           section_id?: string
+          subsection_id?: string | null
           updated_at?: string | null
           width?: number | null
         }
@@ -85,6 +88,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "sections"
             referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "blocks_subsection_id_fkey"
+            columns: ["subsection_id"]
+            isOneToOne: false
+            referencedRelation: "subsections"
+            referencedColumns: ["subsection_id"]
           },
         ]
       }
@@ -120,6 +130,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "board_stats"
+            referencedColumns: ["board_id"]
+          },
           {
             foreignKeyName: "board_sections_board_id_fkey"
             columns: ["board_id"]
@@ -246,7 +263,7 @@ export type Database = {
           description: string | null
           forked_from: string | null
           OLD_board_id: string | null
-          order_index: number | null
+          OLD_order_index: number | null
           owned_by: string | null
           section_id: string
           title: string | null
@@ -258,7 +275,7 @@ export type Database = {
           description?: string | null
           forked_from?: string | null
           OLD_board_id?: string | null
-          order_index?: number | null
+          OLD_order_index?: number | null
           owned_by?: string | null
           section_id?: string
           title?: string | null
@@ -270,7 +287,7 @@ export type Database = {
           description?: string | null
           forked_from?: string | null
           OLD_board_id?: string | null
-          order_index?: number | null
+          OLD_order_index?: number | null
           owned_by?: string | null
           section_id?: string
           title?: string | null
@@ -279,6 +296,47 @@ export type Database = {
           {
             foreignKeyName: "sections_forked_from_fkey"
             columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+        ]
+      }
+      subsections: {
+        Row: {
+          created_at: string
+          deleted: boolean
+          deleted_at: string | null
+          order_index: number
+          section_id: string
+          subsection_id: string
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          deleted?: boolean
+          deleted_at?: string | null
+          order_index: number
+          section_id: string
+          subsection_id?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          deleted?: boolean
+          deleted_at?: string | null
+          order_index?: number
+          section_id?: string
+          subsection_id?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subsections_section_id_fkey"
+            columns: ["section_id"]
             isOneToOne: false
             referencedRelation: "sections"
             referencedColumns: ["section_id"]
@@ -314,6 +372,16 @@ export type Database = {
       }
     }
     Views: {
+      board_stats: {
+        Row: {
+          block_count: number | null
+          board_id: string | null
+          image_count: number | null
+          real_block_count: number | null
+          section_count: number | null
+        }
+        Relationships: []
+      }
       expired_boards: {
         Row: {
           age: unknown | null

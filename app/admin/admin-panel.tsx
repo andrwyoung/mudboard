@@ -7,14 +7,27 @@ import React from "react";
 import { useEffect, useState } from "react";
 
 type FullBoard = Tables<"boards"> & {
-  board_sections: (Tables<"board_sections"> & {
+  board_sections: {
+    section_id: string;
+    order_index: number;
     section: Tables<"sections"> | null;
-  })[];
+  }[];
+  section_count: number;
+  block_count: number;
+  image_count: number;
+  real_block_count: number;
 };
+
+// type FullBlock = Tables<"blocks"> & {
+//   image?: {
+//     image_id: string;
+//     file_ext: string;
+//   };
+// };
 
 export default function AdminPanel() {
   const [boards, setBoards] = useState<FullBoard[]>([]);
-  const [blocks, setBlocks] = useState<Tables<"blocks">[]>([]);
+  // const [blocks, setBlocks] = useState<FullBlock[]>([]);
 
   const [expandedBoards, setExpandedBoards] = useState<string[]>([]);
 
@@ -37,22 +50,41 @@ export default function AdminPanel() {
         )
       `);
 
-      const { data: blockData, error: blockErr } = await supabase
-        .from("blocks")
+      const { data: statsData, error: statsErr } = await supabase
+        .from("board_stats")
         .select("*");
 
-      if (boardErr || blockErr) {
-        console.error("Error fetching admin data", boardErr, blockErr);
+      // const { data: blockData, error: blockErr } = await supabase.from("blocks")
+      //   .select(`
+      //   *,
+      //   image:images (
+      //     image_id,
+      //     file_ext
+      //   )
+      // `);
+
+      if (boardErr || statsErr) {
+        console.error("Error fetching admin data", boardErr, statsErr);
         return;
       }
 
-      const sortedBoards = (boardData || []).sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+      const boardsWithStats = (boardData || [])
+        .map((board) => {
+          const stats = statsData?.find((s) => s.board_id === board.board_id);
+          return {
+            ...board,
+            section_count: stats?.section_count ?? 0,
+            block_count: stats?.block_count ?? 0,
+            image_count: stats?.image_count ?? 0,
+            real_block_count: stats?.real_block_count ?? 0,
+          };
+        })
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
 
-      setBoards(sortedBoards);
-      setBlocks(blockData || []);
+      setBoards(boardsWithStats);
     };
 
     initData();
@@ -109,19 +141,13 @@ export default function AdminPanel() {
                 <th className="text-left p-2">User Id</th>
                 <th className="text-left p-2">Board Id</th>
                 <th className="text-left p-2">Sections</th>
-                <th className="text-left p-2">Images</th>
+                <th className="text-left p-2">Block Data</th>
                 <th className="text-left p-2">Created (PST)</th>
                 <th className="text-left p-2">Columns</th>
               </tr>
             </thead>
             <tbody>
               {boards.map((board) => {
-                const sectionCount = board.board_sections.length;
-                const blockCount = board.board_sections.reduce((sum, bs) => {
-                  const id = bs.section?.section_id;
-                  return sum + blocks.filter((b) => b.section_id === id).length;
-                }, 0);
-
                 const isExpanded = expandedBoards.includes(board.board_id);
 
                 return (
@@ -161,14 +187,25 @@ export default function AdminPanel() {
                         <CopyToClipboard
                           textToCopy={board.board_id}
                           title="Click to copy Board ID"
+                          link={`https://www.mudboard.com/b/${board.board_id}`}
                         >
                           <span className="inline-block max-w-[96px] truncate align-bottom">
                             {board.board_id}
                           </span>
                         </CopyToClipboard>
                       </td>
-                      <td className="p-2">{sectionCount}</td>
-                      <td className="p-2">{blockCount}</td>
+                      <td className="p-2">{board.section_count}</td>
+                      <td
+                        className="p-2"
+                        title={`Live: ${board.block_count}, Images: ${
+                          board.image_count
+                        }, Deleted: ${
+                          board.real_block_count - board.block_count
+                        }`}
+                      >
+                        {board.block_count}, {board.image_count},{" "}
+                        {board.real_block_count - board.block_count}
+                      </td>
                       <td className="p-2">
                         {(() => {
                           const d = new Date(board.created_at);
@@ -198,9 +235,11 @@ export default function AdminPanel() {
                                 <p key={bs.section_id}>⚠️ Missing section</p>
                               );
 
-                            const blocksInSection = blocks.filter(
-                              (b) => b.section_id === sec.section_id
-                            );
+                            // const blocksInSection = blocks.filter(
+                            //   (b) =>
+                            //     b.section_id ===
+                            //     "093cf010-e4fa-445e-9b31-4ed0b8231b6c"
+                            // );
 
                             return (
                               <div key={sec.section_id} className="mb-4">
@@ -217,7 +256,7 @@ export default function AdminPanel() {
 
                                   <CopyToClipboard
                                     textToCopy={sec.section_id}
-                                    title="Click to copy User ID"
+                                    title="Click to copy Section ID"
                                   >
                                     <span className="inline-block max-w-[96px] truncate align-bottom">
                                       {sec.section_id}
@@ -229,27 +268,18 @@ export default function AdminPanel() {
                                       (deleted)
                                     </span>
                                   )}
-                                  {sec.forked_from && (
-                                    <span className="ml-2 text-yellow-600 text-xs">
-                                      forked from {sec.forked_from}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="pl-5 text-xs mt-1 text-gray-600 gap-0.5">
-                                  {blocksInSection.map((block) => (
-                                    <div
-                                      key={block.block_id}
-                                      className="grid grid-cols-[64px_1fr] gap-2"
-                                    >
-                                      <p>{block.block_type}</p>{" "}
-                                      <p>{block.block_id}</p>
-                                    </div>
-                                  ))}
-                                  {blocksInSection.length === 0 && (
-                                    <div className="italic text-gray-400">
-                                      No blocks
-                                    </div>
-                                  )}
+                                  <span className="ml-2  text-xs truncate min-w-[64px]">
+                                    {sec.forked_from ? (
+                                      <CopyToClipboard
+                                        textToCopy={sec.section_id}
+                                        title="Click to copy Section ID"
+                                      >
+                                        forked: {sec.forked_from}
+                                      </CopyToClipboard>
+                                    ) : (
+                                      "None"
+                                    )}
+                                  </span>
                                 </div>
                               </div>
                             );
@@ -266,4 +296,43 @@ export default function AdminPanel() {
       </section>
     </div>
   );
+}
+
+{
+  /* <div className="pl-5 text-xs mt-1 text-gray-600 gap-0.5">
+{blocksInSection.map((block) => (
+  <div
+    key={block.block_id}
+    className={`grid grid-cols-[64px_1fr] gap-2 ${
+      block.deleted ? "bg-rose-100" : ""
+    }`}
+  >
+    <p>{block.block_type}</p>
+    {/* <p>{block.deleted ? "deleted" : ""}</p> */
+}
+// <CopyToClipboard
+//   textToCopy={block.block_id}
+//   title="Click to copy Block ID"
+//   link={
+//     block.block_type === "image" &&
+//     block.image
+//       ? getImageUrl(
+//           block.image.image_id,
+//           block.image.file_ext,
+//           "full"
+//         )
+//       : undefined
+//   }
+// >
+//   {block.block_id}
+// </CopyToClipboard>
+//   </div>
+// ))}
+// {blocksInSection.length === 0 && (
+//   <div className="italic text-gray-400">
+//     No blocks
+//   </div>
+// )}
+{
+  /* </div> */
 }

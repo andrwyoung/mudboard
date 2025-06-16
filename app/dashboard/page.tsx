@@ -48,36 +48,35 @@ export default function DashboardPage() {
   useEffect(() => {
     async function initBoards() {
       if (!user) return;
-      const boards = await getUserBoards(user.id);
 
+      // Step 1: Get user boards
+      const boards = await getUserBoards(user.id);
+      const boardIds = boards.map((b) => b.board_id);
+
+      // Step 2: Fetch board stats in one query
+      const { data: stats, error } = await supabase
+        .from("board_stats")
+        .select("board_id, section_count, block_count")
+        .in("board_id", boardIds);
+
+      if (error) {
+        console.error("Error fetching board stats:", error);
+        return;
+      }
+
+      // Step 3: Convert to map for fast access
       const counts: Record<
         string,
         { sectionCount: number; blockCount: number }
       > = {};
+      stats?.forEach((s) => {
+        counts[s.board_id] = {
+          sectionCount: s.section_count ?? 0,
+          blockCount: s.block_count ?? 0,
+        };
+      });
 
-      await Promise.all(
-        boards.map(async (board) => {
-          const [{ count: sectionCount }, { count: blockCount }] =
-            await Promise.all([
-              supabase
-                .from("sections")
-                .select("*", { count: "exact", head: true })
-                .eq("board_id", board.board_id)
-                .eq("deleted", false),
-              supabase
-                .from("blocks")
-                .select("*", { count: "exact", head: true })
-                .eq("board_id", board.board_id)
-                .eq("deleted", false),
-            ]);
-
-          counts[board.board_id] = {
-            sectionCount: sectionCount ?? 0,
-            blockCount: blockCount ?? 0,
-          };
-        })
-      );
-
+      // Step 4: Set state
       setUserBoards(boards);
       setBoardCounts(counts);
     }
@@ -205,10 +204,10 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* <p className="text-xs text-primary ml-4 font-bold">
+                  <p className="text-xs text-primary ml-4 font-bold">
                     {boardCounts[board.board_id]?.sectionCount ?? 0} sections •{" "}
                     {boardCounts[board.board_id]?.blockCount ?? 0} blocks
-                  </p> */}
+                  </p>
                 </div>
 
                 <div className="flex flex-row-reverse justify-between mb-4 mx-6">

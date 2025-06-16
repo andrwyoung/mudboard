@@ -6,9 +6,10 @@ type Props = {
   textToCopy: string;
   children: React.ReactNode;
   title?: string;
+  link?: string;
 };
 
-export function CopyToClipboard({ textToCopy, children, title }: Props) {
+export function CopyToClipboard({ textToCopy, children, title, link }: Props) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (e: React.MouseEvent) => {
@@ -26,9 +27,17 @@ export function CopyToClipboard({ textToCopy, children, title }: Props) {
 
   return (
     <span
-      className="cursor-pointer p-2 hover:text-secondary transition text-xs text-primary w-full"
+      className={`cursor-pointer  text-xs text-primary w-full ${
+        link ? "hover:text-accent" : "hover:text-secondary"
+      }`}
       onClick={handleCopy}
       title={copied ? "Copied!" : title ?? "Click to copy"}
+      onContextMenu={(e) => {
+        if (!e.metaKey && !e.ctrlKey && link) {
+          e.preventDefault();
+          window.open(link, "_blank");
+        }
+      }}
     >
       {children}
     </span>
