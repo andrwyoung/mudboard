@@ -7,7 +7,7 @@ import { useUIStore } from "@/store/ui-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
 import { ExtFileDropTarget, MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
-import Gallery from "./gallery";
+import SectionGallery from "./gallery";
 import { BoardSection, SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
 import { useOverlayStore } from "@/store/overlay-store";
@@ -167,8 +167,8 @@ export default function Canvas({
                     />
                     <SectionHeader section={sectionMap[sectionId].section} />
                     {columns && (
-                      <Gallery
-                        sectionId={sectionId}
+                      <SectionGallery
+                        section={section}
                         columns={columns}
                         draggedBlocks={draggedBlocks}
                         scrollY={scrollY}

@@ -59,6 +59,7 @@ export async function cloneBoard({
           title: originalSection.title,
           description: originalSection.description,
           forked_from: originalSection.section_id,
+          saved_column_num: originalSection.saved_column_num,
           owned_by: claimedBy,
         };
         const { data: newSection, error: sectionInsertErr } = await supabase

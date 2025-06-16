@@ -12,7 +12,6 @@ import {
   imageNames,
   SUPABASE_OBJECT_URL,
 } from "@/types/upload-settings";
-import { useUIStore } from "@/store/ui-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { AnimatePresence, motion } from "framer-motion";
 import { updateImageBlockCaption } from "@/lib/db-actions/sync-text/update-caption";
@@ -31,10 +30,12 @@ export function getImageUrl(
 export function ImageBlock({
   block,
   shouldEagerLoad,
+  numCols,
 }: {
   block: Block;
   shouldEagerLoad: boolean;
   columnWidth: number;
+  numCols: number;
 }) {
   const img = block.data as MudboardImage;
   const height = block.height;
@@ -46,7 +47,6 @@ export function ImageBlock({
   const caption = block.caption;
 
   const showBlurImg = useLoadingStore((s) => s.showBlurImg);
-  const numCols = useUIStore((s) => s.numCols);
   const [loaded, setLoaded] = useState(false);
 
   const [isErrored, setIsErrored] = useState(false);

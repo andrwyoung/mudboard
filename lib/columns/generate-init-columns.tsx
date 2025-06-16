@@ -2,15 +2,13 @@
 // that organizes it and actually generates the columns
 
 import { Block } from "@/types/block-types";
-import { DEFAULT_COLUMNS } from "@/types/constants";
 
 // Generate initial columns from blocks, handling both legacy and explicit layouts
 export function generateInitColumnsFromBlocks(
   blocks: Block[] | undefined,
-  numCols?: number
+  numCols: number
 ): Block[][] {
-  const cols = numCols ?? DEFAULT_COLUMNS;
-  const newColumns: Block[][] = Array.from({ length: cols }, () => []);
+  const newColumns: Block[][] = Array.from({ length: numCols }, () => []);
 
   if (!blocks || blocks.length === 0) return newColumns;
 
@@ -22,7 +20,7 @@ export function generateInitColumnsFromBlocks(
         b.col_index === undefined ||
         b.row_index === undefined ||
         b.col_index < 0 ||
-        b.col_index >= cols
+        b.col_index >= numCols
       ) {
         canUseExplicitIndices = false;
         break;
@@ -45,7 +43,7 @@ export function generateInitColumnsFromBlocks(
   );
 
   sorted.forEach((block, i) => {
-    const col = i % cols;
+    const col = i % numCols;
     newColumns[col].push(block);
   });
 

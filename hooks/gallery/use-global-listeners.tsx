@@ -2,12 +2,9 @@
 // and also the listener that detects when to deselect an image
 
 import { useEffect } from "react";
-import { softDeleteBlocks } from "@/lib/db-actions/soft-delete-blocks";
 import { useSelectionStore } from "@/store/selection-store";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useGetScope } from "../use-get-scope";
-import { useUIStore } from "@/store/ui-store";
-import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
 import { useUndoStore } from "@/store/undo-store";
 import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
 
@@ -15,8 +12,6 @@ export function useBoardListeners() {
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
-  const setNumCols = useUIStore((s) => s.setNumCols);
-  const numCols = useUIStore((s) => s.numCols);
   const { isOpen: galleryIsOpen } = useOverlayStore(useGetScope());
 
   // Keyboard controls
@@ -38,18 +33,18 @@ export function useBoardListeners() {
         e.preventDefault();
       }
 
-      // ZOOM IN/OUT
-      if (e.ctrlKey || e.metaKey) {
-        if (e.key === "=" || e.key === "+") {
-          setNumCols(Math.max(MIN_COLUMNS, numCols - 1));
-          return;
-        }
+      // // ZOOM IN/OUT
+      // if (e.ctrlKey || e.metaKey) {
+      //   if (e.key === "=" || e.key === "+") {
+      //     setNumCols(Math.max(MIN_COLUMNS, numCols - 1));
+      //     return;
+      //   }
 
-        if (e.key === "-" || e.key === "_") {
-          setNumCols(Math.min(MAX_COLUMNS, numCols + 1));
-          return;
-        }
-      }
+      //   if (e.key === "-" || e.key === "_") {
+      //     setNumCols(Math.min(MAX_COLUMNS, numCols + 1));
+      //     return;
+      //   }
+      // }
 
       // DELETES
       if (e.key === "Backspace" || e.key === "Delete") {
@@ -79,7 +74,7 @@ export function useBoardListeners() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedBlocks, deselectBlocks, setNumCols, numCols]);
+  }, [selectedBlocks, deselectBlocks]);
 
   // Click outside to deselect
   useEffect(() => {

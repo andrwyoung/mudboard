@@ -25,7 +25,8 @@ export function getScrollbarWidth(): number {
 export function getColumnWidth(
   sidebarWidth: number,
   windowWidth: number,
-  spacingSize: number
+  spacingSize: number,
+  numCols: number
 ) {
   // the math:
   // total_width - sidebar_width - (scrollbar + numcol * padding + gallery_padding * 2) * 2 if mirror
@@ -33,7 +34,6 @@ export function getColumnWidth(
 
   const scrollbarWidth = getScrollbarWidth();
   //   const scrollbarWidth = 0;
-  const numCols = useUIStore.getState().numCols;
   const gutterPadding = spacingSize * numCols;
   const galleryPadding = useUIStore.getState().gallerySpacingSize * 2;
 

@@ -28,7 +28,6 @@ export function useInitBoard(
   const setBoard = useMetadataStore((s) => s.setBoard);
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
 
-  const setNumCols = useUIStore((s) => s.setNumCols);
   const resetState = useResetState();
 
   const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
@@ -45,11 +44,6 @@ export function useInitBoard(
 
         const board = await fetchSupabaseBoard(boardId);
         setBoard(board);
-        const initNumCols = board.saved_column_num;
-        if (initNumCols) {
-          setNumCols(initNumCols);
-          // toast(`Number of columns: ${initNumCols}`);
-        }
 
         if (
           board.expired_at &&
@@ -100,7 +94,7 @@ export function useInitBoard(
         for (const section of sections) {
           initColumns[section.section_id] = generateInitColumnsFromBlocks(
             blocksBySection[section.section_id] ?? [],
-            initNumCols
+            section.saved_column_num
           );
         }
 

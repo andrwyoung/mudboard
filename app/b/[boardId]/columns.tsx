@@ -15,6 +15,7 @@ import { useGetScope } from "@/hooks/use-get-scope";
 import { useIsMirror } from "./board";
 import BlockAdder from "@/components/blocks/add-a-block";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
+import { Section } from "@/types/board-types";
 
 // virtualization
 function getBlockLayout(
@@ -48,7 +49,7 @@ function getBlockLayout(
 }
 
 type Props = {
-  sectionId: string;
+  section: Section;
   wholeGalleryEmpty: boolean;
   column: Block[];
   columnWidth: number;
@@ -61,7 +62,7 @@ type Props = {
 };
 
 function ColumnComponent({
-  sectionId,
+  section,
   wholeGalleryEmpty,
   column,
   columnWidth,
@@ -72,6 +73,8 @@ function ColumnComponent({
   handleItemClick,
   scrollY,
 }: Props) {
+  const sectionId = section.section_id;
+
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
@@ -194,6 +197,7 @@ function ColumnComponent({
                 onClick={(e) => handleItemClick(block, e)}
                 shouldEagerLoad={shouldEagerLoad}
                 columnWidth={columnWidth}
+                numCols={section.saved_column_num}
               />
             </div>
           );

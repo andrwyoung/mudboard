@@ -35,7 +35,7 @@ export async function addNewSection({
   }));
 
   // create a new array of columns to use
-  initializeSectionColumns(newBoardSection.section.section_id);
+  initializeSectionColumns(newBoardSection.section);
 
   toast.success("Successfully created new section");
   return newBoardSection;

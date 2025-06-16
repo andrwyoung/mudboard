@@ -21,6 +21,8 @@ export type Section = {
   deleted: boolean;
   deleted_at?: Date;
 
+  saved_column_num: number;
+
   forked_from?: string;
   owned_by?: string;
 };

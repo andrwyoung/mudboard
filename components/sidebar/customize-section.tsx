@@ -4,17 +4,12 @@
 
 // I really do need to come up with a better name for it
 
-import { useUIStore } from "@/store/ui-store";
-import { MAX_COLUMNS } from "@/types/constants";
 import { CheckField } from "../ui/check-field";
 import { changeBoardPermissions } from "@/lib/db-actions/change-board-permissions";
 import { useMetadataStore } from "@/store/metadata-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export default function CustomizeSection() {
-  const setNumCols = useUIStore((s) => s.setNumCols);
-  const numCols = useUIStore((s) => s.numCols);
-
   const board = useMetadataStore((s) => s.board);
   const canEdit = canEditBoard();
   const openToPublic = board?.access_level === "public";
@@ -36,7 +31,7 @@ export default function CustomizeSection() {
             />
           </div>
         )}
-
+        {/* 
         <h3 className="text-xs font-semibold px-4">Columns:</h3>
 
         <div>
@@ -75,7 +70,7 @@ export default function CustomizeSection() {
               );
             })}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

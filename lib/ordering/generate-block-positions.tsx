@@ -20,9 +20,16 @@ export function generatePositionedBlocks(
 } {
   const positionedBlocksBySection: Record<string, PositionedBlock[][]> = {};
   const map = new Map<string, PositionedBlock>();
-  const columnWidth = getColumnWidth(sidebarWidth, windowWidth, spacingSize);
 
   for (const [sectionId, columns] of Object.entries(sectionColumns)) {
+    const numCols = columns.length;
+    const columnWidth = getColumnWidth(
+      sidebarWidth,
+      windowWidth,
+      spacingSize,
+      numCols
+    );
+
     for (let colIndex = 0; colIndex < columns.length; colIndex++) {
       const col = columns[colIndex];
       let top = 0;

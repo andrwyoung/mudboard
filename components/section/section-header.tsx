@@ -1,5 +1,11 @@
 // this component is the thing that handles the title and description above
 // every section inside the gallery
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select"; // ensure this path matches your project structure
 
 import { Section } from "@/types/board-types";
 import InlineEditText from "../ui/inline-edit";
@@ -10,7 +16,6 @@ import {
 import { useLoadingStore } from "@/store/loading-store";
 import { FaFileDownload, FaPlus } from "react-icons/fa";
 import { useImagePicker } from "@/hooks/use-image-picker";
-import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import InlineEditTextarea from "../ui/inline-textarea";
 import { useLayoutStore } from "@/store/layout-store";
@@ -29,6 +34,8 @@ import { useState } from "react";
 import { Block, MudboardImage } from "@/types/block-types";
 import { useUIStore } from "@/store/ui-store";
 import { toast } from "sonner";
+import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
+import { updateSectionColumnNum } from "@/lib/db-actions/update-section-columns";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
@@ -63,64 +70,106 @@ export default function SectionHeader({ section }: { section: Section }) {
             className="text-lg sm:text-xl md:text-2xl text-left"
           />
         </div>
-        <div
-          className={`flex flex-row gap-2 items-center ${
-            mirrorMode ? "opacity-50" : "opacity-80"
-          }`}
-        >
-          {canEdit && (
-            <div className="group flex flex-row cursor-pointer text-primary">
-              {fileInput}
-              <div
+        <div className="flex flex-col items-end gap-1">
+          <div
+            className={`flex flex-row gap-2 items-center ${
+              mirrorMode ? "opacity-50" : "opacity-80"
+            }`}
+          >
+            {canEdit && (
+              <div className="group flex flex-row cursor-pointer text-primary">
+                {fileInput}
+                {/* <div
                 className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
                 onClick={() => createTextBlock(section.section_id)}
               >
                 Text
-              </div>
-              <div
-                className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
+              </div> */}
+                <div
+                  className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
                   transition-transform duration-200 flex items-center justify-center"
-              >
-                {/* <div className="absolute inset-0 rounded-full border-4 border-primary" /> */}
-                <FaPlus
-                  className="z-2 size-4 text-primary group-hover:text-accent hover:primary transition-colors duration-300"
-                  onClick={() => triggerImagePicker()}
-                />
-                {/* <div
-                      className="absolute inset-0 rounded-full bg-primary/40 z-1 group-hover:bg-background transition-all duration-300
-                      group-hover:scale-30"
-                    /> */}
-              </div>
+                >
+                  <FaPlus
+                    className="z-2 size-5 text-primary group-hover:text-accent hover:primary transition-colors duration-300"
+                    onClick={() => triggerImagePicker()}
+                    title="Add Image to Section"
+                  />
+                </div>
 
-              <div
+                {/* <div
                 className="hidden group-hover:block font-header px-1 font-semibold hover:text-accent transition-all duration-300"
                 onClick={() => triggerImagePicker()}
               >
                 Image
+              </div> */}
               </div>
-            </div>
-          )}
+            )}
 
-          <button
-            title="Download Images in Section"
-            className=" text-primary hover:text-accent hover:scale-105
+            <button
+              title="Download Images in Section"
+              className=" text-primary hover:text-accent hover:scale-105
             transition-all duration-300 cursor-pointer"
-            onClick={() => {
-              const blocks = sectionColumns[section.section_id] ?? [];
-              const flattened = blocks.flat();
-              const imageBlocks = flattened.filter(
-                (
-                  b
-                ): b is Block & { block_type: "image"; data: MudboardImage } =>
-                  b.block_type === "image" && !!b.data
-              );
+              onClick={() => {
+                const blocks = sectionColumns[section.section_id] ?? [];
+                const flattened = blocks.flat();
+                const imageBlocks = flattened.filter(
+                  (
+                    b
+                  ): b is Block & {
+                    block_type: "image";
+                    data: MudboardImage;
+                  } => b.block_type === "image" && !!b.data
+                );
 
-              setImagesToDownload(imageBlocks);
-              setDownloadConfirmOpen(true);
-            }}
-          >
-            <FaFileDownload className="size-4.5" />
-          </button>
+                setImagesToDownload(imageBlocks);
+                setDownloadConfirmOpen(true);
+              }}
+            >
+              <FaFileDownload className="size-4.5" />
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 ">
+            {canEdit ? (
+              <Select
+                value={section.saved_column_num?.toString() || "4"}
+                onValueChange={(val) => {
+                  const newVal = parseInt(val);
+                  if (!isNaN(newVal)) {
+                    // save to DB (you'll need to implement this)
+                    updateSectionColumnNum(section.section_id, newVal);
+                  }
+                }}
+              >
+                <SelectTrigger id={`select-trigger-${section.section_id}`}>
+                  <div
+                    className="flex items-center gap-1 font-header text-sm text-primary
+                hover:text-accent transition-colors duration-200"
+                    title="Change Column Number"
+                  >
+                    Columns: {section.saved_column_num}
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from(
+                    { length: MAX_COLUMNS - MIN_COLUMNS + 1 },
+                    (_, i) => {
+                      const n = i + MIN_COLUMNS;
+                      return (
+                        <SelectItem key={n} value={n.toString()}>
+                          {n}
+                        </SelectItem>
+                      );
+                    }
+                  )}
+                </SelectContent>
+              </Select>
+            ) : (
+              <div className="text-sm font-header text-primary">
+                Columns: {section.saved_column_num}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

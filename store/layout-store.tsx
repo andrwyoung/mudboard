@@ -12,6 +12,7 @@ import { SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { generatePositionedBlocks } from "@/lib/ordering/generate-block-positions";
+import { DEFAULT_COLUMNS } from "@/types/constants";
 
 type LayoutStore = {
   // SECTION 1
@@ -21,7 +22,7 @@ type LayoutStore = {
     sectionId: string,
     fn: (prev: Block[][]) => Block[][]
   ) => void;
-  regenerateColumns: () => void;
+  regenerateSectionColumns: (sectionId: string) => void;
 
   // SECTION 2
 
@@ -55,10 +56,16 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
   setSectionColumns: (cols: SectionColumns) => set({ sectionColumns: cols }),
   updateColumnsInASection: (sectionId, fn) => {
     set((state) => {
-      const numCols = useUIStore.getState().numCols;
+      // these 2 variables are used to generate a fall back
+      // in case sectionColumns[sectionId] doesn't exist
+      const boardSections = useMetadataStore.getState().boardSections;
+      const savedNumCols =
+        boardSections.find((bs) => bs.section.section_id === sectionId)?.section
+          .saved_column_num ?? DEFAULT_COLUMNS;
+
       const current =
         state.sectionColumns[sectionId] ??
-        Array.from({ length: numCols }, () => []);
+        Array.from({ length: savedNumCols }, () => []);
       const updated = fn(current);
       return {
         sectionColumns: {
@@ -69,29 +76,29 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
       };
     });
   },
-  regenerateColumns: () => {
-    const masterBlocks = get().masterBlockOrder;
-    const numCols = useUIStore.getState().numCols;
+  regenerateSectionColumns: (sectionId: string) => {
+    const masterBlockOrder = get().masterBlockOrder;
     const boardSections = useMetadataStore.getState().boardSections;
+    const blocksInSection = masterBlockOrder
+      .filter((b) => b.block.section_id === sectionId)
+      .map((b) => b.block);
 
-    const newSectionColumns: SectionColumns = {};
+    const savedColNum =
+      boardSections.find((bs) => bs.section.section_id === sectionId)?.section
+        .saved_column_num ?? DEFAULT_COLUMNS;
 
-    for (const boardSection of boardSections) {
-      newSectionColumns[boardSection.section.section_id] = Array.from(
-        { length: numCols },
-        () => []
-      );
-    }
+    const newCols: Block[][] = Array.from({ length: savedColNum }, () => []);
+    blocksInSection.forEach((block, i) => {
+      newCols[i % savedColNum].push(block);
+    });
 
-    let i = 0;
-    for (const posBlock of masterBlocks) {
-      const sectionId = posBlock.block.section_id;
-      const index = i % numCols;
-      newSectionColumns[sectionId][index].push(posBlock.block);
-      i++;
-    }
-
-    set({ sectionColumns: newSectionColumns });
+    set((state) => ({
+      sectionColumns: {
+        ...state.sectionColumns,
+        [sectionId]: newCols,
+      },
+      layoutDirty: true,
+    }));
   },
 
   // SECTION: figuring out positions
@@ -159,7 +166,7 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
 
     if (layoutDirty && boardId) {
       const flat = get().masterBlockOrder;
-      const success = await syncOrderToSupabase(flat, boardId);
+      const success = await syncOrderToSupabase(flat);
       if (success) {
         set({ layoutDirty: false });
       }

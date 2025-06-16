@@ -265,6 +265,7 @@ export type Database = {
           OLD_board_id: string | null
           OLD_order_index: number | null
           owned_by: string | null
+          saved_column_num: number
           section_id: string
           title: string | null
         }
@@ -277,6 +278,7 @@ export type Database = {
           OLD_board_id?: string | null
           OLD_order_index?: number | null
           owned_by?: string | null
+          saved_column_num: number
           section_id?: string
           title?: string | null
         }
@@ -289,6 +291,7 @@ export type Database = {
           OLD_board_id?: string | null
           OLD_order_index?: number | null
           owned_by?: string | null
+          saved_column_num?: number
           section_id?: string
           title?: string | null
         }

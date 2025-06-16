@@ -18,16 +18,17 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { useLayoutStore } from "@/store/layout-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
+import { Section } from "@/types/board-types";
 
-export default function Gallery({
-  sectionId,
+export default function SectionGallery({
+  section,
   columns,
   draggedBlocks,
   scrollY,
   selectedBlocks,
   overId,
 }: {
-  sectionId: string;
+  section: Section;
   columns: Block[][];
   draggedBlocks: Block[] | null;
   scrollY: number;
@@ -40,7 +41,6 @@ export default function Gallery({
 
   const canEdit = canEditBoard();
 
-  const numCols = useUIStore((s) => s.numCols);
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const sidebarWidth = useLayoutStore((s) => s.sidebarWidth);
@@ -53,18 +53,18 @@ export default function Gallery({
     useOverlayStore(canvasScope);
 
   const isEmpty = columns.every((col) => col.length === 0);
-  const { triggerImagePicker, fileInput } = useImagePicker(sectionId);
+  const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
 
   // column width
   const columnWidth = useMemo(() => {
     if (typeof window === "undefined") return 0;
 
-    const totalGapSpacing = spacingSize * (numCols - 1);
+    const totalGapSpacing = spacingSize * (section.saved_column_num - 1);
     const totalSidePadding = gallerySpacingSize * 2;
 
     const availableWidth =
       window.innerWidth - totalGapSpacing - totalSidePadding - sidebarWidth;
-    const width = availableWidth / numCols;
+    const width = availableWidth / section.saved_column_num;
 
     console.log(
       "column width is around: ",
@@ -75,7 +75,7 @@ export default function Gallery({
       sidebarWidth
     );
     return width;
-  }, [spacingSize, gallerySpacingSize, numCols, sidebarWidth]);
+  }, [spacingSize, gallerySpacingSize, section.saved_column_num, sidebarWidth]);
 
   // when clicking on an image
   const handleItemClick = useCallback(
@@ -147,7 +147,7 @@ export default function Gallery({
           : ""
       } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
       style={{
-        gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
+        gridTemplateColumns: `repeat(${section.saved_column_num}, minmax(0, 1fr))`,
       }}
       aria-hidden={overlayGalleryIsOpen ? "true" : "false"}
     >
@@ -177,15 +177,15 @@ export default function Gallery({
       {columns.map((column, columnIndex) => (
         // <div className="bg-amber-50">
         <DroppableColumn
-          id={`${scope}::col-${sectionId}-${columnIndex}`}
+          id={`${scope}::col-${section.section_id}-${columnIndex}`}
           paddingLeft={spacingSize / 2}
           paddingRight={spacingSize / 2}
-          key={`${sectionId}-${columnIndex}`}
-          sectionId={sectionId}
+          key={`${section.section_id}-${columnIndex}`}
+          sectionId={section.section_id}
           isMirror={isMirror}
         >
           <MemoizedDroppableColumn
-            sectionId={sectionId}
+            section={section}
             wholeGalleryEmpty={isEmpty}
             column={column}
             columnWidth={columnWidth}

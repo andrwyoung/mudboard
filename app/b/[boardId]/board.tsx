@@ -86,7 +86,6 @@ export default function Board({ boardId }: { boardId: string }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
   const spacingSize = useUIStore((s) => s.spacingSize);
-  const numCols = useUIStore((s) => s.numCols);
 
   // sections
   const boardSections = useMetadataStore((s) => s.boardSections);
@@ -120,15 +119,9 @@ export default function Board({ boardId }: { boardId: string }) {
   // ordering
   const positionedBlockMap = useLayoutStore((s) => s.positionedBlockMap);
   const regenerateOrdering = useLayoutStore((s) => s.regenerateOrdering);
-  const regenerateColumns = useLayoutStore((s) => s.regenerateColumns);
 
-  // SECTION: On load. Initialize everything
-  //
   //
   useInitBoard(boardId, setIsExpired, setWelcomeModalOpen);
-
-  // here is where we regenerate layout whenever things change
-  useEffect(() => regenerateColumns(), [regenerateColumns, numCols]);
 
   useEffect(
     () => regenerateOrdering(),

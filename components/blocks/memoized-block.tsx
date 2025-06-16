@@ -25,10 +25,12 @@ export function BlockChooser({
   block,
   shouldEagerLoad,
   columnWidth,
+  numCols,
 }: {
   block: Block;
   shouldEagerLoad: boolean;
   columnWidth: number;
+  numCols: number;
 }) {
   switch (block.block_type) {
     case "image":
@@ -37,6 +39,7 @@ export function BlockChooser({
           block={block}
           shouldEagerLoad={shouldEagerLoad}
           columnWidth={columnWidth}
+          numCols={numCols}
         />
       );
     case "text":
@@ -55,6 +58,7 @@ function BlockComponent({
   onClick,
   shouldEagerLoad,
   columnWidth,
+  numCols,
 }: {
   block: Block;
   isSelected: boolean;
@@ -62,6 +66,7 @@ function BlockComponent({
   onClick: (e: React.MouseEvent) => void;
   shouldEagerLoad: boolean;
   columnWidth: number;
+  numCols: number;
 }) {
   // const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
   const isMirror = useIsMirror();
@@ -119,6 +124,7 @@ function BlockComponent({
               block={block}
               shouldEagerLoad={shouldEagerLoad}
               columnWidth={columnWidth}
+              numCols={numCols}
             />
           </SortableItem>
         </div>

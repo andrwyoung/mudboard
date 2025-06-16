@@ -3,7 +3,6 @@
 import { BlockInsert } from "@/types/block-types";
 import { supabase } from "../../utils/supabase";
 import { PositionedBlock } from "@/types/sync-types";
-import { useUIStore } from "@/store/ui-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { SYNC_BATCH_SIZE } from "@/types/upload-settings";
 
@@ -22,8 +21,7 @@ function positionedBlocksToUpdates(
 }
 
 export async function syncOrderToSupabase(
-  positionedBlocks: PositionedBlock[],
-  board_id: string
+  positionedBlocks: PositionedBlock[]
 ): Promise<boolean> {
   // check for access
   const canWrite = canEditBoard();
@@ -55,10 +53,10 @@ export async function syncOrderToSupabase(
   }
 
   // step 2: update number of default columns
-  await supabase
-    .from("boards")
-    .update({ saved_column_num: useUIStore.getState().numCols })
-    .eq("board_id", board_id);
+  // await supabase
+  //   .from("boards")
+  //   .update({ saved_column_num: useUIStore.getState().numCols })
+  //   .eq("board_id", board_id);
 
   console.log("Finished syncing block order to Supabase");
 

@@ -49,7 +49,7 @@ export async function createNewBoard({
       claimedBy: claimedBy,
     });
 
-    initializeSectionColumns(newBoardSection.section.section_id);
+    initializeSectionColumns(newBoardSection.section);
   }
 
   return boardData;

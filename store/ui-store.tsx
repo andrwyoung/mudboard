@@ -2,19 +2,15 @@
 // very important because we need these numbers to measure the columns widths
 // for virtualization
 
-import {
-  DEFAULT_COLUMNS,
-  DEFAULT_GALLERY_SPACING,
-  DEFAULT_SPACING,
-} from "@/types/constants";
+import { DEFAULT_GALLERY_SPACING, DEFAULT_SPACING } from "@/types/constants";
 import { create } from "zustand";
 
 type UIStore = {
   mirrorMode: boolean;
   toggleMirrorMode: () => void;
 
-  numCols: number;
-  setNumCols: (cols: number) => void;
+  // numCols: number;
+  // setNumCols: (cols: number) => void;
 
   spacingSize: number;
   setSpacingSize: (spacing: number) => void;
@@ -33,8 +29,8 @@ export const useUIStore = create<UIStore>((set) => ({
       mirrorMode: !state.mirrorMode,
     })),
 
-  numCols: DEFAULT_COLUMNS,
-  setNumCols: (cols) => set({ numCols: cols }),
+  // numCols: DEFAULT_COLUMNS,
+  // setNumCols: (cols) => set({ numCols: cols }),
 
   spacingSize: DEFAULT_SPACING,
   setSpacingSize: (spacing) => set({ spacingSize: spacing }),
