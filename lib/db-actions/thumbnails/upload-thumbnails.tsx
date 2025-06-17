@@ -23,9 +23,8 @@ export const uploadThumbnail = async (
     });
 
   if (error) {
-    console.error("Upload error:", error.message);
-    alert("Failed to upload thumbnail.");
+    console.error("Thumbnail upload error:", error.message);
   } else {
-    alert("Thumbnail uploaded!");
+    console.log("Thumbnail uploaded!");
   }
 };

@@ -2,33 +2,53 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { Block, MudboardImage } from "@/types/block-types";
 import { getImageUrl } from "@/utils/get-image-url";
-import React, { useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import html2canvas from "html2canvas-pro";
 import { DEFAULT_BOARD_TITLE } from "@/types/constants";
 import Image from "next/image";
-import { DEFAULT_FILE_MIME, THUMBNAIL_HEIGHT } from "@/types/upload-settings";
+import {
+  DEFAULT_FILE_MIME,
+  THUMBNAIL_HEIGHT,
+  THUMBNAIL_REGENERATION_DELAY,
+} from "@/types/upload-settings";
 import { uploadThumbnail } from "@/lib/db-actions/thumbnails/upload-thumbnails";
+import { checkThumbnailExists } from "@/lib/db-actions/thumbnails/check-thumbnail-exists";
 
 export default function ThumbnailGenerator() {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const hiddenRef = useRef<HTMLDivElement | null>(null);
+  const board = useMetadataStore((s) => s.board);
+  const layoutDirty = useLayoutStore((state) => state.layoutDirty);
+  const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
 
-  const board = useMetadataStore.getState().board;
+  const [regenerationQueued, setRegenerationQueued] = useState(false);
 
-  const allBlocks = useLayoutStore.getState().masterBlockOrder ?? [];
-  const imageBlocks = allBlocks
-    .map((b) => b.block)
-    .filter((block) => block.block_type === "image");
+  const numCols = 3;
 
-  const numCols = imageBlocks.length < 5 ? 2 : 3;
-  const blocks: Block[][] = Array.from({ length: numCols }, () => []);
+  const blocks: Block[][] = useMemo(() => {
+    const allBlocks = (masterBlockOrder ?? []).slice(0, 30);
+    const imageBlocks = allBlocks
+      .map((b) => b.block)
+      .filter((block) => block.block_type === "image");
 
-  allBlocks.slice().forEach((block, i) => {
-    const colIndex = i % numCols;
-    blocks[colIndex].push(block.block);
-  });
+    const cols: Block[][] = Array.from({ length: numCols }, () => []);
 
-  const handleGenerateThumbnail = async () => {
+    imageBlocks.forEach((block, i) => {
+      const colIndex = i % numCols;
+      cols[colIndex].push(block);
+    });
+
+    return cols;
+  }, [masterBlockOrder]);
+
+  // function that actually generates thumbnail
+  const handleGenerateThumbnail = useCallback(async () => {
     if (!board) return;
 
     const element = hiddenRef.current;
@@ -37,6 +57,7 @@ export default function ThumbnailGenerator() {
     const originalCanvas = await html2canvas(element, {
       useCORS: true,
       scale: 1,
+      logging: false,
     });
 
     const fullWidth = originalCanvas.width;
@@ -65,22 +86,63 @@ export default function ThumbnailGenerator() {
     setThumbnailUrl(dataUrl);
 
     await uploadThumbnail(dataUrl, board.board_id, "board-thumb-ext");
-  };
+  }, [board]);
+
+  useEffect(() => {
+    const flatBlocks = blocks.flat();
+    if (!board || flatBlocks.length === 0) return;
+
+    const maybeGenerate = async () => {
+      const exists = await checkThumbnailExists(
+        board.board_id,
+        "board-thumb-ext"
+      );
+
+      if (!exists) {
+        console.log("No thumbnail found. Queuing...");
+        setRegenerationQueued(true);
+      }
+    };
+
+    maybeGenerate();
+  }, [board, blocks]);
+
+  // queuing regeneration
+  useEffect(() => {
+    if (layoutDirty && !regenerationQueued) {
+      setRegenerationQueued(true);
+    }
+  }, [layoutDirty, handleGenerateThumbnail, regenerationQueued]);
+
+  useEffect(() => {
+    if (!regenerationQueued) return;
+
+    const timeout = setTimeout(() => {
+      handleGenerateThumbnail();
+      setRegenerationQueued(false);
+    }, THUMBNAIL_REGENERATION_DELAY);
+
+    return () => clearTimeout(timeout);
+  }, [regenerationQueued, handleGenerateThumbnail]);
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={handleGenerateThumbnail}
-        className="px-2 py-1 cursor-pointer bg-accent text-primary text-xs
+      {process.env.NODE_ENV === "development" && (
+        <div className="p-4">
+          <button
+            type="button"
+            onClick={handleGenerateThumbnail}
+            className="px-2 py-1 cursor-pointer bg-accent text-primary text-xs
          hover:bg-white transition-all duration-200 rounded-sm"
-      >
-        Generate Thumbnail
-      </button>
-      {thumbnailUrl && (
-        <div className="mt-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={thumbnailUrl} alt="Generated thumbnail" />
+          >
+            Generate Thumbnail
+          </button>
+          {thumbnailUrl && (
+            <div className="mt-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={thumbnailUrl} alt="Generated thumbnail" />
+            </div>
+          )}
         </div>
       )}
 
@@ -108,7 +170,7 @@ export default function ThumbnailGenerator() {
                   const url = getImageUrl(
                     image.image_id,
                     image.file_ext,
-                    "thumb"
+                    "medium"
                   );
 
                   return (
@@ -127,9 +189,9 @@ export default function ThumbnailGenerator() {
           </div>
 
           <div
-            className="absolute flex left-0 w-full justify-between items-end px-12 pt-6 pb-2 text-6xl z-20"
+            className="absolute flex left-0 w-full justify-between items-end px-12 pt-6 pb-2 z-20"
             style={{
-              top: `${THUMBNAIL_HEIGHT - 160}px`,
+              top: `${THUMBNAIL_HEIGHT - 200}px`,
             }}
           >
             <Image
@@ -139,9 +201,12 @@ export default function ThumbnailGenerator() {
               height={96}
               className="-translate-y-2"
             />
-            <h1 className="truncate max-w-[800px] text-ellipsis whitespace-nowrap">
-              {board?.title ?? DEFAULT_BOARD_TITLE}
-            </h1>
+            <div className="flex flex-col items-end ">
+              <h3 className="text-3xl translate-y-2">Board</h3>
+              <h1 className="text-6xl truncate max-w-[800px] text-ellipsis whitespace-nowrap">
+                {board?.title ?? DEFAULT_BOARD_TITLE}
+              </h1>
+            </div>
           </div>
 
           <Image

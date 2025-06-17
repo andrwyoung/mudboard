@@ -56,12 +56,12 @@ export default function Sidebar({
               titleClassName="font-header text-sm px-4"
             >
               <CustomizeSection />
-              {process.env.NODE_ENV === "development" && <ThumbnailGenerator />}
             </AccordianWrapper>
           </div>
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full px-8 pt-6">
+        <ThumbnailGenerator />
         <AccountSyncSection />
       </div>
       <a

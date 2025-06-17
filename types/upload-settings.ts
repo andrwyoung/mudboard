@@ -12,6 +12,7 @@ export const CAPTION_HEIGHT = 28;
 
 // syncing
 export const AUTOSYNC_DELAY = 5000;
+export const THUMBNAIL_REGENERATION_DELAY = 10000;
 
 
 // compression

@@ -5,12 +5,8 @@ import Board from "./board";
 import { checkIfBoardExists } from "@/lib/db-actions/check-board-exist";
 import { Metadata } from "next";
 import { metadata as layoutMetadata } from "@/app/layout";
-import {
-  DEFAULT_FILE_EXT,
-  SUPABASE_THUMBNAIL_URL,
-  THUMBNAIL_HEIGHT,
-  THUMBNAIL_WIDTH,
-} from "@/types/upload-settings";
+import { THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH } from "@/types/upload-settings";
+import { getThumbnailUrl } from "@/utils/get-thumbnail-url";
 
 export async function generateMetadata({
   params,
@@ -24,7 +20,7 @@ export async function generateMetadata({
   if (!board || !board.title) return;
 
   const title = board.title;
-  const thumbnailUrl = `${SUPABASE_THUMBNAIL_URL}/board-thumb-ext-${board.board_id}.${DEFAULT_FILE_EXT}`;
+  const thumbnailUrl = getThumbnailUrl(board.board_id, "board-thumb-ext");
   console.log("thumbnail: ", thumbnailUrl);
 
   return {

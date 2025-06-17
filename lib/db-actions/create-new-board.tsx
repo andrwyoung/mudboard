@@ -7,6 +7,7 @@ import { supabase } from "@/utils/supabase";
 import { Tables } from "@/types/supabase";
 import { createSupabaseSection } from "./create-new-section";
 import { initializeSectionColumns } from "../columns/new-section-columns";
+import { DEFAULT_COLUMNS } from "@/types/constants";
 
 export async function createNewBoard({
   title,
@@ -29,7 +30,7 @@ export async function createNewBoard({
         user_id: claimedBy,
         access_level: claimedBy ? "private" : "public",
         is_demo: isDemo,
-        saved_column_num: savedColumnNumber,
+        saved_column_num: savedColumnNumber ?? DEFAULT_COLUMNS,
       },
     ])
     .select()

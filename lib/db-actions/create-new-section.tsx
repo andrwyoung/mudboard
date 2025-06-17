@@ -9,6 +9,7 @@
 import { supabase } from "@/utils/supabase";
 import { BoardSection } from "@/types/board-types";
 import { TablesInsert } from "@/types/supabase";
+import { DEFAULT_COLUMNS } from "@/types/constants";
 
 export async function createSupabaseSection({
   board_id,
@@ -24,7 +25,13 @@ export async function createSupabaseSection({
   // Step 1: create a section (no board_id!)
   const { data: section, error: sectionError } = await supabase
     .from("sections")
-    .insert([{ title, owned_by: claimedBy } as TablesInsert<"sections">])
+    .insert([
+      {
+        title,
+        owned_by: claimedBy,
+        saved_column_num: DEFAULT_COLUMNS,
+      } as TablesInsert<"sections">,
+    ])
     .select()
     .single();
 

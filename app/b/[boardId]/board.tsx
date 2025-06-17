@@ -156,7 +156,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
     const handleResize = () => {
       setShowBlurImg(true);
-      console.log("blurring image (resizing)");
+      // console.log("blurring image (resizing)");
 
       // setting window widht for recalculation
       setWindowWidth(window.innerWidth);
@@ -188,7 +188,7 @@ export default function Board({ boardId }: { boardId: string }) {
       for (const entry of entries) {
         const width = entry.contentRect.width;
         setSidebarWidth(width);
-        console.log("sidebar remeasuring. width: ", width);
+        // console.log("sidebar remeasuring. width: ", width);
       }
     });
 
