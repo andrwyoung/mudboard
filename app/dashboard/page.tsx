@@ -26,7 +26,9 @@ import {
   GlobalAnnouncement,
   SHOW_GLOBAL_ANNOUNCEMENT,
 } from "@/types/constants/error-message";
-import BoardCard from "./board-card";
+import BoardCard from "./dashboard-card";
+
+type DashboardMode = "board" | "sections";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -37,6 +39,7 @@ export default function DashboardPage() {
   console.log(boardCounts);
   const user = useMetadataStore((s) => s.user);
   const [boardToDelete, setBoardToDelete] = useState<Board | null>(null);
+  const [dashboardMode, setDashboardMode] = useState<DashboardMode>("board");
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -125,59 +128,127 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-primary p-6 relative">
+    <div className="min-h-screen bg-primary text-primary p-6 relative">
       {/* Logo */}
       <div className="absolute top-4 left-6">
-        <Logo color="brown" enforceHome={true} />
+        <Logo enforceHome={true} />
       </div>
 
       {/* Header */}
-      <div className="flex justify-between items-center max-w-5xl mx-auto mt-16 mb-10">
-        <h1 className="text-3xl font-bold">Your Boards</h1>
-        <div className="flex gap-2">
-          <Link
-            href={NEW_BOARD_LINK}
-            className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-primary justify-center
-                rounded-md text-primary text-sm font-header transition-all duration-300
-                hover:text-primary-darker hover:border-accent hover:bg-accent/30 
-                `}
-            title="Create a New Board"
-          >
-            New Board
-          </Link>
-          <Button
-            onClick={handleLogout}
-            className="font-header"
-            title="Log out"
-          >
-            Log Out
-          </Button>
-        </div>
-      </div>
 
       {/* Board Cards Grid */}
-      <div className="max-w-5xl mx-auto ">
-        {userBoards.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {userBoards.map((board) => (
-              <BoardCard
-                key={board.board_id}
-                board={board}
-                counts={
-                  boardCounts[board.board_id] ?? {
-                    sectionCount: 0,
-                    blockCount: 0,
-                  }
+      <div className="flex flex-col lg:flex-row gap-0 md:gap-12  mx-auto mt-20 justify-center">
+        {/* <div className="w-64 h-180 bg-white mt-24" /> */}
+
+        <div className="flex flex-col max-w-5xl">
+          <div className="flex flex-row lg:flex-col justify-between items-center w-full min-w-32 mx-auto mb-2">
+            <div>
+              <h1 className="lg:hidden flex text-3xl font-bold text-white">
+                Dashboard
+              </h1>
+
+              <div className="hidden lg:flex flex-col gap-2 my-12 items-center  text-white">
+                <h1>Select View:</h1>
+                <div className="flex flex-col gap-2 font-header">
+                  <Button
+                    variant={
+                      dashboardMode === "board"
+                        ? "dashboard_sidebar_selected"
+                        : "dashboard_sidebar_unselected"
+                    }
+                    onClick={() => setDashboardMode("board")}
+                  >
+                    Boards
+                  </Button>
+                  <Button
+                    variant={
+                      dashboardMode === "sections"
+                        ? "dashboard_sidebar_selected"
+                        : "dashboard_sidebar_unselected"
+                    }
+                    onClick={() => setDashboardMode("sections")}
+                  >
+                    Sections
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-row lg:flex-col gap-2">
+              <Link
+                href={NEW_BOARD_LINK}
+                className={`hidden sm:flex gap-2 cursor-pointer items-center px-3 border-2 border-white justify-center
+                rounded-md text-white text-sm font-header transition-all duration-300
+                hover:text-white hover:border-accent hover:bg-accent/30  py-1
+                `}
+                title="Create a New Board"
+              >
+                New Board
+              </Link>
+              <Button
+                onClick={handleLogout}
+                className="font-header"
+                title="Log out"
+              >
+                Log Out
+              </Button>
+            </div>
+          </div>
+
+          <div className=" justify-start md:justify-center flex lg:hidden ">
+            <div className="flex gap-2 py-0.5 px-1 border-2 rounded-md bg-background">
+              <Button
+                variant={
+                  dashboardMode === "board"
+                    ? "dashboard_selected"
+                    : "dashboard_unselected"
                 }
-                onDelete={() => setBoardToDelete(board)}
-              />
-            ))}
+                onClick={() => setDashboardMode("board")}
+              >
+                Boards
+              </Button>
+              <Button
+                variant={
+                  dashboardMode === "sections"
+                    ? "dashboard_selected"
+                    : "dashboard_unselected"
+                }
+                onClick={() => setDashboardMode("sections")}
+              >
+                Sections
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {userBoards.length > 0 ? (
+          <div className="flex flex-col gap-8">
+            <h1 className="hidden lg:flex text-3xl font-bold text-white">
+              Dashboard
+            </h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
+              {userBoards.map((board) => (
+                <BoardCard
+                  key={board.board_id}
+                  board={board}
+                  counts={
+                    boardCounts[board.board_id] ?? {
+                      sectionCount: 0,
+                      blockCount: 0,
+                    }
+                  }
+                  onDelete={() => setBoardToDelete(board)}
+                />
+              ))}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col w-full gap-4">
-            <div className="w-full self-center">No Boards to show</div>
+            <div className="w-full self-center text-white">
+              No Boards to show
+            </div>
             {SHOW_GLOBAL_ANNOUNCEMENT && (
-              <div className="text-sm text-muted-foreground mb-4 max-w-sm">
+              <div className="text-sm text-white mb-4 max-w-sm">
                 {GlobalAnnouncement}
               </div>
             )}

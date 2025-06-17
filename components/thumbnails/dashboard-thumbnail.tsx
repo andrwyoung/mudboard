@@ -13,7 +13,7 @@ export default function DashboardThumbnail({
   return (
     <div className="flex flex-col relative" style={{ width: THUMBNAIL_WIDTH }}>
       <div
-        className="grid gap-4"
+        className="grid gap-2"
         style={{
           gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
         }}

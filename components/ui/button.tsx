@@ -25,6 +25,12 @@ const buttonVariants = cva(
           "bg-transparent outline-2 outline-primary text-primary hover:bg-secondary/50 ",
         outline_accent:
           "bg-transparent outline-2 outline-white text-white hover:text-accent hover:outline-accent",
+        dashboard_selected: "bg-accent text-primary",
+        dashboard_unselected: "hover:bg-accent",
+        dashboard_sidebar_selected:
+          "text-primary bg-accent border-2 border-accent",
+        dashboard_sidebar_unselected:
+          "text-white border-2 border-transparent hover:bg-accent hover:text-primary",
       },
     },
     defaultVariants: {
