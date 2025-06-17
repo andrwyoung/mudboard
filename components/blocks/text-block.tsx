@@ -3,9 +3,11 @@
 import { Block, TextBlockType } from "@/types/block-types";
 import { updateTextBlockText } from "@/lib/db-actions/sync-text/text-block-actions";
 import InlineEditTextarea from "../ui/inline-textarea";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export default function TextBlock({ block }: { block: Block }) {
   const textData = block.data as TextBlockType;
+  const canEdit = canEditBoard();
 
   // console.log("textdata: ", textData);
 
@@ -16,6 +18,7 @@ export default function TextBlock({ block }: { block: Block }) {
         onChange={(newTitle) => {
           updateTextBlockText(block, newTitle);
         }}
+        isEditable={canEdit}
         unnamedPlaceholder="Double Click to add Text!"
         className="text-sm sm:text-md md:text-lg"
       />

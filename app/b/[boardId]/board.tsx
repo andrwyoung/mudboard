@@ -279,9 +279,9 @@ export default function Board({ boardId }: { boardId: string }) {
 
       <DndContext
         collisionDetection={pointerWithin}
-        onDragEnd={handleDragEnd}
-        onDragStart={handleDragStart}
-        onDragMove={handleDragMove}
+        onDragStart={canEdit ? handleDragStart : undefined}
+        onDragMove={canEdit ? handleDragMove : undefined}
+        onDragEnd={canEdit ? handleDragEnd : undefined}
         sensors={sensors}
         autoScroll={!mirrorMode}
       >

@@ -127,7 +127,7 @@ export default function ThumbnailGenerator() {
 
   return (
     <div>
-      {process.env.NODE_ENV === "development" && (
+      {false && process.env.NODE_ENV === "development" && (
         <div className="p-4">
           <button
             type="button"
@@ -139,8 +139,7 @@ export default function ThumbnailGenerator() {
           </button>
           {thumbnailUrl && (
             <div className="mt-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={thumbnailUrl} alt="Generated thumbnail" />
+              {/* <img src={thumbnailUrl} alt="Generated thumbnail" /> */}
             </div>
           )}
         </div>
