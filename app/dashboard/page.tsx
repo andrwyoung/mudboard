@@ -9,8 +9,6 @@ import { useEffect, useState } from "react";
 import { Board } from "@/types/board-types";
 import { getUserBoards } from "@/lib/db-actions/user/get-user-boards";
 import { useMetadataStore } from "@/store/metadata-store";
-import { formatCreationDate, formatUpdateTime } from "@/utils/time-formatters";
-import { FaArrowRight } from "react-icons/fa6";
 import Link from "next/link";
 import { DEFAULT_BOARD_TITLE, NEW_BOARD_LINK } from "@/types/constants";
 import {
@@ -24,11 +22,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { FaTrashAlt } from "react-icons/fa";
 import {
   GlobalAnnouncement,
   SHOW_GLOBAL_ANNOUNCEMENT,
 } from "@/types/constants/error-message";
+import BoardCard from "./board-card";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -162,79 +160,17 @@ export default function DashboardPage() {
         {userBoards.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {userBoards.map((board) => (
-              <div
+              <BoardCard
                 key={board.board_id}
-                className="h-40 rounded-md bg-background border-2 border-primary shadow-sm flex
-              flex-col justify-between text-primary-darker"
-              >
-                <div className=" mt-4 ml-2">
-                  {/* <InlineEditText
-                    value={
-                      board.title && board.title.trim() != ""
-                        ? board.title
-                        : null
-                    }
-                    unnamedPlaceholder="Untitled Board"
-                    placeholder="Name your board"
-                    onChange={(newTitle) => {
-                      updateBoardTitle(board.board_id, newTitle);
-                    }}
-                    className="text-xl text-primary max-w-64"
-                  /> */}
-                  <div className="flex items-center justify-between mx-4">
-                    <Link
-                      href={`/b/${board.board_id}`}
-                      className="text-xl text-primary  font-header cursor-pointer hover:text-accent transition-all duration-300"
-                    >
-                      {board.title ?? "Untitled Board"}
-                    </Link>
-                    <div className="flex gap-2 items-center shrink-0">
-                      <FaTrashAlt
-                        onClick={() => setBoardToDelete(board)}
-                        title="Delete Board"
-                        className="text-primary hover:text-rose-400 transition-colors cursor-pointer"
-                      />
-                      {/* <RiEdit2Fill
-                        onClick={() => {
-                          handleEditBoardTitle(board.board_id)
-                        }}
-                        title="Edit Board Title"
-                        className="text-primary hover:text-accent transition-colors size-5 cursor-pointer"
-                      /> */}
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-primary ml-4 font-bold">
-                    {boardCounts[board.board_id]?.sectionCount ?? 0} sections •{" "}
-                    {boardCounts[board.board_id]?.blockCount ?? 0} blocks
-                  </p>
-                </div>
-
-                <div className="flex flex-row-reverse justify-between mb-4 mx-6">
-                  <Link
-                    href={`/b/${board.board_id}`}
-                    className="text-sm font-header bg-primary px-3 py-1 rounded-lg cursor-pointer
-                    flex flex-row gap-1.5 items-center justify-center transition-all duration-300
-                    hover:text-primary hover:bg-accent text-white"
-                    title="Open Board"
-                  >
-                    Open
-                    <FaArrowRight />
-                  </Link>
-
-                  <div className="text-xs">
-                    <p className="">
-                      Created: {formatCreationDate(board.created_at)}
-                    </p>
-                    <p className="">
-                      Last Updated:{" "}
-                      {board.updated_at
-                        ? formatUpdateTime(board.updated_at)
-                        : "Never"}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                board={board}
+                counts={
+                  boardCounts[board.board_id] ?? {
+                    sectionCount: 0,
+                    blockCount: 0,
+                  }
+                }
+                onDelete={() => setBoardToDelete(board)}
+              />
             ))}
           </div>
         ) : (

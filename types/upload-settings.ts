@@ -14,6 +14,7 @@ export const CAPTION_HEIGHT = 28;
 export const AUTOSYNC_DELAY = 5000;
 export const THUMBNAIL_REGENERATION_DELAY = 10000;
 
+export const THUMBNAIL_COLUMNS = 3;
 
 // compression
 export const MAX_IMAGE_WIDTH = 1600;
@@ -111,4 +112,10 @@ export const mimeToExtension: Record<string, string> = {
 
   // cropping
   export const THUMBNAIL_WIDTH = 1200;
-  export const THUMBNAIL_HEIGHT = 800;
+  export const THUMBNAIL_EXTERNAL_HEIGHT = 800;
+  export const THUMBNAIL_DASHBOARD_HEIGHT = 800;
+
+  export const THUMBNAIL_HEIGHT_MAP: Record<thumbnailNames, number> = {
+    "board-thumb-ext": THUMBNAIL_EXTERNAL_HEIGHT,
+    "board-thumb-dashboard": THUMBNAIL_DASHBOARD_HEIGHT,
+  };

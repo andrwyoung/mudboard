@@ -11,7 +11,8 @@ import AccountSyncSection from "@/components/sidebar/account-sync-section";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
 import { MirrorModeToggle } from "@/components/ui/sidebar/mirror-toggle";
-import ThumbnailGenerator from "@/components/testing/thumbnail-generator";
+import ThumbnailGenerator from "@/components/thumbnails/thumbnail-generator";
+import { useLoadingStore } from "@/store/loading-store";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -24,6 +25,8 @@ export default function Sidebar({
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
   onCollapse: () => void;
 }) {
+  const boardInitialized = useLoadingStore((s) => s.boardInitialized);
+
   return (
     <div
       className={`flex flex-col h-full w-full relative overflow-y-auto ${SCROLLBAR_STYLE}`}
@@ -61,7 +64,7 @@ export default function Sidebar({
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full px-8 pt-6">
-        <ThumbnailGenerator />
+        {boardInitialized && <ThumbnailGenerator />}
         <AccountSyncSection />
       </div>
       <a

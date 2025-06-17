@@ -11,13 +11,13 @@ import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { useUIStore } from "@/store/ui-store";
 import { SectionColumns } from "@/types/board-types";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useResetState } from "./user-reset-state";
 import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";
 import { useLayoutStore } from "@/store/layout-store";
+import { useLoadingStore } from "@/store/loading-store";
 
 export function useInitBoard(
   boardId: string,
@@ -33,10 +33,13 @@ export function useInitBoard(
   const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
   const regenerateLayout = useLayoutStore((s) => s.regenerateOrdering);
 
+  const setBoardInitialized = useLoadingStore((s) => s.setBoardInitialized);
+
   useEffect(() => {
     async function loadImages() {
       try {
         resetState(); // reset if we're coming from another board
+        setBoardInitialized(false);
 
         //
         // 1: grab the board first
@@ -100,6 +103,7 @@ export function useInitBoard(
 
         setSectionColumns(initColumns);
         regenerateLayout();
+        setBoardInitialized(true);
 
         // now we genrate the initial layout
       } catch (err) {

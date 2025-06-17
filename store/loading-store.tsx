@@ -4,6 +4,9 @@ import { DEFAULT_COLUMNS } from "@/types/constants";
 import { create } from "zustand";
 
 type LoadingStore = {
+  boardInitialized: boolean;
+  setBoardInitialized: (b: boolean) => void;
+
   // unused right now
   isUploading: boolean;
   setIsUploading: (d: boolean) => void;
@@ -26,6 +29,9 @@ type LoadingStore = {
 };
 
 export const useLoadingStore = create<LoadingStore>((set) => ({
+  boardInitialized: false,
+  setBoardInitialized: (b: boolean) => set({ boardInitialized: b }),
+
   isUploading: false,
   setIsUploading: (d) => set({ isUploading: d }),
 

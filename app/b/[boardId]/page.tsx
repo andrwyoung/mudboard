@@ -5,7 +5,10 @@ import Board from "./board";
 import { checkIfBoardExists } from "@/lib/db-actions/check-board-exist";
 import { Metadata } from "next";
 import { metadata as layoutMetadata } from "@/app/layout";
-import { THUMBNAIL_HEIGHT, THUMBNAIL_WIDTH } from "@/types/upload-settings";
+import {
+  THUMBNAIL_EXTERNAL_HEIGHT,
+  THUMBNAIL_WIDTH,
+} from "@/types/upload-settings";
 import { getThumbnailUrl } from "@/utils/get-thumbnail-url";
 
 export async function generateMetadata({
@@ -33,7 +36,7 @@ export async function generateMetadata({
         {
           url: thumbnailUrl,
           width: THUMBNAIL_WIDTH,
-          height: THUMBNAIL_HEIGHT,
+          height: THUMBNAIL_EXTERNAL_HEIGHT,
           alt: `${title} – Mudboard`,
         },
       ],

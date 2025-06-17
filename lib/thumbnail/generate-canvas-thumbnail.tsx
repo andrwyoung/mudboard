@@ -1,76 +1,53 @@
-type GenerateThumbnailOptions = {
-  width?: number;
-  height?: number;
-  columns?: number;
-  padding?: number;
-  bgColor?: string;
-};
+import html2canvas from "html2canvas-pro";
+import { uploadThumbnail } from "@/lib/db-actions/thumbnails/upload-thumbnails";
+import {
+  DEFAULT_FILE_MIME,
+  THUMBNAIL_HEIGHT_MAP,
+  thumbnailNames,
+} from "@/types/upload-settings";
 
-export async function generateCanvasThumbnail(
-  blocks: { url: string }[],
-  options: GenerateThumbnailOptions = {}
-): Promise<string> {
-  const {
-    width = 1200,
-    height = 800,
-    columns = 4,
-    padding = 8,
-    bgColor = "#ffffff",
-  } = options;
-  console.log("generating images for thumbnail: ", blocks);
+export async function generateThumbnailFromRef({
+  element,
+  boardId,
+  thumbnailType,
+}: {
+  element: HTMLDivElement;
+  boardId: string;
+  thumbnailType: thumbnailNames;
+}) {
+  const thumbnailHeight = THUMBNAIL_HEIGHT_MAP[thumbnailType];
 
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
+  const originalCanvas = await html2canvas(element, {
+    useCORS: true,
+    backgroundColor: null,
+    scale: 1,
+    logging: false,
+  });
 
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Canvas context not available");
+  const fullWidth = originalCanvas.width;
 
-  // background
-  ctx.fillStyle = bgColor;
-  ctx.fillRect(0, 0, width, height);
+  const croppedCanvas = document.createElement("canvas");
+  croppedCanvas.width = fullWidth;
+  croppedCanvas.height = thumbnailHeight;
 
-  // image sizing
-  const cellWidth = (width - padding * (columns + 1)) / columns;
-  const rows = Math.ceil(blocks.length / columns);
-  const cellHeight = (height - padding * (rows + 1)) / rows;
+  const ctx = croppedCanvas.getContext("2d");
+  if (!ctx) return;
 
-  const loadImage = (src: string) =>
-    new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous"; // IMPORTANT if loading from Supabase
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
+  ctx.drawImage(
+    originalCanvas,
+    0,
+    0,
+    fullWidth,
+    thumbnailHeight,
+    0,
+    0,
+    fullWidth,
+    thumbnailHeight
+  );
 
-  for (let i = 0; i < blocks.length; i++) {
-    const block = blocks[i];
-    console.log("block url: ", block.url);
-    const col = i % columns;
-    const row = Math.floor(i / columns);
+  const dataUrl = croppedCanvas.toDataURL(DEFAULT_FILE_MIME, 0.9);
 
-    try {
-      const img = await loadImage(block.url);
+  await uploadThumbnail(dataUrl, boardId, thumbnailType);
 
-      const x = padding + col * (cellWidth + padding);
-      const y = padding + row * (cellHeight + padding);
-
-      // maintain aspect ratio inside cell
-      const aspect = img.width / img.height;
-      let drawW = cellWidth;
-      let drawH = cellHeight;
-      if (aspect > 1) {
-        drawH = cellWidth / aspect;
-      } else {
-        drawW = cellHeight * aspect;
-      }
-
-      ctx.drawImage(img, x, y, drawW, drawH);
-    } catch (err) {
-      console.warn("Failed to load image", block.url, err);
-    }
-  }
-
-  return canvas.toDataURL("image/jpeg", 0.9); // or canvas.toBlob for upload
+  return dataUrl;
 }
