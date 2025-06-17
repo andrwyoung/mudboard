@@ -3,6 +3,51 @@
 import { notFound } from "next/navigation";
 import Board from "./board";
 import { checkIfBoardExists } from "@/lib/db-actions/check-board-exist";
+import { Metadata } from "next";
+import { metadata as layoutMetadata } from "@/app/layout";
+import {
+  DEFAULT_FILE_EXT,
+  SUPABASE_THUMBNAIL_URL,
+  THUMBNAIL_HEIGHT,
+  THUMBNAIL_WIDTH,
+} from "@/types/upload-settings";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ boardId: string }>;
+}): Promise<Metadata | undefined> {
+  const { boardId } = await params;
+
+  const board = await checkIfBoardExists(boardId);
+
+  if (!board || !board.title) return;
+
+  const title = board.title;
+  const thumbnailUrl = `${SUPABASE_THUMBNAIL_URL}/board-thumb-ext-${board.board_id}.${DEFAULT_FILE_EXT}`;
+
+  return {
+    ...layoutMetadata,
+    title,
+    openGraph: {
+      ...layoutMetadata.openGraph,
+      title,
+      images: [
+        {
+          url: thumbnailUrl,
+          width: THUMBNAIL_WIDTH,
+          height: THUMBNAIL_HEIGHT,
+          alt: `${title} – Mudboard`,
+        },
+      ],
+    },
+    twitter: {
+      ...layoutMetadata.twitter,
+      title,
+      images: [thumbnailUrl],
+    },
+  };
+}
 
 export default async function BoardPage({
   params,
@@ -11,8 +56,8 @@ export default async function BoardPage({
 }) {
   const { boardId } = await params;
   // check if it even exists
-  const boardExists = await checkIfBoardExists(boardId);
-  if (!boardExists) return notFound();
+  const board = await checkIfBoardExists(boardId);
+  if (!board) return notFound();
 
   return <Board key={boardId} boardId={boardId} />;
 }

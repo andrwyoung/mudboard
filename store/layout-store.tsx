@@ -111,8 +111,19 @@ export const useLayoutStore = create<LayoutStore>((set, get) => ({
     console.log("regenerating layout");
     const { sectionColumns: columns, sidebarWidth, windowWidth } = get();
     const spacingSize = useUIStore.getState().spacingSize;
+
+    const boardSections = useMetadataStore.getState().boardSections;
+    const sectionOrder = boardSections
+      .slice() // avoid mutating original
+      .sort((a, b) => a.order_index - b.order_index)
+      .map((bs) => ({
+        sectionId: bs.section.section_id,
+        order_index: bs.order_index,
+      }));
+
     const { orderedBlocks, positionedBlockMap } = generatePositionedBlocks(
       columns,
+      sectionOrder,
       sidebarWidth,
       windowWidth,
       spacingSize

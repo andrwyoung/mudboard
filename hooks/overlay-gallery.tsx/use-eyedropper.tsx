@@ -1,5 +1,5 @@
-import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
+import { getImageUrl } from "@/utils/get-image-url";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 

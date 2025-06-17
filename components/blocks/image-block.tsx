@@ -10,7 +10,6 @@ import {
   CAPTION_HEIGHT,
   IMAGE_VARIANT_MAP,
   imageNames,
-  SUPABASE_OBJECT_URL,
 } from "@/types/upload-settings";
 import { useLoadingStore } from "@/store/loading-store";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,14 +17,7 @@ import { updateImageBlockCaption } from "@/lib/db-actions/sync-text/update-capti
 import { useSelectionStore } from "@/store/selection-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
-
-export function getImageUrl(
-  image_id: string,
-  file_ext: string,
-  size: imageNames
-): string {
-  return `${SUPABASE_OBJECT_URL}/${image_id}/${size}.${file_ext}`;
-}
+import { getImageUrl } from "@/utils/get-image-url";
 
 export function ImageBlock({
   block,
@@ -165,7 +157,7 @@ export function ImageBlock({
                         border-none focus:outline-none rounded-b-sm
                     ${
                       isFocused
-                        ? "text-primary bg-white"
+                        ? "text-primary bg-primary-text"
                         : "text-primary-darker bg-transparent"
                     }`}
                   style={{ height: CAPTION_HEIGHT }}

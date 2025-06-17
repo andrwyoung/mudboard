@@ -11,6 +11,7 @@ import AccountSyncSection from "@/components/sidebar/account-sync-section";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
 import { MirrorModeToggle } from "@/components/ui/sidebar/mirror-toggle";
+import ThumbnailGenerator from "@/components/testing/thumbnail-generator";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -55,6 +56,7 @@ export default function Sidebar({
               titleClassName="font-header text-sm px-4"
             >
               <CustomizeSection />
+              {process.env.NODE_ENV === "development" && <ThumbnailGenerator />}
             </AccordianWrapper>
           </div>
         </div>

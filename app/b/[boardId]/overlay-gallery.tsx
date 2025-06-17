@@ -1,7 +1,6 @@
 // this is the overlay thing that happens when you double click an image
 // or if you right-click -> Expand an image
 
-import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
 import NextImage from "next/image";
 import React, { useEffect, useRef, useState } from "react";
@@ -14,6 +13,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import ColorWheel from "@/components/overlay-gallery/color-wheel";
 import GreyscaleWheel from "@/components/overlay-gallery/gs-color-wheel";
+import { getImageUrl } from "@/utils/get-image-url";
 
 type OverlayModes = "drag" | "eyedropper";
 

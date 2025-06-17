@@ -1,6 +1,7 @@
 export const DEMO_BOARD_ID = "2c7a54d8-9770-476a-afce-cf831ebebd29"
 
 export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
+export const SUPABASE_THUMBNAIL_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-thumbnails`;
 
 // virtualization
 export const OVERSCAN_SIZE = 1000;
@@ -18,8 +19,10 @@ export const MAX_IMAGE_WIDTH = 1600;
 export const COMPRESSED_IMAGE_WIDTH = 600;
 export const COMPRESSED_THUMB_WIDTH = 300;
 export const DEFAULT_FILE_EXT = "webp";
+export const DEFAULT_FILE_MIME = "image/webp";
 
 export type imageNames = "thumb" | "medium" | "full";
+export type thumbnailNames = "board-thumb-ext" | "board-thumb-dashboard";
 
 export const IMAGE_VARIANT_MAP: Record<imageNames, { width: number; quality: number }> = {
   thumb: { width: COMPRESSED_THUMB_WIDTH, quality: 0.5 },
@@ -103,3 +106,8 @@ export const mimeToExtension: Record<string, string> = {
 
   // cleaning up database
   export const DECLUTTER_CHUNK_SIZE = 100;
+
+
+  // cropping
+  export const THUMBNAIL_WIDTH = 1200;
+  export const THUMBNAIL_HEIGHT = 800;

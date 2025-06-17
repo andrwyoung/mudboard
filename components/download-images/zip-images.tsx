@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { getImageUrl } from "@/components/blocks/image-block";
 import { Block, MudboardImage } from "@/types/block-types";
+import { getImageUrl } from "@/utils/get-image-url";
 
 export async function downloadImagesAsZip(blocks: Block[], title?: string) {
   const zip = new JSZip();

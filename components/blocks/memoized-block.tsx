@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { SortableItem } from "@/components/drag/sortable-wrapper";
 import { Block, MudboardImage } from "@/types/block-types";
-import { getImageUrl, ImageBlock } from "./image-block";
+import { ImageBlock } from "./image-block";
 import TextBlock from "./text-block";
 import { useGetScope } from "@/hooks/use-get-scope";
 import {
@@ -20,6 +20,7 @@ import { useUIStore } from "@/store/ui-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
 import { downloadImagesAsZip } from "../download-images/zip-images";
 import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
+import { getImageUrl } from "@/utils/get-image-url";
 
 export function BlockChooser({
   block,

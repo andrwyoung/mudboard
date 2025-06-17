@@ -25,7 +25,11 @@ const monoFont = Overpass_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mudboard",
+  title: {
+    template: "%s - Mudboard",
+    default: "Mudboard",
+  },
+
   description:
     "A reference board made for Illustrators and Professional Artists. Spend more time drawing, not organizing photos",
 
@@ -54,7 +58,7 @@ export const metadata: Metadata = {
     siteName: "Mudboard",
     images: [
       {
-        url: "https://mudboard.com/og-image.png", // replace with your image URL
+        url: "https://mudboard.com/og-image.png",
         width: 1200,
         height: 630,
         alt: "Screenshot of Mudboard Landing Page",
