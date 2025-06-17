@@ -25,13 +25,14 @@ export async function generateMetadata({
 
   const title = board.title;
   const thumbnailUrl = `${SUPABASE_THUMBNAIL_URL}/board-thumb-ext-${board.board_id}.${DEFAULT_FILE_EXT}`;
+  console.log("thumbnail: ", thumbnailUrl);
 
   return {
     ...layoutMetadata,
     title,
     openGraph: {
       ...layoutMetadata.openGraph,
-      title,
+      title: `${title} – Mudboard`,
       images: [
         {
           url: thumbnailUrl,
@@ -43,7 +44,7 @@ export async function generateMetadata({
     },
     twitter: {
       ...layoutMetadata.twitter,
-      title,
+      title: `${title} – Mudboard`,
       images: [thumbnailUrl],
     },
   };
