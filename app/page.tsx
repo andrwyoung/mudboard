@@ -325,7 +325,7 @@ export default function Home() {
             </p> */}
             <p className="text-center text-sm text-muted mb-6 font-semibold">
               Firsts 300 users get the Lifetime license for <strong>$20</strong>{" "}
-              (normally $25) + an extra 200 images.
+              (normally $25).
             </p>
             {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2"> */}
             <div>

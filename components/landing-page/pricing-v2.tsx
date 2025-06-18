@@ -41,7 +41,7 @@ const plans: Plan[] = [
     price: "$20 one-time",
     oldPrice: "$25",
     features: [
-      { label: "Unlimited* storage", status: "good" },
+      { label: "Generous storage", status: "good" },
       { label: "All core features", status: "good" },
       { label: "Publish, Clone and Remix Modules", status: "good" },
       { label: "Early user street cred", status: "good" },
@@ -52,7 +52,7 @@ const plans: Plan[] = [
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",
-    note: "*You’ll have room for at least 10,000 images (compressed and optimized). So...basically unlimited.",
+    note: "*Includes 10,000+ images per user. For most people, that’s effectively unlimited.",
   },
   // {
   //   name: "Pro",
