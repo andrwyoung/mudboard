@@ -86,7 +86,28 @@ export type Database = {
             foreignKeyName: "blocks_section_id_fkey"
             columns: ["section_id"]
             isOneToOne: false
+            referencedRelation: "section_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "blocks_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "section_with_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "blocks_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
             referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "blocks_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
             referencedColumns: ["section_id"]
           },
           {
@@ -108,6 +129,7 @@ export type Database = {
           order_index: number
           section_id: string
           updated_at: string | null
+          visual_column_num: number | null
         }
         Insert: {
           board_id: string
@@ -118,6 +140,7 @@ export type Database = {
           order_index: number
           section_id: string
           updated_at?: string | null
+          visual_column_num?: number | null
         }
         Update: {
           board_id?: string
@@ -128,6 +151,7 @@ export type Database = {
           order_index?: number
           section_id?: string
           updated_at?: string | null
+          visual_column_num?: number | null
         }
         Relationships: [
           {
@@ -135,6 +159,13 @@ export type Database = {
             columns: ["board_id"]
             isOneToOne: false
             referencedRelation: "board_stats"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "board_with_stats"
             referencedColumns: ["board_id"]
           },
           {
@@ -152,10 +183,38 @@ export type Database = {
             referencedColumns: ["board_id"]
           },
           {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "section_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "board_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "section_with_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
             foreignKeyName: "board_sections_section_id_fkey"
             columns: ["section_id"]
             isOneToOne: false
             referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "board_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
             referencedColumns: ["section_id"]
           },
         ]
@@ -262,6 +321,7 @@ export type Database = {
           deleted_at: string | null
           description: string | null
           forked_from: string | null
+          is_shared: boolean | null
           OLD_board_id: string | null
           OLD_order_index: number | null
           owned_by: string | null
@@ -275,6 +335,7 @@ export type Database = {
           deleted_at?: string | null
           description?: string | null
           forked_from?: string | null
+          is_shared?: boolean | null
           OLD_board_id?: string | null
           OLD_order_index?: number | null
           owned_by?: string | null
@@ -288,6 +349,7 @@ export type Database = {
           deleted_at?: string | null
           description?: string | null
           forked_from?: string | null
+          is_shared?: boolean | null
           OLD_board_id?: string | null
           OLD_order_index?: number | null
           owned_by?: string | null
@@ -300,7 +362,28 @@ export type Database = {
             foreignKeyName: "sections_forked_from_fkey"
             columns: ["forked_from"]
             isOneToOne: false
+            referencedRelation: "section_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "section_with_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
             referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
             referencedColumns: ["section_id"]
           },
         ]
@@ -341,7 +424,28 @@ export type Database = {
             foreignKeyName: "subsections_section_id_fkey"
             columns: ["section_id"]
             isOneToOne: false
+            referencedRelation: "section_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "subsections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "section_with_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "subsections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
             referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "subsections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
             referencedColumns: ["section_id"]
           },
         ]
@@ -384,6 +488,37 @@ export type Database = {
           section_count: number | null
         }
         Relationships: []
+      }
+      board_with_stats: {
+        Row: {
+          access_level: Database["public"]["Enums"]["access_type"] | null
+          block_count: number | null
+          board_id: string | null
+          created_at: string | null
+          deleted: boolean | null
+          deleted_at: string | null
+          expired_at: string | null
+          image_count: number | null
+          is_demo: boolean | null
+          password_hash: string | null
+          real_block_count: number | null
+          saved_column_num: number | null
+          section_count: number | null
+          shared_with: string[] | null
+          slug: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       expired_boards: {
         Row: {
@@ -452,6 +587,117 @@ export type Database = {
           width?: number | null
         }
         Relationships: []
+      }
+      section_stats: {
+        Row: {
+          block_count: number | null
+          fork_count: number | null
+          personal_copy_count: number | null
+          saved_column_num: number | null
+          section_id: string | null
+          shallow_copy_count: number | null
+        }
+        Relationships: []
+      }
+      section_with_stats: {
+        Row: {
+          block_count: number | null
+          created_at: string | null
+          deleted: boolean | null
+          deleted_at: string | null
+          description: string | null
+          fork_count: number | null
+          forked_from: string | null
+          is_shared: boolean | null
+          OLD_board_id: string | null
+          OLD_order_index: number | null
+          owned_by: string | null
+          personal_copy_count: number | null
+          saved_column_num: number | null
+          section_id: string | null
+          shallow_copy_count: number | null
+          title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "section_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "section_with_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
+            referencedColumns: ["section_id"]
+          },
+        ]
+      }
+      user_board_sections: {
+        Row: {
+          board_id: string | null
+          board_owner: string | null
+          board_title: string | null
+          created_at: string | null
+          forked_from: string | null
+          order_index: number | null
+          saved_column_num: number | null
+          section_id: string | null
+          section_title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boards_user_id_fkey"
+            columns: ["board_owner"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "section_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "section_with_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "sections_forked_from_fkey"
+            columns: ["forked_from"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
+            referencedColumns: ["section_id"]
+          },
+        ]
       }
     }
     Functions: {

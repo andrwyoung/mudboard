@@ -10,6 +10,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { reindexSections } from "./reindex-sections";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { createSupabaseSection } from "./create-new-section";
+import { SoftDeleteSections } from "./soft-delete-section";
 
 export async function softDeleteBoardSection(boardSection: BoardSection) {
   // check if access
@@ -39,6 +40,9 @@ export async function softDeleteBoardSection(boardSection: BoardSection) {
     toast.error("Failed to delete section");
     return false;
   }
+
+  // Soft-delete the actual section if it's orphaned
+  await SoftDeleteSections([boardSection.section.section_id]);
 
   // if successfully then delete both section and blocks locally too
   useMetadataStore.setState((s) => ({

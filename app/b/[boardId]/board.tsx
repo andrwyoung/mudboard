@@ -209,12 +209,17 @@ export default function Board({ boardId }: { boardId: string }) {
   useBoardListeners();
 
   // handling importing images
+  const onlyOneSectionMode = boardSections.length === 1;
+  const autoSelectedSection =
+    selectedSection?.section ??
+    (onlyOneSectionMode ? boardSections[0].section : null);
   useImageImport({
-    selectedSection: selectedSection?.section ?? null,
+    selectedSection: autoSelectedSection,
     setIsDraggingExtFile,
     setDraggedExtFileCount,
     extFileOverSection,
     setExtFileOverSection,
+    onlyOneSectionMode,
   });
 
   // handling drag and droping blocks
@@ -274,6 +279,11 @@ export default function Board({ boardId }: { boardId: string }) {
       {isDraggingExtFile && !isExpired && !canEdit && (
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
           <div className="text-3xl font-header">Editing Disabled</div>
+        </div>
+      )}
+      {isDraggingExtFile && boardSections.length === 1 && (
+        <div className="fixed inset-0 bg-accent/20 z-50 flex flex-col gap-1 items-center justify-center text-primary ">
+          <div className="text-3xl font-header ">Drop Images!</div>
         </div>
       )}
 

@@ -4,8 +4,6 @@
 import { useMetadataStore } from "@/store/metadata-store";
 import React, { RefObject, useEffect, useRef, useState } from "react";
 import { DEFAULT_BOARD_TITLE, DEFAULT_SECTION_NAME } from "@/types/constants";
-import { FaPlus } from "react-icons/fa";
-import { useLoadingStore } from "@/store/loading-store";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,11 +17,11 @@ import {
 import { BoardSection } from "@/types/board-types";
 import { softDeleteBoardSection } from "@/lib/db-actions/soft-delete-board-section";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
-import { addNewSection } from "@/lib/sidebar/add-new-section";
 
 import SectionRow from "./section-sections/section-title";
 import { toast } from "sonner";
 import { supabase } from "@/utils/supabase";
+import AddSectionButton from "./section-sections/add-section-button";
 
 export default function SectionsSection({
   sectionRefs,
@@ -34,7 +32,6 @@ export default function SectionsSection({
   const boardSections = useMetadataStore((s) => s.boardSections);
   const canEdit = canEditBoard();
 
-  const setEditingSectionId = useLoadingStore((s) => s.setEditingSectionId);
   const [boardSectionToDelete, setBoardSectionToDelete] =
     useState<BoardSection | null>(null);
 
@@ -158,39 +155,7 @@ export default function SectionsSection({
           </AlertDialog>
         )}
       </div>
-      {canEdit && (
-        <button
-          type="button"
-          className="text-primary-foreground hover:underline hover:underline-offset-2 
-            transition-all duration-300 cursor-pointer px-4
-            flex gap-1 items-center text-sm"
-          onClick={async () => {
-            if (!board) return;
-
-            const newSection = await addNewSection({
-              board_id: board?.board_id,
-              order_index: boardSections.length,
-            });
-
-            if (newSection) {
-              setTimeout(() => {
-                const sectionEl =
-                  sectionRefs.current?.[newSection.section.section_id];
-                setEditingSectionId(newSection.section.section_id);
-                if (sectionEl) {
-                  sectionEl.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  });
-                }
-              }, 100);
-            }
-          }}
-        >
-          <FaPlus className="size-2" />
-          Add Section
-        </button>
-      )}
+      {canEdit && <AddSectionButton sectionRefs={sectionRefs} />}
     </div>
   );
 }

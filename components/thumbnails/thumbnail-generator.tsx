@@ -9,9 +9,7 @@ import React, {
 } from "react";
 import {
   THUMBNAIL_COLUMNS,
-  THUMBNAIL_DASHBOARD_HEIGHT,
   THUMBNAIL_REGENERATION_DELAY,
-  THUMBNAIL_WIDTH,
 } from "@/types/upload-settings";
 import { checkThumbnailExists } from "@/lib/db-actions/thumbnails/check-thumbnail-exists";
 import ExternalThumbnail from "./external-thumbnail";
@@ -19,7 +17,6 @@ import { generateThumbnailFromRef } from "@/lib/thumbnail/generate-canvas-thumbn
 import DashboardThumbnail from "./dashboard-thumbnail";
 import { Block } from "@/types/block-types";
 import { DEFAULT_BOARD_TITLE } from "@/types/constants";
-import Image from "next/image";
 
 export default function ThumbnailGenerator() {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
@@ -113,7 +110,7 @@ export default function ThumbnailGenerator() {
 
   return (
     <div>
-      {process.env.NODE_ENV === "development" && (
+      {false && process.env.NODE_ENV === "development" && (
         <div className="p-4">
           <button
             type="button"
@@ -125,12 +122,12 @@ export default function ThumbnailGenerator() {
           </button>
           {thumbnailUrl && (
             <div className="mt-4">
-              <Image
+              {/* <Image
                 src={thumbnailUrl}
                 alt="Generated thumbnail"
                 height={THUMBNAIL_DASHBOARD_HEIGHT}
                 width={THUMBNAIL_WIDTH}
-              />
+              /> */}
             </div>
           )}
         </div>

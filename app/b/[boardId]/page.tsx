@@ -24,7 +24,7 @@ export async function generateMetadata({
 
   const title = board.title;
   const thumbnailUrl = getThumbnailUrl(board.board_id, "board-thumb-ext");
-  console.log("thumbnail: ", thumbnailUrl);
+  // console.log("thumbnail: ", thumbnailUrl);
 
   return {
     ...layoutMetadata,

@@ -27,6 +27,7 @@ import {
   SHOW_GLOBAL_ANNOUNCEMENT,
 } from "@/types/constants/error-message";
 import BoardCard from "./dashboard-card";
+import { softDeleteBoard } from "@/lib/db-actions/soft-delete-board";
 
 type DashboardMode = "board" | "sections";
 
@@ -110,15 +111,11 @@ export default function DashboardPage() {
   //   }
   // }
 
-  async function softDeleteBoard(boardId: string) {
-    const { error } = await supabase
-      .from("boards")
-      .update({ deleted: true, deleted_at: new Date().toISOString() })
-      .eq("board_id", boardId);
+  async function handleDeleteBoard(boardId: string) {
+    const success = await softDeleteBoard(boardId);
 
-    if (error) {
-      console.error("Failed to delete board:", error.message);
-      toast.error("Something went wrong deleting the board.");
+    if (!success) {
+      toast.error("Failed to delete Board");
       return;
     }
 
@@ -137,7 +134,7 @@ export default function DashboardPage() {
       {/* Header */}
 
       {/* Board Cards Grid */}
-      <div className="flex flex-col lg:flex-row gap-0 md:gap-12  mx-auto mt-20 justify-center">
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-12  mx-auto mt-20 justify-center">
         {/* <div className="w-64 h-180 bg-white mt-24" /> */}
 
         <div className="flex flex-col max-w-5xl">
@@ -148,8 +145,8 @@ export default function DashboardPage() {
               </h1>
 
               <div className="hidden lg:flex flex-col gap-2 my-12 items-center  text-white">
-                <h1>Select View:</h1>
-                <div className="flex flex-col gap-2 font-header">
+                <h1 className="font-semibold">Select View:</h1>
+                <div className="flex flex-col gap-2 font-header text-sm">
                   <Button
                     variant={
                       dashboardMode === "board"
@@ -280,7 +277,7 @@ export default function DashboardPage() {
               <AlertDialogAction
                 className="font-bold"
                 onClick={() => {
-                  softDeleteBoard(boardToDelete.board_id);
+                  handleDeleteBoard(boardToDelete.board_id);
                   setBoardToDelete(null);
                 }}
               >

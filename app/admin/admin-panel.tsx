@@ -149,6 +149,10 @@ export default function AdminPanel() {
             <tbody>
               {boards.map((board) => {
                 const isExpanded = expandedBoards.includes(board.board_id);
+                const isExpired =
+                  !board.user_id &&
+                  new Date().getTime() - new Date(board.created_at).getTime() >
+                    7 * 24 * 60 * 60 * 1000;
 
                 return (
                   <React.Fragment key={board.board_id}>
@@ -156,10 +160,7 @@ export default function AdminPanel() {
                       className={`border-t text-xs cursor-pointer hover:bg-gray-50 ${
                         isExpanded
                           ? "bg-gray-100"
-                          : !board.user_id &&
-                            new Date().getTime() -
-                              new Date(board.created_at).getTime() >
-                              7 * 24 * 60 * 60 * 1000
+                          : isExpired || board.deleted
                           ? "bg-rose-50"
                           : "bg-white"
                       }`}

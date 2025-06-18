@@ -17,12 +17,14 @@ export function useImageImport({
   setDraggedExtFileCount,
   extFileOverSection,
   setExtFileOverSection,
+  onlyOneSectionMode,
 }: {
   selectedSection: Section | null;
   setIsDraggingExtFile: (isDragging: boolean) => void;
   setDraggedExtFileCount: (count: number | null) => void;
   extFileOverSection: ExtFileDropTarget;
   setExtFileOverSection: (s: ExtFileDropTarget) => void;
+  onlyOneSectionMode: boolean;
 }) {
   const extFileOverSectionRef = useRef<ExtFileDropTarget>(extFileOverSection);
   useEffect(() => {
@@ -79,7 +81,11 @@ export function useImageImport({
       setDraggedExtFileCount(null);
 
       // this the section we want to drop into
-      const section = extFileOverSectionRef.current;
+      let section = extFileOverSectionRef.current;
+
+      if (onlyOneSectionMode && selectedSection) {
+        section = { section: selectedSection, mirror: "main" };
+      }
 
       if (!canEditBoard()) {
         console.log("Can't edit board. Not allowing drop");
@@ -186,5 +192,5 @@ export function useImageImport({
       window.removeEventListener("dragleave", handleDragLeave);
       window.removeEventListener("paste", handlePaste);
     };
-  }, [selectedSection]);
+  }, [selectedSection, onlyOneSectionMode]);
 }

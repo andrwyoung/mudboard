@@ -2,6 +2,7 @@
 // NOTE: look at types/supabase.ts because that's where we keep the database accurate types
 
 import { Block } from "./block-types";
+import { SectionStats } from "./stat-types";
 import { Enums } from "./supabase";
 
 export type CanvasScope = "main" | "mirror";
@@ -34,7 +35,7 @@ export type BoardSection = {
   order_index: number;
 
   deleted: boolean;
-};
+} & Partial<SectionStats>;
 
 export type Board = {
   board_id: string;
@@ -56,3 +57,16 @@ export type User = {
   username: string | null;
   email: string | null;
 };
+
+// sections that belong to the user
+export type UserBoardSection = {
+  board_id: string;
+  board_title: string | null;
+  board_owner: string;
+  order_index: number;
+  section_id: string;
+  section_title: string | null;
+  forked_from?: string;
+  saved_column_num: number;
+  created_at: string;
+} & SectionStats;

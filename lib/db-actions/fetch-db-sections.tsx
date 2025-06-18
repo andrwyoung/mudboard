@@ -9,11 +9,11 @@ export async function fetchSupabaseSections(
   boardId: string
 ): Promise<BoardSection[]> {
   const { data, error } = await supabase
-    .from("board_sections")
+    .from("board_sections_with_stats")
     .select("*, section:sections(*)")
     .eq("board_id", boardId)
     .eq("deleted", false) // Filter on board_sections
-    .filter("section.deleted", "eq", false) // Filter on joined section
+    .filter("section.deleted", "eq", false) // Filter on joined section. DANGER TODO we need to fallback
     .order("order_index", { ascending: true });
 
   if (error) {
