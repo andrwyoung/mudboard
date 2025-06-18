@@ -13,14 +13,15 @@ export default function ExternalThumbnail({
   columns: number;
 }) {
   const thumbnailHeight = THUMBNAIL_ASPECT_MAP["board-thumb-ext"].height;
+  const thumbnailWidth = THUMBNAIL_ASPECT_MAP["board-thumb-ext"].width;
 
   return (
     <div
       className="flex flex-col px-24 bg-primary relative"
-      style={{ width: THUMBNAIL_ASPECT_MAP["board-thumb-ext"].width }}
+      style={{ width: thumbnailWidth, minHeight: thumbnailHeight }}
     >
       <div
-        className="grid gap-2"
+        className="grid gap-2 mt-2"
         style={{
           gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
         }}
@@ -72,15 +73,15 @@ export default function ExternalThumbnail({
       <Image
         src="/gradient-overlay2.png"
         alt="Gradient Overlay"
-        width={1200}
+        width={thumbnailWidth}
         height={200}
-        className="absolute -top-10 left-0 w-full pointer-events-none z-10"
+        className="absolute -top-10 left-0 w-full pointer-events-none z-10 opacity-30"
       />
 
       <Image
         src="/gradient-overlay-bottom.png"
         alt="Gradient Overlay"
-        width={1200}
+        width={thumbnailWidth}
         height={300}
         className="absolute left-0 w-full pointer-events-none z-10"
         style={{

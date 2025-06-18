@@ -1,3 +1,5 @@
+import { THUMBNAIL_ASPECT_MAP, thumbnailNames } from "@/types/upload-settings";
+
 type GenerateThumbnailOptions = {
   width?: number;
   height?: number;
@@ -8,11 +10,12 @@ type GenerateThumbnailOptions = {
 
 export async function generateCanvasThumbnail(
   blocks: { url: string }[],
-  options: GenerateThumbnailOptions = {}
+  options: GenerateThumbnailOptions = {},
+  thumbnailType: thumbnailNames
 ): Promise<string> {
   const {
-    width = 1200,
-    height = 800,
+    width = THUMBNAIL_ASPECT_MAP[thumbnailType].width,
+    height = THUMBNAIL_ASPECT_MAP[thumbnailType].height,
     columns = 4,
     padding = 8,
     bgColor = "#ffffff",

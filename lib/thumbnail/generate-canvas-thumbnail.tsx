@@ -16,6 +16,7 @@ export async function generateThumbnailFromRef({
   thumbnailType: thumbnailNames;
 }) {
   const thumbnailHeight = THUMBNAIL_ASPECT_MAP[thumbnailType].height;
+  const thumbnailWidth = THUMBNAIL_ASPECT_MAP[thumbnailType].width;
 
   const originalCanvas = await html2canvas(element, {
     useCORS: true,
@@ -27,7 +28,7 @@ export async function generateThumbnailFromRef({
   const fullWidth = originalCanvas.width;
 
   const croppedCanvas = document.createElement("canvas");
-  croppedCanvas.width = fullWidth;
+  croppedCanvas.width = thumbnailWidth;
   croppedCanvas.height = thumbnailHeight;
 
   const ctx = croppedCanvas.getContext("2d");

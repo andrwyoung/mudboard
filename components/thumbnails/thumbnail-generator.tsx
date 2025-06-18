@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import {
+  THUMBNAIL_ASPECT_MAP,
   THUMBNAIL_COLUMNS,
   THUMBNAIL_REGENERATION_DELAY,
 } from "@/types/upload-settings";
@@ -17,9 +18,11 @@ import { generateThumbnailFromRef } from "@/lib/thumbnail/generate-canvas-thumbn
 import DashboardThumbnail from "./dashboard-thumbnail";
 import { Block } from "@/types/block-types";
 import { DEFAULT_BOARD_TITLE } from "@/types/constants";
+import Image from "next/image";
 
 export default function ThumbnailGenerator() {
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const [dashThumbnailUrl, setDashThumbnailUrl] = useState<string | null>(null);
+  const [extThumbnailUrl, setExtThumbnailUrl] = useState<string | null>(null);
 
   const board = useMetadataStore((s) => s.board);
   const layoutDirty = useLayoutStore((state) => state.layoutDirty);
@@ -57,19 +60,20 @@ export default function ThumbnailGenerator() {
   const handleGenerateThumbnail = useCallback(async () => {
     if (!board || !dashboardRef.current || !externalRef.current) return;
 
-    generateThumbnailFromRef({
+    const extThumbnail = await generateThumbnailFromRef({
       element: externalRef.current,
       boardId: board.board_id,
       thumbnailType: "board-thumb-ext",
     });
 
-    const miniviewThumbnail = await generateThumbnailFromRef({
+    const dashThumbnail = await generateThumbnailFromRef({
       element: dashboardRef.current,
       boardId: board.board_id,
       thumbnailType: "board-thumb-dashboard",
     });
 
-    if (miniviewThumbnail) setThumbnailUrl(miniviewThumbnail);
+    if (dashThumbnail) setDashThumbnailUrl(dashThumbnail);
+    if (extThumbnail) setExtThumbnailUrl(extThumbnail);
   }, [board, dashboardRef]);
 
   useEffect(() => {
@@ -110,7 +114,7 @@ export default function ThumbnailGenerator() {
 
   return (
     <div>
-      {false && process.env.NODE_ENV === "development" && (
+      {process.env.NODE_ENV === "development" && (
         <div className="p-4">
           <button
             type="button"
@@ -120,14 +124,20 @@ export default function ThumbnailGenerator() {
           >
             Generate Thumbnail
           </button>
-          {thumbnailUrl && (
+          {dashThumbnailUrl && extThumbnailUrl && (
             <div className="mt-4">
-              {/* <Image
-                src={thumbnailUrl}
+              <Image
+                src={dashThumbnailUrl}
                 alt="Generated thumbnail"
-                height={THUMBNAIL_DASHBOARD_HEIGHT}
-                width={THUMBNAIL_WIDTH}
-              /> */}
+                height={THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].height}
+                width={THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].width}
+              />
+              <Image
+                src={extThumbnailUrl}
+                alt="Generated thumbnail"
+                height={THUMBNAIL_ASPECT_MAP["board-thumb-ext"].height}
+                width={THUMBNAIL_ASPECT_MAP["board-thumb-ext"].width}
+              />
             </div>
           )}
         </div>
