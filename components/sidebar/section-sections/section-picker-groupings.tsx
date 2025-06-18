@@ -65,7 +65,7 @@ export function SectionSelectButton({
               <div
                 title={
                   lastCopy
-                    ? "This Section is only Copy"
+                    ? "This Section is the only copy"
                     : "This Section used in Multiple Boards"
                 }
                 className={cn(

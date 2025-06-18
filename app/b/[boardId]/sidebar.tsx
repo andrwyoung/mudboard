@@ -13,6 +13,7 @@ import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
 import { MirrorModeToggle } from "@/components/ui/sidebar/mirror-toggle";
 import ThumbnailGenerator from "@/components/thumbnails/thumbnail-generator";
 import { useLoadingStore } from "@/store/loading-store";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -26,6 +27,7 @@ export default function Sidebar({
   onCollapse: () => void;
 }) {
   const boardInitialized = useLoadingStore((s) => s.boardInitialized);
+  const canEdit = canEditBoard();
 
   return (
     <div
@@ -54,12 +56,14 @@ export default function Sidebar({
               <MirrorModeToggle />
             </div>
 
-            <AccordianWrapper
-              title="Board Options"
-              titleClassName="font-header text-sm px-4"
-            >
-              <CustomizeSection />
-            </AccordianWrapper>
+            {canEdit && (
+              <AccordianWrapper
+                title="Board Options"
+                titleClassName="font-header text-sm px-4"
+              >
+                <CustomizeSection />
+              </AccordianWrapper>
+            )}
           </div>
         </div>
       </div>

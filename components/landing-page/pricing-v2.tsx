@@ -18,7 +18,7 @@ type Plan = {
   highlight?: boolean;
   badge?: string;
   badgeColor?: string;
-  note?: string;
+  note?: React.ReactNode;
 };
 
 const plans: Plan[] = [
@@ -27,25 +27,24 @@ const plans: Plan[] = [
     description: "Try it out!",
     price: "$0",
     features: [
-      { label: "200 images", status: "good" },
+      { label: "3 Boards", status: "good" },
       { label: "All core features", status: "good" },
-      { label: "Boards are deleted 7 days after creation", status: "bad" },
       { label: "No collaboration", status: "bad" },
+      { label: "No publishing Modules", status: "bad" },
     ],
     ctaText: "Try the Demo",
     ctaHref: "/demo",
   },
   {
     name: "Lifetime",
-    description: "Buy once. Keep forever",
+    description: "Buy once. Use forever",
     price: "$20 one-time",
     oldPrice: "$25",
     features: [
-      { label: "1000 images included (+200 for early users)", status: "good" },
-      { label: "Boards and Images will never be deleted", status: "good" },
+      { label: "Unlimited* storage", status: "good" },
       { label: "All core features", status: "good" },
+      { label: "Publish, Clone and Remix Modules", status: "good" },
       { label: "Early user street cred", status: "good" },
-      // { label: "No collaboration", status: "bad" },
       // { label: "No uncompressed uploads", status: "bad" },
     ],
     ctaText: "Join the Waitlist",
@@ -53,7 +52,7 @@ const plans: Plan[] = [
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",
-    note: "Add more storage anytime",
+    note: "*You’ll have room for at least 10,000 images (compressed and optimized). So...basically unlimited.",
   },
   // {
   //   name: "Pro",
@@ -74,7 +73,7 @@ const plans: Plan[] = [
 
   {
     name: "More Coming Soon",
-    // description: "For professionals and teams (Coming Soon)",
+    description: "Monthly plan for professionals and teams (Coming Soon):",
     // price: "TBD",
     features: [
       // { label: "Unlimited images", status: "neutral" },
@@ -88,7 +87,20 @@ const plans: Plan[] = [
     // ctaHref: "/upgrade",
     // badge: "Requires License",
     badgeColor: "bg-muted text-primary",
-    // note: "Only available after Lifetime License purchase",
+    note: (
+      <span>
+        Curious about what’s coming?
+        <br />
+        <a
+          href="https://jondrew.notion.site/Mudboard-Roadmap-2162e809fa4e80eb94add8aa315c769d?source=copy_link"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent underline hover:text-white transition-all duration-200 font-bold"
+        >
+          → Check the roadmap
+        </a>
+      </span>
+    ),
   },
 ];
 
@@ -201,7 +213,7 @@ export default function PricingTable() {
       </div>
 
       {/* Storage Add-ons */}
-      <div className="mt-10 text-center text-muted">
+      {/* <div className="mt-10 text-center text-muted">
         <h2 className="mb text-xl font-semibold">Want more images?</h2>
         <p className="text-xs mb-4 text-muted font-semibold">
           *More storage can only be bought with a lifetime license
@@ -216,7 +228,7 @@ export default function PricingTable() {
             badge="Set and Forget"
           />
         </div>
-      </div>
+      </div> */}
     </>
   );
 }

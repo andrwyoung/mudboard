@@ -382,7 +382,7 @@ export default function Home() {
                 model to keep things simple (and so we don&apos;t need to run
                 ads).
               </FAQItem> */}
-              <FAQItem question="Will my boards be deleted after pricing is implemented?">
+              {/* <FAQItem question="Will my boards be deleted after pricing is implemented?">
                 Right now no (mainly cause I haven&apos;t built the
                 deletion/limit part yet lol). I do delete{" "}
                 <strong>unsaved boards</strong> after 7 days of creation, but if
@@ -392,7 +392,7 @@ export default function Home() {
                   but be reasonable please
                 </span>
                 ...don&apos;t go making like 20 test boards)
-              </FAQItem>
+              </FAQItem> */}
               {/* <FAQItem question="What happens to my boards if I cancel?">
                 To keep storage costs manageable (and protect against abuse),
                 boards are deleted 7 days after cancellation. But feel free to
@@ -417,7 +417,34 @@ export default function Home() {
               <FAQItem question="Will you train AI or sell my artwork/data?">
                 No.
               </FAQItem>
-              <FAQItem question="How do I reach out or get involved?">
+              <FAQItem question="Will you add [that feature I’m hoping for]?">
+                Probably! You can check out this{" "}
+                <Link
+                  href="/roadmap"
+                  className="text-accent underline hover:text-white transition-all duration-200 font-bold"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  public roadmap
+                </Link>{" "}
+                of what&apos;s planned/prioritized.
+                <br />
+                <br />
+                If you&apos;d like to get involved and have a say with
+                Mudboard&apos;s direction, you can{" "}
+                <a
+                  href="https://forms.gle/QA96JUcRRP5YSqRT6"
+                  className="text-accent underline hover:text-white transition-all duration-200 font-bold"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  sign up here
+                </a>{" "}
+                to get updates or even become a tester!
+              </FAQItem>
+              {/* <FAQItem question="How do I reach out or get involved?">
                 Great question! We’re always looking for early testers and folks
                 to help shape the direction of this app. You can find out{" "}
                 <Link
@@ -430,7 +457,7 @@ export default function Home() {
                   more info here
                 </Link>
                 .
-              </FAQItem>
+              </FAQItem> */}
             </div>
           </div>
 
