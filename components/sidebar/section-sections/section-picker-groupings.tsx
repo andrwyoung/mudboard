@@ -65,8 +65,8 @@ export function SectionSelectButton({
               <div
                 title={
                   lastCopy
-                    ? "Only copy"
-                    : "This Section used in multiple boards"
+                    ? "This Section is only Copy"
+                    : "This Section used in Multiple Boards"
                 }
                 className={cn(
                   "w-2 h-2 rounded-full translate-y-[1px]",

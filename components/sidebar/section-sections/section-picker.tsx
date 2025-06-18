@@ -18,8 +18,9 @@ import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { SectionSelectButton } from "./section-picker-groupings";
 import Link from "next/link";
 import { buildMudboardLink } from "@/utils/build-mudboard-link";
+import InfoTooltip from "@/components/ui/info-tooltip";
 
-const accordianClass = "text-primary font-header text-xl";
+const accordianClass = "text-primary font-header text-md";
 
 export default function SectionPickerDialog({
   open,
@@ -40,14 +41,6 @@ export default function SectionPickerDialog({
 
   const user = useMetadataStore((s) => s.user);
   const boardSections = useMetadataStore((s) => s.boardSections);
-  const [shouldResetSelection, setShouldResetSelection] = useState(false);
-
-  useEffect(() => {
-    if (shouldResetSelection) {
-      setSelectedSection(null);
-      setShouldResetSelection(false);
-    }
-  }, [shouldResetSelection]);
 
   useEffect(() => {
     if (!open || !user) return;
@@ -106,31 +99,44 @@ export default function SectionPickerDialog({
     >
       <DialogContent className="rounded-md bg-background p-6 max-w-md w-full">
         <DialogTitle className="flex flex-col mb-4  text-primary">
-          <div className="text-xl font-semibold font-header">
-            Choose a Section To Add:
+          <div className="text-2xl font-semibold font-header">
+            Add a Section to This Board
           </div>
-          <p className="text-sm">
-            Link an existing section or create a new one!
-          </p>
+          <div className="flex flex-row gap-4">
+            <p className="text-sm">
+              Reuse a section from another board, or create a brand new one.
+            </p>
+            <div className="flex">
+              <InfoTooltip
+                text={
+                  "Sections can be reused across multiple boards. Any edits made in one board will instantly reflect in all others using the same section. Use this to keep shared content in sync across projects."
+                }
+              />
+            </div>
+          </div>
         </DialogTitle>
 
         <div className="space-y-4 max-h-[500px] overflow-y-auto p-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary">
           <AccordianWrapper
             title="My Sections"
             titleClassName={accordianClass}
-            onCollapse={() => setShouldResetSelection(true)}
+            onCollapse={() => {
+              requestAnimationFrame(() => {
+                setSelectedSection(null);
+              });
+            }}
           >
             {groupedSections.length > 0 ? (
-              <div>
+              <div className="mt-4">
                 {groupedSections.map(([boardId, sections]) => (
-                  <div key={boardId} className="mb-4">
+                  <div key={boardId} className="flex flex-col mb-4">
                     <Link
                       href={buildMudboardLink(boardId)}
                       target="_blank"
                       rel="noopener noreferrer"
                       title="Open Board in new tab"
                       className="text-md font-semibold mb-1 text-primary hover:text-accent 
-                  transition-all duration-150"
+                  transition-all duration-150 self-start"
                     >
                       {sections[0]?.board_title || "Untitled Board"}
                     </Link>
@@ -165,7 +171,11 @@ export default function SectionPickerDialog({
             <AccordianWrapper
               title="Boardless Sections"
               titleClassName={accordianClass}
-              onCollapse={() => setShouldResetSelection(true)}
+              onCollapse={() => {
+                requestAnimationFrame(() => {
+                  setSelectedSection(null);
+                });
+              }}
             >
               <div className="flex flex-col bg-white p-2 rounded-lg">
                 {allUserOrphanedSections.map((section) => (

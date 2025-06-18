@@ -12,9 +12,11 @@ export default function InfoTooltip({ text }: { text: string }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <FaQuestionCircle className="size-3.5 text-primary translate-y-[1px] cursor-help" />
+        <FaQuestionCircle className="size-4 text-primary translate-y-[1px] cursor-help" />
       </TooltipTrigger>
-      <TooltipContent className="max-w-xs text-sm">{text}</TooltipContent>
+      <TooltipContent className="max-w-xs text-md font-medium leading-relaxed">
+        {text}
+      </TooltipContent>
     </Tooltip>
   );
 }
