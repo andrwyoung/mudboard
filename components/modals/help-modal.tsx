@@ -17,21 +17,20 @@ export default function HelpModal({
         <DialogTitle className="text-2xl text-primary">Need Help?</DialogTitle>
 
         <div className="space-y-3 text-sm text-primary ">
-          <h1 className="text-xl font-header mt-4">FAQ</h1>
+          <h1 className="text-2xl font-header mt-4 font-smibold">FAQ</h1>
           <div className="space-y-4 mb-8">
             <AccordianWrapper
-              title="My ___ is deleted/missing!"
+              title="My data is deleted/missing!"
               titleClassName={faqClass}
             >
               <p>
-                Don&apos;t worry! It can very likely be recovered. And it might
-                be something wrong on my end, so please do let me know.
+                Don’t panic — your work is likely still recoverable. It might be
+                a glitch on my end, so please reach out.
               </p>
-              <p className="mt-2">Just reach out and we can fix it.</p>
             </AccordianWrapper>
 
             <AccordianWrapper
-              title="My colors look wierd when uploading Images"
+              title="Colors look off when uploading images"
               titleClassName={faqClass}
             >
               <p>
@@ -47,16 +46,16 @@ export default function HelpModal({
             </AccordianWrapper>
 
             <AccordianWrapper
-              title="Greyscale is wrong"
+              title="Greyscale looks off"
               titleClassName={faqClass}
             >
               <p>
-                Yea, we are technically not using the correct Greyscale method,
-                but I&apos;m not educated enough to know which one I should use.
+                There are several ways to convert to greyscale, and we might not
+                be using the ideal one (yet).
               </p>
               <p className="mt-2">
-                Please reach out if you&apos;re an expert on this topic.
-                I&apos;d love how to discuss how to use the correct greyscale.
+                If you know computer color science or have thoughts on how to
+                improve this, I’d love to hear from you.
               </p>
             </AccordianWrapper>
           </div>
@@ -65,7 +64,7 @@ export default function HelpModal({
             <p>
               Reach out via email at{" "}
               <a
-                href="mailto:andrew@jonadrew.com"
+                href="mailto:andrew@mudboard.com"
                 className="underline hover:text-accent duration-200 transition-all"
               >
                 andrew@jonadrew.com
