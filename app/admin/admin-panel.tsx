@@ -2,6 +2,7 @@
 
 import { CopyToClipboard } from "@/components/ui/click-to-copy";
 import { Tables } from "@/types/supabase";
+import { buildMudboardLink } from "@/utils/build-mudboard-link";
 import { supabase } from "@/utils/supabase";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -188,7 +189,7 @@ export default function AdminPanel() {
                         <CopyToClipboard
                           textToCopy={board.board_id}
                           title="Click to copy Board ID"
-                          link={`https://www.mudboard.com/b/${board.board_id}`}
+                          link={buildMudboardLink(board.board_id)}
                         >
                           <span className="inline-block max-w-[96px] truncate align-bottom">
                             {board.board_id}

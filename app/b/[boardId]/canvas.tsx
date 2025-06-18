@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelectionStore } from "@/store/selection-store";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import DroppableGallerySection from "@/components/drag/droppable-gallery-section";
+import { isLinkedSection } from "@/utils/is-linked-section";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -132,9 +133,11 @@ export default function Canvas({
           <MirrorContext.Provider value={isMirror}>
             {boardSections
               .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
-              .map(({ section }) => {
+              .map((boardSection) => {
+                const section = boardSection.section;
                 const sectionId = section.section_id;
                 const columns = sectionColumns[sectionId];
+                const isLinked = isLinkedSection(boardSection);
 
                 return (
                   <div
@@ -152,6 +155,7 @@ export default function Canvas({
                   >
                     <DroppableGallerySection
                       sectionId={section.section_id}
+                      isLinked={isLinked}
                       isMirror={isMirror}
                       isActive={
                         draggedBlocks != null &&

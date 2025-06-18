@@ -120,16 +120,14 @@ function AlertDialogDescription({
 
 function AlertDialogAction({
   className,
-  good = false,
+  variant,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Action> & {
-  good?: boolean;
+  variant?: "good" | "destructive" | "kinda_good";
 }) {
-  const computedVariant = good ? "good" : "destructive";
-
   return (
     <AlertDialogPrimitive.Action
-      className={cn(buttonVariants({ variant: computedVariant }), className)}
+      className={cn(buttonVariants({ variant }), className)}
       {...props}
     />
   );

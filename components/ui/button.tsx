@@ -18,6 +18,8 @@ const buttonVariants = cva(
         destructive:
           "bg-rose-400 outline-2 outline-rose-400 text-white  hover:outline-rose-500 hover:bg-rose-300",
         good: "bg-accent outline-2 outline-accent text-primary hover:text-white hover:bg-accent/60",
+        kinda_good:
+          "text-primary bg-secondary outline-2 outline-secondary hover:bg-white",
         accent: "bg-white text-primary hover:bg-white",
         outline:
           "bg-transparent outline-2 outline-white text-white hover:bg-white/30 ",

@@ -22,6 +22,7 @@ import SectionRow from "./section-sections/section-title";
 import { toast } from "sonner";
 import { supabase } from "@/utils/supabase";
 import AddSectionButton from "./section-sections/add-section-button";
+import { isLinkedSection } from "@/utils/is-linked-section";
 
 export default function SectionsSection({
   sectionRefs,
@@ -120,40 +121,57 @@ export default function SectionsSection({
               setBoardSectionToDelete={setBoardSectionToDelete}
             />
           ))}
-        {boardSectionToDelete && (
-          <AlertDialog
-            open={!!boardSectionToDelete}
-            onOpenChange={(open) => !open && setBoardSectionToDelete(null)}
-          >
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-2xl text-primary">
-                  Delete &quot;
-                  {boardSectionToDelete.section.title ?? DEFAULT_SECTION_NAME}
-                  &quot;?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will remove the section and any blocks inside it. This
-                  action cannot be undone (as of now).
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="font-semibold">
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  className="font-bold"
-                  onClick={() => {
-                    softDeleteBoardSection(boardSectionToDelete);
-                    setBoardSectionToDelete(null);
-                  }}
-                >
-                  Delete Section
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
+        {boardSectionToDelete &&
+          (() => {
+            const isLinked = isLinkedSection(boardSectionToDelete);
+
+            return (
+              <AlertDialog
+                open={!!boardSectionToDelete}
+                onOpenChange={(open) => !open && setBoardSectionToDelete(null)}
+              >
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-2xl text-primary">
+                      {isLinked ? "Unlink" : "Delete"} &quot;
+                      {boardSectionToDelete.section.title ??
+                        DEFAULT_SECTION_NAME}
+                      &quot;?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {isLinked ? (
+                        <span>
+                          This will remove the section from this board, but keep
+                          it available for reuse elsewhere.
+                        </span>
+                      ) : (
+                        <span>
+                          This is the only remaining copy of this section.
+                          Deleting it will permanently remove the section and
+                          all its blocks. This action cannot be undone.
+                        </span>
+                      )}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="font-semibold">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="font-semibold"
+                      variant={isLinked ? "kinda_good" : "destructive"}
+                      onClick={() => {
+                        softDeleteBoardSection(boardSectionToDelete);
+                        setBoardSectionToDelete(null);
+                      }}
+                    >
+                      {isLinked ? "Unlink Section" : "Delete Section"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            );
+          })()}
       </div>
       {canEdit && <AddSectionButton sectionRefs={sectionRefs} />}
     </div>

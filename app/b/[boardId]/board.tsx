@@ -54,6 +54,7 @@ import WelcomeModal from "@/components/modals/welcome-modal";
 import HelpModal from "@/components/modals/help-modal";
 import { FaQuestion } from "react-icons/fa6";
 import { BoardSection, Section } from "@/types/board-types";
+import { isLinkedSection } from "@/utils/is-linked-section";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -282,7 +283,12 @@ export default function Board({ boardId }: { boardId: string }) {
         </div>
       )}
       {isDraggingExtFile && boardSections.length === 1 && (
-        <div className="fixed inset-0 bg-accent/20 z-50 flex flex-col gap-1 items-center justify-center text-primary ">
+        <div
+          className={`fixed inset-0 z-50 flex flex-col gap-1 items-center justify-center text-primary 
+        ${
+          isLinkedSection(boardSections[0]) ? "bg-secondary/20" : "bg-accent/20"
+        }`}
+        >
           <div className="text-3xl font-header ">Drop Images!</div>
         </div>
       )}

@@ -5,6 +5,7 @@ import { addNewSection } from "@/lib/sidebar/add-new-section";
 import { RefObject, useState } from "react";
 import SectionPickerDialog from "./section-picker";
 import { linkSectionToBoard } from "@/lib/db-actions/cloning/link-section";
+import { BoardSection } from "@/types/board-types";
 
 export default function AddSectionButton({
   sectionRefs,
@@ -32,41 +33,46 @@ export default function AddSectionButton({
       <SectionPickerDialog
         open={open}
         setOpen={setOpen}
-        onAddSection={async (id) => {
+        onAddSection={async (chosenSectionId) => {
           // Handle selection here, e.g. scroll to section or insert content
 
           if (!board) return;
-          let newSection;
 
-          // if not ID was given, then it means we make a new section
-          if (id === null) {
-            newSection = await addNewSection({
-              board_id: board.board_id,
-              order_index: boardSections.length,
-            });
-          } else {
-            newSection = await linkSectionToBoard({
-              board_id: board.board_id,
-              section_id: id,
-              order_index: boardSections.length,
-            });
+          try {
+            let newSection: BoardSection | null;
+            // if not ID was given, then it means we make a new section
+            if (chosenSectionId === null) {
+              newSection = await addNewSection({
+                board_id: board.board_id,
+                order_index: boardSections.length,
+              });
+            } else {
+              // else, we link that new section here
+              newSection = await linkSectionToBoard({
+                board_id: board.board_id,
+                section_id: chosenSectionId,
+                order_index: boardSections.length,
+              });
+            }
+
+            if (newSection) {
+              setTimeout(() => {
+                const sectionEl =
+                  sectionRefs.current?.[newSection.section.section_id];
+                setEditingSectionId(newSection.section.section_id);
+                if (sectionEl) {
+                  sectionEl.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }
+              }, 100);
+            }
+
+            console.log("Selected Section ID:", chosenSectionId);
+          } catch (error) {
+            console.error("Failed to add section", error);
           }
-
-          if (newSection) {
-            setTimeout(() => {
-              const sectionEl =
-                sectionRefs.current?.[newSection.section.section_id];
-              setEditingSectionId(newSection.section.section_id);
-              if (sectionEl) {
-                sectionEl.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-              }
-            }, 100);
-          }
-
-          console.log("Selected Section ID:", id);
         }}
       />
     </>

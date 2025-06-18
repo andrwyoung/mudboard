@@ -7,11 +7,13 @@ import React from "react";
 
 export default function DroppableGallerySection({
   sectionId,
+  isLinked,
   isMirror,
   isActive,
   isExternalDrag,
 }: {
   sectionId: string;
+  isLinked: boolean;
   isMirror: boolean;
   isActive: boolean;
   isExternalDrag: boolean;
@@ -30,9 +32,11 @@ export default function DroppableGallerySection({
   return (
     <div
       ref={setNodeRef}
-      className={`absolute inset-0 z-50 pointer-events-none rounded-sm border-2 opacity-30 ${
+      className={`absolute inset-0 z-50 pointer-events-none rounded-sm border-2 ${
         (realIsOver && isActive) || isExternalDrag
-          ? "bg-accent  border-accent"
+          ? isLinked
+            ? "bg-secondary border-secondary opacity-50 "
+            : "bg-accent border-accent opacity-30 "
           : "border-transparent"
       }`}
     />

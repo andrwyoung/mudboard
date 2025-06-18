@@ -208,7 +208,7 @@ export default function SectionHeader({ section }: { section: Section }) {
             </AlertDialogCancel>
             <AlertDialogAction
               className="font-bold"
-              good
+              variant="good"
               title="Download Images"
               onClick={async () => {
                 setDownloadConfirmOpen(false);

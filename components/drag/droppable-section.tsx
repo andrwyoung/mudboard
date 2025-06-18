@@ -7,11 +7,13 @@ export function DroppableForImages({
   id,
   children,
   highlighted,
+  isLinked,
   sectionId,
 }: {
   id: string;
   children: React.ReactNode;
   highlighted: boolean;
+  isLinked: boolean;
   sectionId: string;
 }) {
   const { setNodeRef, isOver } = useDroppable({
@@ -29,7 +31,9 @@ export function DroppableForImages({
       data-id={id}
       className={`border rounded-sm transition-colors duration-150 w-full px-1 ${
         isOver || highlighted
-          ? "bg-accent/40 border border-accent"
+          ? isLinked
+            ? "bg-secondary/40 border-secondary"
+            : "bg-accent/40 border-accent"
           : "bg-transparent border-transparent"
       }`}
     >

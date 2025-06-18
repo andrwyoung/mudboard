@@ -9,10 +9,12 @@ export function AccordianWrapper({
   title,
   children,
   titleClassName = "",
+  onCollapse,
 }: {
   title?: string;
   children: React.ReactNode;
   titleClassName?: string;
+  onCollapse?: () => void;
 }) {
   const [showForm, setShowForm] = useState(false);
   return (
@@ -21,7 +23,13 @@ export function AccordianWrapper({
         className={`flex flex-row gap-1 items-center transition-all duration-200
               font-semibold cursor-pointer hover:underline hover:underline-offset-2 ${titleClassName}
               ${showForm ? "underline" : ""}`}
-        onClick={() => setShowForm((prev) => !prev)}
+        onClick={() => {
+          setShowForm((prev) => {
+            const next = !prev;
+            if (!next && onCollapse) onCollapse();
+            return next;
+          });
+        }}
       >
         {title}
         <FaCaretDown

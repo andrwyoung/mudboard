@@ -1,5 +1,10 @@
 import { TablesInsert } from "@/types/supabase";
 import { supabase } from "@/utils/supabase";
+import { fetchSupabaseBlocks } from "../fetch-db-blocks";
+import { BoardSection } from "@/types/board-types";
+import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";
+import { useMetadataStore } from "@/store/metadata-store";
+import { useLayoutStore } from "@/store/layout-store";
 
 export async function linkSectionToBoard({
   board_id,
@@ -9,7 +14,7 @@ export async function linkSectionToBoard({
   board_id: string;
   section_id: string;
   order_index: number;
-}) {
+}): Promise<BoardSection | null> {
   // STEP 1: create new board_section relation
   const { data: boardSectionMetadata, error: bsError } = await supabase
     .from("board_sections")
@@ -30,22 +35,39 @@ export async function linkSectionToBoard({
 
   //
   // STEP 2: now grab that board section along with the section
-  const { data: boardSection, error } = await supabase
-    .from("board_sections")
+  const { data: boardSectionData, error } = await supabase
+    .from("board_sections_with_stats")
     .select("*, section:sections(*)")
-    .eq("board_section_id", boardSectionMetadata.board_section_id);
+    .eq("board_section_id", boardSectionMetadata.board_section_id)
+    .single();
 
   if (error) {
     throw new Error("Failed to fetch board_sections: " + error.message);
   }
-  console.log(boardSection);
 
-  // STEP 2b: insert that locally
+  const boardSection = boardSectionData as BoardSection;
+  const section = boardSection.section;
+
+  // STEP 2b: insert board section locally locally
+  const currentSections = useMetadataStore.getState().boardSections;
+  useMetadataStore
+    .getState()
+    .setBoardSections([...currentSections, boardSection]);
 
   // STEP 3: now fetch the blocks (i hope it regenerates)
+  const blocks = await fetchSupabaseBlocks([section.section_id]);
+  const blockSectionColumn = generateInitColumnsFromBlocks(
+    blocks[section.section_id],
+    section.saved_column_num
+  );
 
   // STEP 3b: insert those locally
+  const currentColumns = useLayoutStore.getState().sectionColumns;
+  useLayoutStore.getState().setSectionColumns({
+    ...currentColumns,
+    [section.section_id]: blockSectionColumn,
+  });
 
-  // STEP 3: locally add the boardSection
   // return the boardSection id
+  return boardSection;
 }

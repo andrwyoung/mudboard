@@ -26,6 +26,7 @@ import { swapSectionOrder } from "@/lib/db-actions/swap-section-order";
 import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-text";
+import { isLinkedSection } from "@/utils/is-linked-section";
 
 export default function SectionRow({
   thisBoardSection,
@@ -41,6 +42,7 @@ export default function SectionRow({
   );
   const [pendingDelete, setPendingDelete] = useState(false);
   const canEdit = canEditBoard();
+  const isLinked = isLinkedSection(thisBoardSection);
 
   const selectedSection = useSelectionStore((s) => s.selectedSection);
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
@@ -111,6 +113,7 @@ export default function SectionRow({
         key={thisBoardSection.section.section_id}
         id={`section-${thisBoardSection.order_index}`}
         highlighted={highlighted}
+        isLinked={isLinked}
         sectionId={thisBoardSection.section.section_id}
       >
         <ContextMenu
@@ -141,6 +144,7 @@ export default function SectionRow({
                   }
                 }}
                 onClick={() => {
+                  console.log("Clicked Board Section! ", thisBoardSection);
                   const sectionEl =
                     sectionRefs.current?.[thisBoardSection.section.section_id];
                   setSelectedSection(thisBoardSection);
@@ -152,7 +156,7 @@ export default function SectionRow({
                   }
                 }}
               >
-                <FillingDot selected={selected} />
+                <FillingDot selected={selected} secondary={isLinked} />
                 {isEditing ? (
                   <input
                     ref={inputRef}
@@ -163,13 +167,23 @@ export default function SectionRow({
                       if (e.key === "Enter") handleRenameSubmit();
                       if (e.key === "Escape") setIsEditing(false);
                     }}
-                    className="text-lg bg-transparent border border-accent 
-                    focus:outline-none focus:ring-2 focus:ring-accent/80  font-header rounded w-full"
+                    className={`text-lg bg-transparent border 
+                      ${
+                        isLinked
+                          ? "border-secondary focus:ring-secondary/80"
+                          : "border-accent focus:ring-accent/80"
+                      } 
+                      focus:outline-none focus:ring-2 font-header rounded w-full`}
                   />
                 ) : (
                   <h2
-                    className={`text-lg group-hover:text-accent transition-all duration-300 
+                    className={`text-lg  transition-all duration-300 
                     truncate whitespace-nowrap overflow-hidden min-w-0
+                    ${
+                      isLinked
+                        ? "group-hover:text-secondary"
+                        : "group-hover:text-accent"
+                    }
                     ${titleExists ? "" : "italic"} `}
                   >
                     {titleExists
@@ -181,13 +195,14 @@ export default function SectionRow({
 
               {canEdit && (
                 <HiDotsVertical
-                  className={`size-4 hover:scale-130 text-accent transition-all duration-300 
-                    opacity-0 group-hover:opacity-100 cursor-pointer flex-none ${
-                      selected ? "" : ""
-                    }`}
+                  className={`size-4 hover:scale-130 transition-all duration-300 
+                    opacity-0 group-hover:opacity-100 cursor-pointer flex-none 
+                    ${isLinked ? "text-secondary" : "text-accent"}
+                    ${selected ? "" : ""}`}
                   title="Open Context Menu"
                   onClick={(e) => {
                     e.stopPropagation();
+
                     const el = triggerRef.current;
                     if (!el) return;
                     const event = new MouseEvent("contextmenu", {
@@ -261,9 +276,9 @@ export default function SectionRow({
               onClick={() => {
                 setPendingDelete(true);
               }}
-              variant="destructive"
+              variant={"destructive"}
             >
-              Delete Section
+              {isLinked ? "Unlink Section" : "Delete Section"}
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
