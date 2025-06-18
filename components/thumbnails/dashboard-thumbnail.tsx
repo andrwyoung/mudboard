@@ -1,5 +1,5 @@
 import { Block, MudboardImage } from "@/types/block-types";
-import { THUMBNAIL_WIDTH } from "@/types/upload-settings";
+import { THUMBNAIL_ASPECT_MAP } from "@/types/upload-settings";
 import { getImageUrl } from "@/utils/get-image-url";
 import Image from "next/image";
 
@@ -11,7 +11,10 @@ export default function DashboardThumbnail({
   columns: number;
 }) {
   return (
-    <div className="flex flex-col relative" style={{ width: THUMBNAIL_WIDTH }}>
+    <div
+      className="flex flex-col relative"
+      style={{ width: THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].width }}
+    >
       <div
         className="grid gap-2"
         style={{

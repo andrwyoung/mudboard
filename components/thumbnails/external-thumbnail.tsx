@@ -1,10 +1,7 @@
 import { Block, MudboardImage } from "@/types/block-types";
 import { getImageUrl } from "@/utils/get-image-url";
 import Image from "next/image";
-import {
-  THUMBNAIL_EXTERNAL_HEIGHT,
-  THUMBNAIL_WIDTH,
-} from "@/types/upload-settings";
+import { THUMBNAIL_ASPECT_MAP } from "@/types/upload-settings";
 
 export default function ExternalThumbnail({
   blocks,
@@ -15,10 +12,12 @@ export default function ExternalThumbnail({
   title: string;
   columns: number;
 }) {
+  const thumbnailHeight = THUMBNAIL_ASPECT_MAP["board-thumb-ext"].height;
+
   return (
     <div
       className="flex flex-col px-24 bg-primary relative"
-      style={{ width: THUMBNAIL_WIDTH }}
+      style={{ width: THUMBNAIL_ASPECT_MAP["board-thumb-ext"].width }}
     >
       <div
         className="grid gap-2"
@@ -52,7 +51,7 @@ export default function ExternalThumbnail({
       <div
         className="absolute flex left-0 w-full justify-between items-end px-12 pt-6 pb-2 z-20"
         style={{
-          top: `${THUMBNAIL_EXTERNAL_HEIGHT - 200}px`,
+          top: `${thumbnailHeight - 200}px`,
         }}
       >
         <Image
@@ -85,7 +84,7 @@ export default function ExternalThumbnail({
         height={300}
         className="absolute left-0 w-full pointer-events-none z-10"
         style={{
-          top: `${THUMBNAIL_EXTERNAL_HEIGHT - 300}px`,
+          top: `${thumbnailHeight - 300}px`,
         }}
       />
     </div>

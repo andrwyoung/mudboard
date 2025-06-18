@@ -2,7 +2,7 @@ import html2canvas from "html2canvas-pro";
 import { uploadThumbnail } from "@/lib/db-actions/thumbnails/upload-thumbnails";
 import {
   DEFAULT_FILE_MIME,
-  THUMBNAIL_HEIGHT_MAP,
+  THUMBNAIL_ASPECT_MAP,
   thumbnailNames,
 } from "@/types/upload-settings";
 
@@ -15,7 +15,7 @@ export async function generateThumbnailFromRef({
   boardId: string;
   thumbnailType: thumbnailNames;
 }) {
-  const thumbnailHeight = THUMBNAIL_HEIGHT_MAP[thumbnailType];
+  const thumbnailHeight = THUMBNAIL_ASPECT_MAP[thumbnailType].height;
 
   const originalCanvas = await html2canvas(element, {
     useCORS: true,

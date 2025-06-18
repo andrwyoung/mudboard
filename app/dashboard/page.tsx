@@ -125,7 +125,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-primary text-primary p-6 relative">
+    <div className="min-h-screen bg-primary text-primary p-6 pb-12 lg:px-12 relative">
       {/* Logo */}
       <div className="absolute top-4 left-6">
         <Logo enforceHome={true} />
@@ -134,7 +134,7 @@ export default function DashboardPage() {
       {/* Header */}
 
       {/* Board Cards Grid */}
-      <div className="flex flex-col lg:flex-row gap-6 md:gap-12  mx-auto mt-20 justify-center">
+      <div className="flex flex-col lg:flex-row gap-8 md:gap-12  mx-auto mt-20 justify-center">
         {/* <div className="w-64 h-180 bg-white mt-24" /> */}
 
         <div className="flex flex-col max-w-5xl">

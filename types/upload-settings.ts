@@ -111,11 +111,7 @@ export const mimeToExtension: Record<string, string> = {
 
 
   // cropping
-  export const THUMBNAIL_WIDTH = 1200;
-  export const THUMBNAIL_EXTERNAL_HEIGHT = 800;
-  export const THUMBNAIL_DASHBOARD_HEIGHT = 800;
-
-  export const THUMBNAIL_HEIGHT_MAP: Record<thumbnailNames, number> = {
-    "board-thumb-ext": THUMBNAIL_EXTERNAL_HEIGHT,
-    "board-thumb-dashboard": THUMBNAIL_DASHBOARD_HEIGHT,
+  export const THUMBNAIL_ASPECT_MAP: Record<thumbnailNames, {width: number, height: number}> = {
+    "board-thumb-ext": {width: 1200, height: 800},
+    "board-thumb-dashboard":  {width: 600, height: 400},
   };

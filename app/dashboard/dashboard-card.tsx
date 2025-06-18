@@ -4,13 +4,10 @@ import { FaTrashAlt } from "react-icons/fa";
 import Image from "next/image";
 import { formatCreationDate, formatUpdateTime } from "@/utils/time-formatters";
 import { FaArrowRight } from "react-icons/fa6";
-import {
-  THUMBNAIL_DASHBOARD_HEIGHT,
-  THUMBNAIL_WIDTH,
-} from "@/types/upload-settings";
 import { getThumbnailUrl } from "@/utils/get-thumbnail-url";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { THUMBNAIL_ASPECT_MAP } from "@/types/upload-settings";
 
 export default function BoardCard({
   board,
@@ -76,8 +73,8 @@ export default function BoardCard({
 
       <Image
         src={thumbUrl}
-        width={THUMBNAIL_WIDTH}
-        height={THUMBNAIL_DASHBOARD_HEIGHT}
+        width={THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].width}
+        height={THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].height}
         alt={`${board.title} Dashboard Thumbnail`}
         onError={() => setFallback(true)}
         className={`object-cover opacity-90 ${
