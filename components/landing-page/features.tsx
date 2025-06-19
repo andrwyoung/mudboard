@@ -51,7 +51,8 @@ export default function Features() {
         title="Reusable Sections"
         icon={<FaBook className="size-3.5" />}
       >
-        Build a section once, then drop it into any board. (Coming soon)
+        Don&apos;t rebuild your reference library.{" "}
+        <strong>Build a section once</strong>, then drop it into any board.
       </FeatureItem>
       <FeatureItem icon={<FaPaperPlane />} title="So Sharable">
         All boards have a sharable link. <strong>Send to clients</strong>,

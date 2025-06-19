@@ -29,7 +29,6 @@ const plans: Plan[] = [
     features: [
       { label: "3 Boards", status: "good" },
       { label: "All core features", status: "good" },
-      { label: "No collaboration", status: "bad" },
       { label: "No publishing Modules", status: "bad" },
     ],
     ctaText: "Try the Demo",
@@ -41,10 +40,11 @@ const plans: Plan[] = [
     price: "$20 one-time",
     oldPrice: "$25",
     features: [
-      { label: "Generous storage", status: "good" },
+      { label: "Generous storage (10k+ images)", status: "good" },
       { label: "All core features", status: "good" },
       { label: "Publish, Clone and Remix Modules", status: "good" },
       { label: "Early user street cred", status: "good" },
+      { label: "No collaboration", status: "bad" },
       // { label: "No uncompressed uploads", status: "bad" },
     ],
     ctaText: "Join the Waitlist",
@@ -52,7 +52,7 @@ const plans: Plan[] = [
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",
-    note: "*Includes 10,000+ images per user. For most people, that’s effectively unlimited.",
+    // note: "*Includes around 10,000+ compressed images per user. For most people, that’s effectively unlimited.",
   },
   // {
   //   name: "Pro",
