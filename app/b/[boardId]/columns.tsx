@@ -197,7 +197,7 @@ function ColumnComponent({
                 onClick={(e) => handleItemClick(block, e)}
                 shouldEagerLoad={shouldEagerLoad}
                 columnWidth={columnWidth}
-                numCols={section.saved_column_num}
+                numCols={section.visualColumnNum}
               />
             </div>
           );
@@ -224,7 +224,7 @@ function ColumnComponent({
       {!wholeGalleryEmpty &&
         canEdit &&
         !mirrorMode &&
-        section.saved_column_num <= 6 && (
+        section.visualColumnNum <= 6 && (
           <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
         )}
     </div>

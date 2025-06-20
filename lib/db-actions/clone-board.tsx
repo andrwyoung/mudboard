@@ -32,7 +32,7 @@ export async function cloneBoard({
       initializeSection: false,
       isDemo,
       claimedBy,
-      savedColumnNumber: boardToClone.saved_column_num,
+      savedColumnNumber: boardToClone.saved_column_num, //DEPRECATED. Not neccesary
     });
 
     // STEP 1: get board sections along with the associated sections

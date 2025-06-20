@@ -18,7 +18,11 @@ export default function ExternalThumbnail({
   return (
     <div
       className="flex flex-col px-24 bg-primary relative"
-      style={{ width: thumbnailWidth, minHeight: thumbnailHeight }}
+      style={{
+        width: thumbnailWidth,
+        minHeight: thumbnailHeight,
+        minWidth: thumbnailWidth,
+      }}
     >
       <div
         className="grid gap-2 mt-2"

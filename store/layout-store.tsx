@@ -70,7 +70,7 @@ export const useLayoutStore = create<LayoutStore>()(
         const boardSections = useMetadataStore.getState().boardSections;
         const savedNumCols =
           boardSections.find((bs) => bs.section.section_id === sectionId)
-            ?.section.saved_column_num ?? DEFAULT_COLUMNS;
+            ?.section.visualColumnNum ?? DEFAULT_COLUMNS;
 
         const current =
           state.sectionColumns[sectionId] ??
@@ -94,7 +94,7 @@ export const useLayoutStore = create<LayoutStore>()(
 
       const savedColNum =
         boardSections.find((bs) => bs.section.section_id === sectionId)?.section
-          .saved_column_num ?? DEFAULT_COLUMNS;
+          .visualColumnNum ?? DEFAULT_COLUMNS;
 
       const newCols: Block[][] = Array.from({ length: savedColNum }, () => []);
       blocksInSection.forEach((block, i) => {

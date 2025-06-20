@@ -26,7 +26,7 @@ export type Section = {
   owned_by?: string;
 
   saved_column_num: number;
-  visualColumnNum?: number;
+  visualColumnNum: number; // generated and used by us
 };
 
 export type BoardSection = {

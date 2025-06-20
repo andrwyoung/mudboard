@@ -47,6 +47,7 @@ export async function linkSectionToBoard({
 
   const boardSection = boardSectionData as BoardSection;
   const section = boardSection.section;
+  section.visualColumnNum = section.saved_column_num;
 
   // STEP 2b: insert board section locally locally
   const currentSections = useMetadataStore.getState().boardSections;

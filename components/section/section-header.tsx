@@ -14,7 +14,7 @@ import {
   updateSectionTitle,
 } from "@/lib/db-actions/sync-text/update-section-text";
 import { useLoadingStore } from "@/store/loading-store";
-import { FaFileDownload, FaPlus } from "react-icons/fa";
+import { FaFileDownload, FaPlus, FaSave } from "react-icons/fa";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import InlineEditTextarea from "../ui/inline-textarea";
@@ -36,6 +36,8 @@ import { useUIStore } from "@/store/ui-store";
 import { toast } from "sonner";
 import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
 import { updateSectionColumnNum } from "@/lib/db-actions/update-section-columns";
+import { setVisualColumnNum } from "@/lib/local-actions/set-visual-columns";
+import { cn } from "@/utils/utils";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
@@ -70,9 +72,9 @@ export default function SectionHeader({ section }: { section: Section }) {
             className="text-lg sm:text-xl md:text-2xl text-left"
           />
         </div>
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-col items-end gap-2">
           <div
-            className={`flex flex-row gap-2 items-center ${
+            className={`flex flex-row-reverse gap-2 items-center ${
               mirrorMode ? "opacity-50" : "opacity-80"
             }`}
           >
@@ -130,24 +132,36 @@ export default function SectionHeader({ section }: { section: Section }) {
           </div>
 
           <div className="flex items-center gap-2 ">
-            {canEdit ? (
+            <div className="flex flex-row-reverse items-center gap-2">
+              {canEdit &&
+                section.visualColumnNum !== section.saved_column_num && (
+                  <FaSave
+                    className="text-primary cursor-pointer hover:text-accent
+                    transition-all duration-200"
+                    title="Save Number of Columns"
+                    onClick={() => {
+                      updateSectionColumnNum(
+                        section.section_id,
+                        section.visualColumnNum
+                      );
+                    }}
+                  />
+                )}
               <Select
-                value={section.saved_column_num?.toString() || "4"}
+                value={section.visualColumnNum.toString()}
                 onValueChange={(val) => {
                   const newVal = parseInt(val);
-                  if (!isNaN(newVal)) {
-                    // save to DB (you'll need to implement this)
-                    updateSectionColumnNum(section.section_id, newVal);
-                  }
+                  setVisualColumnNum(section.section_id, newVal);
                 }}
               >
                 <SelectTrigger id={`select-trigger-${section.section_id}`}>
                   <div
-                    className="flex items-center gap-1 font-header text-sm text-primary
-                hover:text-accent transition-colors duration-200"
+                    className={`flex items-center gap-1 font-header text-sm 
+                hover:text-accent transition-colors duration-200 text-primary
+               `}
                     title="Change Column Number"
                   >
-                    Columns: {section.saved_column_num}
+                    Columns: {section.visualColumnNum}
                   </div>
                 </SelectTrigger>
                 <SelectContent>
@@ -155,20 +169,28 @@ export default function SectionHeader({ section }: { section: Section }) {
                     { length: MAX_COLUMNS - MIN_COLUMNS + 1 },
                     (_, i) => {
                       const n = i + MIN_COLUMNS;
+                      const isHighlighted = n === section.saved_column_num;
+
                       return (
                         <SelectItem key={n} value={n.toString()}>
-                          {n}
+                          <span
+                            className={cn(
+                              isHighlighted &&
+                                n.toString() !==
+                                  section.visualColumnNum.toString()
+                                ? "text-accent  font-bold"
+                                : ""
+                            )}
+                          >
+                            {n}
+                          </span>
                         </SelectItem>
                       );
                     }
                   )}
                 </SelectContent>
               </Select>
-            ) : (
-              <div className="text-sm font-header text-primary">
-                Columns: {section.saved_column_num}
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

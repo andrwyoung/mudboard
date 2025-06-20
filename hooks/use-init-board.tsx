@@ -69,6 +69,11 @@ export function useInitBoard(
         //
 
         let boardSections = await fetchSupabaseSections(boardId);
+        // set the visualSectionNum so we don't touch the real saved_column_num
+        boardSections.forEach((boardSection) => {
+          boardSection.section.visualColumnNum =
+            boardSection.section.saved_column_num;
+        });
 
         // please never happen lol
         if (boardSections.length === 0) {

@@ -4,6 +4,7 @@ import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { useLayoutStore } from "@/store/layout-store";
+import { toast } from "sonner";
 
 export async function updateSectionColumnNum(
   sectionId: string,
@@ -37,4 +38,6 @@ export async function updateSectionColumnNum(
     .from("sections")
     .update({ saved_column_num: newColumnNum })
     .eq("section_id", sectionId);
+
+  toast.success(`Saved ${newColumnNum} Columns`);
 }
