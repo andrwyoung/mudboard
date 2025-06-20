@@ -49,9 +49,9 @@ export default function AddSectionButton({
             } else {
               // else, we link that new section here
               newSection = await linkSectionToBoard({
-                board_id: board.board_id,
-                section_id: chosenSectionId,
-                order_index: boardSections.length,
+                destinationBoardId: board.board_id,
+                sectionToLink: chosenSectionId,
+                orderInBoard: boardSections.length,
               });
             }
 

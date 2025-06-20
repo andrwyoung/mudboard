@@ -7,22 +7,22 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { useLayoutStore } from "@/store/layout-store";
 
 export async function linkSectionToBoard({
-  board_id,
-  section_id,
-  order_index,
+  destinationBoardId,
+  sectionToLink,
+  orderInBoard,
 }: {
-  board_id: string;
-  section_id: string;
-  order_index: number;
+  destinationBoardId: string;
+  sectionToLink: string;
+  orderInBoard: number;
 }): Promise<BoardSection | null> {
   // STEP 1: create new board_section relation
   const { data: boardSectionMetadata, error: bsError } = await supabase
     .from("board_sections")
     .insert([
       {
-        board_id,
-        section_id,
-        order_index,
+        board_id: destinationBoardId,
+        section_id: sectionToLink,
+        order_index: orderInBoard,
       } as TablesInsert<"board_sections">,
     ])
     .select()

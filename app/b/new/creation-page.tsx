@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useMetadataStore } from "@/store/metadata-store";
 import { createNewBoard } from "@/lib/db-actions/create-new-board";
 import { DEMO_BOARD_ID } from "@/types/upload-settings";
-import { cloneBoard } from "@/lib/db-actions/clone-board";
+import { cloneBoard } from "@/lib/db-actions/cloning/clone-board";
 
 export default function CreateBoardPage({ type }: { type: "new" | "demo" }) {
   const router = useRouter();
