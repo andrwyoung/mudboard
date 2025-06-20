@@ -35,13 +35,7 @@ export default function PinnedImageViewer({
   const { isDragging } = usePanImage(scrollRef);
 
   //   const { resetZoom } =
-  useCursorZoom(
-    scrollRef,
-    zoomLevel,
-    setZoomLevel,
-    initialSize.height,
-    initialSize.width
-  );
+  useCursorZoom(scrollRef, zoomLevel, setZoomLevel);
 
   const {
     // canvasRef,

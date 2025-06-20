@@ -30,7 +30,7 @@ export default function PinnedPanel() {
           Focus View
         </h1>
         <InfoTooltip
-          text="Click to drag around. Scroll to zoom. More features to come!"
+          text="Click to drag around. Scroll to zoom. You can also resize this window. More features to come!"
           white
         />
       </div>
