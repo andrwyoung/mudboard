@@ -59,6 +59,8 @@ export async function fetchSupabaseBlocks(
         deleted,
         data: nonImageBlockData,
         image,
+        is_flipped,
+        is_greyscale,
       } = block;
 
       const incompleteImageBlock: Omit<Block, "data"> = {
@@ -72,6 +74,8 @@ export async function fetchSupabaseBlocks(
         order_index,
         caption,
         deleted,
+        is_flipped,
+        is_greyscale,
       };
 
       if (block_type === "image" && image) {

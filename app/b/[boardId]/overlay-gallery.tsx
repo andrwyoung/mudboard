@@ -16,6 +16,8 @@ import GreyscaleWheel from "@/components/overlay-gallery/gs-color-wheel";
 import { getImageUrl } from "@/utils/get-image-url";
 import { usePanImage } from "@/hooks/overlay-gallery.tsx/use-pan-image";
 import { useGetInitialSizeOnLayout } from "@/hooks/overlay-gallery.tsx/use-get-initial-size";
+import { updateGreyscaleSupabase } from "@/lib/db-actions/block-editing.tsx/update-greyscale";
+import { updateFlippedSupabase } from "@/lib/db-actions/block-editing.tsx/update-flip";
 
 type OverlayModes = "drag" | "eyedropper";
 
@@ -31,12 +33,19 @@ export default function OverlayGallery({
     setOverlayBlock: setSelectedBlock,
   } = useOverlayStore(isMirror ? "mirror" : "main");
 
+  const visualOverridesMap = useLayoutStore((s) => s.visualOverridesMap);
+  const setVisualOverride = useLayoutStore((s) => s.setVisualOverride);
+
   const getNextImage = useLayoutStore((s) => s.getNextImage);
   const getPrevImage = useLayoutStore((s) => s.getPrevImage);
   const imageBlock = selectedBlock.data as MudboardImage;
   const [overlayMode, setOverlayMode] = useState<OverlayModes>("drag");
-  const [isGreyscale, setIsGreyscale] = useState(false);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [isGreyscale, setIsGreyscale] = useState(
+    visualOverridesMap.get(selectedBlock.block_id)?.is_greyscale ?? false
+  );
+  const [isFlipped, setIsFlipped] = useState(
+    visualOverridesMap.get(selectedBlock.block_id)?.is_flipped ?? false
+  );
 
   // const [direction, setDirection] = useState<"left" | "right">("right");
 
@@ -366,7 +375,15 @@ export default function OverlayGallery({
         </button>
         <button
           onClick={() => {
-            setIsGreyscale((g) => !g);
+            const newValue = !isGreyscale;
+            setIsGreyscale(() => {
+              return newValue;
+            });
+            updateGreyscaleSupabase(selectedBlock.block_id, newValue);
+            setVisualOverride(selectedBlock.block_id, {
+              is_greyscale: newValue,
+            });
+
             setGreyscaleClicked(true);
             setTimeout(() => setGreyscaleClicked(false), 400); // match animation duration
           }}
@@ -383,9 +400,14 @@ export default function OverlayGallery({
         </button>
         <button
           onClick={() => {
-            setIsFlipped((g) => !g);
-            // setGreyscaleClicked(true);
-            // setTimeout(() => setGreyscaleClicked(false), 400); // match animation duration
+            const newValue = !isFlipped;
+            setIsFlipped(() => {
+              return newValue;
+            });
+            updateFlippedSupabase(selectedBlock.block_id, newValue);
+            setVisualOverride(selectedBlock.block_id, {
+              is_flipped: newValue,
+            });
           }}
           title="Flip Horizontally"
           className={`p-2 rounded-lg cursor-pointer hover:text-accent hover:scale-110 active:scale-95 group transition-all  ${

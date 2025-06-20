@@ -8,6 +8,8 @@ type PinnedStore = {
 
   pinnedBlock: Block | null;
   setPinnedBlock: (b: Block | null) => void;
+
+  reset: () => void;
 };
 
 export const usePinnedStore = create<PinnedStore>((set) => ({
@@ -26,4 +28,6 @@ export const usePinnedStore = create<PinnedStore>((set) => ({
       set({ pinnedBlock: null });
     }
   },
+
+  reset: () => set({ isOpen: false, pinnedBlock: null }),
 }));

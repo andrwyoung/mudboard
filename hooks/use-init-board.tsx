@@ -18,6 +18,8 @@ import { useResetState } from "./user-reset-state";
 import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
+import { VisualOverride } from "@/types/block-types";
+import { usePinnedStore } from "@/store/use-pinned-store";
 
 export function useInitBoard(
   boardId: string,
@@ -34,12 +36,14 @@ export function useInitBoard(
   const regenerateLayout = useLayoutStore((s) => s.regenerateOrdering);
 
   const setBoardInitialized = useLoadingStore((s) => s.setBoardInitialized);
+  const resetPinnedView = usePinnedStore((s) => s.reset);
 
   useEffect(() => {
     async function loadImages() {
       try {
         resetState(); // reset if we're coming from another board
         setBoardInitialized(false);
+        resetPinnedView();
 
         //
         // 1: grab the board first
@@ -93,6 +97,22 @@ export function useInitBoard(
         const sectionIds = sections.map((s) => s.section_id);
         const blocksBySection = await fetchSupabaseBlocks(sectionIds);
 
+        // populate the gallery overrides
+        const setVisualOverride = useLayoutStore.getState().setVisualOverride;
+        for (const blocks of Object.values(blocksBySection)) {
+          for (const block of blocks) {
+            const overrides: Partial<VisualOverride> = {};
+            if (block.is_flipped) overrides.is_flipped = block.is_flipped;
+            if (block.is_greyscale) overrides.is_greyscale = block.is_greyscale;
+            // if you add crop later, include it here too
+
+            if (Object.keys(overrides).length > 0) {
+              setVisualOverride(block.block_id, overrides);
+            }
+          }
+        }
+
+        // generate the columns
         const initColumns: SectionColumns = {};
         for (const section of sections) {
           initColumns[section.section_id] = generateInitColumnsFromBlocks(

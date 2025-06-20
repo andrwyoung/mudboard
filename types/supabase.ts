@@ -21,6 +21,8 @@ export type Database = {
           deleted_at: string | null
           height: number
           image_id: string | null
+          is_flipped: boolean | null
+          is_greyscale: boolean | null
           OLD_board_id: string | null
           order_index: number
           row_index: number
@@ -40,6 +42,8 @@ export type Database = {
           deleted_at?: string | null
           height: number
           image_id?: string | null
+          is_flipped?: boolean | null
+          is_greyscale?: boolean | null
           OLD_board_id?: string | null
           order_index?: number
           row_index?: number
@@ -59,6 +63,8 @@ export type Database = {
           deleted_at?: string | null
           height?: number
           image_id?: string | null
+          is_flipped?: boolean | null
+          is_greyscale?: boolean | null
           OLD_board_id?: string | null
           order_index?: number
           row_index?: number
@@ -180,13 +186,6 @@ export type Database = {
             columns: ["board_id"]
             isOneToOne: false
             referencedRelation: "expired_boards"
-            referencedColumns: ["board_id"]
-          },
-          {
-            foreignKeyName: "board_sections_board_id_fkey"
-            columns: ["board_id"]
-            isOneToOne: false
-            referencedRelation: "user_board_sections"
             referencedColumns: ["board_id"]
           },
           {
@@ -479,6 +478,81 @@ export type Database = {
       }
     }
     Views: {
+      board_sections_with_stats: {
+        Row: {
+          block_count: number | null
+          board_id: string | null
+          board_section_id: string | null
+          created_at: string | null
+          deleted: boolean | null
+          deleted_at: string | null
+          fork_count: number | null
+          order_index: number | null
+          personal_copy_count: number | null
+          section_id: string | null
+          shallow_copy_count: number | null
+          updated_at: string | null
+          visual_column_num: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "board_stats"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "board_with_stats"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "expired_boards"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "section_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "board_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "section_with_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "board_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "board_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
+            referencedColumns: ["section_id"]
+          },
+        ]
+      }
       board_stats: {
         Row: {
           block_count: number | null
@@ -591,7 +665,9 @@ export type Database = {
       section_stats: {
         Row: {
           block_count: number | null
+          deleted: boolean | null
           fork_count: number | null
+          is_shared: boolean | null
           personal_copy_count: number | null
           saved_column_num: number | null
           section_id: string | null
@@ -651,17 +727,49 @@ export type Database = {
       }
       user_board_sections: {
         Row: {
+          block_count: number | null
           board_id: string | null
           board_owner: string | null
           board_title: string | null
           created_at: string | null
+          fork_count: number | null
           forked_from: string | null
           order_index: number | null
+          personal_copy_count: number | null
           saved_column_num: number | null
           section_id: string | null
           section_title: string | null
+          shallow_copy_count: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "board_stats"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "board_with_stats"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["board_id"]
+          },
+          {
+            foreignKeyName: "board_sections_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "expired_boards"
+            referencedColumns: ["board_id"]
+          },
           {
             foreignKeyName: "boards_user_id_fkey"
             columns: ["board_owner"]

@@ -10,7 +10,7 @@ import { useMetadataStore } from "./metadata-store";
 import { useUIStore } from "./ui-store";
 import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
 import { SectionColumns } from "@/types/board-types";
-import { Block } from "@/types/block-types";
+import { Block, VisualOverride } from "@/types/block-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { generatePositionedBlocks } from "@/lib/ordering/generate-block-positions";
 import { DEFAULT_COLUMNS } from "@/types/constants";
@@ -24,6 +24,13 @@ type LayoutStore = {
     fn: (prev: Block[][]) => Block[][]
   ) => void;
   regenerateSectionColumns: (sectionId: string) => void;
+
+  visualOverridesMap: Map<string, VisualOverride>;
+  setVisualOverride: (
+    blockId: string,
+    overrides: Partial<VisualOverride>
+  ) => void;
+  clearVisualOverride: (blockId: string) => void;
 
   // SECTION 2
 
@@ -102,6 +109,22 @@ export const useLayoutStore = create<LayoutStore>()(
         layoutDirty: true,
       }));
     },
+
+    visualOverridesMap: new Map<string, VisualOverride>(),
+    setVisualOverride: (blockId: string, overrides: Partial<VisualOverride>) =>
+      set((state) => {
+        const current = state.visualOverridesMap.get(blockId) ?? {};
+        const updated = { ...current, ...overrides };
+        const newMap = new Map(state.visualOverridesMap);
+        newMap.set(blockId, updated);
+        return { visualOverridesMap: newMap };
+      }),
+    clearVisualOverride: (blockId: string) =>
+      set((state) => {
+        const newMap = new Map(state.visualOverridesMap);
+        newMap.delete(blockId);
+        return { visualOverridesMap: newMap };
+      }),
 
     // SECTION: figuring out positions
     //
@@ -198,6 +221,7 @@ export const useLayoutStore = create<LayoutStore>()(
         sectionColumns: {},
         positionedBlockMap: new Map(),
         masterBlockOrder: [],
+        visualOverridesMap: new Map(),
       }),
   }))
 );

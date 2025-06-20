@@ -18,6 +18,7 @@ import { useSelectionStore } from "@/store/selection-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { getImageUrl } from "@/utils/get-image-url";
+import { useLayoutStore } from "@/store/layout-store";
 
 export function ImageBlock({
   block,
@@ -56,8 +57,16 @@ export function ImageBlock({
     isInScope && Object.keys(selectedBlocks).length === 1 && isSelected;
   const captionIsActive = Boolean(caption) || (isSoleSelected && canEdit);
 
-  // SECTION: filename and sizing
+  // overrides
+  const visualOverridesMap = useLayoutStore((s) => s.visualOverridesMap);
+  const clearVisualOverride = useLayoutStore((s) => s.clearVisualOverride);
+  const overrides = visualOverridesMap.get(block.block_id);
+  const editActive =
+    overrides?.is_flipped ||
+    overrides?.is_greyscale ||
+    overrides?.crop !== undefined;
 
+  // SECTION: filename and sizing
   let size: imageNames = "medium";
   if (numCols > 6) size = "thumb";
   else if (numCols < 4) size = "full";
@@ -105,6 +114,18 @@ export function ImageBlock({
             }}
             className={`relative overflow-hidden`}
           >
+            {editActive && (
+              <div
+                title="Reset Visual Edits"
+                className="absolute right-2 top-2 bg-accent size-2 ring-2 hover:bg-secondary
+                ring-white/80 hover:ring-secondary z-20 shadow-lg rounded-full cursor-pointer hover:scale-125 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearVisualOverride(block.block_id);
+                }}
+              />
+            )}
+
             {img.blurhash && (
               <div
                 className="absolute inset-0 rounded-sm overflow-hidden"
@@ -133,7 +154,9 @@ export function ImageBlock({
               onError={() => setIsErrored(true)}
               onLoad={() => setLoaded(true)}
               className={`w-full h-full ${showBlurImg ? "hidden" : "visible"}
-            ${captionIsActive ? "rounded-t-sm" : "rounded-sm"}`}
+            ${captionIsActive ? "rounded-t-sm" : "rounded-sm"}
+            ${overrides?.is_greyscale ? "grayscale" : ""}
+                  ${overrides?.is_flipped ? "transform scale-x-[-1]" : ""}`}
               loading={shouldEagerLoad ? "eager" : "lazy"}
             />
           </div>

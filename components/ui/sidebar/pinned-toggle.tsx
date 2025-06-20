@@ -34,7 +34,7 @@ export function PinnedModeToggle({ showText = true }: { showText?: boolean }) {
       <FaImage className="" />
       {showText && (
         <h3 className={`group-hover:underline`} title="Toggle Focus View">
-          Focus Mode
+          Spotlight View
         </h3>
       )}
     </button>

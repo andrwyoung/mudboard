@@ -18,6 +18,8 @@ export type UploadStatus =
 export type FileType = "database" | "blob" | "local";
 export type BlockType = "image" | "text" | "spacer";
 
+export type CropRect = { x: number; y: number; w: number; h: number };
+
 export type Block = {
   block_id: string;
   section_id: string;
@@ -38,6 +40,10 @@ export type Block = {
 
   deleted: boolean;
   subsection_id?: string;
+
+  is_flipped: boolean | null;
+  is_greyscale: boolean | null;
+  // crop: CropRect | null;
 };
 
 export type MudboardImage = {
@@ -56,6 +62,12 @@ export type MudboardImage = {
   // helper types
   fileType?: FileType;
   uploadStatus?: UploadStatus;
+};
+
+export type VisualOverride = {
+  is_flipped?: boolean;
+  is_greyscale?: boolean;
+  crop?: { x: number; y: number; w: number; h: number };
 };
 
 export type TextBlockType = {

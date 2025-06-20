@@ -366,7 +366,7 @@ export default function Board({ boardId }: { boardId: string }) {
             <div className="hidden lg:flex  h-full">
               {pinnedMode && windowWidth != 0 && (
                 <ResizablePinnedPanel
-                  initialWidth={windowWidth * 0.25}
+                  initialWidth={windowWidth * 0.4}
                   maxWidth={Math.max(240, windowWidth - sidebarWidth - 600)}
                 >
                   <PinnedPanel />
