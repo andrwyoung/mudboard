@@ -8,13 +8,24 @@ import {
 } from "@/components/ui/tooltip";
 import { FaQuestionCircle } from "react-icons/fa";
 
-export default function InfoTooltip({ text }: { text: string }) {
+export default function InfoTooltip({
+  text,
+  white = false,
+}: {
+  text: string;
+  white?: boolean;
+}) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <FaQuestionCircle className="size-4 text-primary translate-y-[1px] cursor-help" />
+        <FaQuestionCircle
+          className={`size-4 text-primary translate-y-[1px] cursor-help
+          ${white ? "text-white" : "text-primary"}`}
+        />
       </TooltipTrigger>
-      <TooltipContent className="max-w-xs text-md font-medium leading-relaxed">
+      <TooltipContent
+        className={`max-w-xs text-md font-medium leading-relaxed `}
+      >
         {text}
       </TooltipContent>
     </Tooltip>

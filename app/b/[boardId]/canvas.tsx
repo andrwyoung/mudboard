@@ -16,6 +16,8 @@ import { useSelectionStore } from "@/store/selection-store";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import DroppableGallerySection from "@/components/drag/droppable-gallery-section";
 import { isLinkedSection } from "@/utils/is-linked-section";
+import HelpModal from "@/components/modals/help-modal";
+import { FaQuestion } from "react-icons/fa6";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -48,6 +50,7 @@ export default function Canvas({
   setExtFileOverSection,
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const mirrorKey = isMirror ? "mirror" : "main";
   // overlay gallery stuff
@@ -186,6 +189,17 @@ export default function Canvas({
           </MirrorContext.Provider>
         </div>
       </div>
+      <button
+        onClick={() => setHelpOpen(true)}
+        type="button"
+        title="Help / Support"
+        className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
+               border-primary text-primary-darker rounded-full hover:border-accent
+              shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
+      >
+        <FaQuestion />
+      </button>
+      <HelpModal open={helpOpen} setOpen={setHelpOpen} />
     </div>
   );
 }

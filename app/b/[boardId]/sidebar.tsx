@@ -10,10 +10,10 @@ import Logo from "@/components/ui/logo";
 import AccountSyncSection from "@/components/sidebar/account-sync-section";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
-import { MirrorModeToggle } from "@/components/ui/sidebar/mirror-toggle";
 import ThumbnailGenerator from "@/components/thumbnails/thumbnail-generator";
 import { useLoadingStore } from "@/store/loading-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
+import { PinnedModeToggle } from "@/components/ui/sidebar/pinned-toggle";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -53,7 +53,8 @@ export default function Sidebar({
 
           <div className="px-4 flex flex-col gap-4">
             <div className="px-4">
-              <MirrorModeToggle />
+              {/* <MirrorModeToggle /> */}
+              <PinnedModeToggle />
             </div>
 
             {canEdit && (

@@ -26,6 +26,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-overlay-background: var(--overlay-background);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -68,7 +69,8 @@
   --secondary: #ffc79b;
   --secondary-lighter: #ffef9d;
   --secondary-foreground: #ffffff;
-  --grey-light: #ededed;
+  --overlay-background: #676266;
+  --grey-light: #000000;
   --grey-mid: #a7a7a7;
   --muted: #f8f8f8;
   --muted-foreground: #7d7d7d;

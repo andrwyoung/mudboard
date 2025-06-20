@@ -51,10 +51,12 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
 import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
 import WelcomeModal from "@/components/modals/welcome-modal";
-import HelpModal from "@/components/modals/help-modal";
-import { FaQuestion } from "react-icons/fa6";
 import { BoardSection, Section } from "@/types/board-types";
 import { isLinkedSection } from "@/utils/is-linked-section";
+import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
+import PinnedPanel from "@/components/pinned-panel/pinned-panel";
+import { useSidebarStore } from "@/store/sidebar-store";
+import { usePinnedStore } from "@/store/use-pinned-store";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -68,7 +70,6 @@ export type ExtFileDropTarget = {
 export default function Board({ boardId }: { boardId: string }) {
   const [isExpired, setIsExpired] = useState(false);
   const [welcomeModalOpen, setWelcomeModalOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
 
   // when dragging new images from local computer
   const [isDraggingExtFile, setIsDraggingExtFile] = useState(false);
@@ -84,9 +85,12 @@ export default function Board({ boardId }: { boardId: string }) {
   const [draggedBlocks, setDraggedBlocks] = useState<Block[] | null>(null);
 
   // sidebar
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const sidebarCollapsed = useSidebarStore((s) => s.isCollapsed);
+  const setSidebarCollapsed = useSidebarStore((s) => s.setIsCollapsed);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
   const spacingSize = useUIStore((s) => s.spacingSize);
+
+  const pinnedMode = usePinnedStore((s) => s.isOpen);
 
   // sections
   const boardSections = useMetadataStore((s) => s.boardSections);
@@ -266,16 +270,6 @@ export default function Board({ boardId }: { boardId: string }) {
 
   return (
     <div className="flex h-screen overflow-hidden relative">
-      <button
-        onClick={() => setHelpOpen(true)}
-        type="button"
-        title="Help / Support"
-        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
-         border-primary text-primary-darker rounded-full hover:border-accent
-        shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
-      >
-        <FaQuestion />
-      </button>
       {isExpired && <BoardExpiredPopup />}
       {isDraggingExtFile && !isExpired && !canEdit && (
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
@@ -352,7 +346,7 @@ export default function Board({ boardId }: { boardId: string }) {
               setExtFileOverSection={setExtFileOverSection}
               extFileOverSection={extFileOverSection}
             />
-            {mirrorMode && (
+            {false && mirrorMode && (
               <div className="hidden lg:flex w-full h-full">
                 <Canvas
                   isMirror={true}
@@ -369,6 +363,16 @@ export default function Board({ boardId }: { boardId: string }) {
                 />
               </div>
             )}
+            <div className="hidden lg:flex  h-full">
+              {pinnedMode && windowWidth != 0 && (
+                <ResizablePinnedPanel
+                  initialWidth={windowWidth * 0.25}
+                  maxWidth={Math.max(240, windowWidth - sidebarWidth - 600)}
+                >
+                  <PinnedPanel />
+                </ResizablePinnedPanel>
+              )}
+            </div>
           </div>
         </main>
 
@@ -404,7 +408,6 @@ export default function Board({ boardId }: { boardId: string }) {
           )}
         </DragOverlay>
       </DndContext>
-      <HelpModal open={helpOpen} setOpen={setHelpOpen} />
       <WelcomeModal open={welcomeModalOpen} setOpen={setWelcomeModalOpen} />
     </div>
   );

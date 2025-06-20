@@ -4,12 +4,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CollapseArrow } from "../ui/sidebar/collapse-arrow";
-import { useUIStore } from "@/store/ui-store";
-import { MdViewColumn } from "react-icons/md";
+import { FaImage } from "react-icons/fa6";
+import { usePinnedStore } from "@/store/use-pinned-store";
 
 export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
-  const toggleMirrorMode = useUIStore((s) => s.toggleMirrorMode);
-  const mirrorMode = useUIStore((s) => s.mirrorMode);
+  const togglePinnedView = usePinnedStore((s) => s.toggleOpen);
+  const pinnedViewOpen = usePinnedStore((s) => s.isOpen);
 
   return (
     <div className="h-full flex flex-col items-center justify-start pt-2 gap-4">
@@ -22,7 +22,7 @@ export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
         />
       </Link>
       <CollapseArrow left onClick={onExpand} />
-      <button
+      {/* <button
         type="button"
         className="flex items-center gap-1 cursor-pointer group"
         onClick={toggleMirrorMode}
@@ -31,6 +31,18 @@ export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
         <MdViewColumn
           className={`hover:text-accent hover:scale-110 transition-all duration-200 
             size-6 ${mirrorMode ? "text-accent" : "text-white"}`}
+        />
+      </button> */}
+
+      <button
+        type="button"
+        className="flex items-center gap-1 cursor-pointer group"
+        onClick={togglePinnedView}
+        title="Toggle Expanded Image"
+      >
+        <FaImage
+          className={`hover:text-accent hover:scale-110 transition-all duration-200 
+            size-5 ${pinnedViewOpen ? "text-accent" : "text-white"}`}
         />
       </button>
     </div>

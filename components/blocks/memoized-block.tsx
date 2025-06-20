@@ -16,11 +16,11 @@ import {
 } from "../ui/context-menu";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { useUIStore } from "@/store/ui-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
 import { downloadImagesAsZip } from "../download-images/zip-images";
 import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
 import { getImageUrl } from "@/utils/get-image-url";
+import { usePinnedStore } from "@/store/use-pinned-store";
 
 export function BlockChooser({
   block,
@@ -74,19 +74,15 @@ function BlockComponent({
   const scope = useGetScope();
 
   const { openOverlay } = useOverlayStore(scope);
-  const { openOverlay: otherOpenOverlay } = useOverlayStore(
-    scope === "main" ? "mirror" : "main"
-  );
+
+  const setPinnedStoreOpen = usePinnedStore((s) => s.setIsOpen);
+  const setPinnedBlock = usePinnedStore((s) => s.setPinnedBlock);
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
   const setSelectedBlock = useSelectionStore((s) => s.setSelectedBlocks);
   const selectedBlocksLength = Object.entries(selectedBlocks).length;
   const currentBlockSelected = !!selectedBlocks[block.block_id];
-
-  // throw to other screen
-  const mirrorMode = useUIStore((s) => s.mirrorMode);
-  const toggleMirrorMode = useUIStore((s) => s.toggleMirrorMode);
 
   return (
     <ContextMenu>
@@ -138,16 +134,15 @@ function BlockComponent({
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => {
-                // if mirror mode not active. first do that:
-                if (!mirrorMode) {
-                  toggleMirrorMode();
-                }
+                // if (!pinnedStoreOpen) {
+                //   setSidebarCollapsed(true);
+                // }
+                setPinnedStoreOpen(true);
 
-                otherOpenOverlay(block);
-                // then set the overlay to selected image
+                setPinnedBlock(block);
               }}
             >
-              View In Mirror
+              View In Focus
             </ContextMenuItem>
             {selectedBlocksLength === 1 ? (
               <ContextMenuItem

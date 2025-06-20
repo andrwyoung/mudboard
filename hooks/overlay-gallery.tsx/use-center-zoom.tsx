@@ -1,3 +1,4 @@
+import { MAX_OVERLAY_ZOOM } from "@/types/constants";
 import { useCallback, useEffect } from "react";
 
 export function useCenteredZoom(
@@ -32,7 +33,7 @@ export function useCenteredZoom(
   );
 
   const zoomIn = useCallback(() => {
-    zoomAtCenter((z) => Math.min(z + 0.1, 3));
+    zoomAtCenter((z) => Math.min(z + 0.1, MAX_OVERLAY_ZOOM));
   }, [zoomAtCenter]);
 
   const zoomOut = useCallback(() => {

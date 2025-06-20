@@ -7,13 +7,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaAdjust, FaArrowsAltH, FaMinus, FaPlus } from "react-icons/fa";
 import { FaChevronLeft, FaEyeDropper, FaXmark } from "react-icons/fa6";
 import { useOverlayStore } from "@/store/overlay-store";
-import { useCenteredZoom } from "@/hooks/overlay-gallery.tsx/use-zoom";
+import { useCenteredZoom } from "@/hooks/overlay-gallery.tsx/use-center-zoom";
 import { useEyedropper } from "@/hooks/overlay-gallery.tsx/use-eyedropper";
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import ColorWheel from "@/components/overlay-gallery/color-wheel";
 import GreyscaleWheel from "@/components/overlay-gallery/gs-color-wheel";
 import { getImageUrl } from "@/utils/get-image-url";
+import { usePanImage } from "@/hooks/overlay-gallery.tsx/use-pan-image";
+import { useGetInitialSizeOnLayout } from "@/hooks/overlay-gallery.tsx/use-get-initial-size";
 
 type OverlayModes = "drag" | "eyedropper";
 
@@ -53,8 +55,6 @@ export default function OverlayGallery({
   } | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStart = useRef<{ x: number; y: number } | null>(null);
 
   const [initialSize, setInitialSize] = useState<{
     width: number;
@@ -108,79 +108,6 @@ export default function OverlayGallery({
     }
   }, [getPrevImage, selectedBlock.block_id, setSelectedBlock]);
 
-  // calculate initial height and width
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container || !selectedBlock.width) return;
-
-    const containerWidth = container.clientWidth - 24 * 4; // remove padding (px-12)
-    const containerHeight = container.clientHeight - 24 * 4; // remove padding (py-12)
-
-    const imageAspect = selectedBlock.width / selectedBlock.height;
-    const containerAspect = containerWidth / containerHeight;
-
-    let width = selectedBlock.width;
-    let height = selectedBlock.height;
-
-    if (imageAspect > containerAspect) {
-      width = containerWidth;
-      height = containerWidth / imageAspect;
-    } else {
-      height = containerHeight;
-      width = containerHeight * imageAspect;
-    }
-
-    setInitialSize({ width, height });
-    // disable lint cause we want that scrollcontainerRef here with us
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedBlock.width, selectedBlock.height, scrollContainerRef.current]);
-
-  // dragggin the image around
-  useEffect(() => {
-    if (overlayMode !== "drag") return;
-
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const onMouseDown = (e: MouseEvent) => {
-      if (e.button !== 0) return;
-      setIsDragging(true);
-      dragStart.current = { x: e.clientX, y: e.clientY };
-
-      // Prevent default drag behavior on image
-      e.preventDefault();
-    };
-
-    const onMouseMove = (e: MouseEvent) => {
-      if (!isDragging || !dragStart.current) return;
-
-      const dx = e.clientX - dragStart.current.x;
-      const dy = e.clientY - dragStart.current.y;
-
-      container.scrollLeft -= dx;
-      container.scrollTop -= dy;
-
-      dragStart.current = { x: e.clientX, y: e.clientY };
-    };
-
-    const onMouseUp = () => {
-      if (!isDragging) return;
-      setIsDragging(false);
-      dragStart.current = null;
-      container.style.cursor = "default";
-    };
-
-    window.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-
-    return () => {
-      window.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    };
-  }, [isDragging, overlayMode]);
-
   // when users aren't active, hide the ui
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -211,6 +138,10 @@ export default function OverlayGallery({
 
   // SECTION: hooks
   //
+
+  // panning
+  useGetInitialSizeOnLayout(scrollContainerRef, selectedBlock, setInitialSize);
+  const { isDragging } = usePanImage(scrollContainerRef);
 
   /// zoooming
   const { zoomIn, zoomOut, resetZoom } = useCenteredZoom(

@@ -16,6 +16,10 @@ export const DEFAULT_GALLERY_SPACING = 12;
 export const DEFAULT_SECTION_NAME = "Untitled Section";
 export const DEFAULT_BOARD_TITLE= "Untitled Board";
 
+export const PINNED_IMAGE_PADDING = 800;
+
+export const MAX_OVERLAY_ZOOM = 3;
+export const MAX_FOCUS_ZOOM = 5
 
 
 // login constants
