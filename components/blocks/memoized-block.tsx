@@ -21,6 +21,7 @@ import { downloadImagesAsZip } from "../download-images/zip-images";
 import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
 import { getImageUrl } from "@/utils/get-image-url";
 import { usePinnedStore } from "@/store/use-pinned-store";
+import { useLayoutStore } from "@/store/layout-store";
 
 export function BlockChooser({
   block,
@@ -69,7 +70,7 @@ function BlockComponent({
   columnWidth: number;
   numCols: number;
 }) {
-  // const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
+  const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
   const isMirror = useIsMirror();
   const scope = useGetScope();
 
@@ -112,10 +113,11 @@ function BlockComponent({
             isMirror={isMirror}
             sectionId={block.section_id}
           >
-            {/* <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
-          y:{position?.colIndex}, x:{position?.rowIndex}, o:
-          {position?.orderIndex}, t:{position?.top}, h:{position?.height}
-        </h1> */}
+            <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
+              y:{position?.colIndex}, x:{position?.rowIndex}, o:{" "}
+              {position?.orderIndex}
+              {/* , t:{position?.top}, h:{position?.height} */}
+            </h1>
 
             <BlockChooser
               block={block}

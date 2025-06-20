@@ -5,19 +5,40 @@ import { supabase } from "../../utils/supabase";
 import { PositionedBlock } from "@/types/sync-types";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { SYNC_BATCH_SIZE } from "@/types/upload-settings";
+import { useMetadataStore } from "@/store/metadata-store";
+import { commitToSectionColumns } from "./sync-local-order";
 
 function positionedBlocksToUpdates(
   blocks: PositionedBlock[]
 ): Partial<BlockInsert>[] {
+  // don't sync col_index and row_index if saved_column_number does not equal visualColumnNumber
+  const sectionMap = useMetadataStore
+    .getState()
+    .boardSections.reduce((acc, bs) => {
+      acc[bs.section.section_id] = bs.section;
+      return acc;
+    }, {} as Record<string, { saved_column_num: number; visualColumnNum?: number }>);
+
   return blocks
     .filter(({ block }) => !block.block_id.startsWith("temp-"))
-    .map(({ block, colIndex, rowIndex, orderIndex }) => ({
-      block_id: block.block_id,
-      section_id: block.section_id,
-      col_index: colIndex,
-      row_index: rowIndex,
-      order_index: orderIndex,
-    }));
+    .map(({ block, colIndex, rowIndex, orderIndex }) => {
+      const section = sectionMap[block.section_id];
+      const shouldSyncLayout =
+        section && section.visualColumnNum === section.saved_column_num;
+
+      const update: Partial<BlockInsert> = {
+        block_id: block.block_id,
+        section_id: block.section_id,
+        order_index: orderIndex,
+      };
+
+      if (shouldSyncLayout) {
+        update.col_index = colIndex;
+        update.row_index = rowIndex;
+      }
+
+      return update;
+    });
 }
 
 export async function syncOrderToSupabase(
@@ -52,11 +73,8 @@ export async function syncOrderToSupabase(
     await sleep(50);
   }
 
-  // step 2: update number of default columns
-  // await supabase
-  //   .from("boards")
-  //   .update({ saved_column_num: useUIStore.getState().numCols })
-  //   .eq("board_id", board_id);
+  // update locally
+  commitToSectionColumns(positionedBlocks);
 
   console.log("Finished syncing block order to Supabase");
 

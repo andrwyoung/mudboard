@@ -17,8 +17,11 @@ export async function updateSectionColumnNum(
     return;
   }
 
-  // update locally
-  // STEP 1: update number of columns
+  // STEP 1: update the actual layout
+  // we want to regenerate the layout first so that we don't "save" the previous column layout
+  useLayoutStore.getState().regenerateSectionColumns(sectionId);
+
+  // STEP 2: update number of columns
   useMetadataStore.setState((s) => ({
     boardSections: s.boardSections.map((bs) =>
       bs.section.section_id === sectionId
@@ -29,9 +32,6 @@ export async function updateSectionColumnNum(
         : bs
     ),
   }));
-
-  // STEP 2: update the actual layout
-  useLayoutStore.getState().regenerateSectionColumns(sectionId);
 
   // update remotely
   await supabase

@@ -28,7 +28,7 @@ export function getNewTop(col: Block[]): number {
 
   const lastBlock = col[col.length - 1];
   const height = lastBlock.height ?? 0;
-  const rowIndex = lastBlock.row_index ?? 0;
+  const rowIndex = lastBlock.saved_row_index ?? 0;
 
   return rowIndex + height + spacing;
 }

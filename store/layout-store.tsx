@@ -14,6 +14,7 @@ import { Block, VisualOverride } from "@/types/block-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { generatePositionedBlocks } from "@/lib/ordering/generate-block-positions";
 import { DEFAULT_COLUMNS } from "@/types/constants";
+import { generateColumnsFromBlockLayout } from "@/lib/columns/generate-columns";
 
 type LayoutStore = {
   // SECTION 1
@@ -87,19 +88,30 @@ export const useLayoutStore = create<LayoutStore>()(
     },
     regenerateSectionColumns: (sectionId: string) => {
       const masterBlockOrder = get().masterBlockOrder;
-      const boardSections = useMetadataStore.getState().boardSections;
       const blocksInSection = masterBlockOrder
         .filter((b) => b.block.section_id === sectionId)
         .map((b) => b.block);
 
-      const savedColNum =
-        boardSections.find((bs) => bs.section.section_id === sectionId)?.section
-          .visualColumnNum ?? DEFAULT_COLUMNS;
+      const section = useMetadataStore
+        .getState()
+        .boardSections.find(
+          (bs) => bs.section.section_id === sectionId
+        )?.section;
 
-      const newCols: Block[][] = Array.from({ length: savedColNum }, () => []);
-      blocksInSection.forEach((block, i) => {
-        newCols[i % savedColNum].push(block);
-      });
+      if (!section) {
+        throw new Error(
+          `regenerateSectionColumns: No section found with id ${sectionId}`
+        );
+      }
+
+      const useExplicitPositioning =
+        section.visualColumnNum === section.saved_column_num;
+
+      const newCols = generateColumnsFromBlockLayout(
+        blocksInSection,
+        section.visualColumnNum,
+        useExplicitPositioning
+      );
 
       set((state) => ({
         sectionColumns: {

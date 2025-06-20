@@ -23,9 +23,9 @@ export async function cloneBlocksFromSections(
     image_id: block.image_id,
     data: block.data,
 
-    col_index: block.col_index,
-    row_index: block.row_index,
-    order_index: block.order_index,
+    col_index: block.saved_col_index,
+    row_index: block.saved_row_index,
+    order_index: block.saved_order_index,
 
     height: block.height,
     width: block.width,

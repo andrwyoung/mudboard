@@ -32,9 +32,9 @@ export type Block = {
   width?: number;
 
   // this is the initial order
-  col_index: number;
-  row_index: number;
-  order_index: number;
+  saved_col_index: number;
+  saved_row_index: number;
+  saved_order_index: number;
 
   caption: string | null;
 

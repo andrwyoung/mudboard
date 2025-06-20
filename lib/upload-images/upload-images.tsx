@@ -196,9 +196,9 @@ export async function uploadImages(
         ...incompleteBlock,
         data: newImage,
 
-        col_index: colIndex,
-        row_index: rowIndex,
-        order_index: 0,
+        saved_col_index: colIndex,
+        saved_row_index: rowIndex,
+        saved_order_index: 0,
         caption: null,
 
         is_flipped: null,

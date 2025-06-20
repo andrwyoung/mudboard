@@ -27,10 +27,10 @@ export async function createTextBlock(
     block_type: "text",
     data: textBlock,
     height: TEXT_BLOCK_HEIGHT,
-    col_index: colIndex,
-    row_index: rowIndex,
+    saved_col_index: colIndex,
+    saved_row_index: rowIndex,
     caption: null, // text blocks don't have captions
-    order_index: 0,
+    saved_order_index: 0,
     deleted: false,
 
     is_flipped: null,

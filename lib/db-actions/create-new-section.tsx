@@ -41,7 +41,7 @@ export async function createSupabaseSection({
   }
 
   // Step 2: link section to board
-  const { data: boardSection, error: bsError } = await supabase
+  const { data: boardSectionData, error: bsError } = await supabase
     .from("board_sections")
     .insert([
       {
@@ -53,10 +53,14 @@ export async function createSupabaseSection({
     .select("*, section:sections(*)")
     .single();
 
-  if (bsError || !boardSection) {
+  if (bsError || !boardSectionData) {
     console.log("Failed to create board section, ", bsError);
     throw new Error("Failed to link section to board");
   }
+
+  // IMPORTANT (kind of fragile sorry). initialize visualColumnNumber
+  const boardSection = boardSectionData as BoardSection;
+  boardSection.section.visualColumnNum = boardSection.section.saved_column_num;
 
   return boardSection;
 }

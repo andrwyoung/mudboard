@@ -2,6 +2,7 @@
 // that organizes it and actually generates the columns
 
 import { Block } from "@/types/block-types";
+import { generateColumnsFromBlockLayout } from "./generate-columns";
 
 // Generate initial columns from blocks, handling both legacy and explicit layouts
 export function generateInitColumnsFromBlocks(
@@ -17,10 +18,10 @@ export function generateInitColumnsFromBlocks(
   if (canUseExplicitIndices) {
     for (const b of blocks) {
       if (
-        b.col_index === undefined ||
-        b.row_index === undefined ||
-        b.col_index < 0 ||
-        b.col_index >= numCols
+        b.saved_col_index === undefined ||
+        b.saved_row_index === undefined ||
+        b.saved_col_index < 0 ||
+        b.saved_col_index >= numCols
       ) {
         canUseExplicitIndices = false;
         break;
@@ -28,24 +29,5 @@ export function generateInitColumnsFromBlocks(
     }
   }
 
-  if (canUseExplicitIndices) {
-    // Sort by row_index to maintain vertical order
-    const sorted = [...blocks].sort((a, b) => a.row_index! - b.row_index!);
-    for (const block of sorted) {
-      newColumns[block.col_index!].push(block);
-    }
-    return newColumns;
-  }
-
-  // Fallback to legacy order_index layout
-  const sorted = [...blocks].sort(
-    (a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)
-  );
-
-  sorted.forEach((block, i) => {
-    const col = i % numCols;
-    newColumns[col].push(block);
-  });
-
-  return newColumns;
+  return generateColumnsFromBlockLayout(blocks, numCols, canUseExplicitIndices);
 }
