@@ -6,7 +6,7 @@ import {
   thumbnailNames,
 } from "@/types/upload-settings";
 
-export async function generateThumbnailFromRef({
+export async function generateAndUploadThumbnailFromRef({
   element,
   boardId,
   thumbnailType,

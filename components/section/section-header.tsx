@@ -173,17 +173,26 @@ export default function SectionHeader({ section }: { section: Section }) {
 
                       return (
                         <SelectItem key={n} value={n.toString()}>
-                          <span
-                            className={cn(
-                              isHighlighted &&
-                                n.toString() !==
-                                  section.visualColumnNum.toString()
-                                ? "text-accent  font-bold"
-                                : ""
-                            )}
-                          >
-                            {n}
-                          </span>
+                          <div className="flex items-center gap-1 justify-between w-full">
+                            <span
+                              className={cn(
+                                isHighlighted &&
+                                  n.toString() !==
+                                    section.visualColumnNum.toString()
+                                  ? "font-semibold"
+                                  : ""
+                              )}
+                            >
+                              {n}
+                            </span>
+                            {isHighlighted &&
+                              n.toString() !==
+                                section.visualColumnNum.toString() && (
+                                <span className="text-xs text-primary italic">
+                                  saved
+                                </span>
+                              )}
+                          </div>
                         </SelectItem>
                       );
                     }

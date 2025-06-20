@@ -1,33 +1,30 @@
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  THUMBNAIL_ASPECT_MAP,
   THUMBNAIL_COLUMNS,
   THUMBNAIL_REGENERATION_DELAY,
 } from "@/types/upload-settings";
 import { checkThumbnailExists } from "@/lib/db-actions/thumbnails/check-thumbnail-exists";
 import ExternalThumbnail from "./external-thumbnail";
-import { generateThumbnailFromRef } from "@/lib/thumbnail/generate-canvas-thumbnail";
 import DashboardThumbnail from "./dashboard-thumbnail";
 import { Block } from "@/types/block-types";
 import { DEFAULT_BOARD_TITLE } from "@/types/constants";
-import Image from "next/image";
+import { useThumbnailStore } from "@/store/thumbnail-store";
+import { Board } from "@/types/board-types";
 
-export default function ThumbnailGenerator() {
-  const [dashThumbnailUrl, setDashThumbnailUrl] = useState<string | null>(null);
-  const [extThumbnailUrl, setExtThumbnailUrl] = useState<string | null>(null);
+export type ThumbnailGeneratorHandle = {
+  generate: () => void;
+};
 
-  const board = useMetadataStore((s) => s.board);
+export default function ThumbnailGenerator({ board }: { board: Board }) {
   const layoutDirty = useLayoutStore((state) => state.layoutDirty);
   const externalRef = useRef<HTMLDivElement | null>(null);
   const dashboardRef = useRef<HTMLDivElement | null>(null);
+
+  const generateThumbnails = useThumbnailStore((s) => s.generateThumbnail);
+  const dashThumbnailUrl = useThumbnailStore((s) => s.dashThumbnailUrl);
+  const extThumbnailUrl = useThumbnailStore((s) => s.extThumbnailUrl);
 
   const [regenerationQueued, setRegenerationQueued] = useState(false);
   const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
@@ -56,29 +53,14 @@ export default function ThumbnailGenerator() {
     return cols;
   }, [masterBlockOrder, columnsToRender]);
 
-  // function that actually generates thumbnail
-  const handleGenerateThumbnail = useCallback(async () => {
-    if (!board || !dashboardRef.current || !externalRef.current) return;
-
-    const extThumbnail = await generateThumbnailFromRef({
-      element: externalRef.current,
-      boardId: board.board_id,
-      thumbnailType: "board-thumb-ext",
-    });
-
-    const dashThumbnail = await generateThumbnailFromRef({
-      element: dashboardRef.current,
-      boardId: board.board_id,
-      thumbnailType: "board-thumb-dashboard",
-    });
-
-    if (dashThumbnail) setDashThumbnailUrl(dashThumbnail);
-    if (extThumbnail) setExtThumbnailUrl(extThumbnail);
-  }, [board, dashboardRef]);
-
+  // mount the refs to the generator store
   useEffect(() => {
-    if (!board) return;
+    useThumbnailStore.getState().setExternalRef(externalRef);
+    useThumbnailStore.getState().setDashboardRef(dashboardRef);
+  }, []);
 
+  // if no thumbnail exists on mount, queue a regeneration
+  useEffect(() => {
     const maybeGenerate = async () => {
       const exists = await checkThumbnailExists(
         board.board_id,
@@ -86,7 +68,7 @@ export default function ThumbnailGenerator() {
       );
 
       if (!exists) {
-        console.log("No thumbnail found. Queuing...");
+        console.log("No thumbnail found. Generating...");
         setRegenerationQueued(true);
       }
     };
@@ -99,47 +81,49 @@ export default function ThumbnailGenerator() {
     if (layoutDirty && !regenerationQueued) {
       setRegenerationQueued(true);
     }
-  }, [layoutDirty, handleGenerateThumbnail, regenerationQueued]);
+  }, [layoutDirty, generateThumbnails, regenerationQueued]);
 
   useEffect(() => {
-    if (!regenerationQueued) return;
+    if (!regenerationQueued || !board) return;
 
     const timeout = setTimeout(() => {
-      handleGenerateThumbnail();
+      generateThumbnails(board.board_id);
       setRegenerationQueued(false);
     }, THUMBNAIL_REGENERATION_DELAY);
 
     return () => clearTimeout(timeout);
-  }, [regenerationQueued, handleGenerateThumbnail]);
+  }, [regenerationQueued, generateThumbnails, board]);
 
   return (
     <div>
-      {process.env.NODE_ENV === "development" && (
+      {/* {process.env.NODE_ENV === "development"  && (
         <div className="p-4">
           <button
             type="button"
-            onClick={handleGenerateThumbnail}
+            onClick={() => generateThumbnails(board?.board_id)}
             className="px-2 py-1 cursor-pointer bg-accent text-primary text-xs
          hover:bg-white transition-all duration-200 rounded-sm"
           >
             Generate Thumbnail
           </button>
-          {dashThumbnailUrl && extThumbnailUrl && (
-            <div className="mt-4">
-              <Image
-                src={dashThumbnailUrl}
-                alt="Generated thumbnail"
-                height={THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].height}
-                width={THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].width}
-              />
-              <Image
-                src={extThumbnailUrl}
-                alt="Generated thumbnail"
-                height={THUMBNAIL_ASPECT_MAP["board-thumb-ext"].height}
-                width={THUMBNAIL_ASPECT_MAP["board-thumb-ext"].width}
-              />
-            </div>
-          )}
+          // 
+        </div>
+      )} */}
+
+      {false && dashThumbnailUrl && extThumbnailUrl && (
+        <div className="mt-4">
+          {/* <Image
+            src={dashThumbnailUrl}
+            alt="Generated thumbnail"
+            height={THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].height}
+            width={THUMBNAIL_ASPECT_MAP["board-thumb-dashboard"].width}
+          />
+          <Image
+            src={extThumbnailUrl}
+            alt="Generated thumbnail"
+            height={THUMBNAIL_ASPECT_MAP["board-thumb-ext"].height}
+            width={THUMBNAIL_ASPECT_MAP["board-thumb-ext"].width}
+          /> */}
         </div>
       )}
 
@@ -153,7 +137,7 @@ export default function ThumbnailGenerator() {
         <div ref={externalRef}>
           <ExternalThumbnail
             blocks={blocks}
-            title={board?.title ?? DEFAULT_BOARD_TITLE}
+            title={board.title ?? DEFAULT_BOARD_TITLE}
             columns={columnsToRender}
           />
         </div>

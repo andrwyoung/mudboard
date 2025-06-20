@@ -14,6 +14,7 @@ import ThumbnailGenerator from "@/components/thumbnails/thumbnail-generator";
 import { useLoadingStore } from "@/store/loading-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { PinnedModeToggle } from "@/components/ui/sidebar/pinned-toggle";
+import { useMetadataStore } from "@/store/metadata-store";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -27,6 +28,7 @@ export default function Sidebar({
   onCollapse: () => void;
 }) {
   const boardInitialized = useLoadingStore((s) => s.boardInitialized);
+  const board = useMetadataStore((s) => s.board);
   const canEdit = canEditBoard();
 
   return (
@@ -69,7 +71,7 @@ export default function Sidebar({
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full px-8 pt-6">
-        {boardInitialized && <ThumbnailGenerator />}
+        {boardInitialized && board && <ThumbnailGenerator board={board} />}
         <AccountSyncSection />
       </div>
       <a

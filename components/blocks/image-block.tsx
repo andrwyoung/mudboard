@@ -77,8 +77,8 @@ export function ImageBlock({
   const realHeight = Math.round(realWidth * aspectRatio);
 
   // lil dot sizing
-  const baseSize = 64;
-  const decay = 0.7;
+  const baseSize = 48;
+  const decay = 0.6;
   const dotSize = Math.max(
     8,
     Math.min(16, baseSize * Math.pow(decay, numCols))
