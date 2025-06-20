@@ -200,6 +200,10 @@ export async function uploadImages(
         row_index: rowIndex,
         order_index: 0,
         caption: null,
+
+        is_flipped: null,
+        is_greyscale: null,
+        crop: null,
       };
 
       const newCols = [...prevCols];

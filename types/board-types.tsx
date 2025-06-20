@@ -22,10 +22,11 @@ export type Section = {
   deleted: boolean;
   deleted_at?: Date;
 
-  saved_column_num: number;
-
   forked_from?: string;
   owned_by?: string;
+
+  saved_column_num: number;
+  visualColumnNum?: number;
 };
 
 export type BoardSection = {

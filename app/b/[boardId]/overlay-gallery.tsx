@@ -46,6 +46,18 @@ export default function OverlayGallery({
   const [isFlipped, setIsFlipped] = useState(
     visualOverridesMap.get(selectedBlock.block_id)?.is_flipped ?? false
   );
+  const [crop, setCropped] = useState(
+    visualOverridesMap.get(selectedBlock.block_id)?.crop
+  );
+  console.log(setCropped);
+  const cropStyles = crop
+    ? {
+        objectFit: "none" as const,
+        objectPosition: `${crop.x}% ${crop.y}%`,
+        width: `${100 / (crop.w / 100)}%`,
+        height: `${100 / (crop.h / 100)}%`,
+      }
+    : {};
 
   // const [direction, setDirection] = useState<"left" | "right">("right");
 
@@ -255,6 +267,7 @@ export default function OverlayGallery({
                   alt={selectedBlock.caption ?? imageBlock.original_name}
                   width={selectedBlock.width}
                   height={selectedBlock.height}
+                  style={cropStyles}
                   className={`h-full w-full object-contain rounded-md shadow-lg ${
                     !showOverlayUI
                       ? "cursor-none"
@@ -263,7 +276,9 @@ export default function OverlayGallery({
                       : isDragging
                       ? "cursor-grabbing"
                       : "cursor-grab"
-                  } ${isGreyscale ? "grayscale" : ""}
+                  } 
+                  ${crop ? "object-none" : "object-contain"} 
+                  ${isGreyscale ? "grayscale" : ""}
                   ${isFlipped ? "transform scale-x-[-1]" : ""}`}
                 />
               </div>

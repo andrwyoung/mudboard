@@ -76,6 +76,14 @@ export function ImageBlock({
   const realWidth = variant.width;
   const realHeight = Math.round(realWidth * aspectRatio);
 
+  // lil dot sizing
+  const baseSize = 64;
+  const decay = 0.7;
+  const dotSize = Math.max(
+    8,
+    Math.min(16, baseSize * Math.pow(decay, numCols))
+  );
+
   const fileName =
     img.fileType !== "database"
       ? img.fileName
@@ -117,8 +125,18 @@ export function ImageBlock({
             {editActive && (
               <div
                 title={canEdit ? "Reset Visual Edits" : "Photo has some Edits"}
-                className="absolute right-2 top-2 bg-accent size-2 ring-2 hover:bg-secondary
-                ring-white/80 hover:ring-secondary z-20 shadow-lg rounded-full cursor-pointer hover:scale-125 transition-all"
+                className="absolute bg-accent border-2 hover:bg-secondary box-border
+                border-white/80 hover:boarder-secondary z-20 shadow-lg rounded-full cursor-pointer 
+                hover:scale-125 transition-all"
+                style={{
+                  position: "absolute",
+                  top: `${2 + numCols * 0.5}%`,
+                  right: `${2 + numCols * 0.5}%`,
+                  width: `${dotSize}px`,
+                  height: `${dotSize}px`,
+                  minHeight: 12,
+                  minWidth: 12,
+                }}
                 onClick={(e) => {
                   if (!canEdit) return;
                   e.stopPropagation();

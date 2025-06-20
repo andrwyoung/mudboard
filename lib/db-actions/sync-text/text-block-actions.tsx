@@ -32,6 +32,10 @@ export async function createTextBlock(
     caption: null, // text blocks don't have captions
     order_index: 0,
     deleted: false,
+
+    is_flipped: null,
+    is_greyscale: null,
+    crop: null,
   };
 
   // first slap it into local
