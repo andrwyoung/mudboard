@@ -8,6 +8,7 @@ import {
   Block,
   BlockDownload,
   BlockType,
+  CropRect,
   ImageDownload,
   TextBlockType,
 } from "@/types/block-types";
@@ -61,6 +62,7 @@ export async function fetchSupabaseBlocks(
         image,
         is_flipped,
         is_greyscale,
+        crop,
       } = block;
 
       const incompleteImageBlock: Omit<Block, "data"> = {
@@ -76,6 +78,7 @@ export async function fetchSupabaseBlocks(
         deleted,
         is_flipped,
         is_greyscale,
+        crop: crop as CropRect,
       };
 
       if (block_type === "image" && image) {

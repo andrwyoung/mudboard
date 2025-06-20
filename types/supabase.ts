@@ -16,6 +16,7 @@ export type Database = {
           caption: string | null
           col_index: number
           created_at: string
+          crop: Json | null
           data: Json | null
           deleted: boolean
           deleted_at: string | null
@@ -37,6 +38,7 @@ export type Database = {
           caption?: string | null
           col_index?: number
           created_at?: string
+          crop?: Json | null
           data?: Json | null
           deleted?: boolean
           deleted_at?: string | null
@@ -58,6 +60,7 @@ export type Database = {
           caption?: string | null
           col_index?: number
           created_at?: string
+          crop?: Json | null
           data?: Json | null
           deleted?: boolean
           deleted_at?: string | null

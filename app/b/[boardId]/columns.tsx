@@ -221,9 +221,12 @@ function ColumnComponent({
           // }}
         />
       </SortableContext>
-      {!wholeGalleryEmpty && canEdit && !mirrorMode && (
-        <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
-      )}
+      {!wholeGalleryEmpty &&
+        canEdit &&
+        !mirrorMode &&
+        section.saved_column_num <= 6 && (
+          <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
+        )}
     </div>
   );
 }

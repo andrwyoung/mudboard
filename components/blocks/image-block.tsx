@@ -116,10 +116,11 @@ export function ImageBlock({
           >
             {editActive && (
               <div
-                title="Reset Visual Edits"
+                title={canEdit ? "Reset Visual Edits" : "Photo has some Edits"}
                 className="absolute right-2 top-2 bg-accent size-2 ring-2 hover:bg-secondary
                 ring-white/80 hover:ring-secondary z-20 shadow-lg rounded-full cursor-pointer hover:scale-125 transition-all"
                 onClick={(e) => {
+                  if (!canEdit) return;
                   e.stopPropagation();
                   clearVisualOverride(block.block_id);
                 }}

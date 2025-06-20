@@ -104,7 +104,7 @@ export function useInitBoard(
             const overrides: Partial<VisualOverride> = {};
             if (block.is_flipped) overrides.is_flipped = block.is_flipped;
             if (block.is_greyscale) overrides.is_greyscale = block.is_greyscale;
-            // if you add crop later, include it here too
+            if (block.crop) overrides.crop = block.crop;
 
             if (Object.keys(overrides).length > 0) {
               setVisualOverride(block.block_id, overrides);

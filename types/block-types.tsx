@@ -43,7 +43,7 @@ export type Block = {
 
   is_flipped: boolean | null;
   is_greyscale: boolean | null;
-  // crop: CropRect | null;
+  crop: CropRect | null;
 };
 
 export type MudboardImage = {
@@ -67,7 +67,7 @@ export type MudboardImage = {
 export type VisualOverride = {
   is_flipped?: boolean;
   is_greyscale?: boolean;
-  crop?: { x: number; y: number; w: number; h: number };
+  crop?: CropRect;
 };
 
 export type TextBlockType = {
