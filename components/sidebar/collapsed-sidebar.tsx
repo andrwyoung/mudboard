@@ -19,6 +19,7 @@ export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
           alt={"Small Mudboard Logo"}
           width={350}
           height={350}
+          draggable={false}
         />
       </Link>
       <CollapseArrow left onClick={onExpand} />

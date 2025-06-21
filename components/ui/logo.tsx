@@ -25,6 +25,7 @@ export default function Logo({
         height={387}
         width={1267}
         className="w-[150px]"
+        draggable={false}
       />
     </Link>
   );

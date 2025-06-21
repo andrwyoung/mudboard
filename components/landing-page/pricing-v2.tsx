@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { FaXmark, FaCheck } from "react-icons/fa6";
+import { INTEREST_LINK } from "@/types/constants";
 
 type Feature = {
   label: string;
@@ -48,7 +49,7 @@ const plans: Plan[] = [
       // { label: "No uncompressed uploads", status: "bad" },
     ],
     ctaText: "Join the Waitlist",
-    ctaHref: "https://forms.gle/2nwUurgKJBYAFxCQ6",
+    ctaHref: INTEREST_LINK,
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",

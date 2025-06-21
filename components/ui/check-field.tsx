@@ -29,14 +29,14 @@ export function CheckField({
       <CheckboxPrimitive.Root
         data-slot="checkbox"
         className={`
-            peer border-input dark:bg-input/30  bg-transparent
-            dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50
+            peer border-primary dark:bg-input/30  bg-transparent
+            dark:data-[state=checked]:bg-primary  focus-visible:border-ring focus-visible:ring-ring/50
             aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-3.5 shrink-0
             rounded-[4px] border-2 shadow-sm  transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed
-            disabled:opacity-50 cursor-pointer ${
+            disabled:opacity-35 cursor-pointer ${
               isMuted
-                ? "data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                : "data-[state=checked]:bg-accent data-[state=checked]:border-white"
+                ? "data-[state=checked]:bg-primary data-[state=checked]:border-primary/60"
+                : "data-[state=checked]:bg-accent data-[state=checked]:border-primary/60"
             }
           `}
         id={`${text}-checkbox`}
@@ -56,11 +56,7 @@ export function CheckField({
       <span
         className={`text-sm font-semibold leading-tight transition-colors duration-150
             ${isDiff ? "text-secondary-darker" : ""}
-            ${
-              isDisabled
-                ? "text-primary-muted/60"
-                : "text-primary-text group-hover:text-accent"
-            }`}
+            ${isDisabled ? "text-primary/60" : " group-hover:text-accent"}`}
       >
         {text}
       </span>

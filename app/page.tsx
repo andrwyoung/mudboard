@@ -13,6 +13,7 @@ import Image from "next/image";
 import {
   DASHBOARD_LINK,
   DEMO_BOARD_LINK,
+  INTEREST_LINK,
   LOGIN_LINK,
   NEW_BOARD_LINK,
 } from "@/types/constants";
@@ -434,7 +435,7 @@ export default function Home() {
                 If you&apos;d like to get involved and have a say with
                 Mudboard&apos;s direction, you can{" "}
                 <a
-                  href="https://forms.gle/QA96JUcRRP5YSqRT6"
+                  href={INTEREST_LINK}
                   className="text-accent underline hover:text-white transition-all duration-200 font-bold"
                   target="_blank"
                   rel="noopener noreferrer"

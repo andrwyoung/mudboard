@@ -16,6 +16,7 @@ import { useUIStore } from "@/store/ui-store";
 import SectionDownloadButton from "./section-icons.tsx/download-button";
 import SectionAddImageButton from "./section-icons.tsx/add-image-button";
 import SectionColumnSelector from "./section-icons.tsx/change-columns-select";
+import SectionShareDialog from "./section-icons.tsx/section-share-options";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
@@ -65,9 +66,7 @@ export default function SectionHeader({ section }: { section: Section }) {
               blocks={(sectionColumns[section.section_id] ?? []).flat()}
             />
 
-            {/* <button>
-              <FaLeaf />
-            </button> */}
+            {canEdit && <SectionShareDialog section={section} />}
           </div>
 
           <SectionColumnSelector

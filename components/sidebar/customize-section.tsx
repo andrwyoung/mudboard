@@ -4,8 +4,6 @@
 
 // I really do need to come up with a better name for it
 
-import { CheckField } from "../ui/check-field";
-import { changeBoardPermissions } from "@/lib/db-actions/change-board-permissions";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useThumbnailStore } from "@/store/thumbnail-store";
 import { useState } from "react";
@@ -16,10 +14,11 @@ import {
   THUMBNAIL_COLUMNS,
 } from "@/types/upload-settings";
 import InfoTooltip from "../ui/info-tooltip";
+import { toast } from "sonner";
+import { FaCopy } from "react-icons/fa6";
 
 export default function CustomizeSection() {
   const board = useMetadataStore((s) => s.board);
-  const openToPublic = board?.access_level === "public";
 
   const [thumbnailPreviewOpen, setThumbnailPreviewOpen] = useState(false);
   const extThumbnailUrl = useThumbnailStore((s) => s.extThumbnailUrl);
@@ -29,13 +28,12 @@ export default function CustomizeSection() {
   const extAspect = thumbnailWidth / thumbnailHeight;
 
   const generateThumbnails = useThumbnailStore((s) => s.generateThumbnail);
-  const boardUnclaimed = board !== null && board.user_id === null;
 
   return (
     <>
       <div className=" flex flex-col gap-4 ">
         <div className="flex flex-col gap-1 self-center w-full">
-          {!boardUnclaimed && (
+          {/* {!boardUnclaimed && (
             <div className="px-2">
               <CheckField
                 text="Allow anyone to edit"
@@ -46,20 +44,40 @@ export default function CustomizeSection() {
                 }}
               />
             </div>
-          )}
+          )} */}
 
           {board && (
-            <button
-              type="button"
-              onClick={() => {
-                setThumbnailPreviewOpen(true);
-                generateThumbnails(board?.board_id);
-              }}
-              className="ml-2 px-2 py-1 w-fit cursor-pointer text-white hover:underline hover:text-accent text-xs
+            <div className="px-2">
+              <button
+                type="button"
+                title="Share Board"
+                data-umami-event={`App: Share (Copy Link)`}
+                onClick={() => {
+                  const url = `https://mudboard.com/b/${board?.board_id}`;
+                  navigator.clipboard.writeText(url).then(() => {
+                    console.log("Copied to clipboard:", url);
+                  });
+                  toast.success("Copied Board Link!");
+                }}
+                className="flex items-center px-2 mt-2 mb-1 gap-1 text-white text-sm font-bold font-header
+            cursor-pointer hover:text-accent transition-all duration-300"
+              >
+                <FaCopy />
+                Copy Board Link
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setThumbnailPreviewOpen(true);
+                  generateThumbnails(board?.board_id);
+                }}
+                className="ml-2 py-1 w-fit cursor-pointer text-white hover:underline hover:text-accent text-xs
           transition-all duration-200 rounded-sm"
-            >
-              Manually Update Thumbnail
-            </button>
+              >
+                Manually Update Thumbnail
+              </button>
+            </div>
           )}
         </div>
       </div>

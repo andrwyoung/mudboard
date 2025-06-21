@@ -9,8 +9,7 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { claimBoard } from "@/lib/db-actions/claim-board";
 import { DASHBOARD_LINK } from "@/types/constants";
 import Link from "next/link";
-import { FaHome, FaShareAlt } from "react-icons/fa";
-import { toast } from "sonner";
+import { FaHome } from "react-icons/fa";
 import { useState } from "react";
 import { LuLogIn } from "react-icons/lu";
 
@@ -64,24 +63,6 @@ export default function AccountSyncSection() {
       {canEdit && !boardUnclaimed && <SyncButton />}
 
       <div className="flex items-center justify-between w-full bg-background px-4 py-2 rounded-lg ">
-        <button
-          type="button"
-          title="Share Board"
-          data-umami-event={`App: Share (Copy Link)`}
-          onClick={() => {
-            const url = `https://mudboard.com/b/${board?.board_id}`;
-            navigator.clipboard.writeText(url).then(() => {
-              console.log("Copied to clipboard:", url);
-            });
-            toast.success("Copied Board Link!");
-          }}
-          className="flex items-center gap-1 text-primary text-xs font-bold font-header
-                    cursor-pointer hover:text-accent transition-all duration-300"
-        >
-          <FaShareAlt />
-          Share
-        </button>
-
         <div className="">
           {user ? (
             <div className="flex flex-col ">

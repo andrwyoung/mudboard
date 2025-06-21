@@ -322,9 +322,11 @@ export type Database = {
           deleted: boolean
           deleted_at: string | null
           description: string | null
+          first_published_at: string | null
           forked_from: string | null
           is_forkable: boolean | null
           is_linkable: boolean | null
+          is_on_marketplace: boolean | null
           is_public: boolean | null
           OLD_board_id: string | null
           OLD_order_index: number | null
@@ -338,9 +340,11 @@ export type Database = {
           deleted?: boolean
           deleted_at?: string | null
           description?: string | null
+          first_published_at?: string | null
           forked_from?: string | null
           is_forkable?: boolean | null
           is_linkable?: boolean | null
+          is_on_marketplace?: boolean | null
           is_public?: boolean | null
           OLD_board_id?: string | null
           OLD_order_index?: number | null
@@ -354,9 +358,11 @@ export type Database = {
           deleted?: boolean
           deleted_at?: string | null
           description?: string | null
+          first_published_at?: string | null
           forked_from?: string | null
           is_forkable?: boolean | null
           is_linkable?: boolean | null
+          is_on_marketplace?: boolean | null
           is_public?: boolean | null
           OLD_board_id?: string | null
           OLD_order_index?: number | null

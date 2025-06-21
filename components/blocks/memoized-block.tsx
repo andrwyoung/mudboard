@@ -113,12 +113,13 @@ function BlockComponent({
             isMirror={isMirror}
             sectionId={block.section_id}
           >
-            <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
-              y:{position?.colIndex}, x:{position?.rowIndex}, o:{" "}
-              {position?.orderIndex}
-              {/* , t:{position?.top}, h:{position?.height} */}
-            </h1>
-
+            {false && process.env.NODE_ENV === "development" && (
+              <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
+                y:{position?.colIndex}, x:{position?.rowIndex}, o:{" "}
+                {position?.orderIndex}
+                {/* , t:{position?.top}, h:{position?.height} */}
+              </h1>
+            )}
             <BlockChooser
               block={block}
               shouldEagerLoad={shouldEagerLoad}

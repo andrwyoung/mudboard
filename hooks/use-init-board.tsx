@@ -78,7 +78,9 @@ export function useInitBoard(
           console.log(
             section.is_public,
             section.is_forkable,
-            section.is_linkable
+            section.is_linkable,
+            section.is_on_marketplace,
+            section.first_published_at
           );
         });
 

@@ -28,6 +28,8 @@ export type Section = {
   is_public: boolean | null;
   is_linkable: boolean | null;
   is_forkable: boolean | null;
+  is_on_marketplace: boolean | null;
+  first_published_at: Date;
   // shared_with: string[] ;
 
   saved_column_num: number;
