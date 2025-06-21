@@ -97,10 +97,8 @@ export const useLayoutStore = create<LayoutStore>()(
       });
     },
     regenerateSectionColumns: (sectionId: string) => {
-      const masterBlockOrder = get().masterBlockOrder;
-      const blocksInSection = masterBlockOrder
-        .filter((b) => b.block.section_id === sectionId)
-        .map((b) => b.block);
+      const currentColumns = get().sectionColumns[sectionId];
+      const blocksInSection = currentColumns?.flat() ?? [];
 
       const section = useMetadataStore
         .getState()

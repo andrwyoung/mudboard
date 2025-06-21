@@ -57,7 +57,7 @@ import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
 import PinnedPanel from "@/components/pinned-panel/pinned-panel";
 import { useSidebarStore } from "@/store/sidebar-store";
 import { usePinnedStore } from "@/store/use-pinned-store";
-import { MOBILE_BREAKPOINT } from "@/types/constants";
+import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -98,7 +98,6 @@ export default function Board({ boardId }: { boardId: string }) {
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // when blurring images
-  const setShowBlurImg = useLoadingStore((s) => s.setShowBlurImg);
   const sliderVal = useLoadingStore((s) => s.sliderVal);
   const fadeGallery = useLoadingStore((s) => s.fadeGallery);
   const showLoading = useLoadingStore((s) => s.showLoading);
@@ -164,50 +163,7 @@ export default function Board({ boardId }: { boardId: string }) {
     () => boardSections.map((bs) => bs.section.section_id),
     [boardSections]
   );
-  useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
-
-    const handleResize = () => {
-      setShowBlurImg(true);
-      // console.log("blurring image (resizing)");
-
-      // setting window widht for recalculation
-
-      const windowWidth = window.innerWidth;
-      setWindowWidth(windowWidth);
-
-      const isMobile = windowWidth < MOBILE_BREAKPOINT;
-      const { forceMobileColumns, toggleMobileColumns } =
-        useLayoutStore.getState();
-
-      if (isMobile && !forceMobileColumns) {
-        toggleMobileColumns();
-      } else if (!isMobile && forceMobileColumns) {
-        toggleMobileColumns();
-      }
-
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        setShowBlurImg(false);
-        console.log("unblurring image (resize ended)");
-      }, 400); // adjust this delay if needed
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [setShowBlurImg, setWindowWidth, sectionIds]);
-
-  // useEffect(() => {
-  //   if (windowWidth < 640) {
-  //     for (const sectionId of sectionIds) {
-  //       setVisualColumnNum(sectionId, 2);
-  //     }
-  //   }
-  // }, [windowWidth, boardSections]);
+  useMobileColumnResizeEffect(sectionIds);
 
   // SECTION: measurements and virtualization setup
   //

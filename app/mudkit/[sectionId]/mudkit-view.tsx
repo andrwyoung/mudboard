@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Section } from "@/types/board-types";
+import { BoardSection, Section } from "@/types/board-types";
 import { supabase } from "@/utils/supabase";
 import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";
 import SectionGallery from "@/app/b/[boardId]/gallery";
@@ -12,6 +12,8 @@ import { useOverlayStore } from "@/store/overlay-store";
 import { useResetState } from "@/hooks/user-reset-state";
 import { useLayoutStore } from "@/store/layout-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
+import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
+import { useMetadataStore } from "@/store/metadata-store";
 
 interface Props {
   sectionId: string;
@@ -20,6 +22,7 @@ interface Props {
 export default function MudkitView({ sectionId }: Props) {
   const [section, setSection] = useState<Section | null>(null);
   const [loading, setLoading] = useState(true);
+  const setBoardSections = useMetadataStore((s) => s.setBoardSections);
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
@@ -27,9 +30,8 @@ export default function MudkitView({ sectionId }: Props) {
   const { overlayBlock } = useOverlayStore("main");
 
   const resetState = useResetState();
-
   useEffect(() => {
-    resetState(); // nuke the stores
+    resetState();
 
     const fetchSectionData = async () => {
       setLoading(true);
@@ -45,6 +47,16 @@ export default function MudkitView({ sectionId }: Props) {
 
       const section = sectionData as Section;
       section.visualColumnNum = section.saved_column_num;
+
+      // fake a board section
+      const boardSection: BoardSection = {
+        section,
+        board_section_id: "",
+        board_id: "",
+        order_index: 0,
+        deleted: false,
+      };
+      setBoardSections([boardSection]);
 
       const blocksBySection = await fetchSupabaseBlocks([section.section_id]);
 
@@ -72,7 +84,9 @@ export default function MudkitView({ sectionId }: Props) {
     };
 
     fetchSectionData();
-  }, [sectionId, setSectionColumns, resetState]);
+  }, [sectionId, setSectionColumns, setBoardSections]);
+
+  useMobileColumnResizeEffect(section?.section_id ? [section.section_id] : []);
 
   if (loading) return null;
 

@@ -33,7 +33,7 @@ export async function updateSectionColumnNum(
   // STEP 2: sync the layout locally and remotely so we have a good
   await useLayoutStore.getState().syncLayout();
 
-  // // STEP 3: regenerate the real columns so
+  // // STEP 3: regenerate the real columns
   useLayoutStore.getState().regenerateSectionColumns(sectionId);
 
   // STEP 2: save the column number
