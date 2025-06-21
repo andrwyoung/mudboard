@@ -34,6 +34,9 @@ export async function updateSectionColumnNum(
   }));
 
   // update remotely
+  // STEP 1: sync the individual block layout
+  await useLayoutStore.getState().syncLayout();
+  // STEP 2: save the column number
   await supabase
     .from("sections")
     .update({ saved_column_num: newColumnNum })

@@ -25,6 +25,11 @@ export type Section = {
   forked_from?: string;
   owned_by?: string;
 
+  is_public: boolean | null;
+  is_linkable: boolean | null;
+  is_forkable: boolean | null;
+  // shared_with: string[] ;
+
   saved_column_num: number;
   visualColumnNum: number; // generated and used by us
 };

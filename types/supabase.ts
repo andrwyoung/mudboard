@@ -323,7 +323,9 @@ export type Database = {
           deleted_at: string | null
           description: string | null
           forked_from: string | null
-          is_shared: boolean | null
+          is_forkable: boolean | null
+          is_linkable: boolean | null
+          is_public: boolean | null
           OLD_board_id: string | null
           OLD_order_index: number | null
           owned_by: string | null
@@ -337,7 +339,9 @@ export type Database = {
           deleted_at?: string | null
           description?: string | null
           forked_from?: string | null
-          is_shared?: boolean | null
+          is_forkable?: boolean | null
+          is_linkable?: boolean | null
+          is_public?: boolean | null
           OLD_board_id?: string | null
           OLD_order_index?: number | null
           owned_by?: string | null
@@ -351,7 +355,9 @@ export type Database = {
           deleted_at?: string | null
           description?: string | null
           forked_from?: string | null
-          is_shared?: boolean | null
+          is_forkable?: boolean | null
+          is_linkable?: boolean | null
+          is_public?: boolean | null
           OLD_board_id?: string | null
           OLD_order_index?: number | null
           owned_by?: string | null
@@ -820,6 +826,11 @@ export type Database = {
     Enums: {
       access_type: "private" | "shared_with" | "public"
       admin_level: "admin" | "sudo"
+      section_access_type:
+        | "private"
+        | "shared_personally"
+        | "shared_with"
+        | "public"
       tier_level: "free" | "beta" | "pro" | "alpha"
     }
     CompositeTypes: {
@@ -938,6 +949,12 @@ export const Constants = {
     Enums: {
       access_type: ["private", "shared_with", "public"],
       admin_level: ["admin", "sudo"],
+      section_access_type: [
+        "private",
+        "shared_personally",
+        "shared_with",
+        "public",
+      ],
       tier_level: ["free", "beta", "pro", "alpha"],
     },
   },
