@@ -57,6 +57,7 @@ import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
 import PinnedPanel from "@/components/pinned-panel/pinned-panel";
 import { useSidebarStore } from "@/store/sidebar-store";
 import { usePinnedStore } from "@/store/use-pinned-store";
+import { MOBILE_BREAKPOINT } from "@/types/constants";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -123,7 +124,9 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // ordering
   const positionedBlockMap = useLayoutStore((s) => s.positionedBlockMap);
-  const regenerateOrdering = useLayoutStore((s) => s.regenerateOrdering);
+  const regenerateOrdering = useLayoutStore(
+    (s) => s.regenerateOrderingInternally
+  );
 
   //
   useInitBoard(boardId, setIsExpired, setWelcomeModalOpen);
@@ -156,6 +159,11 @@ export default function Board({ boardId }: { boardId: string }) {
     setWindowWidth(window.innerWidth); // grab window size on init
   }, [setWindowWidth]);
   //
+
+  const sectionIds = useMemo(
+    () => boardSections.map((bs) => bs.section.section_id),
+    [boardSections]
+  );
   useEffect(() => {
     let timeout: NodeJS.Timeout | null = null;
 
@@ -164,7 +172,19 @@ export default function Board({ boardId }: { boardId: string }) {
       // console.log("blurring image (resizing)");
 
       // setting window widht for recalculation
-      setWindowWidth(window.innerWidth);
+
+      const windowWidth = window.innerWidth;
+      setWindowWidth(windowWidth);
+
+      const isMobile = windowWidth < MOBILE_BREAKPOINT;
+      const { forceMobileColumns, toggleMobileColumns } =
+        useLayoutStore.getState();
+
+      if (isMobile && !forceMobileColumns) {
+        toggleMobileColumns();
+      } else if (!isMobile && forceMobileColumns) {
+        toggleMobileColumns();
+      }
 
       if (timeout) clearTimeout(timeout);
       timeout = setTimeout(() => {
@@ -179,7 +199,15 @@ export default function Board({ boardId }: { boardId: string }) {
       window.removeEventListener("resize", handleResize);
       if (timeout) clearTimeout(timeout);
     };
-  }, [setShowBlurImg, setWindowWidth]);
+  }, [setShowBlurImg, setWindowWidth, sectionIds]);
+
+  // useEffect(() => {
+  //   if (windowWidth < 640) {
+  //     for (const sectionId of sectionIds) {
+  //       setVisualColumnNum(sectionId, 2);
+  //     }
+  //   }
+  // }, [windowWidth, boardSections]);
 
   // SECTION: measurements and virtualization setup
   //

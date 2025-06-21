@@ -13,7 +13,7 @@ import { SectionColumns } from "@/types/board-types";
 import { Block, VisualOverride } from "@/types/block-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { generatePositionedBlocks } from "@/lib/ordering/generate-block-positions";
-import { DEFAULT_COLUMNS } from "@/types/constants";
+import { DEFAULT_COLUMNS, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { generateColumnsFromBlockLayout } from "@/lib/columns/generate-columns";
 
 type LayoutStore = {
@@ -25,6 +25,10 @@ type LayoutStore = {
     fn: (prev: Block[][]) => Block[][]
   ) => void;
   regenerateSectionColumns: (sectionId: string) => void;
+  regenerateAllSections: () => void;
+
+  forceMobileColumns: boolean;
+  toggleMobileColumns: () => void;
 
   visualOverridesMap: Map<string, VisualOverride>;
   setVisualOverride: (
@@ -37,7 +41,13 @@ type LayoutStore = {
 
   positionedBlockMap: Map<string, PositionedBlock>;
   masterBlockOrder: PositionedBlock[];
-  regenerateOrdering: () => void;
+  regenerateOrderingInternally: () => void;
+  regenerateOrder: (
+    orderedSections: {
+      sectionId: string;
+      order_index: number;
+    }[]
+  ) => void;
 
   getBlockPosition: (blockId: string) => PositionedBlock | undefined;
   getNextImage: (currentId: string) => PositionedBlock | null;
@@ -104,12 +114,15 @@ export const useLayoutStore = create<LayoutStore>()(
         );
       }
 
-      const useExplicitPositioning =
-        section.visualColumnNum === section.saved_column_num;
+      const trueNumCols = get().forceMobileColumns
+        ? MOBILE_COLUMN_NUMBER
+        : section.visualColumnNum;
+
+      const useExplicitPositioning = trueNumCols === section.saved_column_num;
 
       const newCols = generateColumnsFromBlockLayout(
         blocksInSection,
-        section.visualColumnNum,
+        trueNumCols,
         useExplicitPositioning
       );
 
@@ -120,6 +133,20 @@ export const useLayoutStore = create<LayoutStore>()(
         },
         layoutDirty: true,
       }));
+    },
+    regenerateAllSections: () => {
+      const { sectionColumns, regenerateSectionColumns } = get();
+      for (const sectionId of Object.keys(sectionColumns)) {
+        regenerateSectionColumns(sectionId);
+      }
+    },
+
+    forceMobileColumns: false,
+    toggleMobileColumns: () => {
+      const current = get().forceMobileColumns;
+      set({ forceMobileColumns: !current });
+
+      get().regenerateAllSections();
     },
 
     visualOverridesMap: new Map<string, VisualOverride>(),
@@ -144,11 +171,7 @@ export const useLayoutStore = create<LayoutStore>()(
 
     positionedBlockMap: new Map(),
     masterBlockOrder: [],
-    regenerateOrdering: () => {
-      console.log("regenerating layout");
-      const { sectionColumns: columns, sidebarWidth, windowWidth } = get();
-      const spacingSize = useUIStore.getState().spacingSize;
-
+    regenerateOrderingInternally: () => {
       const boardSections = useMetadataStore.getState().boardSections;
       const sectionOrder = boardSections
         .slice() // avoid mutating original
@@ -158,9 +181,22 @@ export const useLayoutStore = create<LayoutStore>()(
           order_index: bs.order_index,
         }));
 
+      get().regenerateOrder(sectionOrder);
+    },
+    regenerateOrder: (
+      orderedSections: {
+        sectionId: string;
+        order_index: number;
+      }[]
+    ) => {
+      console.log("regenerating layout");
+
+      const { sectionColumns: columns, sidebarWidth, windowWidth } = get();
+      const spacingSize = useUIStore.getState().spacingSize;
+
       const { orderedBlocks, positionedBlockMap } = generatePositionedBlocks(
         columns,
-        sectionOrder,
+        orderedSections,
         sidebarWidth,
         windowWidth,
         spacingSize

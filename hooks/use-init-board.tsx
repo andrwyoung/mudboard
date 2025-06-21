@@ -33,7 +33,9 @@ export function useInitBoard(
   const resetState = useResetState();
 
   const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
-  const regenerateLayout = useLayoutStore((s) => s.regenerateOrdering);
+  const regenerateLayout = useLayoutStore(
+    (s) => s.regenerateOrderingInternally
+  );
 
   const setBoardInitialized = useLoadingStore((s) => s.setBoardInitialized);
   const resetPinnedView = usePinnedStore((s) => s.reset);
@@ -43,7 +45,6 @@ export function useInitBoard(
       try {
         resetState(); // reset if we're coming from another board
         setBoardInitialized(false);
-        resetPinnedView();
 
         //
         // 1: grab the board first

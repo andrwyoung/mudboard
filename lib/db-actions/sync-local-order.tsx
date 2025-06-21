@@ -1,8 +1,12 @@
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { PositionedBlock } from "@/types/sync-types";
+import { shouldSyncSectionLayout } from "../columns/should-sync-indexes";
 
-export function commitToSectionColumns(positionedBlocks: PositionedBlock[]) {
+export function commitToSectionColumns(
+  positionedBlocks: PositionedBlock[],
+  forceMobileColumns: boolean
+) {
   const sectionMap = useMetadataStore
     .getState()
     .boardSections.reduce((acc, bs) => {
@@ -21,8 +25,7 @@ export function commitToSectionColumns(positionedBlocks: PositionedBlock[]) {
 
   for (const [sectionId, blocks] of groupedBySection.entries()) {
     const section = sectionMap[sectionId];
-    const shouldCommit =
-      section && section.visualColumnNum === section.saved_column_num;
+    const shouldCommit = shouldSyncSectionLayout(section, forceMobileColumns);
     if (!shouldCommit) continue;
 
     layoutStore.updateColumnsInASection(sectionId, (prevCols) => {

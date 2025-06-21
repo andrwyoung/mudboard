@@ -7,9 +7,12 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { SYNC_BATCH_SIZE } from "@/types/upload-settings";
 import { useMetadataStore } from "@/store/metadata-store";
 import { commitToSectionColumns } from "./sync-local-order";
+import { useLayoutStore } from "@/store/layout-store";
+import { shouldSyncSectionLayout } from "../columns/should-sync-indexes";
 
 function positionedBlocksToUpdates(
-  blocks: PositionedBlock[]
+  blocks: PositionedBlock[],
+  forceMobileColumns: boolean
 ): Partial<BlockInsert>[] {
   // don't sync col_index and row_index if saved_column_number does not equal visualColumnNumber
   const sectionMap = useMetadataStore
@@ -23,8 +26,10 @@ function positionedBlocksToUpdates(
     .filter(({ block }) => !block.block_id.startsWith("temp-"))
     .map(({ block, colIndex, rowIndex, orderIndex }) => {
       const section = sectionMap[block.section_id];
-      const shouldSyncLayout =
-        section && section.visualColumnNum === section.saved_column_num;
+      const shouldSyncLayout = shouldSyncSectionLayout(
+        section,
+        forceMobileColumns
+      );
 
       const update: Partial<BlockInsert> = {
         block_id: block.block_id,
@@ -51,8 +56,14 @@ export async function syncOrderToSupabase(
     return false;
   }
 
+  // should you sync column indexes
+  const forceMobileColumns = useLayoutStore.getState().forceMobileColumns;
+
   // use position map to sync
-  const updates = positionedBlocksToUpdates(positionedBlocks);
+  const updates = positionedBlocksToUpdates(
+    positionedBlocks,
+    forceMobileColumns
+  );
   console.log("Syncing block order to Supabase via update:", updates);
 
   // step 1: update block order
@@ -74,7 +85,7 @@ export async function syncOrderToSupabase(
   }
 
   // update locally
-  commitToSectionColumns(positionedBlocks);
+  commitToSectionColumns(positionedBlocks, forceMobileColumns);
 
   console.log("Finished syncing block order to Supabase");
 

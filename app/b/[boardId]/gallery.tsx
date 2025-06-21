@@ -19,6 +19,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import { Section } from "@/types/board-types";
+import { MOBILE_COLUMN_NUMBER } from "@/types/constants";
 
 export default function SectionGallery({
   section,
@@ -44,6 +45,7 @@ export default function SectionGallery({
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const sidebarWidth = useLayoutStore((s) => s.sidebarWidth);
+  const forceMobileColumns = useLayoutStore((s) => s.forceMobileColumns);
 
   const lastSelectedBlock = useSelectionStore((s) => s.lastSelectedBlock);
   const setSelectedBlocks = useSelectionStore((s) => s.setSelectedBlocks);
@@ -147,7 +149,9 @@ export default function SectionGallery({
           : ""
       } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
       style={{
-        gridTemplateColumns: `repeat(${section.visualColumnNum}, minmax(0, 1fr))`,
+        gridTemplateColumns: `repeat(${
+          forceMobileColumns ? MOBILE_COLUMN_NUMBER : section.visualColumnNum
+        }, minmax(0, 1fr))`,
       }}
       aria-hidden={overlayGalleryIsOpen ? "true" : "false"}
     >

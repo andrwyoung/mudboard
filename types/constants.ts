@@ -21,6 +21,8 @@ export const PINNED_IMAGE_PADDING = 800;
 export const MAX_OVERLAY_ZOOM = 3;
 export const MAX_FOCUS_ZOOM = 8;
 
+export const MOBILE_BREAKPOINT = 640;
+export const MOBILE_COLUMN_NUMBER = 2;
 
 // login constants
 export const DEFAULT_TIER : Enums<"tier_level"> = "free"

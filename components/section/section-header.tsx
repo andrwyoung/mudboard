@@ -69,12 +69,14 @@ export default function SectionHeader({ section }: { section: Section }) {
             {canEdit && <SectionShareDialog section={section} />}
           </div>
 
-          <SectionColumnSelector
-            sectionId={section.section_id}
-            visualColumnNum={section.visualColumnNum}
-            savedColumnNum={section.saved_column_num}
-            canEdit={canEdit}
-          />
+          <div className="hidden sm:block">
+            <SectionColumnSelector
+              sectionId={section.section_id}
+              visualColumnNum={section.visualColumnNum}
+              savedColumnNum={section.saved_column_num}
+              canEdit={canEdit}
+            />
+          </div>
         </div>
       </div>
 

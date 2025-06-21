@@ -30,7 +30,7 @@ export default function NotFoundComponent({
       <div className="text-muted-foreground mb-8 text-sm max-w-md">
         <p className="mb-1">
           The {pageTitle.charAt(0).toLowerCase() + pageTitle.slice(1)}{" "}
-          you&apos;re looking for doesn&apos;t exist or has been deleted.
+          you&apos;re looking for doesn&apos;t exist or has been unpublished.
         </p>
         {pageTitle !== "Page" && (
           <p>

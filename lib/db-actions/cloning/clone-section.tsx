@@ -20,6 +20,9 @@ export async function cloneSection({
     forked_from: originalSection.section_id,
     saved_column_num: originalSection.saved_column_num,
     owned_by: newOwnerUserId,
+
+    // NOTE: we intentionally leave out is_public, is_forkable etc
+    // the database will fill in the defaults
   };
   const { data: newSection, error: sectionInsertErr } = await supabase
     .from("sections")
