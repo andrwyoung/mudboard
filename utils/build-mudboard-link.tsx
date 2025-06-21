@@ -1,3 +1,5 @@
+import { BOARD_BASE_URL } from "@/types/constants";
+
 export function buildMudboardLink(boardId: string) {
-  return `https://www.mudboard.com/b/${boardId}`;
+  return `${BOARD_BASE_URL}/${boardId}`;
 }

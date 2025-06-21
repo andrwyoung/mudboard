@@ -407,7 +407,7 @@ export default function Home() {
                   onClick={(e) => {
                     e.stopPropagation();
 
-                    navigator.clipboard.writeText("andrew@jonadrew.com");
+                    navigator.clipboard.writeText("andrew@mudboard.com");
                     setCopiedEmail(true);
                     setTimeout(() => setCopiedEmail(false), 2000);
                   }}

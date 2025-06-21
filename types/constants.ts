@@ -27,12 +27,14 @@ export const DEFAULT_TIER : Enums<"tier_level"> = "free"
 
 
 // links constants
+export const BOARD_BASE_URL= "https://mudboard.com/b"
+export const SECTION_BASE_URL = "https://mudboard.com/mudkit";
+
+// hard coded links
 export const NEW_BOARD_LINK = "/b/new"
 export const DEMO_BOARD_LINK = "/demo"
 export const DASHBOARD_LINK = "/dashboard"
 export const LOGIN_LINK = "/login"
 export const ROADMAP_LINK = "https://jondrew.notion.site/Mudboard-Roadmap-2162e809fa4e80eb94add8aa315c769d?source=copy_link"
 
-// export const BOARD_URL = ""
-// export const SECTION_URL = ""
 export const INTEREST_LINK = "https://forms.gle/QA96JUcRRP5YSqRT6"

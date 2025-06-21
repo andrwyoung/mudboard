@@ -17,9 +17,9 @@ export async function generateMetadata({
 
   const board = await checkIfBoardExists(boardId);
 
-  if (!board || !board.title) return;
+  if (!board) return;
 
-  const title = board.title;
+  const title = board.title?.trim() || "Untitled Board";
   const thumbnailUrl = getThumbnailUrl(board.board_id, "board-thumb-ext");
   // console.log("thumbnail: ", thumbnailUrl);
 

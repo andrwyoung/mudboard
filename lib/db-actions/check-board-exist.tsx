@@ -13,7 +13,12 @@ export async function checkIfBoardExists(
     .single();
 
   if (error) {
-    console.error("Error checking board existence:", error);
+    if (error.code === "PGRST116") {
+      // "Row not found" error, expected if board doesn't exist
+      return null;
+    }
+
+    console.warn("Unexpected error checking board existence:", error.message);
     return null;
   }
 

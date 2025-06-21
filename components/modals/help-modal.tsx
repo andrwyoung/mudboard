@@ -67,7 +67,7 @@ export default function HelpModal({
                 href="mailto:andrew@mudboard.com"
                 className="underline hover:text-accent duration-200 transition-all"
               >
-                andrew@jonadrew.com
+                andrew@mudboard.com
               </a>
               .
             </p>

@@ -16,6 +16,7 @@ import {
 import InfoTooltip from "../ui/info-tooltip";
 import { toast } from "sonner";
 import { FaCopy } from "react-icons/fa6";
+import { BOARD_BASE_URL } from "@/types/constants";
 
 export default function CustomizeSection() {
   const board = useMetadataStore((s) => s.board);
@@ -53,7 +54,7 @@ export default function CustomizeSection() {
                 title="Share Board"
                 data-umami-event={`App: Share (Copy Link)`}
                 onClick={() => {
-                  const url = `https://mudboard.com/b/${board?.board_id}`;
+                  const url = `${BOARD_BASE_URL}/${board?.board_id}`;
                   navigator.clipboard.writeText(url).then(() => {
                     console.log("Copied to clipboard:", url);
                   });

@@ -10,13 +10,11 @@ import {
 } from "@/types/constants/error-message";
 
 export default function NotFoundComponent({
-  boardPage = false,
+  pageTitle = "Page",
 }: {
-  boardPage?: boolean;
+  pageTitle?: "Board" | "Page" | "Mudkit";
 }) {
   const user = useMetadataStore((s) => s.user);
-
-  const pageTitle = boardPage ? "Board" : "Page";
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-4">
@@ -34,14 +32,14 @@ export default function NotFoundComponent({
           The {pageTitle.charAt(0).toLowerCase() + pageTitle.slice(1)}{" "}
           you&apos;re looking for doesn&apos;t exist or has been deleted.
         </p>
-        {boardPage && (
+        {pageTitle !== "Page" && (
           <p>
             Mistake? Please reach out:{" "}
             <a
-              href="mailto:andrew@jonadrew.com"
+              href="mailto:andrew@mudboard.com"
               className="underline hover:text-accent duration-200 transition-all"
             >
-              andrew@jonadrew.com
+              andrew@mudboard.com
             </a>
           </p>
         )}

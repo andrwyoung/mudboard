@@ -24,7 +24,7 @@ export const DEFAULT_FILE_EXT = "webp";
 export const DEFAULT_FILE_MIME = "image/webp";
 
 export type imageNames = "thumb" | "medium" | "full";
-export type thumbnailNames = "board-thumb-ext" | "board-thumb-dashboard";
+export type thumbnailNames = "board-thumb-ext" | "board-thumb-dashboard" | "section-thumb-ext";
 
 export const IMAGE_VARIANT_MAP: Record<imageNames, { width: number; quality: number }> = {
   thumb: { width: COMPRESSED_THUMB_WIDTH, quality: 0.5 },
@@ -114,4 +114,5 @@ export const mimeToExtension: Record<string, string> = {
   export const THUMBNAIL_ASPECT_MAP: Record<thumbnailNames, {width: number, height: number}> = {
     "board-thumb-ext": {width: 1200, height: 800},
     "board-thumb-dashboard":  {width: 600, height: 400},
+    "section-thumb-ext": {width: 1200, height: 800},
   };

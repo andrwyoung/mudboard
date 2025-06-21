@@ -14,8 +14,7 @@ import { FaShareAlt, FaLink } from "react-icons/fa";
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
 import { CheckField } from "@/components/ui/check-field";
-
-const SECTION_BASE_URL = "https://mudboard.com/section";
+import { SECTION_BASE_URL } from "@/types/constants";
 
 type ShareableSectionField =
   | "is_public"
