@@ -19,6 +19,7 @@ import { useIsMirror } from "@/app/b/[boardId]/board";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { getImageUrl } from "@/utils/get-image-url";
 import { useLayoutStore } from "@/store/layout-store";
+import { MAX_COLUMNS } from "@/types/constants";
 
 export function ImageBlock({
   block,
@@ -80,7 +81,7 @@ export function ImageBlock({
   const baseSize = 48;
   const decay = 0.6;
   const dotSize = Math.max(
-    8,
+    MAX_COLUMNS,
     Math.min(16, baseSize * Math.pow(decay, numCols))
   );
 
@@ -130,8 +131,8 @@ export function ImageBlock({
                 hover:scale-125 transition-all"
                 style={{
                   position: "absolute",
-                  top: `${2 + numCols * 0.5}%`,
-                  right: `${2 + numCols * 0.5}%`,
+                  top: `${(MAX_COLUMNS - numCols) * 1.5 + 6}px`,
+                  right: `${(MAX_COLUMNS - numCols) * 1.5 + 6}px`,
                   width: `${dotSize}px`,
                   height: `${dotSize}px`,
                   minHeight: 12,

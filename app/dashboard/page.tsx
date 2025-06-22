@@ -165,7 +165,7 @@ export default function DashboardPage() {
                     }
                     onClick={() => setDashboardMode("sections")}
                   >
-                    Sections
+                    Mudkits
                   </Button>
                 </div>
               </div>
