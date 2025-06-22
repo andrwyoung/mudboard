@@ -11,7 +11,11 @@ import { useSelectionStore } from "@/store/selection-store";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useResetState } from "@/hooks/user-reset-state";
 import { useLayoutStore } from "@/store/layout-store";
-import { SCROLLBAR_STYLE } from "@/types/constants";
+import {
+  MOBILE_BREAKPOINT,
+  MOBILE_COLUMN_NUMBER,
+  SCROLLBAR_STYLE,
+} from "@/types/constants";
 import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
 import { useMetadataStore } from "@/store/metadata-store";
 
@@ -62,10 +66,15 @@ export default function MudkitView({ sectionId }: Props) {
 
       const blocks = blocksBySection[section.section_id];
 
+      const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+      if (isMobile) {
+        useLayoutStore.setState({ forceMobileColumns: true });
+      }
+
       setSection(sectionData);
       const generated = generateInitColumnsFromBlocks(
         blocks,
-        section.saved_column_num
+        isMobile ? MOBILE_COLUMN_NUMBER : section.saved_column_num
       );
       setSectionColumns({
         [section.section_id]: generated,
@@ -91,7 +100,7 @@ export default function MudkitView({ sectionId }: Props) {
   if (loading) return null;
 
   return (
-    <div className="flex flex-col sm:px-2 md:px-12  py-4 w-screen h-screen mx-auto relative">
+    <div className="flex flex-col sm:px-2 md:px-12 py-4 w-screen h-screen mx-auto relative">
       {section && (
         <>
           <div className="pt-2 pb-4 px-2 text-primary ">

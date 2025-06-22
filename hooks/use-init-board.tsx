@@ -20,6 +20,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { VisualOverride } from "@/types/block-types";
 import { usePinnedStore } from "@/store/use-pinned-store";
+import { MOBILE_BREAKPOINT, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 
 export function useInitBoard(
   boardId: string,
@@ -128,11 +129,16 @@ export function useInitBoard(
         }
 
         // generate the columns
+        const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+        if (isMobile) {
+          useLayoutStore.setState({ forceMobileColumns: true });
+        }
+
         const initColumns: SectionColumns = {};
         for (const section of sections) {
           initColumns[section.section_id] = generateInitColumnsFromBlocks(
             blocksBySection[section.section_id] ?? [],
-            section.saved_column_num
+            isMobile ? MOBILE_COLUMN_NUMBER : section.saved_column_num
           );
         }
 

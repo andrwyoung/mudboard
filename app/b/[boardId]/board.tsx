@@ -109,7 +109,6 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // virtualization
   const windowWidth = useLayoutStore((s) => s.windowWidth);
-  const setWindowWidth = useLayoutStore((s) => s.setWindowWidth);
   const setSidebarWidth = useLayoutStore((s) => s.setSidebarWidth);
   const sidebarWidth = useLayoutStore((s) => s.sidebarWidth);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
@@ -153,10 +152,6 @@ export default function Board({ boardId }: { boardId: string }) {
   }, []);
 
   // SECTION: blur image when resizing window
-  //
-  useEffect(() => {
-    setWindowWidth(window.innerWidth); // grab window size on init
-  }, [setWindowWidth]);
   //
 
   const sectionIds = useMemo(

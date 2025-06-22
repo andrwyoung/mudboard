@@ -8,6 +8,11 @@ export function useMobileColumnResizeEffect(sectionIds: string[]) {
   const setShowBlurImg = useLoadingStore((s) => s.setShowBlurImg);
 
   useEffect(() => {
+    const width = window.innerWidth;
+    setWindowWidth(width); // grab window size on init
+  }, [setWindowWidth]);
+
+  useEffect(() => {
     let timeout: NodeJS.Timeout | null = null;
 
     const handleResize = () => {
