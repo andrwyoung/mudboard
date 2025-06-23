@@ -3,11 +3,15 @@
 import { Block, TextBlockType } from "@/types/block-types";
 import { updateTextBlockText } from "@/lib/db-actions/sync-text/text-block-actions";
 import InlineEditTextarea from "../ui/inline-textarea";
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 
-export default function TextBlock({ block }: { block: Block }) {
+export default function TextBlock({
+  block,
+  canEdit,
+}: {
+  block: Block;
+  canEdit: boolean;
+}) {
   const textData = block.data as TextBlockType;
-  const canEdit = canEditBoard();
 
   // console.log("textdata: ", textData);
 

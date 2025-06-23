@@ -80,7 +80,7 @@ export default function Board({ boardId }: { boardId: string }) {
     null
   );
   console.log(draggedExtFileCount);
-  const canEdit = canEditBoard();
+  const canBoardEdit = canEditBoard();
 
   // when dragging blocks
   const [draggedBlocks, setDraggedBlocks] = useState<Block[] | null>(null);
@@ -250,9 +250,9 @@ export default function Board({ boardId }: { boardId: string }) {
   return (
     <div className="flex h-screen overflow-hidden relative">
       {isExpired && <BoardExpiredPopup />}
-      {isDraggingExtFile && !isExpired && !canEdit && (
+      {isDraggingExtFile && !isExpired && !canBoardEdit && (
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
-          <div className="text-3xl font-header">Editing Disabled</div>
+          <div className="text-3xl font-header">Editing Board Disabled</div>
         </div>
       )}
       {isDraggingExtFile && boardSections.length === 1 && (
@@ -268,9 +268,9 @@ export default function Board({ boardId }: { boardId: string }) {
 
       <DndContext
         collisionDetection={pointerWithin}
-        onDragStart={canEdit ? handleDragStart : undefined}
-        onDragMove={canEdit ? handleDragMove : undefined}
-        onDragEnd={canEdit ? handleDragEnd : undefined}
+        onDragStart={handleDragStart}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEnd}
         sensors={sensors}
         autoScroll={!mirrorMode}
       >

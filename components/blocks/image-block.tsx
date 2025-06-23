@@ -16,16 +16,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import { updateImageBlockCaption } from "@/lib/db-actions/sync-text/update-caption";
 import { useSelectionStore } from "@/store/selection-store";
 import { useIsMirror } from "@/app/b/[boardId]/board";
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { getImageUrl } from "@/utils/get-image-url";
 import { useLayoutStore } from "@/store/layout-store";
 import { MAX_COLUMNS } from "@/types/constants";
 
 export function ImageBlock({
+  canEdit,
   block,
   shouldEagerLoad,
   numCols,
 }: {
+  canEdit: boolean;
   block: Block;
   shouldEagerLoad: boolean;
   columnWidth: number;
@@ -51,7 +52,6 @@ export function ImageBlock({
   const selectedScope = useSelectionStore((s) => s.selectionScope);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const isMirror = useIsMirror();
-  const canEdit = canEditBoard();
   const isSelected = !!selectedBlocks[block.block_id];
   const isInScope = selectedScope === (isMirror ? "mirror" : "main");
   const isSoleSelected =

@@ -94,6 +94,7 @@ export default function MudkitView({ sectionId }: Props) {
     };
 
     fetchSectionData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionId, setSectionColumns, setBoardSections]);
 
   useMobileColumnResizeEffect(section?.section_id ? [section.section_id] : []);
@@ -126,6 +127,7 @@ export default function MudkitView({ sectionId }: Props) {
           {sectionColumns && (
             <div className={`overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}>
               <SectionGallery
+                canEdit={false} // purely view only on this page
                 section={section}
                 columns={sectionColumns[section.section_id]}
                 draggedBlocks={null}

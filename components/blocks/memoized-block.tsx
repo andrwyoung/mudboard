@@ -1,7 +1,7 @@
 // this is what a block is
 
 import { memo } from "react";
-import { SortableItem } from "@/components/drag/sortable-wrapper";
+import { SortableBlock } from "@/components/drag/sortable-wrapper";
 import { Block, MudboardImage } from "@/types/block-types";
 import { ImageBlock } from "./image-block";
 import TextBlock from "./text-block";
@@ -24,11 +24,13 @@ import { usePinnedStore } from "@/store/use-pinned-store";
 import { useLayoutStore } from "@/store/layout-store";
 
 export function BlockChooser({
+  canEdit,
   block,
   shouldEagerLoad,
   columnWidth,
   numCols,
 }: {
+  canEdit: boolean;
   block: Block;
   shouldEagerLoad: boolean;
   columnWidth: number;
@@ -38,6 +40,7 @@ export function BlockChooser({
     case "image":
       return (
         <ImageBlock
+          canEdit={canEdit}
           block={block}
           shouldEagerLoad={shouldEagerLoad}
           columnWidth={columnWidth}
@@ -45,7 +48,7 @@ export function BlockChooser({
         />
       );
     case "text":
-      return <TextBlock block={block} />;
+      return <TextBlock block={block} canEdit={canEdit} />;
     case "spacer":
       return <div className="h-8 w-full bg-transparent" />; // placeholder
     default:
@@ -54,6 +57,7 @@ export function BlockChooser({
 }
 
 function BlockComponent({
+  canEdit,
   block,
   isSelected,
   isDragging,
@@ -62,6 +66,7 @@ function BlockComponent({
   columnWidth,
   numCols,
 }: {
+  canEdit: boolean;
   block: Block;
   isSelected: boolean;
   isDragging: boolean;
@@ -108,7 +113,8 @@ function BlockComponent({
           ${isSelected ? "outline-4 outline-secondary" : ""}`}
           onClick={onClick}
         >
-          <SortableItem
+          <SortableBlock
+            canEdit={canEdit}
             id={`${scope}::block-${block.block_id}`}
             isMirror={isMirror}
             sectionId={block.section_id}
@@ -121,12 +127,13 @@ function BlockComponent({
               </h1>
             )}
             <BlockChooser
+              canEdit={canEdit}
               block={block}
               shouldEagerLoad={shouldEagerLoad}
               columnWidth={columnWidth}
               numCols={numCols}
             />
-          </SortableItem>
+          </SortableBlock>
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>

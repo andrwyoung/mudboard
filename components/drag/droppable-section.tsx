@@ -4,12 +4,14 @@
 import { useDroppable } from "@dnd-kit/core";
 
 export function DroppableForImages({
+  canEdit,
   id,
   children,
   highlighted,
   isLinked,
   sectionId,
 }: {
+  canEdit: boolean;
   id: string;
   children: React.ReactNode;
   highlighted: boolean;
@@ -27,8 +29,8 @@ export function DroppableForImages({
 
   return (
     <div
-      ref={setNodeRef}
-      data-id={id}
+      ref={canEdit ? setNodeRef : undefined}
+      data-id={canEdit ? id : undefined}
       className={`border rounded-sm transition-colors duration-150 w-full px-1 ${
         isOver || highlighted
           ? isLinked

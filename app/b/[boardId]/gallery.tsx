@@ -181,6 +181,7 @@ export default function SectionGallery({
       {columns.map((column, columnIndex) => (
         // <div className="bg-amber-50">
         <DroppableColumn
+          canEdit={canEdit}
           id={`${scope}::col-${section.section_id}-${columnIndex}`}
           paddingLeft={spacingSize / 2}
           paddingRight={spacingSize / 2}
@@ -189,6 +190,7 @@ export default function SectionGallery({
           isMirror={isMirror}
         >
           <MemoizedDroppableColumn
+            canEdit={canEdit}
             section={section}
             wholeGalleryEmpty={isEmpty}
             column={column}

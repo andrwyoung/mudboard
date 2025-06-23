@@ -29,8 +29,8 @@ export async function createTextBlock(
     height: TEXT_BLOCK_HEIGHT,
     saved_col_index: colIndex,
     saved_row_index: rowIndex,
-    caption: null, // text blocks don't have captions
     saved_order_index: 0,
+    caption: null, // text blocks don't have captions
     deleted: false,
 
     is_flipped: null,
@@ -46,12 +46,23 @@ export async function createTextBlock(
     return updated;
   });
 
+  // now we upload to supabase
+  const { saved_col_index, saved_row_index, saved_order_index, ...rest } =
+    block;
+
+  const blockInsert: BlockInsert = {
+    ...rest,
+    col_index: saved_col_index,
+    row_index: saved_row_index,
+    order_index: saved_order_index,
+  };
+
   // then if access allows it, then we upload it to supabase
   const canWrite = canEditBoard();
   if (canWrite) {
     const { error: blockInsertError } = await supabase
       .from("blocks")
-      .insert(block as BlockInsert)
+      .insert(blockInsert)
       .select()
       .single();
 

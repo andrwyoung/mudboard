@@ -17,7 +17,6 @@ import {
   ContextMenuTrigger,
 } from "../../ui/context-menu";
 import { DroppableForImages } from "@/components/drag/droppable-section";
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 import FillingDot from "@/components/ui/filling-dot";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { HiDotsVertical } from "react-icons/hi";
@@ -27,6 +26,7 @@ import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-text";
 import { isLinkedSection } from "@/utils/is-linked-section";
+import { canEditSection } from "@/lib/auth/can-edit-section";
 
 export default function SectionRow({
   thisBoardSection,
@@ -41,7 +41,7 @@ export default function SectionRow({
     null
   );
   const [pendingDelete, setPendingDelete] = useState(false);
-  const canEdit = canEditBoard();
+  const canSectionEdit = canEditSection(thisBoardSection.section);
   const isLinked = isLinkedSection(thisBoardSection);
 
   const selectedSection = useSelectionStore((s) => s.selectedSection);
@@ -110,6 +110,7 @@ export default function SectionRow({
       {fileInput}
 
       <DroppableForImages
+        canEdit={canSectionEdit}
         key={thisBoardSection.section.section_id}
         id={`section-${thisBoardSection.order_index}`}
         highlighted={highlighted}
@@ -138,7 +139,7 @@ export default function SectionRow({
               <div
                 className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
                 onDoubleClick={() => {
-                  if (canEdit) {
+                  if (canSectionEdit) {
                     setEditValue(thisBoardSection.section.title ?? "");
                     setIsEditing(true);
                   }
@@ -193,7 +194,7 @@ export default function SectionRow({
                 )}
               </div>
 
-              {canEdit && (
+              {canSectionEdit && (
                 <HiDotsVertical
                   className={`size-4 hover:scale-130 transition-all duration-300 
                     opacity-0 group-hover:opacity-100 cursor-pointer flex-none 

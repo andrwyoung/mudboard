@@ -9,6 +9,7 @@ import { useDroppable } from "@dnd-kit/core";
 import React from "react";
 
 function DropIndicator({
+  canEdit,
   id,
   isActive,
   padding,
@@ -16,6 +17,7 @@ function DropIndicator({
   sectionId,
   isMirror,
 }: {
+  canEdit: boolean;
   id: string;
   isActive: boolean;
   padding?: "bottom" | "above";
@@ -47,8 +49,8 @@ function DropIndicator({
 
   return (
     <div
-      ref={setNodeRef}
-      data-id={id}
+      ref={canEdit ? setNodeRef : undefined}
+      data-id={canEdit ? id : undefined}
       className={`w-full z-15 transition-all duration-150 ease-in-out relative
        ${padding === "bottom" ? "flex-1" : ""}`}
       tabIndex={-1}

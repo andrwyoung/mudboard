@@ -14,7 +14,6 @@ import {
 import { useGetScope } from "@/hooks/use-get-scope";
 import { useIsMirror } from "./board";
 import BlockAdder from "@/components/blocks/add-a-block";
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { Section } from "@/types/board-types";
 
 // virtualization
@@ -49,6 +48,7 @@ function getBlockLayout(
 }
 
 type Props = {
+  canEdit: boolean;
   section: Section;
   wholeGalleryEmpty: boolean;
   column: Block[];
@@ -62,6 +62,7 @@ type Props = {
 };
 
 function ColumnComponent({
+  canEdit,
   section,
   wholeGalleryEmpty,
   column,
@@ -88,8 +89,6 @@ function ColumnComponent({
     draggedBlocks.length <= MAX_DRAGGED_ITEMS;
   const isMirror = useIsMirror();
   const scope = useGetScope();
-
-  const canEdit = canEditBoard();
 
   const { items } = getBlockLayout(
     column,
@@ -120,6 +119,7 @@ function ColumnComponent({
         {/* First drop zone */}
         {column.length > 0 && (
           <MemoizedDropIndicator
+            canEdit={canEdit}
             id={`${scope}::drop-${sectionId}-${columnIndex}-0`}
             isActive={
               enableDragIndicators &&
@@ -171,6 +171,7 @@ function ColumnComponent({
             >
               {index !== 0 ? (
                 <MemoizedDropIndicator
+                  canEdit={canEdit}
                   key={`${scope}::drop-${sectionId}-${columnIndex}-${index}`}
                   id={`${scope}::drop-${sectionId}-${columnIndex}-${index}`}
                   isActive={
@@ -189,6 +190,7 @@ function ColumnComponent({
               ) : null}
 
               <MemoizedBlock
+                canEdit={canEdit}
                 block={block}
                 isSelected={!!selectedBlocks[block.block_id]}
                 isDragging={
@@ -205,6 +207,7 @@ function ColumnComponent({
 
         {/* Drop zone at the end */}
         <MemoizedDropIndicator
+          canEdit={canEdit}
           id={`${scope}::drop-${sectionId}-${columnIndex}-${column.length}`}
           isActive={
             enableDragIndicators &&

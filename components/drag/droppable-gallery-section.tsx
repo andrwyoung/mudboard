@@ -6,12 +6,14 @@ import { useDroppable } from "@dnd-kit/core";
 import React from "react";
 
 export default function DroppableGallerySection({
+  canEdit,
   sectionId,
   isLinked,
   isMirror,
   isActive,
   isExternalDrag,
 }: {
+  canEdit: boolean;
   sectionId: string;
   isLinked: boolean;
   isMirror: boolean;
@@ -31,7 +33,7 @@ export default function DroppableGallerySection({
 
   return (
     <div
-      ref={setNodeRef}
+      ref={canEdit ? setNodeRef : undefined}
       className={`absolute inset-0 z-50 pointer-events-none rounded-sm border-2 ${
         (realIsOver && isActive) || isExternalDrag
           ? isLinked

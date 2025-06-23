@@ -218,8 +218,13 @@ export default function SectionShareDialog({
                     off: "Mudkit Unpublished.",
                   })
                 }
+                disabled={!section.owned_by}
               >
-                {published ? "Unpublish" : "Publish Mudkit!"}
+                {!section.owned_by
+                  ? "Save Board to Enable Publishing"
+                  : published
+                  ? "Unpublish"
+                  : "Publish Mudkit!"}
               </Button>
               {published && (
                 <Button variant="secondary" onClick={copyLink}>

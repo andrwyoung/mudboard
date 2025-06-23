@@ -2,12 +2,14 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 
-export function SortableItem({
+export function SortableBlock({
+  canEdit,
   children,
   id,
   sectionId,
   isMirror,
 }: {
+  canEdit: boolean;
   children: React.ReactNode;
   id: string;
   sectionId: string;
@@ -22,7 +24,11 @@ export function SortableItem({
   });
 
   return (
-    <div ref={setNodeRef} {...attributes} {...listeners}>
+    <div
+      ref={canEdit ? setNodeRef : undefined}
+      {...(canEdit ? attributes : {})}
+      {...(canEdit ? listeners : {})}
+    >
       {children}
     </div>
   );

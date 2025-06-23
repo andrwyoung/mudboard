@@ -161,6 +161,7 @@ export default function Canvas({
                     }}
                   >
                     <DroppableGallerySection
+                      canEdit={canEdit}
                       sectionId={section.section_id}
                       isLinked={isLinked}
                       isMirror={isMirror}

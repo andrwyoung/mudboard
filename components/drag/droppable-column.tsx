@@ -3,6 +3,7 @@
 import { useDroppable } from "@dnd-kit/core";
 
 export function DroppableColumn({
+  canEdit,
   id,
   children,
   paddingLeft,
@@ -10,6 +11,7 @@ export function DroppableColumn({
   sectionId,
   isMirror,
 }: {
+  canEdit: boolean;
   id: string;
   children: React.ReactNode;
   paddingLeft: number;
@@ -27,8 +29,8 @@ export function DroppableColumn({
 
   return (
     <div
-      ref={setNodeRef}
-      data-id={id}
+      ref={canEdit ? setNodeRef : undefined}
+      data-id={canEdit ? id : null}
       className={`flex flex-col transition-colors `}
       style={{
         paddingLeft,

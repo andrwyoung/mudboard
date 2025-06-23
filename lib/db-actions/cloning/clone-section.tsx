@@ -19,7 +19,7 @@ export async function cloneSection({
     description: originalSection.description,
     forked_from: originalSection.section_id,
     saved_column_num: originalSection.saved_column_num,
-    owned_by: newOwnerUserId,
+    owned_by: newOwnerUserId, // IMPORTANT
 
     // NOTE: we intentionally leave out is_public, is_forkable etc
     // the database will fill in the defaults
