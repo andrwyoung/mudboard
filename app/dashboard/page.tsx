@@ -112,7 +112,8 @@ export default function DashboardPage() {
   // }
 
   async function handleDeleteBoard(boardId: string) {
-    const success = await softDeleteBoard(boardId);
+    if (!user) return; // yes. you need to be logged in to delete a board
+    const success = await softDeleteBoard(boardId, user.id);
 
     if (!success) {
       toast.error("Failed to delete Board");

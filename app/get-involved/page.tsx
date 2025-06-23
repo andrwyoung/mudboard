@@ -1,4 +1,3 @@
-// app/review/page.tsx
 import Link from "next/link";
 import { GiGloop } from "react-icons/gi";
 import { LuTestTubeDiagonal } from "react-icons/lu";

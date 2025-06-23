@@ -12,7 +12,10 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { createSupabaseSection } from "./create-new-section";
 import { SoftDeleteSections } from "./soft-delete-section";
 
-export async function softDeleteBoardSection(boardSection: BoardSection) {
+export async function softDeleteBoardSection(
+  boardSection: BoardSection,
+  userId: string | undefined
+) {
   // check if access
   const canWrite = canEditBoard();
   if (!canWrite) {
@@ -42,7 +45,10 @@ export async function softDeleteBoardSection(boardSection: BoardSection) {
   }
 
   // Soft-delete the actual section if it's orphaned
-  await SoftDeleteSections([boardSection.section.section_id]);
+  const deletedSectionIds = await SoftDeleteSections(
+    [boardSection.section.section_id],
+    userId
+  );
 
   // if successfully then delete both section and blocks locally too
   useMetadataStore.setState((s) => ({
@@ -97,8 +103,12 @@ export async function softDeleteBoardSection(boardSection: BoardSection) {
   await reindexSections();
 
   // toast
-  toast.success(
-    `Deleted section: ${boardSection.section.title ?? DEFAULT_SECTION_NAME}`
-  );
+  const sectionName = boardSection.section.title ?? DEFAULT_SECTION_NAME;
+  if (deletedSectionIds?.includes(boardSection.section.section_id)) {
+    toast.success(`Deleted section: ${sectionName}`);
+  } else {
+    toast.success(`Unlinked section: ${sectionName}`);
+  }
+
   return true;
 }

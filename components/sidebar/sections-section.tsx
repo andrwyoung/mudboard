@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { supabase } from "@/utils/supabase";
 import AddSectionButton from "./section-sections/add-section-button";
 import { isLinkedSection } from "@/utils/is-linked-section";
+import { canEditSection } from "@/lib/auth/can-edit-section";
 
 export default function SectionsSection({
   sectionRefs,
@@ -124,7 +125,9 @@ export default function SectionsSection({
           ))}
         {boardSectionToDelete &&
           (() => {
-            const isLinked = isLinkedSection(boardSectionToDelete);
+            const unLink =
+              isLinkedSection(boardSectionToDelete) ||
+              !canEditSection(boardSectionToDelete.section);
 
             return (
               <AlertDialog
@@ -134,13 +137,13 @@ export default function SectionsSection({
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle className="text-2xl text-primary">
-                      {isLinked ? "Unlink" : "Delete"} &quot;
+                      {unLink ? "Unlink" : "Delete"} &quot;
                       {boardSectionToDelete.section.title ??
                         DEFAULT_SECTION_NAME}
                       &quot;?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      {isLinked ? (
+                      {unLink ? (
                         <span>
                           This will remove the section from this board, but keep
                           it available for reuse elsewhere.
@@ -160,13 +163,14 @@ export default function SectionsSection({
                     </AlertDialogCancel>
                     <AlertDialogAction
                       className="font-semibold"
-                      variant={isLinked ? "kinda_good" : "destructive"}
+                      variant={unLink ? "kinda_good" : "destructive"}
                       onClick={() => {
-                        softDeleteBoardSection(boardSectionToDelete);
+                        const user = useMetadataStore.getState().user;
+                        softDeleteBoardSection(boardSectionToDelete, user?.id);
                         setBoardSectionToDelete(null);
                       }}
                     >
-                      {isLinked ? "Unlink Section" : "Delete Section"}
+                      {unLink ? "Unlink Section" : "Delete Section"}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

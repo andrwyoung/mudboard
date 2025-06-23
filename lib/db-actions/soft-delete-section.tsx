@@ -1,10 +1,13 @@
-import { SectionStats } from "@/types/stat-types";
+import { SectionWithStats } from "@/types/stat-types";
 import { supabase } from "@/utils/supabase";
 
-export async function SoftDeleteSections(sectionIds: string[]) {
+export async function SoftDeleteSections(
+  sectionIds: string[],
+  userId: string | undefined
+): Promise<string[] | undefined> {
   // STEP 1: first check if there are no more sections existing
-  const { data: sectionStats, error: sectionStatsError } = await supabase
-    .from("section_stats")
+  const { data: sectionWithStats, error: sectionStatsError } = await supabase
+    .from("section_with_stats")
     .select("*")
     .eq("deleted", false) // don't get the deleted ones
     .in("section_id", sectionIds);
@@ -16,10 +19,18 @@ export async function SoftDeleteSections(sectionIds: string[]) {
     return;
   }
 
-  const stats = sectionStats as SectionStats[];
+  const stats = sectionWithStats as SectionWithStats[];
 
+  // delete section if:
+  // 1. you own it (or is unclaimed)
+  // 2. and it's the very last one
   const sectionIdsToDelete = stats
-    .filter((stat) => stat.shallow_copy_count === 0 && !stat.is_shared)
+    .filter(
+      (stat) =>
+        (stat.owned_by === null || stat.owned_by === userId) &&
+        stat.shallow_copy_count === 0 &&
+        !stat.is_shared
+    )
     .map((stat) => stat.section_id);
 
   if (sectionIdsToDelete.length === 0) {
@@ -50,4 +61,5 @@ export async function SoftDeleteSections(sectionIds: string[]) {
   }
 
   console.log(`Soft deleted ${sectionIdsToDelete.length} section(s)`);
+  return sectionIdsToDelete;
 }

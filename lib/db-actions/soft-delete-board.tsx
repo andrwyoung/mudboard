@@ -1,12 +1,13 @@
 import { supabase } from "@/utils/supabase";
 import { SoftDeleteSections } from "./soft-delete-section";
 
-export async function softDeleteBoard(boardId: string) {
+export async function softDeleteBoard(boardId: string, userId: string) {
   // STEP 1: mark board as deleted
   const { error } = await supabase
     .from("boards")
     .update({ deleted: true, deleted_at: new Date().toISOString() })
-    .eq("board_id", boardId);
+    .eq("board_id", boardId)
+    .eq("user_id", userId);
 
   if (error) {
     console.error("Failed to delete board:", error.message);
@@ -31,7 +32,7 @@ export async function softDeleteBoard(boardId: string) {
   // STEP 3??? mark sections as deleted
   const sectionIds = boardSections?.map((bs) => bs.section_id).filter(Boolean);
   if (sectionIds.length > 0) {
-    await SoftDeleteSections(sectionIds);
+    await SoftDeleteSections(sectionIds, userId);
   }
 
   return true;

@@ -1,10 +1,18 @@
 import { supabase } from "@/utils/supabase";
 import { BoardSection } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
+import { canEditBoard } from "../auth/can-edit-board";
 
 // Assumes both sections are on the same board
 export async function swapSectionOrder(a: BoardSection, b: BoardSection) {
   if (a.order_index === b.order_index) return;
+
+  // should never fire. we shouldn't even show the button to do this
+  const canEdit = canEditBoard();
+  if (!canEdit) {
+    console.error("This should not fire. Blocking section swap");
+    return;
+  }
 
   const { error: errorA } = await supabase
     .from("board_sections")
