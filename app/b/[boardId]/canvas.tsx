@@ -18,6 +18,8 @@ import DroppableGallerySection from "@/components/drag/droppable-gallery-section
 import { isLinkedSection } from "@/utils/is-linked-section";
 import HelpModal from "@/components/modals/help-modal";
 import { FaQuestion } from "react-icons/fa6";
+import { canEditBoard } from "@/lib/auth/can-edit-board";
+import { canEditSection } from "@/lib/auth/can-edit-section";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -142,6 +144,8 @@ export default function Canvas({
                 const columns = sectionColumns[sectionId];
                 const isLinked = isLinkedSection(boardSection);
 
+                const canEdit = canEditBoard() && canEditSection(section);
+
                 return (
                   <div
                     key={sectionId}
@@ -172,7 +176,10 @@ export default function Canvas({
                         extFileOverSection.mirror === mirrorKey
                       }
                     />
-                    <SectionHeader section={sectionMap[sectionId].section} />
+                    <SectionHeader
+                      section={sectionMap[sectionId].section}
+                      canEdit={canEdit}
+                    />
                     {columns && (
                       <SectionGallery
                         section={section}
@@ -181,6 +188,7 @@ export default function Canvas({
                         scrollY={scrollY}
                         selectedBlocks={selectedBlocks}
                         overId={dropIndicatorId}
+                        canEdit={canEdit}
                       />
                     )}
                   </div>

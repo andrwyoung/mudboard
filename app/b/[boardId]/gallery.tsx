@@ -14,7 +14,6 @@ import Image from "next/image";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useGetScope } from "@/hooks/use-get-scope";
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { useLayoutStore } from "@/store/layout-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
@@ -28,6 +27,7 @@ export default function SectionGallery({
   scrollY,
   selectedBlocks,
   overId,
+  canEdit,
 }: {
   section: Section;
   columns: Block[][];
@@ -35,12 +35,11 @@ export default function SectionGallery({
   scrollY: number;
   selectedBlocks: Record<string, Block>;
   overId: string | null;
+  canEdit: boolean;
 }) {
   const isMirror = useIsMirror();
   const canvasScope = isMirror ? "mirror" : "main";
   const scope = useGetScope();
-
-  const canEdit = canEditBoard();
 
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);

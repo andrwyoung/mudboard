@@ -5,15 +5,17 @@
 import { useMetadataStore } from "@/store/metadata-store";
 
 export function canEditBoard(): boolean {
-  const user = useMetadataStore.getState().user;
-  const board = useMetadataStore.getState().board;
+  const { user, board } = useMetadataStore.getState();
 
-  // if board is expired then no
-  if (board?.expired_at && new Date(board.expired_at) <= new Date())
-    return false;
+  // If no board, can't edit
+  if (!board) return false;
 
-  if (board?.access_level === "public") return true;
+  // Unclaimed board = open editing
+  if (!board.user_id) return true;
 
-  // If claimed, only owner can edit (for now)
-  return user?.id === board?.user_id;
+  // Public boards are editable by anyone
+  if (board.access_level === "public") return true;
+
+  // Only owner can edit
+  return user?.id === board.user_id;
 }

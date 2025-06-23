@@ -16,16 +16,21 @@ import SectionDownloadButton from "./section-icons.tsx/download-button";
 import SectionAddImageButton from "./section-icons.tsx/add-image-button";
 import SectionColumnSelector from "./section-icons.tsx/change-columns-select";
 import SectionShareDialog from "./section-icons.tsx/section-share-options";
-import { useCanEditSection } from "@/lib/auth/can-edit-section";
+import { FaLock } from "react-icons/fa6";
 
-export default function SectionHeader({ section }: { section: Section }) {
+export default function SectionHeader({
+  section,
+  canEdit,
+}: {
+  section: Section;
+  canEdit: boolean;
+}) {
   const title = section?.title;
   const description = section?.description;
   const isEditing =
     useLoadingStore.getState().editingSectionId === section.section_id;
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
-  const canEdit = useCanEditSection(section);
 
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
@@ -54,6 +59,13 @@ export default function SectionHeader({ section }: { section: Section }) {
               mirrorMode ? "opacity-50" : "opacity-80"
             }`}
           >
+            {!canEdit && (
+              <FaLock
+                title="Editing is Locked"
+                className="opacity-50 text-primary size-4.5"
+              />
+            )}
+
             {canEdit && (
               <SectionAddImageButton
                 triggerImagePicker={triggerImagePicker}
@@ -66,7 +78,7 @@ export default function SectionHeader({ section }: { section: Section }) {
               blocks={(sectionColumns[section.section_id] ?? []).flat()}
             />
 
-            {canEdit && <SectionShareDialog section={section} />}
+            <SectionShareDialog section={section} canEdit={canEdit} />
           </div>
 
           <div className="hidden sm:block">
