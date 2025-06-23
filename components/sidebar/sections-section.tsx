@@ -18,7 +18,7 @@ import { BoardSection } from "@/types/board-types";
 import { softDeleteBoardSection } from "@/lib/db-actions/soft-delete-board-section";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 
-import SectionRow from "./section-sections/section-title";
+import SectionRow from "./section-sections/section-row";
 import { toast } from "sonner";
 import { supabase } from "@/utils/supabase";
 import AddSectionButton from "./section-sections/add-section-button";
@@ -31,7 +31,7 @@ export default function SectionsSection({
 }) {
   const board = useMetadataStore((s) => s.board);
   const boardSections = useMetadataStore((s) => s.boardSections);
-  const canEdit = canEditBoard();
+  const canBoardEdit = canEditBoard();
 
   const [boardSectionToDelete, setBoardSectionToDelete] =
     useState<BoardSection | null>(null);
@@ -97,12 +97,12 @@ export default function SectionsSection({
         ) : (
           <div
             onDoubleClick={() => {
-              if (canEdit) {
+              if (canBoardEdit) {
                 setEditBoardTitle(board?.title ?? "");
                 setIsEditingBoardTitle(true);
               }
             }}
-            title={canEdit ? "Double-click to rename" : ""}
+            title={canBoardEdit ? "Double-click to rename" : ""}
             className="cursor-pointer px-2 py-0.5 border border-transparent ring-2 ring-transparent
              hover:text-accent transition-all duration-300 font-header"
           >
@@ -115,6 +115,7 @@ export default function SectionsSection({
           .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)) //redundant. but ok
           .map((boardSection) => (
             <SectionRow
+              canBoardEdit={canBoardEdit}
               key={boardSection.section.section_id}
               thisBoardSection={boardSection}
               sectionRefs={sectionRefs}
@@ -173,7 +174,7 @@ export default function SectionsSection({
             );
           })()}
       </div>
-      {canEdit && <AddSectionButton sectionRefs={sectionRefs} />}
+      {canBoardEdit && <AddSectionButton sectionRefs={sectionRefs} />}
     </div>
   );
 }

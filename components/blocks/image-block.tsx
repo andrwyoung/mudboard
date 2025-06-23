@@ -178,6 +178,7 @@ export function ImageBlock({
             ${overrides?.is_greyscale ? "grayscale" : ""}
                   ${overrides?.is_flipped ? "transform scale-x-[-1]" : ""}`}
               loading={shouldEagerLoad ? "eager" : "lazy"}
+              draggable={false}
             />
           </div>
           <AnimatePresence initial={false}>

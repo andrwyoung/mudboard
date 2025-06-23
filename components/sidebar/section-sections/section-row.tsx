@@ -27,15 +27,18 @@ import { useImagePicker } from "@/hooks/use-image-picker";
 import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-text";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import { canEditSection } from "@/lib/auth/can-edit-section";
+import { FaLock } from "react-icons/fa";
 
 export default function SectionRow({
   thisBoardSection,
   sectionRefs,
   setBoardSectionToDelete,
+  canBoardEdit,
 }: {
   thisBoardSection: BoardSection;
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
   setBoardSectionToDelete: (section: BoardSection) => void;
+  canBoardEdit: boolean;
 }) {
   const [highlightedSection, setHighlightedSection] = useState<string | null>(
     null
@@ -132,9 +135,13 @@ export default function SectionRow({
         >
           <ContextMenuTrigger asChild>
             <div
+              title="Go to section"
               ref={triggerRef}
               className="grid group items-center w-full"
               style={{ gridTemplateColumns: "1fr auto" }}
+              onContextMenu={(e) => {
+                if (!canBoardEdit) e.preventDefault();
+              }}
             >
               <div
                 className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
@@ -194,7 +201,7 @@ export default function SectionRow({
                 )}
               </div>
 
-              {canSectionEdit && (
+              {canSectionEdit ? (
                 <HiDotsVertical
                   className={`size-4 hover:scale-130 transition-all duration-300 
                     opacity-0 group-hover:opacity-100 cursor-pointer flex-none 
@@ -216,6 +223,13 @@ export default function SectionRow({
                     el.dispatchEvent(event);
                   }}
                 />
+              ) : (
+                <FaLock
+                  title="Section locked from Edits"
+                  className={`opacity-30 size-3 ${
+                    canBoardEdit ? "" : "hidden"
+                  }`}
+                />
               )}
 
               {/* {sections.length > 1 && canEdit && (
@@ -231,57 +245,70 @@ export default function SectionRow({
           )} */}
             </div>
           </ContextMenuTrigger>
-          <ContextMenuContent className="">
-            <ContextMenuItem
-              onClick={() => {
-                setEditValue(thisBoardSection.section.title ?? "");
-                console.log("hey");
-                setTimeout(() => {
-                  setIsEditing(true);
-                }, 100);
-              }}
-            >
-              Rename
-            </ContextMenuItem>
-            <ContextMenuSub>
-              <ContextMenuSubTrigger>Add Block</ContextMenuSubTrigger>
-              <ContextMenuSubContent>
-                <ContextMenuItem onClick={() => triggerImagePicker()}>
-                  Image
-                </ContextMenuItem>
-                <ContextMenuItem
-                  onClick={() =>
-                    createTextBlock(thisBoardSection.section.section_id)
-                  }
-                >
-                  Text
-                </ContextMenuItem>
-              </ContextMenuSubContent>
-            </ContextMenuSub>
-            <ContextMenuItem
-              disabled={thisBoardSection.order_index === 0}
-              onClick={() => handleMoveSection("up")}
-            >
-              Move Up
-            </ContextMenuItem>
-            <ContextMenuItem
-              disabled={
-                thisBoardSection.order_index === allBoardSections.length - 1
-              }
-              onClick={() => handleMoveSection("down")}
-            >
-              Move Down
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem
-              onClick={() => {
-                setPendingDelete(true);
-              }}
-              variant={"destructive"}
-            >
-              {isLinked ? "Unlink Section" : "Delete Section"}
-            </ContextMenuItem>
-          </ContextMenuContent>
+
+          {canBoardEdit && (
+            <ContextMenuContent className="">
+              {canSectionEdit && (
+                <>
+                  <ContextMenuItem
+                    onClick={() => {
+                      setEditValue(thisBoardSection.section.title ?? "");
+                      console.log("hey");
+                      setTimeout(() => {
+                        setIsEditing(true);
+                      }, 100);
+                    }}
+                  >
+                    Rename
+                  </ContextMenuItem>
+                  <ContextMenuSub>
+                    <ContextMenuSubTrigger>Add Block</ContextMenuSubTrigger>
+                    <ContextMenuSubContent>
+                      <ContextMenuItem onClick={() => triggerImagePicker()}>
+                        Image
+                      </ContextMenuItem>
+                      <ContextMenuItem
+                        onClick={() =>
+                          createTextBlock(thisBoardSection.section.section_id)
+                        }
+                      >
+                        Text
+                      </ContextMenuItem>
+                    </ContextMenuSubContent>
+                  </ContextMenuSub>
+                </>
+              )}
+
+              <ContextMenuItem
+                disabled={thisBoardSection.order_index === 0}
+                onClick={() => handleMoveSection("up")}
+              >
+                Move Up
+              </ContextMenuItem>
+              <ContextMenuItem
+                disabled={
+                  thisBoardSection.order_index === allBoardSections.length - 1
+                }
+                onClick={() => handleMoveSection("down")}
+              >
+                Move Down
+              </ContextMenuItem>
+
+              {canSectionEdit && (
+                <>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem
+                    onClick={() => {
+                      setPendingDelete(true);
+                    }}
+                    variant={"destructive"}
+                  >
+                    {isLinked ? "Unlink Section" : "Delete Section"}
+                  </ContextMenuItem>
+                </>
+              )}
+            </ContextMenuContent>
+          )}
         </ContextMenu>
       </DroppableForImages>
     </>

@@ -200,30 +200,34 @@ function BlockComponent({
         <ContextMenuItem onClick={() => deselectBlocks()}>
           Deselect
         </ContextMenuItem>
-        <ContextMenuSeparator />
 
-        <ContextMenuItem
-          onClick={() => {
-            // default to deleting the current block
-            let blocksToDelete = [block];
+        {canEdit && (
+          <>
+            <ContextMenuSeparator />
+            <ContextMenuItem
+              onClick={() => {
+                // default to deleting the current block
+                let blocksToDelete = [block];
 
-            const selectedBlockIds = Object.keys(selectedBlocks);
+                const selectedBlockIds = Object.keys(selectedBlocks);
 
-            // but if there are multiple selected and current block is in there, then delete all
-            if (selectedBlockIds.length > 1 && currentBlockSelected) {
-              blocksToDelete = Object.values(selectedBlocks);
-            }
+                // but if there are multiple selected and current block is in there, then delete all
+                if (selectedBlockIds.length > 1 && currentBlockSelected) {
+                  blocksToDelete = Object.values(selectedBlocks);
+                }
 
-            deleteBlocksWithUndo(blocksToDelete);
-          }}
-          variant="destructive"
-        >
-          Delete{" "}
-          {currentBlockSelected &&
-            selectedBlocksLength !== 1 &&
-            selectedBlocksLength}
-          <ContextMenuShortcut>Del</ContextMenuShortcut>
-        </ContextMenuItem>
+                deleteBlocksWithUndo(blocksToDelete);
+              }}
+              variant="destructive"
+            >
+              Delete{" "}
+              {currentBlockSelected &&
+                selectedBlocksLength !== 1 &&
+                selectedBlocksLength}
+              <ContextMenuShortcut>Del</ContextMenuShortcut>
+            </ContextMenuItem>
+          </>
+        )}
       </ContextMenuContent>
     </ContextMenu>
   );
