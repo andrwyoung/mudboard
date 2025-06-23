@@ -6,12 +6,11 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function updateSectionTitle(
   sectionId: string,
-  newTitle: string | null
+  newTitle: string | null,
+  canEdit: boolean
 ) {
-  const canWrite = canEditBoard();
-
-  if (!canWrite) {
-    console.warn("Not syncing section title");
+  if (!canEdit) {
+    console.warn("This should not fire. Blocking section swap");
     return;
   }
 

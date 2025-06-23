@@ -29,7 +29,9 @@ export default function SectionColumnSelector({
         <FaSave
           className="text-primary cursor-pointer hover:text-accent transition-all duration-200"
           title="Save Number of Columns"
-          onClick={() => updateSectionColumnNum(sectionId, visualColumnNum)}
+          onClick={() =>
+            updateSectionColumnNum(sectionId, visualColumnNum, canEdit)
+          }
         />
       )}
       <Select

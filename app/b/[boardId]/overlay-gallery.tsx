@@ -18,6 +18,7 @@ import { usePanImage } from "@/hooks/overlay-gallery.tsx/use-pan-image";
 import { useGetInitialSizeOnLayout } from "@/hooks/overlay-gallery.tsx/use-get-initial-size";
 import { updateGreyscaleSupabase } from "@/lib/db-actions/block-editing.tsx/update-greyscale";
 import { updateFlippedSupabase } from "@/lib/db-actions/block-editing.tsx/update-flip";
+import { canEditSection } from "@/lib/auth/can-edit-section";
 
 type OverlayModes = "drag" | "eyedropper";
 
@@ -91,6 +92,10 @@ export default function OverlayGallery({
   );
   const getBlockPosition = useLayoutStore((s) => s.getBlockPosition);
   const boardSections = useMetadataStore((s) => s.boardSections);
+  const section = boardSections.find(
+    (s) => s.section.section_id === selectedBlock.section_id
+  )?.section;
+  const canSectionEdit = section ? canEditSection(section) : false;
 
   // debug info
   useEffect(() => {
@@ -394,7 +399,11 @@ export default function OverlayGallery({
             setIsGreyscale(() => {
               return newValue;
             });
-            updateGreyscaleSupabase(selectedBlock.block_id, newValue);
+            updateGreyscaleSupabase(
+              selectedBlock.block_id,
+              newValue,
+              canSectionEdit
+            );
             setVisualOverride(selectedBlock.block_id, {
               is_greyscale: newValue,
             });
@@ -419,7 +428,11 @@ export default function OverlayGallery({
             setIsFlipped(() => {
               return newValue;
             });
-            updateFlippedSupabase(selectedBlock.block_id, newValue);
+            updateFlippedSupabase(
+              selectedBlock.block_id,
+              newValue,
+              canSectionEdit
+            );
             setVisualOverride(selectedBlock.block_id, {
               is_flipped: newValue,
             });

@@ -2,18 +2,16 @@
 
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { useLayoutStore } from "@/store/layout-store";
 import { toast } from "sonner";
 
 export async function updateSectionColumnNum(
   sectionId: string,
-  newColumnNum: number
+  newColumnNum: number,
+  canEdit: boolean
 ) {
-  const canWrite = canEditBoard();
-
-  if (!canWrite) {
-    console.warn("Not syncing section column number");
+  if (!canEdit) {
+    console.warn("This should never fire. Blocking Column change");
     return;
   }
 

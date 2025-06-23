@@ -104,7 +104,11 @@ export default function SectionRow({
       return;
     }
 
-    updateSectionTitle(thisBoardSection.section.section_id, editValue);
+    updateSectionTitle(
+      thisBoardSection.section.section_id,
+      editValue,
+      canSectionEdit
+    );
     setIsEditing(false);
   }
 
@@ -253,7 +257,6 @@ export default function SectionRow({
                   <ContextMenuItem
                     onClick={() => {
                       setEditValue(thisBoardSection.section.title ?? "");
-                      console.log("hey");
                       setTimeout(() => {
                         setIsEditing(true);
                       }, 100);

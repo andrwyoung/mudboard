@@ -1,6 +1,6 @@
 import { useMetadataStore } from "@/store/metadata-store";
 import { canEditBoard } from "../auth/can-edit-board";
-import { createSupabaseSection } from "../db-actions/create-new-section";
+import { createSupabaseBoardSection } from "../db-actions/create-new-section";
 import { initializeSectionColumns } from "../columns/new-section-columns";
 import { toast } from "sonner";
 
@@ -22,7 +22,7 @@ export async function addNewSection({
   const user = useMetadataStore.getState().user;
 
   // create one in the database
-  const newBoardSection = await createSupabaseSection({
+  const newBoardSection = await createSupabaseBoardSection({
     board_id,
     title,
     order_index,

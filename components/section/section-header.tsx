@@ -48,7 +48,7 @@ export default function SectionHeader({
             autofocus={isEditing}
             placeholder="Add title"
             onChange={(newTitle) => {
-              updateSectionTitle(section.section_id, newTitle);
+              updateSectionTitle(section.section_id, newTitle, canEdit);
             }}
             className="text-lg sm:text-xl md:text-2xl text-left"
           />

@@ -1,13 +1,14 @@
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { supabase } from "@/utils/supabase";
 
 export async function updateFlippedSupabase(
   blockId: string,
-  isFlipped: boolean
+  isFlipped: boolean,
+  canEdit: boolean
 ) {
-  const canWrite = canEditBoard();
-  if (!canWrite) {
-    console.warn("No write access: not persisting flip to db");
+  if (!canEdit) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("No write access: not persisting flip to db");
+    }
     return;
   }
 

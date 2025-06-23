@@ -5,7 +5,7 @@
 
 import { supabase } from "@/utils/supabase";
 import { Tables } from "@/types/supabase";
-import { createSupabaseSection } from "./create-new-section";
+import { createSupabaseBoardSection } from "./create-new-section";
 import { initializeSectionColumns } from "../columns/new-section-columns";
 import { DEFAULT_COLUMNS } from "@/types/constants";
 
@@ -44,7 +44,7 @@ export async function createNewBoard({
   // by default we make a new empty section, but we can disable for cloning
   if (initializeSection) {
     // always make a new section if we make a board
-    const newBoardSection = await createSupabaseSection({
+    const newBoardSection = await createSupabaseBoardSection({
       board_id: boardData.board_id,
       order_index: 0,
       claimedBy: claimedBy,

@@ -1,13 +1,14 @@
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { supabase } from "@/utils/supabase";
 
 export async function updateGreyscaleSupabase(
   blockId: string,
-  isGreyscale: boolean
+  isGreyscale: boolean,
+  canEdit: boolean
 ) {
-  const canWrite = canEditBoard();
-  if (!canWrite) {
-    console.warn("No write access: not persisting greyscale to db");
+  if (!canEdit) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("No write access: not persisting greyscale to db");
+    }
     return;
   }
 

@@ -24,7 +24,7 @@ export async function claimBoard() {
     .from("boards")
     .update({ user_id: user.id, access_level: "private" })
     .eq("board_id", board.board_id)
-    .is("user_id", null)
+    .is("user_id", null) // IMPORTANT. should never be true, but good to guard
     .select();
 
   if (claimError || !data?.length) {

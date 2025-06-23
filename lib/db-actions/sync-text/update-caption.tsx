@@ -3,16 +3,14 @@
 import { supabase } from "@/utils/supabase";
 import { useLayoutStore } from "@/store/layout-store";
 import { Block } from "@/types/block-types";
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function updateImageBlockCaption(
   block: Block,
-  newCaption: string | null
+  newCaption: string | null,
+  canEdit: boolean
 ) {
-  const canWrite = canEditBoard();
-
-  if (!canWrite) {
-    console.warn("Not syncing block caption");
+  if (!canEdit) {
+    console.error("This should not fire. Blocking caption edit");
     return;
   }
 

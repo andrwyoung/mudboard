@@ -96,7 +96,7 @@ export async function fetchSupabaseBlocks(
             blurhash: image.blurhash ?? undefined,
 
             // defined by me
-            fileName: `${SUPABASE_OBJECT_URL}/${image.image_id}/thumb.${image.file_ext}`,
+            fileName: `${SUPABASE_OBJECT_URL}/${image.image_id}/medium.${image.file_ext}`,
             fileType: "database",
           },
         };

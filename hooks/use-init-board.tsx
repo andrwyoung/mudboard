@@ -5,7 +5,7 @@
 // 3: grab all the blocks
 // 4: shove blocks into their sections/columns
 
-import { createSupabaseSection } from "@/lib/db-actions/create-new-section";
+import { createSupabaseBoardSection } from "@/lib/db-actions/create-new-section";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import { fetchSupabaseBoard } from "@/lib/db-actions/fetch-db-board";
 import { fetchSupabaseSections } from "@/lib/db-actions/fetch-db-sections";
@@ -91,7 +91,7 @@ export function useInitBoard(
           console.error("ERROR: No sections, creating one");
           const user = useMetadataStore.getState().user;
 
-          const fallback = await createSupabaseSection({
+          const fallback = await createSupabaseBoardSection({
             board_id: boardId,
             order_index: 0,
             claimedBy: user?.id ?? null,

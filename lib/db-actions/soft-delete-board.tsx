@@ -7,7 +7,7 @@ export async function softDeleteBoard(boardId: string, userId: string) {
     .from("boards")
     .update({ deleted: true, deleted_at: new Date().toISOString() })
     .eq("board_id", boardId)
-    .eq("user_id", userId);
+    .eq("user_id", userId); // you can only delete your own board
 
   if (error) {
     console.error("Failed to delete board:", error.message);

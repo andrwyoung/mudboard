@@ -9,7 +9,7 @@ import { DEFAULT_SECTION_NAME } from "@/types/constants";
 import { useLayoutStore } from "@/store/layout-store";
 import { reindexSections } from "./reindex-sections";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
-import { createSupabaseSection } from "./create-new-section";
+import { createSupabaseBoardSection } from "./create-new-section";
 import { SoftDeleteSections } from "./soft-delete-section";
 
 export async function softDeleteBoardSection(
@@ -80,7 +80,7 @@ export async function softDeleteBoardSection(
   const user = useMetadataStore.getState().user;
   if (allBoardSections.length <= 0) {
     console.log("Last section, creating new one");
-    const fallback = await createSupabaseSection({
+    const fallback = await createSupabaseBoardSection({
       board_id: boardId,
       order_index: 0,
       claimedBy: user?.id ?? null,

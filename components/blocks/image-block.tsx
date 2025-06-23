@@ -215,7 +215,7 @@ export function ImageBlock({
                       e.currentTarget.blur();
                     } else if (e.key === "Enter") {
                       if (captionDraft !== caption) {
-                        updateImageBlockCaption(block, captionDraft);
+                        updateImageBlockCaption(block, captionDraft, canEdit);
                       }
                       e.preventDefault();
                       e.currentTarget.blur();

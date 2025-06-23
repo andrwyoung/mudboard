@@ -11,7 +11,7 @@ import { BoardSection } from "@/types/board-types";
 import { TablesInsert } from "@/types/supabase";
 import { DEFAULT_COLUMNS } from "@/types/constants";
 
-export async function createSupabaseSection({
+export async function createSupabaseBoardSection({
   board_id,
   title,
   order_index,

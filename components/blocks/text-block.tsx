@@ -20,7 +20,7 @@ export default function TextBlock({
       <InlineEditTextarea
         value={textData?.text ?? null}
         onChange={(newTitle) => {
-          updateTextBlockText(block, newTitle);
+          updateTextBlockText(block, newTitle, canEdit);
         }}
         isEditable={canEdit}
         unnamedPlaceholder="Double Click to add Text!"

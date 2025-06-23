@@ -80,12 +80,11 @@ export async function createTextBlock(
 
 export async function updateTextBlockText(
   block: Block,
-  newText: string | null
+  newText: string | null,
+  canEdit: boolean
 ) {
-  const canWrite = canEditBoard();
-
-  if (!canWrite) {
-    console.warn("Not syncing text block text");
+  if (!canEdit) {
+    console.error("This should not fire. Blocking text edit");
     return;
   }
 
