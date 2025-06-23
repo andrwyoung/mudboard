@@ -1,5 +1,4 @@
 import { supabase } from "@/utils/supabase";
-import { Block } from "@/types/block-types";
 import { TablesInsert } from "@/types/supabase";
 
 export async function cloneBlocksFromSections(
@@ -15,17 +14,16 @@ export async function cloneBlocksFromSections(
     .eq("deleted", false);
 
   if (blockErr) throw blockErr;
-  const blocks = blockData as Block[];
 
   // build blocks to insert
-  const newBlocks: TablesInsert<"blocks">[] = blocks.map((block) => ({
+  const newBlocks: TablesInsert<"blocks">[] = blockData.map((block) => ({
     block_type: block.block_type,
     image_id: block.image_id,
     data: block.data,
 
-    col_index: block.saved_col_index,
-    row_index: block.saved_row_index,
-    order_index: block.saved_order_index,
+    col_index: block.col_index,
+    row_index: block.row_index,
+    order_index: block.order_index,
 
     height: block.height,
     width: block.width,
