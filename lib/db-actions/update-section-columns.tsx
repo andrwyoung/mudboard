@@ -32,7 +32,7 @@ export async function updateSectionColumnNum(
   await useLayoutStore.getState().syncLayout();
 
   // // STEP 3: regenerate the real columns
-  useLayoutStore.getState().regenerateSectionColumns(sectionId);
+  // useLayoutStore.getState().regenerateSectionColumns(sectionId);
 
   // STEP 2: save the column number
   await supabase

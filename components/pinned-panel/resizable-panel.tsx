@@ -1,4 +1,3 @@
-// components/pinned-panel/resizable-panel.tsx
 "use client";
 
 import { useLoadingStore } from "@/store/loading-store";
@@ -10,11 +9,13 @@ export default function ResizablePinnedPanel({
   minWidth = 240,
   maxWidth = 6000,
   children,
+  dndId = "__undefined__",
 }: {
   initialWidth?: number;
   minWidth?: number;
   maxWidth?: number;
   children: React.ReactNode;
+  dndId?: string;
 }) {
   const [width, setWidth] = useState(initialWidth);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -26,7 +27,7 @@ export default function ResizablePinnedPanel({
   const startWidth = useRef(0);
 
   const { setNodeRef, isOver } = useDroppable({
-    id: "pinned-panel-dropzone",
+    id: dndId,
   });
 
   useEffect(() => {

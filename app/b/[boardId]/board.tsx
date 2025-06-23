@@ -347,6 +347,7 @@ export default function Board({ boardId }: { boardId: string }) {
                 <ResizablePinnedPanel
                   initialWidth={windowWidth * 0.4}
                   maxWidth={Math.max(240, windowWidth - sidebarWidth - 600)}
+                  dndId="pinned-panel-dropzone"
                 >
                   <PinnedPanel />
                 </ResizablePinnedPanel>

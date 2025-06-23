@@ -10,13 +10,17 @@ export function DroppablePanel({
   id: string;
   children: React.ReactNode;
 }) {
-  const { setNodeRef, isOver } = useDroppable({ id });
+  const { setNodeRef, isOver } = useDroppable({
+    id: "pinned-panel-dropzone",
+  });
 
   return (
     <div
       ref={setNodeRef}
       data-id={id}
-      className={`flex ${isOver ? "bg-accent/40 border-accent" : ""}`}
+      className={`absolute inset-0 z-100 opacity-50  ${
+        isOver ? "bg-accent" : "hidden"
+      } `}
     >
       {children}
     </div>
