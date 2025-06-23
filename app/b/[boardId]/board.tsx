@@ -46,7 +46,7 @@ import { useLoadingStore } from "@/store/loading-store";
 import { useSelectionStore } from "@/store/selection-store";
 import Canvas from "./canvas";
 import { useInitBoard } from "@/hooks/use-init-board";
-import { useBoardListeners } from "@/hooks/gallery/use-global-listeners";
+import { useGlobalListeners } from "@/hooks/gallery/use-global-listeners";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
 import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
@@ -190,7 +190,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
   //
   // keyboard listeners
-  useBoardListeners();
+  useGlobalListeners();
 
   // handling importing images
   const onlyOneSectionMode = boardSections.length === 1;

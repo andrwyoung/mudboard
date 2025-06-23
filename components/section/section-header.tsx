@@ -9,7 +9,6 @@ import {
 } from "@/lib/db-actions/sync-text/update-section-text";
 import { useLoadingStore } from "@/store/loading-store";
 import { useImagePicker } from "@/hooks/use-image-picker";
-import { canEditBoard } from "@/lib/auth/can-edit-board";
 import InlineEditTextarea from "../ui/inline-textarea";
 import { useLayoutStore } from "@/store/layout-store";
 import { useUIStore } from "@/store/ui-store";
@@ -17,6 +16,7 @@ import SectionDownloadButton from "./section-icons.tsx/download-button";
 import SectionAddImageButton from "./section-icons.tsx/add-image-button";
 import SectionColumnSelector from "./section-icons.tsx/change-columns-select";
 import SectionShareDialog from "./section-icons.tsx/section-share-options";
+import { useCanEditSection } from "@/lib/auth/can-edit-section";
 
 export default function SectionHeader({ section }: { section: Section }) {
   const title = section?.title;
@@ -25,7 +25,7 @@ export default function SectionHeader({ section }: { section: Section }) {
     useLoadingStore.getState().editingSectionId === section.section_id;
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
-  const canEdit = canEditBoard();
+  const canEdit = useCanEditSection(section);
 
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const mirrorMode = useUIStore((s) => s.mirrorMode);

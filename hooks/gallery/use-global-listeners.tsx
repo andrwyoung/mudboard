@@ -8,7 +8,7 @@ import { useGetScope } from "../use-get-scope";
 import { useUndoStore } from "@/store/undo-store";
 import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
 
-export function useBoardListeners() {
+export function useGlobalListeners() {
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
