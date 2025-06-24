@@ -4,12 +4,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CollapseArrow } from "../ui/sidebar/collapse-arrow";
-import { FaImage } from "react-icons/fa6";
-import { usePinnedStore } from "@/store/use-pinned-store";
+import { FaImage, FaLeaf } from "react-icons/fa6";
+import { usePanelStore } from "@/store/panel-store";
+import { FaWindowClose } from "react-icons/fa";
+
+const iconClassname =
+  "hover:text-accent hover:scale-110 transition-all duration-200 text-white";
 
 export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
-  const togglePinnedView = usePinnedStore((s) => s.toggleOpen);
-  const pinnedViewOpen = usePinnedStore((s) => s.isOpen);
+  const panelMode = usePanelStore((s) => s.panelMode);
+  const setPanelMode = usePanelStore((s) => s.setPanelMode);
 
   return (
     <div className="h-full flex flex-col items-center justify-start pt-2 gap-4">
@@ -35,17 +39,38 @@ export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
         />
       </button> */}
 
-      <button
-        type="button"
-        className="flex items-center gap-1 cursor-pointer group"
-        onClick={togglePinnedView}
-        title="Toggle Expanded Image"
-      >
-        <FaImage
-          className={`hover:text-accent hover:scale-110 transition-all duration-200 
-            size-5 ${pinnedViewOpen ? "text-accent" : "text-white"}`}
-        />
-      </button>
+      {panelMode === "none" && (
+        <button
+          type="button"
+          className="cursor-pointer"
+          onClick={() => setPanelMode("focus")}
+          title="Toggle to Focus Mode"
+        >
+          <FaImage className={`size-5 ${iconClassname}`} />
+        </button>
+      )}
+
+      {panelMode === "focus" && (
+        <button
+          type="button"
+          className="cursor-pointer"
+          onClick={() => setPanelMode("explore")}
+          title="Toggle to Explore Mode"
+        >
+          <FaLeaf className={`size-5 ${iconClassname}`} />
+        </button>
+      )}
+
+      {panelMode === "explore" && (
+        <button
+          type="button"
+          className="cursor-pointer"
+          onClick={() => setPanelMode("none")}
+          title="Close Side Panel"
+        >
+          <FaWindowClose className={`size-5 ${iconClassname}`} />
+        </button>
+      )}
     </div>
   );
 }

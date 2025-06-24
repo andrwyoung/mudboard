@@ -9,7 +9,7 @@ import { BoardSection, SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { handleSectionDrop } from "@/lib/drag-handling/handle-section-drop";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
-import { usePinnedStore } from "@/store/use-pinned-store";
+import { usePanelStore } from "@/store/panel-store";
 
 export function getMovingItem(
   activeId: string,
@@ -223,7 +223,7 @@ export function useGalleryHandlers({
         over?.id === "pinned-panel-dropzone" &&
         activeBlocksWithPos[0].block.block_type === "image"
       ) {
-        usePinnedStore.setState({ pinnedBlock: activeBlocksWithPos[0].block });
+        usePanelStore.setState({ pinnedBlock: activeBlocksWithPos[0].block });
       }
 
       const unscopedDropId = String(dropIndicatorId).split("::")[1] ?? "";

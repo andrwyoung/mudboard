@@ -1,42 +1,83 @@
-import { useSidebarStore } from "@/store/sidebar-store";
-import { usePinnedStore } from "@/store/use-pinned-store";
+import { PanelMode, usePanelStore } from "@/store/panel-store";
 import { FaImage } from "react-icons/fa";
+import { FaLeaf } from "react-icons/fa6";
 
-export function PinnedModeToggle({ showText = true }: { showText?: boolean }) {
-  const pinnedViewOpen = usePinnedStore((s) => s.isOpen);
-  const setPinnedViewOpen = usePinnedStore((s) => s.setIsOpen);
-  const setPinnedBlock = usePinnedStore((s) => s.setPinnedBlock);
+export function PanelToggleButton({
+  mode,
+  icon,
+  label,
+  title,
+}: {
+  mode: PanelMode;
+  icon: React.ReactNode;
+  label: string;
+  title?: string;
+}) {
+  const panelMode = usePanelStore((s) => s.panelMode);
+  const setPanelMode = usePanelStore((s) => s.setPanelMode);
 
-  const isSidebarCollapsed = useSidebarStore((s) => s.isCollapsed);
-  const setSidebarCollapsed = useSidebarStore((s) => s.setIsCollapsed);
-
-  const handleToggleFocusView = () => {
-    if (pinnedViewOpen) {
-      // Exiting Focus View — close and clear pinned image
-      setPinnedViewOpen(false);
-      setPinnedBlock(null);
-    } else {
-      // Entering Focus View — open and collapse sidebar if not already
-      setPinnedViewOpen(true);
-      if (!isSidebarCollapsed) {
-        setSidebarCollapsed(true);
-      }
-    }
-  };
+  const isActive = panelMode === mode;
 
   return (
     <button
       type="button"
-      className={`flex items-center gap-2 cursor-pointer group transition-all duration-300 
-        ${pinnedViewOpen ? "text-accent" : "text-white hover:text-accent"}`}
-      onClick={handleToggleFocusView}
+      className={`flex items-center gap-4 cursor-pointer group transition-all duration-300 px-2 rounded-sm
+        py-0.5 ${
+          isActive ? "bg-accent text-primary" : "text-white hover:text-accent"
+        }`}
+      onClick={() => {
+        setPanelMode(isActive ? "none" : mode);
+      }}
+      title={title}
     >
-      <FaImage className="" />
-      {showText && (
-        <h3 className={`group-hover:underline`} title="Toggle Focus View">
-          Spotlight View
-        </h3>
-      )}
+      {icon}
+      <span className="group-hover:underline font-header">{label}</span>
     </button>
+  );
+}
+
+export function PinnedModeToggle({ showText = true }: { showText?: boolean }) {
+  const panelMode = usePanelStore((s) => s.panelMode);
+  const setPanelMode = usePanelStore((s) => s.setPanelMode);
+
+  return (
+    <div className="flex flex-col mb-2">
+      <div className="flex justify-between items-center">
+        <h3 className="text-sm font-semibold">Side panel:</h3>
+        {
+          <button
+            type="button"
+            className={`text-sm  hover:text-accent hover:underline font-semibold
+          transition-all duration-200 ${
+            panelMode === "none"
+              ? "opacity-0"
+              : "opacity-75 hover:opacity-100 cursor-pointer"
+          }
+          `}
+            onClick={() => setPanelMode("none")}
+          >
+            Close
+          </button>
+        }
+      </div>
+      <div className="flex flex-col my-1 ">
+        {showText && (
+          <>
+            <PanelToggleButton
+              mode="focus"
+              icon={<FaImage />}
+              label="Spotlight"
+              title="Toggle Focus View"
+            />
+            <PanelToggleButton
+              mode="explore"
+              icon={<FaLeaf />}
+              label="Explore"
+              title="Toggle Explore View"
+            />
+          </>
+        )}
+      </div>
+    </div>
   );
 }

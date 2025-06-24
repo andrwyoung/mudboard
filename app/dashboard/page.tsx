@@ -7,7 +7,6 @@ import Logo from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Board } from "@/types/board-types";
-import { getUserBoards } from "@/lib/db-actions/user/get-user-boards";
 import { useMetadataStore } from "@/store/metadata-store";
 import Link from "next/link";
 import { DEFAULT_BOARD_TITLE, NEW_BOARD_LINK } from "@/types/constants";
@@ -28,16 +27,14 @@ import {
 } from "@/types/constants/error-message";
 import BoardCard from "./dashboard-card";
 import { softDeleteBoard } from "@/lib/db-actions/soft-delete-board";
+import { BoardWithStats } from "@/types/stat-types";
+import { getUserBoardsWithStats } from "@/lib/db-actions/explore/get-user-board-with-stats";
 
 type DashboardMode = "board" | "sections";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [userBoards, setUserBoards] = useState<Board[]>([]);
-  const [boardCounts, setBoardCounts] = useState<
-    Record<string, { sectionCount: number; blockCount: number }>
-  >({});
-  console.log(boardCounts);
+  const [userBoards, setUserBoards] = useState<BoardWithStats[]>([]);
   const user = useMetadataStore((s) => s.user);
   const [boardToDelete, setBoardToDelete] = useState<Board | null>(null);
   const [dashboardMode, setDashboardMode] = useState<DashboardMode>("board");
@@ -52,35 +49,8 @@ export default function DashboardPage() {
       if (!user) return;
 
       // Step 1: Get user boards
-      const boards = await getUserBoards(user.id);
-      const boardIds = boards.map((b) => b.board_id);
-
-      // Step 2: Fetch board stats in one query
-      const { data: stats, error } = await supabase
-        .from("board_stats")
-        .select("board_id, section_count, block_count")
-        .in("board_id", boardIds);
-
-      if (error) {
-        console.error("Error fetching board stats:", error);
-        return;
-      }
-
-      // Step 3: Convert to map for fast access
-      const counts: Record<
-        string,
-        { sectionCount: number; blockCount: number }
-      > = {};
-      stats?.forEach((s) => {
-        counts[s.board_id] = {
-          sectionCount: s.section_count ?? 0,
-          blockCount: s.block_count ?? 0,
-        };
-      });
-
-      // Step 4: Set state
+      const boards = await getUserBoardsWithStats(user.id);
       setUserBoards(boards);
-      setBoardCounts(counts);
     }
 
     initBoards();
@@ -229,12 +199,6 @@ export default function DashboardPage() {
                 <BoardCard
                   key={board.board_id}
                   board={board}
-                  counts={
-                    boardCounts[board.board_id] ?? {
-                      sectionCount: 0,
-                      blockCount: 0,
-                    }
-                  }
                   onDelete={() => setBoardToDelete(board)}
                 />
               ))}

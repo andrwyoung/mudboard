@@ -19,7 +19,7 @@ import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-colum
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { VisualOverride } from "@/types/block-types";
-import { usePinnedStore } from "@/store/use-pinned-store";
+import { usePanelStore } from "@/store/panel-store";
 import { MOBILE_BREAKPOINT, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 
 export function useInitBoard(
@@ -39,7 +39,7 @@ export function useInitBoard(
   );
 
   const setBoardInitialized = useLoadingStore((s) => s.setBoardInitialized);
-  const resetPinnedView = usePinnedStore((s) => s.reset);
+  const resetPinnedView = usePanelStore((s) => s.reset);
 
   useEffect(() => {
     async function loadImages() {

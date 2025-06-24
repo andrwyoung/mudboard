@@ -1,16 +1,15 @@
 import InfoTooltip from "../ui/info-tooltip";
 import { MudboardImage } from "@/types/block-types";
 import PinnedImageViewer from "./pinned-image";
-import { usePinnedStore } from "@/store/use-pinned-store";
+import { usePanelStore } from "@/store/panel-store";
 import { useRef, useState } from "react";
 import { useGetInitialSizeOnLayout } from "@/hooks/overlay-gallery.tsx/use-get-initial-size";
 import { FaXmark } from "react-icons/fa6";
 
 export default function PinnedPanel() {
-  const pinnedBlock = usePinnedStore((s) => s.pinnedBlock);
+  const pinnedBlock = usePanelStore((s) => s.pinnedBlock);
 
-  const setPinnedPanelOpen = usePinnedStore((s) => s.setIsOpen);
-  const setPinnedBlock = usePinnedStore((s) => s.setPinnedBlock);
+  const closePanel = usePanelStore((s) => s.closePanel);
 
   const image = pinnedBlock?.data as MudboardImage;
 
@@ -30,7 +29,7 @@ export default function PinnedPanel() {
           Focus View
         </h1>
         <InfoTooltip
-          text="Focused view for exploring details. Click to drag; scroll to zoom. Edits here don’t change the gallery. More tools coming soon."
+          text="Click to drag. scroll to zoom. Edits here don’t change the gallery. More tools coming soon."
           white
         />
       </div>
@@ -39,8 +38,7 @@ export default function PinnedPanel() {
         className={`absolute top-4 right-4  
          cursor-pointer text-lg z-100`}
         onClick={() => {
-          setPinnedBlock(null);
-          setPinnedPanelOpen(false);
+          closePanel();
         }}
       >
         <FaXmark />

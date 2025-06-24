@@ -2,12 +2,12 @@
 
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
-import { usePinnedStore } from "@/store/use-pinned-store";
+import { usePanelStore } from "@/store/panel-store";
 
 export function useResetState() {
   return () => {
     useLayoutStore.getState().clearAll();
     useMetadataStore.getState().clearAll();
-    usePinnedStore.getState().reset();
+    usePanelStore.getState().reset();
   };
 }

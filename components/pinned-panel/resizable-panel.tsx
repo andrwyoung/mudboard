@@ -9,7 +9,7 @@ export default function ResizablePinnedPanel({
   minWidth = 240,
   maxWidth = 6000,
   children,
-  dndId = "__undefined__",
+  dndId,
 }: {
   initialWidth?: number;
   minWidth?: number;
@@ -27,7 +27,7 @@ export default function ResizablePinnedPanel({
   const startWidth = useRef(0);
 
   const { setNodeRef, isOver } = useDroppable({
-    id: dndId,
+    id: dndId ?? "__undefined__",
   });
 
   useEffect(() => {
@@ -78,12 +78,15 @@ export default function ResizablePinnedPanel({
       className={`relative h-full `}
       style={{ width }}
     >
+      {/* Highlight when hovered over */}
+      {dndId && (
+        <div
+          className={`absolute inset-0 z-100 opacity-50  ${
+            isOver ? "bg-accent" : "hidden"
+          } `}
+        />
+      )}
       {/* Resizer sliver */}
-      <div
-        className={`absolute inset-0 z-100 opacity-50  ${
-          isOver ? "bg-accent" : "hidden"
-        } `}
-      />
       <div
         onMouseDown={startDragging}
         className={`absolute top-0 left-0 -translate-x-1/2 w-1.5 h-full 

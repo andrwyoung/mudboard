@@ -1,4 +1,3 @@
-import { Board } from "@/types/board-types";
 import Link from "next/link";
 import { FaTrashAlt } from "react-icons/fa";
 import Image from "next/image";
@@ -8,14 +7,13 @@ import { getThumbnailUrl } from "@/utils/get-thumbnail-url";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { THUMBNAIL_ASPECT_MAP } from "@/types/upload-settings";
+import { BoardWithStats } from "@/types/stat-types";
 
 export default function BoardCard({
   board,
-  counts,
   onDelete,
 }: {
-  board: Board;
-  counts: { sectionCount: number; blockCount: number };
+  board: BoardWithStats;
   onDelete: () => void;
 }) {
   const [fallback, setFallback] = useState(false);
@@ -55,7 +53,7 @@ export default function BoardCard({
             {board.title ?? "Untitled Board"}
           </Link>
           <p className="text-xs text-primary font-bold">
-            {counts.sectionCount ?? 0} sections • {counts.blockCount ?? 0}{" "}
+            {board.section_count ?? 0} sections • {board.block_count ?? 0}{" "}
             blocks
           </p>
         </div>

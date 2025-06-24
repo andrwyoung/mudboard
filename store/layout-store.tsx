@@ -2,6 +2,9 @@
 // positions and syncing
 // it's basically the master file for how we are keeping the columns around
 
+// sectionColumns is our source of truth
+// we derive masterBlockOrder and positonedBlockMap from that to make it easier for us
+
 // board, sections and user info is kept in metadata-store.tsx
 
 import { create } from "zustand";
@@ -18,7 +21,7 @@ import { generateColumnsFromBlockLayout } from "@/lib/columns/generate-columns";
 
 type LayoutStore = {
   // SECTION 1
-  sectionColumns: SectionColumns;
+  sectionColumns: SectionColumns; // source of truth
   setSectionColumns: (cols: SectionColumns) => void;
   updateColumnsInASection: (
     sectionId: string,
@@ -39,8 +42,8 @@ type LayoutStore = {
 
   // SECTION 2
 
-  positionedBlockMap: Map<string, PositionedBlock>;
-  masterBlockOrder: PositionedBlock[];
+  positionedBlockMap: Map<string, PositionedBlock>; // derived position map
+  masterBlockOrder: PositionedBlock[]; // derived order
   regenerateOrderingInternally: () => void;
   regenerateOrder: (
     orderedSections: {
@@ -60,7 +63,7 @@ type LayoutStore = {
   setWindowWidth: (width: number) => void;
 
   // SECTION 4
-
+  // TODO: per section dirty tracking
   layoutDirty: boolean;
   setLayoutDirty: (d: boolean) => void;
 
@@ -70,8 +73,6 @@ type LayoutStore = {
 
 export const useLayoutStore = create<LayoutStore>()(
   subscribeWithSelector((set, get) => ({
-    // SECTION: the columns themselves
-
     sectionColumns: {},
     setSectionColumns: (cols: SectionColumns) => set({ sectionColumns: cols }),
     updateColumnsInASection: (sectionId, fn) => {

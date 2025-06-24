@@ -48,7 +48,7 @@ export default function Sidebar({
       </div>
 
       <div className="flex flex-col flex-grow justify-center gap-24">
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-14">
           <div className="px-4">
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
@@ -58,21 +58,22 @@ export default function Sidebar({
               {/* <MirrorModeToggle /> */}
               <PinnedModeToggle />
             </div>
-
-            {canEdit && (
-              <AccordianWrapper
-                title="Board Options"
-                titleClassName="font-header text-sm px-4"
-              >
-                <CustomizeSection />
-              </AccordianWrapper>
-            )}
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4 w-full px-8 pt-6">
+      <div className="flex flex-col gap-4 w-full px-4 pt-6">
         {boardInitialized && board && <ThumbnailGenerator board={board} />}
-        <AccountSyncSection />
+        {canEdit && (
+          <AccordianWrapper
+            title="Board Options"
+            titleClassName="font-header text-sm px-4"
+          >
+            <CustomizeSection />
+          </AccordianWrapper>
+        )}
+        <div className="px-4">
+          <AccountSyncSection />
+        </div>
       </div>
       <a
         className="flex flex-col items-center px-4 py-4 

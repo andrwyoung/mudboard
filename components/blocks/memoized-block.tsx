@@ -20,7 +20,7 @@ import { useIsMirror } from "@/app/b/[boardId]/board";
 import { downloadImagesAsZip } from "../download-images/zip-images";
 import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
 import { getImageUrl } from "@/utils/get-image-url";
-import { usePinnedStore } from "@/store/use-pinned-store";
+import { usePanelStore } from "@/store/panel-store";
 import { useLayoutStore } from "@/store/layout-store";
 
 export function BlockChooser({
@@ -81,8 +81,9 @@ function BlockComponent({
 
   const { openOverlay } = useOverlayStore(scope);
 
-  const setPinnedStoreOpen = usePinnedStore((s) => s.setIsOpen);
-  const setPinnedBlock = usePinnedStore((s) => s.setPinnedBlock);
+  const openPinnedPanelWithBlock = usePanelStore(
+    (s) => s.openPinnedPanelWithBlock
+  );
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
@@ -147,9 +148,7 @@ function BlockComponent({
                 // if (!pinnedStoreOpen) {
                 //   setSidebarCollapsed(true);
                 // }
-                setPinnedStoreOpen(true);
-
-                setPinnedBlock(block);
+                openPinnedPanelWithBlock(block);
               }}
             >
               View In Focus

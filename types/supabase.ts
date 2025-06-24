@@ -697,9 +697,13 @@ export type Database = {
           deleted: boolean | null
           deleted_at: string | null
           description: string | null
+          first_published_at: string | null
           fork_count: number | null
           forked_from: string | null
-          is_shared: boolean | null
+          is_forkable: boolean | null
+          is_linkable: boolean | null
+          is_on_marketplace: boolean | null
+          is_public: boolean | null
           OLD_board_id: string | null
           OLD_order_index: number | null
           owned_by: string | null

@@ -55,8 +55,7 @@ import { BoardSection, Section } from "@/types/board-types";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
 import PinnedPanel from "@/components/pinned-panel/pinned-panel";
-import { useSidebarStore } from "@/store/sidebar-store";
-import { usePinnedStore } from "@/store/use-pinned-store";
+import { usePanelStore } from "@/store/panel-store";
 import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
 
 // differentiating mirror gallery from real one
@@ -86,12 +85,13 @@ export default function Board({ boardId }: { boardId: string }) {
   const [draggedBlocks, setDraggedBlocks] = useState<Block[] | null>(null);
 
   // sidebar
-  const sidebarCollapsed = useSidebarStore((s) => s.isCollapsed);
-  const setSidebarCollapsed = useSidebarStore((s) => s.setIsCollapsed);
+
   const mirrorMode = useUIStore((s) => s.mirrorMode);
   const spacingSize = useUIStore((s) => s.spacingSize);
 
-  const pinnedMode = usePinnedStore((s) => s.isOpen);
+  const panelMode = usePanelStore((s) => s.panelMode);
+  const sidebarCollapsed = usePanelStore((s) => s.isCollapsed);
+  const setSidebarCollapsed = usePanelStore((s) => s.setIsCollapsed);
 
   // sections
   const boardSections = useMetadataStore((s) => s.boardSections);
@@ -343,13 +343,19 @@ export default function Board({ boardId }: { boardId: string }) {
               </div>
             )}
             <div className="hidden lg:flex  h-full">
-              {pinnedMode && windowWidth != 0 && (
+              {panelMode !== "none" && windowWidth != 0 && (
                 <ResizablePinnedPanel
                   initialWidth={windowWidth * 0.4}
                   maxWidth={Math.max(240, windowWidth - sidebarWidth - 600)}
                   dndId="pinned-panel-dropzone"
                 >
-                  <PinnedPanel />
+                  {panelMode === "focus" && <PinnedPanel />}
+                  {/* {panelMode === "explore" && <ExplorePanel />} */}
+                  {panelMode === "explore" && (
+                    <div className="h-full w-full font-header text-2xl text-primary flex items-center justify-center bg-primary/40">
+                      Panel Under Construction
+                    </div>
+                  )}
                 </ResizablePinnedPanel>
               )}
             </div>
