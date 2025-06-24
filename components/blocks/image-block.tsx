@@ -123,9 +123,9 @@ export function ImageBlock({
             }}
             className={`relative overflow-hidden`}
           >
-            {editActive && (
+            {editActive && canEdit && (
               <div
-                title={canEdit ? "Reset Visual Edits" : "Photo has some Edits"}
+                title={"Reset Visual Edits"}
                 className="absolute bg-accent border-2 hover:bg-secondary box-border
                 border-white/80 hover:boarder-secondary z-20 shadow-lg rounded-full cursor-pointer 
                 hover:scale-125 transition-all"

@@ -144,7 +144,9 @@ export default function Canvas({
                 const columns = sectionColumns[sectionId];
                 const isLinked = isLinkedSection(boardSection);
 
-                const canEdit = canEditBoard() && canEditSection(section);
+                const canBoardEdit = canEditBoard();
+                const canSectionEdit = canEditSection(section);
+                const canEdit = canBoardEdit && canSectionEdit;
 
                 return (
                   <div
@@ -154,7 +156,9 @@ export default function Canvas({
                       sectionRefs.current[key] = el;
                     }}
                     className={`relative  ${
-                      canEdit ? "" : "bg-primary/15 rounded-lg"
+                      canBoardEdit && !canSectionEdit
+                        ? "bg-primary/15 rounded-lg"
+                        : ""
                     } `}
                     onDragOver={() => {
                       if (isDraggingExtFile) {
@@ -162,23 +166,25 @@ export default function Canvas({
                       }
                     }}
                   >
-                    <DroppableGallerySection
-                      canEdit={canEdit}
-                      sectionId={section.section_id}
-                      isLinked={isLinked}
-                      isMirror={isMirror}
-                      isActive={
-                        draggedBlocks != null &&
-                        draggedBlocks != undefined &&
-                        draggedBlocks.length > MAX_DRAGGED_ITEMS
-                      }
-                      isExternalDrag={
-                        isDraggingExtFile &&
-                        extFileOverSection?.section.section_id ===
-                          section.section_id &&
-                        extFileOverSection.mirror === mirrorKey
-                      }
-                    />
+                    {canBoardEdit && (
+                      <DroppableGallerySection
+                        canEdit={canEdit}
+                        sectionId={section.section_id}
+                        isLinked={isLinked}
+                        isMirror={isMirror}
+                        isActive={
+                          draggedBlocks != null &&
+                          draggedBlocks != undefined &&
+                          draggedBlocks.length > MAX_DRAGGED_ITEMS
+                        }
+                        isExternalDrag={
+                          isDraggingExtFile &&
+                          extFileOverSection?.section.section_id ===
+                            section.section_id &&
+                          extFileOverSection.mirror === mirrorKey
+                        }
+                      />
+                    )}
                     <SectionHeader
                       section={sectionMap[sectionId].section}
                       canEdit={canEdit}

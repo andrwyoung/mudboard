@@ -117,7 +117,7 @@ export default function SectionRow({
       {fileInput}
 
       <DroppableForImages
-        canEdit={canSectionEdit}
+        canEdit={canSectionEdit && canBoardEdit}
         key={thisBoardSection.section.section_id}
         id={`section-${thisBoardSection.order_index}`}
         highlighted={highlighted}
