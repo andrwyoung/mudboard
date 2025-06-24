@@ -116,7 +116,11 @@ function BlockComponent({
         >
           <SortableBlock
             canEdit={canEdit}
-            id={`${scope}::block-${block.block_id}`}
+            id={
+              canEdit
+                ? `${scope}::block-${block.block_id}`
+                : `disabled::block-${block.block_id}`
+            }
             isMirror={isMirror}
             sectionId={block.section_id}
           >

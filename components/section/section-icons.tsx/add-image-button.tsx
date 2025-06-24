@@ -20,7 +20,7 @@ export default function SectionAddImageButton({
         onClick={triggerImagePicker}
         title="Add Image to Section"
       >
-        <FaPlus className="z-2 size-5 text-primary group-hover:text-accent transition-colors duration-300" />
+        <FaPlus className="z-2 size-5  group-hover:text-accent transition-colors duration-300" />
       </button>
     </div>
   );

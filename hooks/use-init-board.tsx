@@ -19,7 +19,6 @@ import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-colum
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { VisualOverride } from "@/types/block-types";
-import { usePanelStore } from "@/store/panel-store";
 import { MOBILE_BREAKPOINT, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 
 export function useInitBoard(
@@ -39,7 +38,6 @@ export function useInitBoard(
   );
 
   const setBoardInitialized = useLoadingStore((s) => s.setBoardInitialized);
-  const resetPinnedView = usePanelStore((s) => s.reset);
 
   useEffect(() => {
     async function loadImages() {
@@ -145,8 +143,6 @@ export function useInitBoard(
         setSectionColumns(initColumns);
         regenerateLayout();
         setBoardInitialized(true);
-
-        // now we genrate the initial layout
       } catch (err) {
         console.error("Error loading sections:", err);
         toast.error("Error loading data! Try reloading");

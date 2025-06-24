@@ -6,8 +6,10 @@ import { getMovingItem } from "@/hooks/gallery/use-drag-handlers";
 import { Block } from "@/types/block-types";
 import { SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
+import { cloneBlocks } from "../db-actions/cloning/clone-blocks";
+import { toastClonedBlocks } from "@/utils/toast-clone-blocks";
 
-export function handleBlockDrop({
+export async function handleBlockDrop({
   activeId,
   // activeBlocksWithPos,
   positionedBlockMap,
@@ -16,6 +18,7 @@ export function handleBlockDrop({
   insertIndex,
   toColumnIndex,
   toSectionId,
+  cloneBlock,
 }: {
   activeId: string;
   activeBlocksWithPos: PositionedBlock[];
@@ -27,6 +30,7 @@ export function handleBlockDrop({
   insertIndex: number;
   toColumnIndex: number;
   toSectionId: string;
+  cloneBlock: boolean;
 }) {
   console.log("toColumnIndex: ", toColumnIndex, " insertIndex: ", insertIndex);
 
@@ -50,6 +54,8 @@ export function handleBlockDrop({
   }
 
   if (fromSectionId === toSectionId) {
+    // note that we don't need to worry about clones yet (might implement later)
+
     updateSections({
       [fromSectionId]: (prev) => {
         const fromCol = [...prev[fromColumnIndex]];
@@ -83,27 +89,47 @@ export function handleBlockDrop({
       },
     });
   } else {
-    updateSections({
-      [fromSectionId]: (prev) => {
-        const cols = [...prev];
-        const fromCol = [...cols[fromColumnIndex]];
+    let finalItem = movingItem;
+    if (cloneBlock) {
+      const clonedBlockId = await cloneBlocks([finalItem], toSectionId);
 
-        fromCol.splice(movingItemIndex, 1);
-        cols[fromColumnIndex] = fromCol;
-        return cols;
-      },
+      finalItem = {
+        ...movingItem,
+        block_id: clonedBlockId[movingItem.block_id],
+      };
+    }
+
+    updateSections({
+      // STEP 1: remove from the current section
+      ...(cloneBlock
+        ? {} // skip removing from original section if we're cloning
+        : {
+            [fromSectionId]: (prev) => {
+              const cols = [...prev];
+              const fromCol = [...cols[fromColumnIndex]];
+
+              fromCol.splice(movingItemIndex, 1);
+              cols[fromColumnIndex] = fromCol;
+              return cols;
+            },
+          }),
+      // STEP 2: then add to the real section
       [toSectionId]: (prev) => {
         const cols = [...prev];
         const toCol = [...cols[toColumnIndex]];
         const insertAt = Math.min(insertIndex, toCol.length);
 
         toCol.splice(insertAt, 0, {
-          ...movingItem,
+          ...finalItem,
           section_id: toSectionId,
         });
         cols[toColumnIndex] = toCol;
         return cols;
       },
     });
+  }
+
+  if (cloneBlock) {
+    toastClonedBlocks(1);
   }
 }

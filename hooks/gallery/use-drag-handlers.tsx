@@ -10,6 +10,7 @@ import { PositionedBlock } from "@/types/sync-types";
 import { handleSectionDrop } from "@/lib/drag-handling/handle-section-drop";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import { usePanelStore } from "@/store/panel-store";
+import { toastClonedBlocks } from "@/utils/toast-clone-blocks";
 
 export function getMovingItem(
   activeId: string,
@@ -210,8 +211,11 @@ export function useGalleryHandlers({
       initialPointerYRef.current = null;
 
       const { active, over } = event;
-      const activeId =
-        active.id.toString().match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
+      const rawId = active.id.toString();
+      const cloneBlock = rawId.startsWith("disabled::");
+      const activeId = rawId.match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
+
+      console.log("cloneBlock is ", cloneBlock);
 
       // convert all draggedBlocks into positionedBlocks
       const activeBlocksWithPos: PositionedBlock[] =
@@ -256,6 +260,7 @@ export function useGalleryHandlers({
             sectionColumns,
             updateSections,
             targetSection,
+            cloneBlock,
           });
           return;
         }
@@ -269,6 +274,7 @@ export function useGalleryHandlers({
           insertIndex,
           toColumnIndex,
           toSectionId,
+          cloneBlock,
         });
 
         // then we handle section matches
@@ -281,6 +287,7 @@ export function useGalleryHandlers({
           sectionColumns,
           updateSections,
           targetSection,
+          cloneBlock,
         });
       }
 

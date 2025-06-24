@@ -49,6 +49,7 @@ export async function fetchSupabaseBlocks(
     (block: BlockWithOptionalImage): Block => {
       const {
         block_id,
+        image_id,
         section_id,
         block_type,
         height,
@@ -67,6 +68,7 @@ export async function fetchSupabaseBlocks(
 
       const incompleteImageBlock: Omit<Block, "data"> = {
         block_id,
+        image_id: image_id ?? undefined,
         section_id,
         block_type: block_type as BlockType,
         height,

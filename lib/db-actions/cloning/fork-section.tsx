@@ -1,5 +1,5 @@
 import { cloneSection } from "./clone-section";
-import { cloneBlocksFromSections } from "./clone-blocks";
+import { cloneBlocksFromSections } from "./clone-blocks-in-section";
 import { Section } from "@/types/board-types";
 import { linkSectionToBoard } from "./link-section";
 

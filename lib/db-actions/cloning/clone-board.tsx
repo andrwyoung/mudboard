@@ -7,7 +7,7 @@ import { checkIfBoardExists } from "../check-board-exist";
 import { toast } from "sonner";
 import { BoardSection } from "@/types/board-types";
 import { cloneSection } from "./clone-section";
-import { cloneBlocksFromSections } from "./clone-blocks";
+import { cloneBlocksFromSections } from "./clone-blocks-in-section";
 
 export async function cloneBoard({
   boardIdToClone,

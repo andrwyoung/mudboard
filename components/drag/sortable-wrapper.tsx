@@ -20,15 +20,17 @@ export function SortableBlock({
     data: {
       sectionId,
       isMirror,
+      canEdit,
     },
   });
 
   return (
-    <div
-      ref={canEdit ? setNodeRef : undefined}
-      {...(canEdit ? attributes : {})}
-      {...(canEdit ? listeners : {})}
-    >
+    // <div
+    //   ref={canEdit ? setNodeRef : undefined}
+    //   {...(canEdit ? attributes : {})}
+    //   {...(canEdit ? listeners : {})}
+    // >
+    <div ref={setNodeRef} {...attributes} {...listeners}>
       {children}
     </div>
   );

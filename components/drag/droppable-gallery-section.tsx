@@ -33,12 +33,14 @@ export default function DroppableGallerySection({
 
   return (
     <div
-      ref={canEdit ? setNodeRef : undefined}
+      ref={setNodeRef}
       className={`absolute inset-0 z-50 pointer-events-none rounded-sm border-2 ${
         (realIsOver && isActive) || isExternalDrag
-          ? isLinked
-            ? "bg-secondary border-secondary opacity-50 "
-            : "bg-accent border-accent opacity-30 "
+          ? canEdit
+            ? isLinked
+              ? "bg-secondary border-secondary opacity-50"
+              : "bg-accent border-accent opacity-30"
+            : "bg-rose-200 border-rose-300 opacity-50"
           : "border-transparent"
       }`}
     />

@@ -27,7 +27,7 @@ export default function SectionColumnSelector({
     <div className="flex flex-row-reverse items-center gap-2">
       {canEdit && visualColumnNum !== savedColumnNum && (
         <FaSave
-          className="text-primary cursor-pointer hover:text-accent transition-all duration-200"
+          className="cursor-pointer hover:text-accent transition-all duration-200"
           title="Save Number of Columns"
           onClick={() =>
             updateSectionColumnNum(sectionId, visualColumnNum, canEdit)
@@ -44,7 +44,7 @@ export default function SectionColumnSelector({
         <SelectTrigger id={`select-trigger-${sectionId}`}>
           <div
             className="flex items-center gap-1 font-header text-sm hover:text-accent 
-            transition-colors duration-200 text-primary"
+            transition-colors duration-200 "
             title="Change Column Number"
           >
             Columns: {visualColumnNum}

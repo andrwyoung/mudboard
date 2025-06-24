@@ -43,7 +43,7 @@ export default function InlineEditTextarea({
 
   return (
     <div
-      className={`border py-1 px-3 text-sm rounded-md  text-primary w-full transition-all ${
+      className={`border py-1 px-3 text-sm rounded-md   w-full transition-all ${
         isEditing ? "border-input shadow-sm" : "border-transparent"
       } ${className}`}
       onDoubleClick={() => {

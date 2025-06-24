@@ -48,7 +48,6 @@ export default function DashboardPage() {
     async function initBoards() {
       if (!user) return;
 
-      // Step 1: Get user boards
       const boards = await getUserBoardsWithStats(user.id);
       setUserBoards(boards);
     }

@@ -21,7 +21,7 @@ export function PanelToggleButton({
   return (
     <button
       type="button"
-      className={`flex items-center gap-4 cursor-pointer group transition-all duration-300 px-2 rounded-sm
+      className={`flex items-center gap-2 cursor-pointer group transition-all duration-300 px-2 rounded-sm
         py-0.5 ${
           isActive ? "bg-accent text-primary" : "text-white hover:text-accent"
         }`}
@@ -72,7 +72,7 @@ export function PinnedModeToggle({ showText = true }: { showText?: boolean }) {
             <PanelToggleButton
               mode="explore"
               icon={<FaLeaf />}
-              label="Explore"
+              label="Greenhouse"
               title="Toggle Explore View"
             />
           </>

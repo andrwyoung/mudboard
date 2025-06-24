@@ -21,14 +21,18 @@ import { FaLock } from "react-icons/fa6";
 export default function SectionHeader({
   section,
   canEdit,
+  mode = "main",
 }: {
   section: Section;
   canEdit: boolean;
+  mode?: "mirror" | "main";
 }) {
   const title = section?.title;
   const description = section?.description;
   const isEditing =
     useLoadingStore.getState().editingSectionId === section.section_id;
+
+  const textColor = mode === "main" ? "text-primary" : "text-white";
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
 
@@ -50,10 +54,10 @@ export default function SectionHeader({
             onChange={(newTitle) => {
               updateSectionTitle(section.section_id, newTitle, canEdit);
             }}
-            className="text-lg sm:text-xl md:text-2xl text-left"
+            className={`text-lg sm:text-xl md:text-2xl text-left  ${textColor} `}
           />
         </div>
-        <div className="flex flex-col items-end gap-2">
+        <div className={`flex flex-col items-end gap-2 ${textColor}`}>
           <div
             className={`flex flex-row-reverse gap-2 items-center ${
               mirrorMode ? "opacity-50" : "opacity-80"
@@ -62,7 +66,7 @@ export default function SectionHeader({
             {!canEdit && (
               <FaLock
                 title="Editing is Locked"
-                className="opacity-50 text-primary size-4.5"
+                className={`opacity-50 size-4.5`}
               />
             )}
 
@@ -101,7 +105,7 @@ export default function SectionHeader({
           onChange={(newDesc) => {
             updateSectionDescription(section.section_id, newDesc);
           }}
-          className="leading-relaxed"
+          className={`leading-relaxed ${textColor}`}
         />
       </div>
     </div>

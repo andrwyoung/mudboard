@@ -16,7 +16,7 @@ export default function TextBlock({
   // console.log("textdata: ", textData);
 
   return (
-    <div className="outline outline-border rounded-sm">
+    <div className="outline outline-border rounded-sm text-primary">
       <InlineEditTextarea
         value={textData?.text ?? null}
         onChange={(newTitle) => {

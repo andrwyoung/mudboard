@@ -57,6 +57,7 @@ import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
 import PinnedPanel from "@/components/pinned-panel/pinned-panel";
 import { usePanelStore } from "@/store/panel-store";
 import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
+import { useInitExplore } from "@/hooks/use-init-explore";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -126,7 +127,8 @@ export default function Board({ boardId }: { boardId: string }) {
     (s) => s.regenerateOrderingInternally
   );
 
-  //
+  // KEY SECTION: Initializers
+  useInitExplore();
   useInitBoard(boardId, setIsExpired, setWelcomeModalOpen);
 
   useEffect(
@@ -185,8 +187,6 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // SECTION: hooks
   //
-
-  // KEY SECTION: initializers
 
   //
   // keyboard listeners
@@ -347,7 +347,9 @@ export default function Board({ boardId }: { boardId: string }) {
                 <ResizablePinnedPanel
                   initialWidth={windowWidth * 0.4}
                   maxWidth={Math.max(240, windowWidth - sidebarWidth - 600)}
-                  dndId="pinned-panel-dropzone"
+                  dndId={
+                    panelMode === "focus" ? "pinned-panel-dropzone" : undefined
+                  }
                 >
                   {panelMode === "focus" && <PinnedPanel />}
                   {/* {panelMode === "explore" && <ExplorePanel />} */}

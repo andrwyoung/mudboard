@@ -2,12 +2,15 @@ import { Block } from "@/types/block-types";
 import { Section, SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { toast } from "sonner";
+import { cloneBlocks } from "../db-actions/cloning/clone-blocks";
+import { toastClonedBlocks } from "@/utils/toast-clone-blocks";
 
-export function handleSectionDrop({
+export async function handleSectionDrop({
   activeBlocksWithPos,
   sectionColumns,
   updateSections,
   targetSection,
+  cloneBlock,
 }: {
   activeBlocksWithPos: PositionedBlock[];
   sectionColumns: SectionColumns;
@@ -15,6 +18,7 @@ export function handleSectionDrop({
     updates: Record<string, (prev: Block[][]) => Block[][]>
   ) => void;
   targetSection: Section;
+  cloneBlock: boolean;
 }) {
   if (!targetSection || !activeBlocksWithPos?.length) {
     return;
@@ -48,17 +52,44 @@ export function handleSectionDrop({
   }
 
   // Step 2: Remove each block from its source
-  for (const { sectionId, colIndex, rowIndex } of activeBlocksWithPos) {
-    const sectionCols = sectionMutations.get(sectionId);
-    if (!sectionCols) continue;
+  // UNLESS we're cloning
+  if (!cloneBlock) {
+    for (const { sectionId, colIndex, rowIndex } of activeBlocksWithPos) {
+      const sectionCols = sectionMutations.get(sectionId);
+      if (!sectionCols) continue;
 
-    const col = sectionCols[colIndex];
-    col.splice(rowIndex, 1); // remove the block
+      const col = sectionCols[colIndex];
+      col.splice(rowIndex, 1); // remove the block
+    }
+  }
+
+  // Step 2.5: if we're cloning, then we want to create a new copy of each of the blocks
+  // then update using that
+  let finalBlocks = activeBlocksWithPos;
+  if (cloneBlock) {
+    console.log("cloning blocks", finalBlocks);
+    const blockIdMap = await cloneBlocks(
+      activeBlocksWithPos.map((b) => b.block),
+      targetSection.section_id
+    );
+
+    finalBlocks = activeBlocksWithPos.map((b) => {
+      const newId = blockIdMap[b.block.block_id];
+      return {
+        ...b,
+        block: {
+          ...b.block,
+          block_id: newId,
+          section_id: targetSection.section_id, // important!
+        },
+        sectionId: targetSection.section_id,
+      };
+    });
   }
 
   // Step 3: insert each into the shortest column in the target section
   const targetCols = sectionMutations.get(targetSection.section_id)!;
-  for (const { block } of activeBlocksWithPos) {
+  for (const { block } of finalBlocks) {
     const shortestIndex = targetCols.reduce(
       (minIndex, col, i, arr) =>
         col.length < arr[minIndex].length ? i : minIndex,
@@ -77,4 +108,8 @@ export function handleSectionDrop({
   }
 
   updateSections(updates);
+
+  if (cloneBlock) {
+    toastClonedBlocks(activeBlocksWithPos.length);
+  }
 }

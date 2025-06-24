@@ -134,7 +134,7 @@ export default function Canvas({
           paddingBottom: gallerySpacingSize,
         }}
       >
-        <div style={{ direction: "ltr" }}>
+        <div style={{ direction: "ltr" }} className="flex flex-col gap-2 ">
           <MirrorContext.Provider value={isMirror}>
             {boardSections
               .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
@@ -153,7 +153,9 @@ export default function Canvas({
                       const key = isMirror ? `mirror-${sectionId}` : sectionId;
                       sectionRefs.current[key] = el;
                     }}
-                    className="relative"
+                    className={`relative  ${
+                      canEdit ? "" : "bg-primary/15 rounded-lg"
+                    } `}
                     onDragOver={() => {
                       if (isDraggingExtFile) {
                         setExtFileOverSection({ section, mirror: mirrorKey });

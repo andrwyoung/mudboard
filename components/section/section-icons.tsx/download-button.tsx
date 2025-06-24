@@ -32,7 +32,7 @@ export default function SectionDownloadButton({
     <>
       <button
         title="Download Images in Section"
-        className="text-primary hover:text-accent hover:scale-105 transition-all duration-300 cursor-pointer"
+        className="hover:text-accent hover:scale-105 transition-all duration-300 cursor-pointer"
         onClick={() => setOpen(true)}
       >
         <FaFileDownload className="size-4.5" />

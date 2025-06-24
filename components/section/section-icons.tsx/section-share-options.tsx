@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Section } from "@/types/board-types";
-import { FaShareAlt, FaLink } from "react-icons/fa";
+import { FaLink, FaLeaf } from "react-icons/fa";
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";
 import { CheckField } from "@/components/ui/check-field";
 import { SECTION_BASE_URL } from "@/types/constants";
-import { FaCopy } from "react-icons/fa6";
+import { FaCopy, FaSeedling } from "react-icons/fa6";
 
 type ShareableSectionField =
   | "is_public"
@@ -125,15 +125,19 @@ export default function SectionShareDialog({
         <button
           title="Open Sharing Options"
           onClick={() => setOpen(true)}
-          className="text-primary hover:text-accent cursor-pointer transition-all duration-200 mr-1"
+          className="hover:text-accent cursor-pointer transition-all duration-200 "
         >
-          <FaShareAlt className="size-4" />
+          {section.is_public ? (
+            <FaSeedling className="size-4.5 mr-[1px]" />
+          ) : (
+            <FaLeaf className="size-5 mr-[1px]" />
+          )}
         </button>
       ) : (
         <button
           title="Copy Sharing Link"
           onClick={copyLink}
-          className={`text-primary hover:text-accent cursor-pointer transition-all duration-200
+          className={`hover:text-accent cursor-pointer transition-all duration-200
             ${section.is_public ? "" : "hidden"}`}
         >
           <FaCopy className="size-5" />
@@ -143,12 +147,16 @@ export default function SectionShareDialog({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="text-primary select-none">
           <DialogHeader>
-            <DialogTitle className="text-xl">Publish as a Mudkit</DialogTitle>
+            <DialogTitle className="text-xl">
+              {section.is_public ? "Mudkit Settings" : "Publish as a Mudkit"}
+            </DialogTitle>
           </DialogHeader>
 
           {published ? (
             <div>
-              <p className="text-sm">This Section has been published.</p>
+              <p className="text-sm">
+                This Section has been published as a Mudkit.
+              </p>
               <div className="flex flex-col gap-4 mt-2">
                 {shareOptions.map(
                   ({ label, desc, field, gated, flip, disabled }) => (
@@ -195,15 +203,12 @@ export default function SectionShareDialog({
                 </strong>
                 <ul className="list-disc list-inside text-xs text-muted-foreground mt-1 space-y-1">
                   <li>Your kit gets its own public link</li>
+                  <li>
+                    If shared on the marketplace, others can clone or link it
+                    from the Explore panel
+                  </li>
                   <li>Only you can edit the original section</li>
                   <li>You can unpublish or make it private anytime</li>
-                  <li>
-                    If shared on the marketplace, others can fork or clone your
-                    kit <br />
-                    <span className="text-muted-foreground italic">
-                      (advanced controls available with pro plan)
-                    </span>
-                  </li>
                 </ul>
               </div>
             </div>
