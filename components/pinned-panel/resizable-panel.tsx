@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from "react";
 
 export default function ResizablePinnedPanel({
   initialWidth = 1200,
-  minWidth = 240,
+  minWidth = 400,
   maxWidth = 6000,
   children,
   dndId,
@@ -75,7 +75,7 @@ export default function ResizablePinnedPanel({
         panelRef.current = el;
         setNodeRef(el);
       }}
-      className={`relative h-full `}
+      className={`relative h-full select-none`}
       style={{ width }}
     >
       {/* Highlight when hovered over */}
@@ -90,7 +90,7 @@ export default function ResizablePinnedPanel({
       <div
         onMouseDown={startDragging}
         className={`absolute top-0 left-0 -translate-x-1/2 w-1.5 h-full 
-            cursor-col-resize z-50 transition-all duration-200
+            cursor-col-resize z-50 transition-all duration-200 select-none
          ${dragging ? "bg-accent" : "hover:bg-accent"}`}
         title="Drag to resize"
       />

@@ -10,7 +10,9 @@ import { PositionedBlock } from "@/types/sync-types";
 import { handleSectionDrop } from "@/lib/drag-handling/handle-section-drop";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import { usePanelStore } from "@/store/panel-store";
-import { toastClonedBlocks } from "@/utils/toast-clone-blocks";
+import { useExploreStore } from "@/store/explore-store";
+import { cloneBlocksToSection } from "@/lib/drag-handling/handle-clone-section-drop";
+import { handleClonedBlockDrop } from "@/lib/drag-handling/handle-clone-block-drop";
 
 export function getMovingItem(
   activeId: string,
@@ -86,10 +88,10 @@ export function useGalleryHandlers({
       document.body.classList.add("cursor-grabbing");
       // deselectBlocks();
 
-      console.log(
-        "starting drag. here's positioned block map: ",
-        positionedBlockMap
-      );
+      // console.log(
+      //   "starting drag. here's positioned block map: ",
+      //   positionedBlockMap
+      // );
 
       // cache blockRefs map so move doesn't have to recompute
       blockRectsRef.current = new Map();
@@ -101,9 +103,20 @@ export function useGalleryHandlers({
       });
 
       const { active, activatorEvent } = event;
-      const rawBlockId =
-        active.id.toString().match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
-      const initDraggedBlock = positionedBlockMap.get(rawBlockId);
+      const rawId = active.id.toString();
+      const isMirror = rawId.startsWith("mirror");
+      const rawBlockId = rawId.match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
+
+      let initDraggedBlock: Block | undefined = undefined;
+      if (!isMirror) {
+        initDraggedBlock = positionedBlockMap.get(rawBlockId)?.block;
+      } else {
+        // if it's in the mirror side, then we need to grab from the explore panel
+        const results = useExploreStore.getState().getBlocks([rawBlockId]);
+        if (results.length === 1) {
+          initDraggedBlock = results[0];
+        }
+      }
 
       if (!initDraggedBlock || !selectedBlocks) return;
 
@@ -111,14 +124,19 @@ export function useGalleryHandlers({
 
       // if not selected already, then we're just dragging this block
       if (!isSelected) {
-        setDraggedBlocks([initDraggedBlock.block]);
+        setDraggedBlocks([initDraggedBlock]);
       } else {
         // but if not then we grab all selected blocks and set them to drag
         const selectedIds = Object.keys(selectedBlocks);
 
-        const draggedGroup = selectedIds
-          .map((id) => positionedBlockMap.get(id)?.block)
-          .filter((b): b is Block => Boolean(b));
+        let draggedGroup: Block[];
+        if (!isMirror) {
+          draggedGroup = selectedIds
+            .map((id) => positionedBlockMap.get(id)?.block)
+            .filter((b): b is Block => Boolean(b));
+        } else {
+          draggedGroup = useExploreStore.getState().getBlocks(selectedIds);
+        }
 
         setDraggedBlocks(draggedGroup);
       }
@@ -134,7 +152,10 @@ export function useGalleryHandlers({
 
   const handleDragMove = useCallback(
     (event: DragMoveEvent) => {
-      const { delta, over } = event;
+      const { delta, over, active } = event;
+
+      if (!active.data.current?.canEdit && !active.data.current?.isMirror)
+        return;
 
       if (!over) {
         setDropIndicatorId(null);
@@ -207,17 +228,17 @@ export function useGalleryHandlers({
     (event: DragEndEvent) => {
       document.body.classList.remove("cursor-grabbing");
 
-      setDraggedBlocks(null);
       initialPointerYRef.current = null;
 
       const { active, over } = event;
       const rawId = active.id.toString();
-      const cloneBlock = rawId.startsWith("disabled::");
+      const cloneBlock = !active.data.current?.canEdit;
       const activeId = rawId.match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
 
       console.log("cloneBlock is ", cloneBlock);
 
       // convert all draggedBlocks into positionedBlocks
+      if (!draggedBlocks) return;
       const activeBlocksWithPos: PositionedBlock[] =
         draggedBlocks
           ?.map((block) => positionedBlockMap.get(block.block_id))
@@ -247,50 +268,81 @@ export function useGalleryHandlers({
         const toColumnIndex = Number(dropMatch[2]);
         const insertIndex = Number(dropMatch[3]);
 
+        console.log("dragged blocks len, ", draggedBlocks.length);
+
         // the case where we're dragging too many blocks
-        if (draggedBlocks && draggedBlocks.length > MAX_DRAGGED_ITEMS) {
+        if (draggedBlocks.length > MAX_DRAGGED_ITEMS) {
           const targetBoardSection = boardSections.find(
             (bs) => bs.section.section_id === toSectionId
           );
           const targetSection = targetBoardSection?.section;
 
           if (!targetSection) return;
-          handleSectionDrop({
-            activeBlocksWithPos,
-            sectionColumns,
-            updateSections,
-            targetSection,
-            cloneBlock,
-          });
+          if (cloneBlock) {
+            console.log("here1");
+            cloneBlocksToSection({
+              blocks: draggedBlocks,
+              sectionColumns,
+              updateSections,
+              targetSection,
+            });
+          } else {
+            console.log("here2");
+            handleSectionDrop({
+              activeBlocksWithPos,
+              sectionColumns,
+              updateSections,
+              targetSection,
+            });
+          }
+
+          setDraggedBlocks(null);
           return;
         }
 
-        handleBlockDrop({
-          activeId,
-          activeBlocksWithPos,
-          positionedBlockMap,
-          sectionColumns,
-          updateSections,
-          insertIndex,
-          toColumnIndex,
-          toSectionId,
-          cloneBlock,
-        });
+        if (cloneBlock) {
+          console.log("here3");
+          handleClonedBlockDrop({
+            block: draggedBlocks[0],
+            toSectionId,
+            toColumnIndex,
+            insertIndex,
+            updateSections,
+          });
+        } else {
+          handleBlockDrop({
+            activeBlockWithPos: activeBlocksWithPos[0],
+            updateSections,
+            insertIndex,
+            toColumnIndex,
+            toSectionId,
+          });
+        }
 
         // then we handle section matches
       } else if (sectionMatch) {
         const sectionIndex = Number(sectionMatch[1]);
         const targetSection = boardSections[sectionIndex].section;
 
-        handleSectionDrop({
-          activeBlocksWithPos,
-          sectionColumns,
-          updateSections,
-          targetSection,
-          cloneBlock,
-        });
+        if (cloneBlock) {
+          console.log("here5");
+          cloneBlocksToSection({
+            blocks: draggedBlocks ?? [],
+            sectionColumns,
+            updateSections,
+            targetSection,
+          });
+        } else {
+          handleSectionDrop({
+            activeBlocksWithPos,
+            sectionColumns,
+            updateSections,
+            targetSection,
+          });
+        }
       }
 
+      setDraggedBlocks(null);
       setDropIndicatorId(null);
       deselectBlocks();
     },

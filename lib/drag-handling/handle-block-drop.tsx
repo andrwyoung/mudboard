@@ -2,47 +2,32 @@
 // when you drop a block over a block
 // it's mainly just all the math needed for recalculating a block's position
 
-import { getMovingItem } from "@/hooks/gallery/use-drag-handlers";
 import { Block } from "@/types/block-types";
-import { SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
-import { cloneBlocks } from "../db-actions/cloning/clone-blocks";
-import { toastClonedBlocks } from "@/utils/toast-clone-blocks";
 
 export async function handleBlockDrop({
-  activeId,
-  // activeBlocksWithPos,
-  positionedBlockMap,
-  sectionColumns,
+  activeBlockWithPos,
   updateSections,
   insertIndex,
   toColumnIndex,
   toSectionId,
-  cloneBlock,
 }: {
-  activeId: string;
-  activeBlocksWithPos: PositionedBlock[];
-  positionedBlockMap: Map<string, PositionedBlock>;
-  sectionColumns: SectionColumns;
+  activeBlockWithPos: PositionedBlock;
   updateSections: (
     updates: Record<string, (prev: Block[][]) => Block[][]>
   ) => void;
   insertIndex: number;
   toColumnIndex: number;
   toSectionId: string;
-  cloneBlock: boolean;
 }) {
   console.log("toColumnIndex: ", toColumnIndex, " insertIndex: ", insertIndex);
 
-  const result = getMovingItem(activeId, positionedBlockMap, sectionColumns);
-  if (!result) return;
-
   const {
-    item: movingItem,
-    fromSectionId,
-    fromColumnIndex,
-    movingItemIndex,
-  } = result;
+    block: movingBlock,
+    sectionId: fromSectionId,
+    colIndex: fromColumnIndex,
+    rowIndex: movingItemIndex,
+  } = activeBlockWithPos;
 
   // No movement
   if (
@@ -89,30 +74,17 @@ export async function handleBlockDrop({
       },
     });
   } else {
-    let finalItem = movingItem;
-    if (cloneBlock) {
-      const clonedBlockId = await cloneBlocks([finalItem], toSectionId);
-
-      finalItem = {
-        ...movingItem,
-        block_id: clonedBlockId[movingItem.block_id],
-      };
-    }
-
     updateSections({
       // STEP 1: remove from the current section
-      ...(cloneBlock
-        ? {} // skip removing from original section if we're cloning
-        : {
-            [fromSectionId]: (prev) => {
-              const cols = [...prev];
-              const fromCol = [...cols[fromColumnIndex]];
+      [fromSectionId]: (prev) => {
+        const cols = [...prev];
+        const fromCol = [...cols[fromColumnIndex]];
 
-              fromCol.splice(movingItemIndex, 1);
-              cols[fromColumnIndex] = fromCol;
-              return cols;
-            },
-          }),
+        fromCol.splice(movingItemIndex, 1);
+        cols[fromColumnIndex] = fromCol;
+        return cols;
+      },
+
       // STEP 2: then add to the real section
       [toSectionId]: (prev) => {
         const cols = [...prev];
@@ -120,16 +92,12 @@ export async function handleBlockDrop({
         const insertAt = Math.min(insertIndex, toCol.length);
 
         toCol.splice(insertAt, 0, {
-          ...finalItem,
+          ...movingBlock,
           section_id: toSectionId,
         });
         cols[toColumnIndex] = toCol;
         return cols;
       },
     });
-  }
-
-  if (cloneBlock) {
-    toastClonedBlocks(1);
   }
 }

@@ -191,6 +191,7 @@ export default function Canvas({
                     />
                     {columns && (
                       <SectionGallery
+                        isMirror={isMirror}
                         section={section}
                         columns={columns}
                         draggedBlocks={draggedBlocks}

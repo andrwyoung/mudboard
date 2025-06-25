@@ -1,7 +1,7 @@
 // this component is the thing that handles the title and description above
 // every section inside the gallery
 
-import { Section } from "@/types/board-types";
+import { CanvasScope, Section } from "@/types/board-types";
 import InlineEditText from "../ui/inline-edit";
 import {
   updateSectionDescription,
@@ -25,7 +25,7 @@ export default function SectionHeader({
 }: {
   section: Section;
   canEdit: boolean;
-  mode?: "mirror" | "main";
+  mode?: CanvasScope;
 }) {
   const title = section?.title;
   const description = section?.description;
@@ -63,7 +63,7 @@ export default function SectionHeader({
               mirrorMode ? "opacity-50" : "opacity-80"
             }`}
           >
-            {!canEdit && (
+            {!canEdit && mode === "main" && (
               <FaLock
                 title="Editing is Locked"
                 className={`opacity-50 size-4.5`}

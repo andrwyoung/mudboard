@@ -9,7 +9,7 @@ import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
 import React, { useCallback, useMemo } from "react";
 import { MemoizedDroppableColumn } from "./columns";
-import { useIsMirror } from "./board";
+import { MirrorContext } from "./board";
 import Image from "next/image";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
@@ -28,6 +28,7 @@ export default function SectionGallery({
   selectedBlocks,
   overId,
   canEdit,
+  isMirror = false,
 }: {
   section: Section;
   columns: Block[][];
@@ -36,8 +37,8 @@ export default function SectionGallery({
   selectedBlocks: Record<string, Block>;
   overId: string | null;
   canEdit: boolean;
+  isMirror?: boolean;
 }) {
-  const isMirror = useIsMirror();
   const canvasScope = isMirror ? "mirror" : "main";
   const scope = useGetScope();
 
@@ -47,7 +48,12 @@ export default function SectionGallery({
   const forceMobileColumns = useLayoutStore((s) => s.forceMobileColumns);
 
   const lastSelectedBlock = useSelectionStore((s) => s.lastSelectedBlock);
-  const setSelectedBlocks = useSelectionStore((s) => s.setSelectedBlocks);
+  const addBlocksToSelection = useSelectionStore((s) => s.addBlocksToSelection);
+  const selectOnlyThisBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
+  const removeBlockFromSelection = useSelectionStore(
+    (s) => s.removeBlockFromSelection
+  );
+
   const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
 
   const { isOpen: overlayGalleryIsOpen, openOverlay: openOverlayGallery } =
@@ -81,20 +87,21 @@ export default function SectionGallery({
   // when clicking on an image
   const handleItemClick = useCallback(
     (block: Block, event: React.MouseEvent<Element, MouseEvent>) => {
-      console.log("Clicked? ", event, block);
+      // console.log("Clicked? ", event, block);
+      console.log("Clicked? ", block);
 
       if (event.detail === 2 && block.block_type === "image") {
         console.log("Double clicked:", block);
-        setSelectedBlocks(canvasScope, { [block.block_id]: block }, block);
+        selectOnlyThisBlock(canvasScope, block);
         openOverlayGallery(block);
         return;
       }
 
-      let newSelected: Record<string, Block> = {};
+      const isMeta = event.metaKey || event.ctrlKey;
+      const isShift = event.shiftKey;
 
-      // shift behavior
       if (
-        event.shiftKey &&
+        isShift &&
         lastSelectedBlock?.block_id &&
         selectedBlocks[lastSelectedBlock.block_id]
       ) {
@@ -105,31 +112,32 @@ export default function SectionGallery({
           (b) => b.block.block_id === lastSelectedBlock.block_id
         );
 
-        console.log("grabbing items from");
-
         if (currentIndex !== -1 && lastIndex !== -1) {
           const [start, end] = [currentIndex, lastIndex].sort((a, b) => a - b);
-          const inRange = masterBlockOrder.slice(start, end + 1);
-          newSelected = { ...selectedBlocks };
-          inRange.forEach((b) => {
-            newSelected[b.block.block_id] = b.block;
-          });
+          const inRange = masterBlockOrder
+            .slice(start, end + 1)
+            .map((b) => b.block);
+          addBlocksToSelection(canvasScope, inRange);
+          return;
         }
-      } else if (event.metaKey || event.ctrlKey) {
-        newSelected = { ...selectedBlocks };
-        if (newSelected[block.block_id]) {
-          delete newSelected[block.block_id];
-        } else {
-          newSelected[block.block_id] = block;
-        }
-      } else {
-        newSelected = { [block.block_id]: block };
       }
 
-      setSelectedBlocks(canvasScope, newSelected, block);
+      if (isMeta) {
+        const isAlreadySelected = selectedBlocks[block.block_id];
+        if (isAlreadySelected) {
+          removeBlockFromSelection(block);
+        } else {
+          addBlocksToSelection(canvasScope, [block]);
+        }
+        return;
+      }
+
+      selectOnlyThisBlock(canvasScope, block);
     },
     [
-      setSelectedBlocks,
+      selectOnlyThisBlock,
+      removeBlockFromSelection,
+      addBlocksToSelection,
       openOverlayGallery,
       selectedBlocks,
       canvasScope,
@@ -139,72 +147,74 @@ export default function SectionGallery({
   );
 
   return (
-    <div
-      className={`grid h-full relative ${
-        draggedBlocks ? "cursor-grabbing" : "cursor-default"
-      } ${
-        draggedBlocks?.length && draggedBlocks.length > MAX_DRAGGED_ITEMS
-          ? ""
-          : ""
-      } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
-      style={{
-        gridTemplateColumns: `repeat(${
-          forceMobileColumns ? MOBILE_COLUMN_NUMBER : section.visualColumnNum
-        }, minmax(0, 1fr))`,
-      }}
-      aria-hidden={overlayGalleryIsOpen ? "true" : "false"}
-    >
-      {/* <p className="text-primary">hey there</p> */}
-      {isEmpty && canEdit && (
-        <>
-          {fileInput}
-          <div className="absolute inset-0 flex flex-col items-center justify-center ">
-            <div
-              className="w-fit h-fit flex flex-col items-center select-none
+    <MirrorContext.Provider value={isMirror}>
+      <div
+        className={`grid h-full relative ${
+          draggedBlocks ? "cursor-grabbing" : "cursor-default"
+        } ${
+          draggedBlocks?.length && draggedBlocks.length > MAX_DRAGGED_ITEMS
+            ? ""
+            : ""
+        } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
+        style={{
+          gridTemplateColumns: `repeat(${
+            forceMobileColumns ? MOBILE_COLUMN_NUMBER : section.visualColumnNum
+          }, minmax(0, 1fr))`,
+        }}
+        aria-hidden={overlayGalleryIsOpen ? "true" : "false"}
+      >
+        {/* <p className="text-primary">hey there</p> */}
+        {isEmpty && canEdit && (
+          <>
+            {fileInput}
+            <div className="absolute inset-0 flex flex-col items-center justify-center ">
+              <div
+                className="w-fit h-fit flex flex-col items-center select-none
         opacity-60 z-10 hover:opacity-90 transition-all duration-200 cursor-pointer "
-              onClick={triggerImagePicker}
-            >
-              <Image
-                src="/1.png"
-                alt="No images yet"
-                width={375}
-                height={150}
-                draggable={false}
-              />
-              <h3 className="text-primary text-sm">
-                No Images Yet! Drag one in or click here to add.
-              </h3>
+                onClick={triggerImagePicker}
+              >
+                <Image
+                  src="/1.png"
+                  alt="No images yet"
+                  width={375}
+                  height={150}
+                  draggable={false}
+                />
+                <h3 className="text-primary text-sm">
+                  No Images Yet! Drag one in or click here to add.
+                </h3>
+              </div>
             </div>
-          </div>
-        </>
-      )}
-      {columns.map((column, columnIndex) => (
-        // <div className="bg-amber-50">
-        <DroppableColumn
-          canEdit={canEdit}
-          id={`${scope}::col-${section.section_id}-${columnIndex}`}
-          paddingLeft={spacingSize / 2}
-          paddingRight={spacingSize / 2}
-          key={`${section.section_id}-${columnIndex}`}
-          sectionId={section.section_id}
-          isMirror={isMirror}
-        >
-          <MemoizedDroppableColumn
+          </>
+        )}
+        {columns.map((column, columnIndex) => (
+          // <div className="bg-amber-50">
+          <DroppableColumn
             canEdit={canEdit}
-            section={section}
-            wholeGalleryEmpty={isEmpty}
-            column={column}
-            columnWidth={columnWidth}
-            columnIndex={columnIndex}
-            overId={overId}
-            draggedBlocks={draggedBlocks}
-            selectedBlocks={selectedBlocks}
-            handleItemClick={handleItemClick}
-            scrollY={scrollY}
-          />
-        </DroppableColumn>
-        // </div>
-      ))}
-    </div>
+            id={`${scope}::col-${section.section_id}-${columnIndex}`}
+            paddingLeft={spacingSize / 2}
+            paddingRight={spacingSize / 2}
+            key={`${section.section_id}-${columnIndex}`}
+            sectionId={section.section_id}
+            isMirror={isMirror}
+          >
+            <MemoizedDroppableColumn
+              canEdit={canEdit}
+              section={section}
+              wholeGalleryEmpty={isEmpty}
+              column={column}
+              columnWidth={columnWidth}
+              columnIndex={columnIndex}
+              overId={overId}
+              draggedBlocks={draggedBlocks}
+              selectedBlocks={selectedBlocks}
+              handleItemClick={handleItemClick}
+              scrollY={scrollY}
+            />
+          </DroppableColumn>
+          // </div>
+        ))}
+      </div>
+    </MirrorContext.Provider>
   );
 }

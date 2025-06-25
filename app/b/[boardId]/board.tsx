@@ -346,13 +346,18 @@ export default function Board({ boardId }: { boardId: string }) {
               {panelMode !== "none" && windowWidth != 0 && (
                 <ResizablePinnedPanel
                   initialWidth={windowWidth * 0.4}
-                  maxWidth={Math.max(240, windowWidth - sidebarWidth - 600)}
+                  maxWidth={Math.max(400, windowWidth - sidebarWidth - 600)}
                   dndId={
                     panelMode === "focus" ? "pinned-panel-dropzone" : undefined
                   }
                 >
                   {panelMode === "focus" && <PinnedPanel />}
-                  {/* {panelMode === "explore" && <ExplorePanel />} */}
+                  {/* {panelMode === "explore" && (
+                    <ExplorePanel
+                      draggedBlocks={draggedBlocks}
+                      selectedBlocks={selectedBlocks}
+                    />
+                  )} */}
                   {panelMode === "explore" && (
                     <div className="h-full w-full font-header text-2xl text-primary flex items-center justify-center bg-primary/40">
                       Panel Under Construction

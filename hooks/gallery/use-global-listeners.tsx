@@ -7,9 +7,11 @@ import { useOverlayStore } from "@/store/overlay-store";
 import { useGetScope } from "../use-get-scope";
 import { useUndoStore } from "@/store/undo-store";
 import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
+import { canEditBlock } from "@/lib/auth/can-edit-block";
 
 export function useGlobalListeners() {
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
+  const currentScope = useSelectionStore((s) => s.currentScope);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   const { isOpen: galleryIsOpen } = useOverlayStore(useGetScope());
@@ -47,10 +49,14 @@ export function useGlobalListeners() {
       // }
 
       // DELETES
-      if (e.key === "Backspace" || e.key === "Delete") {
-        const blocksToDelete = Object.values(selectedBlocks);
-        if (blocksToDelete.length > 0) {
-          deleteBlocksWithUndo(blocksToDelete);
+      if (currentScope === "main") {
+        if (e.key === "Backspace" || e.key === "Delete") {
+          const blocksToDelete = Object.values(selectedBlocks).filter((block) =>
+            canEditBlock(block)
+          );
+          if (blocksToDelete.length > 0) {
+            deleteBlocksWithUndo(blocksToDelete);
+          }
         }
       }
 

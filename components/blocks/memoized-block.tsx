@@ -111,16 +111,18 @@ function BlockComponent({
               hover:scale-101 hover:shadow-xl hover:opacity-100
               relative bg-background
           ${isDragging ? "opacity-30" : ""} 
-          ${isSelected ? "outline-4 outline-secondary" : ""}`}
+          ${
+            isSelected
+              ? canEdit
+                ? "outline-4 outline-accent"
+                : "outline-4 outline-secondary"
+              : ""
+          }`}
           onClick={onClick}
         >
           <SortableBlock
             canEdit={canEdit}
-            id={
-              canEdit
-                ? `${scope}::block-${block.block_id}`
-                : `disabled::block-${block.block_id}`
-            }
+            id={`${scope}::block-${block.block_id}`}
             isMirror={isMirror}
             sectionId={block.section_id}
           >

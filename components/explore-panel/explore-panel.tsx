@@ -9,10 +9,16 @@ import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-colum
 import { Section } from "@/types/board-types";
 import SectionGallery from "@/app/b/[boardId]/gallery";
 import SectionHeader from "../section/section-header";
+import { Block } from "@/types/block-types";
 
-export default function ExplorePanel() {
-  const userMudkits = useExploreStore((s) => s.userMudkits);
-  const otherMudkits = useExploreStore((s) => s.otherMudkits);
+export default function ExplorePanel({
+  draggedBlocks,
+  selectedBlocks,
+}: {
+  draggedBlocks: Block[] | null;
+  selectedBlocks: Record<string, Block>;
+}) {
+  const allMudkits = useExploreStore((s) => s.allMudkits);
 
   const boardSections = useMetadataStore((s) => s.boardSections ?? []);
 
@@ -21,10 +27,19 @@ export default function ExplorePanel() {
   const exploreSectionColumns = useExploreStore((s) => s.sectionColumns);
   const setExploreSectionColumns = useExploreStore((s) => s.setSectionColumns);
 
-  const filteredMudkits = useMemo(() => {
+  const userId = useMetadataStore((s) => s.user?.id);
+  const { userMudkits, otherMudkits } = useMemo(() => {
     const usedSectionIds = new Set(boardSections.map((bs) => bs.section_id));
-    return userMudkits.filter((kit) => !usedSectionIds.has(kit.section_id));
-  }, [userMudkits, boardSections]);
+
+    const filtered = allMudkits.filter(
+      (kit) => !usedSectionIds.has(kit.section_id)
+    );
+
+    const userMudkits = filtered.filter((kit) => kit.owned_by === userId);
+    const otherMudkits = filtered.filter((kit) => kit.owned_by !== userId);
+
+    return { userMudkits, otherMudkits };
+  }, [allMudkits, boardSections, userId]);
 
   const handleFetchMudkit = async (section: Section) => {
     const blocks = await fetchSupabaseBlocks([section.section_id]);
@@ -45,7 +60,7 @@ export default function ExplorePanel() {
       <div>
         <h3 className="text-white text-md font-bold mb-2">My Mudkits</h3>
         <div className="p-1 bg-muted rounded-lg">
-          {filteredMudkits.map((section) => (
+          {userMudkits.map((section) => (
             <SectionSelectButton
               key={section.section_id}
               section={section}
@@ -81,11 +96,12 @@ export default function ExplorePanel() {
           />
 
           <SectionGallery
+            isMirror={true}
             section={selectedSection}
             columns={exploreSectionColumns}
-            draggedBlocks={null}
+            draggedBlocks={draggedBlocks}
             scrollY={0}
-            selectedBlocks={{}}
+            selectedBlocks={selectedBlocks}
             overId={null}
             canEdit={false}
           />

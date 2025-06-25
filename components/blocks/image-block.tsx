@@ -15,7 +15,6 @@ import { useLoadingStore } from "@/store/loading-store";
 import { AnimatePresence, motion } from "framer-motion";
 import { updateImageBlockCaption } from "@/lib/db-actions/sync-text/update-caption";
 import { useSelectionStore } from "@/store/selection-store";
-import { useIsMirror } from "@/app/b/[boardId]/board";
 import { getImageUrl } from "@/utils/get-image-url";
 import { useLayoutStore } from "@/store/layout-store";
 import { MAX_COLUMNS } from "@/types/constants";
@@ -49,13 +48,9 @@ export function ImageBlock({
 
   // SECTION: selection
 
-  const selectedScope = useSelectionStore((s) => s.selectionScope);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
-  const isMirror = useIsMirror();
   const isSelected = !!selectedBlocks[block.block_id];
-  const isInScope = selectedScope === (isMirror ? "mirror" : "main");
-  const isSoleSelected =
-    isInScope && Object.keys(selectedBlocks).length === 1 && isSelected;
+  const isSoleSelected = Object.keys(selectedBlocks).length === 1 && isSelected;
   const captionIsActive = Boolean(caption) || (isSoleSelected && canEdit);
 
   // overrides
