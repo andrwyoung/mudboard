@@ -12,6 +12,9 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "../ui/context-menu";
 import { useOverlayStore } from "@/store/overlay-store";
@@ -65,6 +68,8 @@ function BlockComponent({
   shouldEagerLoad,
   columnWidth,
   numCols,
+  addImage,
+  addText,
 }: {
   canEdit: boolean;
   block: Block;
@@ -74,6 +79,8 @@ function BlockComponent({
   shouldEagerLoad: boolean;
   columnWidth: number;
   numCols: number;
+  addImage: () => void;
+  addText: () => void;
 }) {
   const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
   const isMirror = useIsMirror();
@@ -157,7 +164,7 @@ function BlockComponent({
                 openPinnedPanelWithBlock(block);
               }}
             >
-              View In Focus
+              Spotlight
             </ContextMenuItem>
             {selectedBlocksLength === 1 ? (
               <ContextMenuItem
@@ -202,9 +209,19 @@ function BlockComponent({
           </>
         )}
 
+        {canEdit && (
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Add Below</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuItem onClick={addImage}>Image</ContextMenuItem>
+              <ContextMenuItem onClick={addText}>Text</ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+        )}
+        {/* 
         <ContextMenuItem onClick={() => deselectBlocks()}>
           Deselect
-        </ContextMenuItem>
+        </ContextMenuItem> */}
 
         {canEdit && (
           <>

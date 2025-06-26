@@ -30,6 +30,7 @@ export default function MudkitView({ sectionId }: Props) {
   const setBoardSections = useMetadataStore((s) => s.setBoardSections);
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
+
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
   const { overlayBlock } = useOverlayStore("main");

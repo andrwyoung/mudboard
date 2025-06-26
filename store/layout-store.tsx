@@ -11,11 +11,11 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { useMetadataStore } from "./metadata-store";
 import { useUIStore } from "./ui-store";
-import { syncOrderToSupabase } from "@/lib/db-actions/sync-order";
+import { syncOrderToSupabase } from "@/store/layout-core/sync-order";
 import { SectionColumns } from "@/types/board-types";
 import { Block, VisualOverride } from "@/types/block-types";
 import { PositionedBlock } from "@/types/sync-types";
-import { generatePositionedBlocks } from "@/lib/ordering/generate-block-positions";
+import { generatePositionedBlocks } from "@/store/layout-core/positioning/generate-block-positions";
 import { DEFAULT_COLUMNS, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { generateColumnsFromBlockLayout } from "@/lib/columns/generate-columns";
 

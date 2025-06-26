@@ -148,6 +148,7 @@ export default function SectionGallery({
 
   return (
     <MirrorContext.Provider value={isMirror}>
+      {fileInput}
       <div
         className={`grid h-full relative ${
           draggedBlocks ? "cursor-grabbing" : "cursor-default"
@@ -166,12 +167,11 @@ export default function SectionGallery({
         {/* <p className="text-primary">hey there</p> */}
         {isEmpty && canEdit && (
           <>
-            {fileInput}
             <div className="absolute inset-0 flex flex-col items-center justify-center ">
               <div
                 className="w-fit h-fit flex flex-col items-center select-none
-        opacity-60 z-10 hover:opacity-90 transition-all duration-200 cursor-pointer "
-                onClick={triggerImagePicker}
+                    opacity-60 z-10 hover:opacity-90 transition-all duration-200 cursor-pointer "
+                onClick={() => triggerImagePicker()}
               >
                 <Image
                   src="/1.png"
@@ -210,6 +210,7 @@ export default function SectionGallery({
               selectedBlocks={selectedBlocks}
               handleItemClick={handleItemClick}
               scrollY={scrollY}
+              triggerImagePicker={triggerImagePicker}
             />
           </DroppableColumn>
           // </div>

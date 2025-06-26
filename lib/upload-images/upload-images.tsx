@@ -47,7 +47,8 @@ type PreparedImage = {
 export async function uploadImages(
   files: File[],
   sectionId: string,
-  columnIndex?: number
+  columnIndexPreference?: number,
+  rowIndexPreference?: number
 ) {
   if (!files || files.length === 0) return;
 
@@ -185,10 +186,12 @@ export async function uploadImages(
     // here we add it to local layout so we can immediately interact
     updateColumns((prevCols) => {
       const colIndex =
-        files.length <= DROP_SPREAD_THRESHOLD && columnIndex !== undefined
-          ? columnIndex
+        files.length <= DROP_SPREAD_THRESHOLD &&
+        columnIndexPreference !== undefined
+          ? columnIndexPreference
           : findShortestColumn(sectionId);
-      const rowIndex = prevCols[colIndex].length;
+      const rowIndex = rowIndexPreference ?? prevCols[colIndex].length;
+      console.log("rowIndex: ", rowIndex);
 
       const newBlock: Block = {
         block_id: tempBlockId,
@@ -207,7 +210,11 @@ export async function uploadImages(
       };
 
       const newCols = [...prevCols];
-      newCols[colIndex] = [...newCols[colIndex], newBlock];
+      const updatedCol = [...newCols[colIndex]];
+
+      updatedCol.splice(rowIndex, 0, newBlock); // useful only if rowIndexPreference is true
+      newCols[colIndex] = updatedCol;
+
       return newCols;
     });
 
@@ -215,10 +222,12 @@ export async function uploadImages(
     // optimistically generate order and columns
     const cols = useLayoutStore.getState().sectionColumns[sectionId] ?? [];
     const optimisticColIndex =
-      files.length <= DROP_SPREAD_THRESHOLD && columnIndex !== undefined
-        ? columnIndex
+      files.length <= DROP_SPREAD_THRESHOLD &&
+      columnIndexPreference !== undefined
+        ? columnIndexPreference
         : findShortestColumn(sectionId);
-    const optimisticRowIndex = cols[optimisticColIndex].length;
+    const optimisticRowIndex =
+      rowIndexPreference ?? cols[optimisticColIndex].length;
     const bestEffortBlock: BlockInsert = {
       ...incompleteBlock,
 

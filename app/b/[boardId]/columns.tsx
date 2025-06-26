@@ -15,6 +15,7 @@ import { useGetScope } from "@/hooks/use-get-scope";
 import { useIsMirror } from "./board";
 import BlockAdder from "@/components/blocks/add-a-block";
 import { Section } from "@/types/board-types";
+import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
 
 // virtualization
 function getBlockLayout(
@@ -59,6 +60,7 @@ type Props = {
   selectedBlocks: Record<string, Block>;
   handleItemClick: (block: Block, e: React.MouseEvent) => void;
   scrollY: number;
+  triggerImagePicker: (columnIndex?: number, rowIndex?: number) => void;
 };
 
 function ColumnComponent({
@@ -73,6 +75,7 @@ function ColumnComponent({
   selectedBlocks,
   handleItemClick,
   scrollY,
+  triggerImagePicker,
 }: Props) {
   const sectionId = section.section_id;
 
@@ -96,21 +99,6 @@ function ColumnComponent({
     columnWidth,
     gallerySpacingSize
   );
-
-  // const visibleItems = items.filter(({ top, height }) => {
-  //   return (
-  //     top + height > scrollY - overscan &&
-  //     top < scrollY + viewportHeight + overscan
-  //   );
-  // });
-
-  // const visibleIndicators = items
-  //   .map(({ top }, index) => ({ top, index }))
-  //   .filter(({ top }) => {
-  //     return (
-  //       top > scrollY - overscan && top < scrollY + viewportHeight + overscan
-  //     );
-  //   });
 
   return (
     // <div style={{ height: totalHeight, position: "relative" }}>
@@ -200,6 +188,10 @@ function ColumnComponent({
                 shouldEagerLoad={shouldEagerLoad}
                 columnWidth={columnWidth}
                 numCols={section.visualColumnNum}
+                addImage={() => triggerImagePicker(columnIndex, index + 1)}
+                addText={() =>
+                  createTextBlock(section.section_id, columnIndex, index + 1)
+                }
               />
             </div>
           );
@@ -228,7 +220,10 @@ function ColumnComponent({
         canEdit &&
         !mirrorMode &&
         section.visualColumnNum <= 6 && (
-          <BlockAdder sectionId={sectionId} columnIndex={columnIndex} />
+          <BlockAdder
+            addImage={() => triggerImagePicker(columnIndex)}
+            addText={() => createTextBlock(section.section_id, columnIndex)}
+          />
         )}
     </div>
   );

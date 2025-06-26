@@ -17,7 +17,7 @@ export default function SectionAddImageButton({
         type="button"
         className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
         transition-transform duration-200 flex items-center justify-center"
-        onClick={triggerImagePicker}
+        onClick={() => triggerImagePicker()}
         title="Add Image to Section"
       >
         <FaPlus className="z-2 size-5  group-hover:text-accent transition-colors duration-300" />

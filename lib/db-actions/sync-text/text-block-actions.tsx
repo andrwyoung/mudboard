@@ -10,11 +10,12 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 export async function createTextBlock(
   sectionId: string,
-  columnIndex?: number
+  colIndexPreference?: number,
+  rowIndexPreference?: number
 ): Promise<Block> {
   const columns = useLayoutStore.getState().sectionColumns[sectionId] ?? [];
-  const colIndex = columnIndex ?? findShortestColumn(sectionId);
-  const rowIndex = columns[colIndex].length;
+  const colIndex = colIndexPreference ?? findShortestColumn(sectionId);
+  const rowIndex = rowIndexPreference ?? columns[colIndex].length;
 
   // first create the text and the block
   const textBlock: TextBlockType = {
@@ -42,7 +43,10 @@ export async function createTextBlock(
   const updateColumns = useLayoutStore.getState().updateColumnsInASection;
   updateColumns(sectionId, (prevCols) => {
     const updated = [...prevCols];
-    updated[colIndex] = [...(updated[colIndex] ?? []), block];
+    const updatedCol = [...(updated[colIndex] ?? [])];
+    updatedCol.splice(rowIndex, 0, block); // insert at rowIndex
+    updated[colIndex] = updatedCol;
+
     return updated;
   });
 

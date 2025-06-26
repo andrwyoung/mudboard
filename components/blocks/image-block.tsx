@@ -169,7 +169,7 @@ export function ImageBlock({
               onError={() => setIsErrored(true)}
               onLoad={() => setLoaded(true)}
               className={`w-full h-full ${showBlurImg ? "hidden" : "visible"}
-            ${captionIsActive ? "rounded-t-sm" : "rounded-sm"}
+            ${captionIsActive && false ? "rounded-t-sm" : "rounded-sm"}
             ${overrides?.is_greyscale ? "grayscale" : ""}
                   ${overrides?.is_flipped ? "transform scale-x-[-1]" : ""}`}
               loading={shouldEagerLoad ? "eager" : "lazy"}
@@ -177,7 +177,7 @@ export function ImageBlock({
             />
           </div>
           <AnimatePresence initial={false}>
-            {captionIsActive && (
+            {captionIsActive && false && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: CAPTION_HEIGHT }} // match your fixed height

@@ -58,6 +58,7 @@ import PinnedPanel from "@/components/pinned-panel/pinned-panel";
 import { usePanelStore } from "@/store/panel-store";
 import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
 import { useInitExplore } from "@/hooks/use-init-explore";
+import ExplorePanel from "@/components/explore-panel/explore-panel";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -352,17 +353,17 @@ export default function Board({ boardId }: { boardId: string }) {
                   }
                 >
                   {panelMode === "focus" && <PinnedPanel />}
-                  {/* {panelMode === "explore" && (
+                  {panelMode === "explore" && (
                     <ExplorePanel
                       draggedBlocks={draggedBlocks}
                       selectedBlocks={selectedBlocks}
                     />
-                  )} */}
-                  {panelMode === "explore" && (
+                  )}
+                  {/* {panelMode === "explore" && (
                     <div className="h-full w-full font-header text-2xl text-primary flex items-center justify-center bg-primary/40">
                       Panel Under Construction
                     </div>
-                  )}
+                  )} */}
                 </ResizablePinnedPanel>
               )}
             </div>

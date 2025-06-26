@@ -4,10 +4,14 @@
 import { useRef } from "react";
 import { uploadImages } from "@/lib/upload-images/upload-images";
 
-export function useImagePicker(sectionId: string, columnIndex?: number) {
+export function useImagePicker(sectionId: string) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const columnIndexRef = useRef<number | undefined>(undefined);
+  const rowIndexRef = useRef<number | undefined>(undefined);
 
-  function triggerImagePicker() {
+  function triggerImagePicker(columnIndex?: number, rowIndex?: number) {
+    columnIndexRef.current = columnIndex;
+    rowIndexRef.current = rowIndex;
     inputRef.current?.click();
   }
 
@@ -21,7 +25,12 @@ export function useImagePicker(sectionId: string, columnIndex?: number) {
       onChange={(e) => {
         const files = e.target.files;
         if (files && files.length > 0) {
-          uploadImages(Array.from(files), sectionId, columnIndex);
+          uploadImages(
+            Array.from(files),
+            sectionId,
+            columnIndexRef.current,
+            rowIndexRef.current
+          );
         }
       }}
     />

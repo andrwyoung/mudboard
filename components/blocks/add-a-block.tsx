@@ -1,5 +1,3 @@
-import { useImagePicker } from "@/hooks/use-image-picker";
-import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
 import React from "react";
 import { FaPlus } from "react-icons/fa";
 
@@ -7,33 +5,18 @@ const buttonClass =
   "text-primary font-header font-semibold text-md opacity-0 group-hover:opacity-20 group-hover/button:opacity-100 transition-opacity duration-400";
 
 export default function BlockAdder({
-  sectionId,
-  columnIndex,
+  addImage,
+  addText,
 }: {
-  sectionId: string;
-  columnIndex: number;
+  addImage: () => void;
+  addText: () => void;
 }) {
-  // for triggering the file opener
-  const { triggerImagePicker, fileInput } = useImagePicker(
-    sectionId,
-    columnIndex
-  );
-
-  function handleAddImageBlock() {
-    triggerImagePicker();
-  }
-
-  function handleAddTextBlock() {
-    createTextBlock(sectionId, columnIndex);
-  }
-
   return (
     <>
-      {fileInput}
       <div className="relative h-12 w-full group ">
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          onClick={() => handleAddImageBlock()}
+          onClick={addImage}
         >
           <div
             className="flex-shrink-0 relative size-6 group cursor-pointer hover:scale-95 
@@ -49,7 +32,7 @@ export default function BlockAdder({
         </div>
 
         <button
-          onClick={() => handleAddTextBlock()}
+          onClick={addText}
           className="absolute left-0 top-0 bottom-0 w-1/2 group/button pointer-events-auto cursor-pointer"
         >
           <span
@@ -59,7 +42,7 @@ export default function BlockAdder({
           </span>
         </button>
         <button
-          onClick={() => handleAddImageBlock()}
+          onClick={addImage}
           className="absolute right-0 top-0 bottom-0 w-1/2 group/button pointer-events-auto cursor-pointer"
         >
           <span
