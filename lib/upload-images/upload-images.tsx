@@ -29,6 +29,7 @@ import { findShortestColumn } from "../columns/column-helpers";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { rasterizeVectorImage } from "./processing/rasterize-vectors";
+import { useMetadataStore } from "@/store/metadata-store";
 
 type PreparedImage = {
   image_id: string;
@@ -51,6 +52,8 @@ export async function uploadImages(
   rowIndexPreference?: number
 ) {
   if (!files || files.length === 0) return;
+
+  const user = useMetadataStore.getState().user;
 
   const updateColumnsInASection =
     useLayoutStore.getState().updateColumnsInASection;
@@ -169,6 +172,8 @@ export async function uploadImages(
       fileName: objectUrl, // the local file
       fileType: "blob",
       uploadStatus: "uploading",
+
+      uploaded_by: user?.id,
     };
 
     console.log("sectionId: ", sectionId);

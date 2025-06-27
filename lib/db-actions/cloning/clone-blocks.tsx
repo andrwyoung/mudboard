@@ -28,6 +28,8 @@ export async function cloneBlocks(
     is_flipped: block.is_flipped,
     is_greyscale: block.is_greyscale,
     crop: block.crop,
+
+    cloned_from: block.block_id,
   }));
 
   const { data, error } = await supabase
@@ -36,11 +38,7 @@ export async function cloneBlocks(
     .select("block_id");
 
   if (error || !data || !Array.isArray(data)) {
-    console.error("Failed to clone blocks:", {
-      error,
-      receivedData: data,
-      attemptedBlocks: clonedBlocks,
-    });
+    console.error("Failed to clone blocks:", error);
     throw new Error("Block cloning failed during Supabase insert.");
   }
 

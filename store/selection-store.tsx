@@ -20,7 +20,7 @@ type SelectionStore = {
   setSelectedBlocks: (
     scope: CanvasScope,
     blocks: Record<string, Block>,
-    lastSelected: Block
+    lastSelected: Block | null
   ) => void;
   deselectBlocks: () => void;
 };

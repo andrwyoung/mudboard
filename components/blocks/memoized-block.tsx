@@ -94,7 +94,7 @@ function BlockComponent({
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
-  const setSelectedBlock = useSelectionStore((s) => s.setSelectedBlocks);
+  const selectOnlyThisBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
   const selectedBlocksLength = Object.entries(selectedBlocks).length;
   const currentBlockSelected = !!selectedBlocks[block.block_id];
 
@@ -106,7 +106,7 @@ function BlockComponent({
           const alreadySelected = !!selectedBlocks[block.block_id];
           if (!alreadySelected) {
             deselectBlocks();
-            setSelectedBlock(scope, { [block.block_id]: block }, block);
+            selectOnlyThisBlock(scope, block);
           }
         }}
       >

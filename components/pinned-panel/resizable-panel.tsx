@@ -75,6 +75,7 @@ export default function ResizablePinnedPanel({
         panelRef.current = el;
         setNodeRef(el);
       }}
+      data-id={dndId}
       className={`relative h-full select-none`}
       style={{ width }}
     >

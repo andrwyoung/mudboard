@@ -41,8 +41,15 @@ export async function uploadImageToSupabase(
   // now insert metadata
   // note we're inserting everything except our user created fields:
   // fileName and uploadStatus
-  const { image_id, file_ext, original_name, og_width, og_height, blurhash } =
-    newImage;
+  const {
+    image_id,
+    file_ext,
+    original_name,
+    og_width,
+    og_height,
+    blurhash,
+    uploaded_by,
+  } = newImage;
 
   const payload: ImageInsert = {
     image_id,
@@ -51,6 +58,7 @@ export async function uploadImageToSupabase(
     og_width,
     og_height,
     blurhash,
+    uploaded_by,
   };
 
   const { error: insertError } = await supabase.from("images").insert(payload);

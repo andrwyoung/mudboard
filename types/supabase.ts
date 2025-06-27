@@ -14,6 +14,7 @@ export type Database = {
           block_id: string
           block_type: string
           caption: string | null
+          cloned_from: string | null
           col_index: number
           created_at: string
           crop: Json | null
@@ -36,6 +37,7 @@ export type Database = {
           block_id?: string
           block_type: string
           caption?: string | null
+          cloned_from?: string | null
           col_index?: number
           created_at?: string
           crop?: Json | null
@@ -58,6 +60,7 @@ export type Database = {
           block_id?: string
           block_type?: string
           caption?: string | null
+          cloned_from?: string | null
           col_index?: number
           created_at?: string
           crop?: Json | null
@@ -77,6 +80,34 @@ export type Database = {
           width?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "blocks_cloned_from_fkey"
+            columns: ["cloned_from"]
+            isOneToOne: false
+            referencedRelation: "section_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "blocks_cloned_from_fkey"
+            columns: ["cloned_from"]
+            isOneToOne: false
+            referencedRelation: "section_with_stats"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "blocks_cloned_from_fkey"
+            columns: ["cloned_from"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["section_id"]
+          },
+          {
+            foreignKeyName: "blocks_cloned_from_fkey"
+            columns: ["cloned_from"]
+            isOneToOne: false
+            referencedRelation: "user_board_sections"
+            referencedColumns: ["section_id"]
+          },
           {
             foreignKeyName: "blocks_image_id_fkey"
             columns: ["image_id"]
@@ -291,6 +322,7 @@ export type Database = {
           og_height: number
           og_width: number
           original_name: string
+          uploaded_by: string | null
         }
         Insert: {
           blurhash?: string | null
@@ -302,6 +334,7 @@ export type Database = {
           og_height: number
           og_width: number
           original_name: string
+          uploaded_by?: string | null
         }
         Update: {
           blurhash?: string | null
@@ -313,8 +346,17 @@ export type Database = {
           og_height?: number
           og_width?: number
           original_name?: string
+          uploaded_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "images_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       sections: {
         Row: {

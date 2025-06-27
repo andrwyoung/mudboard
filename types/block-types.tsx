@@ -44,6 +44,8 @@ export type Block = {
   is_flipped: boolean | null;
   is_greyscale: boolean | null;
   crop: CropRect | null;
+
+  cloned_from?: string;
 };
 
 export type MudboardImage = {
@@ -55,6 +57,8 @@ export type MudboardImage = {
   og_width: number;
   og_height: number;
   blurhash?: string;
+
+  uploaded_by?: string;
 
   // defined by me on fetch
   fileName: string;

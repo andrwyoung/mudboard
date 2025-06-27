@@ -15,6 +15,8 @@ export async function cloneBlocksFromSections(
 
   if (blockErr) throw blockErr;
 
+  // NOTE: I cant (don't wanna) cast to Block[] because col_index is named saved_col_index
+
   // build blocks to insert
   const newBlocks: TablesInsert<"blocks">[] = blockData.map((block) => ({
     block_type: block.block_type,
@@ -36,6 +38,8 @@ export async function cloneBlocksFromSections(
     is_flipped: block.is_flipped,
     is_greyscale: block.is_greyscale,
     crop: block.crop,
+
+    cloned_from: block.block_id,
   }));
 
   // insert the new blocks with new section_id

@@ -59,6 +59,7 @@ import { usePanelStore } from "@/store/panel-store";
 import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
 import { useInitExplore } from "@/hooks/use-init-explore";
 import ExplorePanel from "@/components/explore-panel/explore-panel";
+import { MarqueBox } from "@/components/board/marque";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -121,6 +122,14 @@ export default function Board({ boardId }: { boardId: string }) {
   // for dragging and stuff
   const [dropIndicatorId, setDropIndicatorId] = useState<string | null>(null);
   const initialPointerYRef = useRef<number | null>(null);
+
+  // marque
+  const [marqueRect, setMarqueRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   // ordering
   const positionedBlockMap = useLayoutStore((s) => s.positionedBlockMap);
@@ -191,7 +200,9 @@ export default function Board({ boardId }: { boardId: string }) {
 
   //
   // keyboard listeners
-  useGlobalListeners();
+  useGlobalListeners({
+    setMarqueRect,
+  });
 
   // handling importing images
   const onlyOneSectionMode = boardSections.length === 1;
@@ -266,6 +277,8 @@ export default function Board({ boardId }: { boardId: string }) {
           <div className="text-3xl font-header ">Drop Images!</div>
         </div>
       )}
+
+      {marqueRect && <MarqueBox marqueRect={marqueRect} />}
 
       <DndContext
         collisionDetection={pointerWithin}
@@ -353,17 +366,16 @@ export default function Board({ boardId }: { boardId: string }) {
                   }
                 >
                   {panelMode === "focus" && <PinnedPanel />}
-                  {panelMode === "explore" && (
+                  {process.env.NODE_ENV === "development" ? (
                     <ExplorePanel
                       draggedBlocks={draggedBlocks}
                       selectedBlocks={selectedBlocks}
                     />
-                  )}
-                  {/* {panelMode === "explore" && (
+                  ) : (
                     <div className="h-full w-full font-header text-2xl text-primary flex items-center justify-center bg-primary/40">
                       Panel Under Construction
                     </div>
-                  )} */}
+                  )}
                 </ResizablePinnedPanel>
               )}
             </div>

@@ -31,7 +31,8 @@ export async function fetchSupabaseBlocks(
       og_height,
       file_ext,
       original_name,
-      blurhash
+      blurhash,
+      uploaded_by
     )
   `
     )
@@ -64,6 +65,7 @@ export async function fetchSupabaseBlocks(
         is_flipped,
         is_greyscale,
         crop,
+        cloned_from,
       } = block;
 
       const incompleteImageBlock: Omit<Block, "data"> = {
@@ -81,6 +83,7 @@ export async function fetchSupabaseBlocks(
         is_flipped,
         is_greyscale,
         crop: crop as CropRect,
+        cloned_from: cloned_from ?? undefined,
       };
 
       if (block_type === "image" && image) {
@@ -96,6 +99,7 @@ export async function fetchSupabaseBlocks(
             og_width: image.og_width,
             og_height: image.og_height,
             blurhash: image.blurhash ?? undefined,
+            uploaded_by: image.uploaded_by ?? undefined,
 
             // defined by me
             fileName: `${SUPABASE_OBJECT_URL}/${image.image_id}/medium.${image.file_ext}`,
