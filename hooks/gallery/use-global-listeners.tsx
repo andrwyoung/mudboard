@@ -1,13 +1,9 @@
-// this hook handles all the global keyboard shortcuts
-// and also the listener that detects when to deselect an image
+// this hook handles
+// - marque tool
+// - undo key
+// - delete image key
 
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { useSelectionStore } from "@/store/selection-store";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useGetScope } from "../use-get-scope";
@@ -103,6 +99,7 @@ export function useGlobalListeners({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedBlocks, deselectBlocks]);
 
+  // this is the marque tool
   useEffect(() => {
     let startX = 0;
     let startY = 0;
@@ -186,26 +183,14 @@ export function useGlobalListeners({
       document.body.classList.remove("select-none");
     }
 
-    // function handleGlobalClick(event: MouseEvent) {
-    //   const target = event.target as HTMLElement;
-    //   const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
-    //   const isBlockItem = clickedId?.includes("::block-");
-    //   const isContextMenu = clickedId === "context-menu";
-    //   if (!isBlockItem && !isContextMenu && !isDragging) {
-    //     deselectBlocks();
-    //   }
-    // }
-
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-    // document.body.addEventListener("click", handleGlobalClick);
 
     return () => {
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-      // document.body.removeEventListener("click", handleGlobalClick);
     };
   }, [deselectBlocks]);
 }

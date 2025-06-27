@@ -1,3 +1,6 @@
+// when you open the overlay-gallery we want the images to "fill" the screen
+// as much as possible. this function calculates that
+
 import { Block } from "@/types/block-types";
 import { useLayoutEffect } from "react";
 

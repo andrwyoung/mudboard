@@ -1,3 +1,5 @@
+// everyone's favorite tool
+
 import { Block, MudboardImage } from "@/types/block-types";
 import { getImageUrl } from "@/utils/get-image-url";
 import { useEffect, useRef, useState } from "react";

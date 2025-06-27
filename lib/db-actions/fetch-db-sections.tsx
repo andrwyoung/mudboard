@@ -1,6 +1,7 @@
-// grab all the sections
-// I was debating whether or not this should be the one responsible for
-// creating a new section if none exist but I decided against it
+// grab all the board_sections
+
+// IMPORTANT: notice we grab board_sections_with_stats
+// instead of simply board_sections
 
 import { BoardSection } from "@/types/board-types";
 import { supabase } from "../../utils/supabase";

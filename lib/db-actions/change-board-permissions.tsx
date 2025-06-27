@@ -1,3 +1,4 @@
+// DEPRECATED: in favor of section by section permissions
 // here's the function that let's people change the board permissions
 
 // at time of writing it's only changing from public/private

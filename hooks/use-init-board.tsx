@@ -1,9 +1,4 @@
-// this is the hook used to initiaze a board
-// O: clear the previous data....this is pretty important
-// 1: grab the board itself
-// 2: grab the sections (initialize 1 if there's none...which should never be)
-// 3: grab all the blocks
-// 4: shove blocks into their sections/columns
+// KEY FILE: this is the hook used to initiaze a board
 
 import { createSupabaseBoardSection } from "@/lib/db-actions/create-new-section";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
@@ -33,7 +28,7 @@ export function useInitBoard(
   const resetState = useResetState();
 
   const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
-  const regenerateLayout = useLayoutStore(
+  const generatePositionedBlocks = useLayoutStore(
     (s) => s.regenerateOrderingInternally
   );
 
@@ -46,13 +41,12 @@ export function useInitBoard(
         setBoardInitialized(false);
 
         //
-        // 1: grab the board first
-        //
-
+        // STEP 1: grab the board first
         const board = await fetchSupabaseBoard(boardId);
         setBoard(board);
 
         if (
+          // DEPRECATED
           board.expired_at &&
           new Date(board.expired_at) <= new Date() &&
           board.user_id === null
@@ -65,14 +59,16 @@ export function useInitBoard(
         }
 
         //
-        // 2: grab the sections and figure that out
+        // STEP 2: grab the sections and figure that out
         //
 
         let boardSections = await fetchSupabaseSections(boardId);
-        // set the visualSectionNum so we don't touch the real saved_column_num
+
         boardSections.forEach((boardSection) => {
           const section = boardSection.section;
 
+          // REMEMBER: set the visualSectionNum so we don't touch the real saved_column_num
+          // I know....this is very fragile. I always forget too
           section.visualColumnNum = section.saved_column_num;
 
           console.log(
@@ -84,7 +80,8 @@ export function useInitBoard(
           );
         });
 
-        // please never happen lol
+        // Edge case: please never happen lol
+        // TODO: should I throw an error instead?
         if (boardSections.length === 0) {
           console.error("ERROR: No sections, creating one");
           const user = useMetadataStore.getState().user;
@@ -98,13 +95,11 @@ export function useInitBoard(
         }
         console.log("Got sections: ", boardSections);
 
-        // set sections and selectedSection
         setBoardSections(boardSections);
         setSelectedSection(boardSections[0]);
 
         //
-        // 3: grab blocks from supabase. and now that we have
-        // everything, we can generate the colums
+        // STEP 3: grab blocks from supabase
         //
         const sections = boardSections.map((bs) => bs.section);
 
@@ -126,7 +121,7 @@ export function useInitBoard(
           }
         }
 
-        // generate the columns
+        // STEP 4: generate the columns
         const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
         if (isMobile) {
           useLayoutStore.setState({ forceMobileColumns: true });
@@ -141,7 +136,7 @@ export function useInitBoard(
         }
 
         setSectionColumns(initColumns);
-        regenerateLayout();
+        generatePositionedBlocks();
         setBoardInitialized(true);
       } catch (err) {
         console.error("Error loading sections:", err);

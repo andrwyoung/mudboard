@@ -1,3 +1,5 @@
+// the better use-center-zoom.tsx
+
 import { MAX_FOCUS_ZOOM, PINNED_IMAGE_PADDING } from "@/types/constants";
 import { useCallback, useEffect } from "react";
 

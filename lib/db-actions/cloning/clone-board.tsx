@@ -1,5 +1,4 @@
-// here's how we duplicate the main board for the demo board
-// I still don't know if I want this function public for others to use
+// clone a board. currenly only used to make Demo boards
 
 import { supabase } from "@/utils/supabase";
 import { createNewBoard } from "../create-new-board";
@@ -26,7 +25,7 @@ export async function cloneBoard({
   }
 
   try {
-    // first make new board
+    // STEP 1: first make new board
     const board = await createNewBoard({
       title: isDemo ? "My Demo Board" : `Copy of ${boardToClone.title}`,
       initializeSection: false,
@@ -35,7 +34,8 @@ export async function cloneBoard({
       savedColumnNumber: boardToClone.saved_column_num, //DEPRECATED. Not neccesary
     });
 
-    // STEP 1: get board sections along with the associated sections
+    // STEP 2: grabs all a board's sections
+    // (remember that board_sections maps sections to boards)
     const { data: boardSectionData, error: sectionErr } = await supabase
       .from("board_sections")
       .select("*, section:sections(*)")
@@ -47,7 +47,8 @@ export async function cloneBoard({
 
     console.log("BoardSections: ", boardSections, " data: ", boardSectionData);
 
-    // STEP 2: insert the real sections
+    // STEP 3: here we clone each of the sections and
+    // attach them to this new board
     const originalToClonedSectionIdMap: Record<string, string> = {};
     await Promise.all(
       boardSections.map(async (boardSection) => {
@@ -67,7 +68,7 @@ export async function cloneBoard({
       })
     );
 
-    // STEP 3: Clone the blocks
+    // STEP 4: Clone the blocks and attach them to their new section
     await cloneBlocksFromSections(originalToClonedSectionIdMap);
 
     return board.board_id;

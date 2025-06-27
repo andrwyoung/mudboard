@@ -1,19 +1,7 @@
-// a board is composed of:
-// 1: sidebar in sidebar.tsx
-// 2: one or 2 canvases depending if mirror mode is active
+// this is pretty much everything to do with a board
 
-// structure breakdown:
-// board -> 1 sidebar + 1 canvas + 1 additional canvas if mirror is active
-// canvas -> 1 gallery per section
-// gallery -> 1 section header + columns
-// column -> blocks
-// block -> text block or image block
-
-// the board is in charge of initializing all the data
-// and then dealing with the drag and drop logic
-
-// board.tsx doesn't really handle regenerating and syncing things whenever
-// things change. rather, layout-store does the lion's share of that
+// it renders the sidebar and then the main canvas
+// it is the main docking point for all the drag, import, initialization handlers
 
 "use client";
 import {
@@ -51,7 +39,7 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
 import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
 import WelcomeModal from "@/components/modals/welcome-modal";
-import { BoardSection, Section } from "@/types/board-types";
+import { Section } from "@/types/board-types";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
 import PinnedPanel from "@/components/pinned-panel/pinned-panel";
@@ -138,21 +126,14 @@ export default function Board({ boardId }: { boardId: string }) {
   );
 
   // KEY SECTION: Initializers
-  useInitExplore();
-  useInitBoard(boardId, setIsExpired, setWelcomeModalOpen);
+  useInitBoard(boardId, setIsExpired, setWelcomeModalOpen); // MAIN: grabs all blocks, sections etc
+  useInitExplore(); // side quest. grabs all relevant mudkits
 
+  // KEY SECTION: regenerates the order whenever the screen size changes
   useEffect(
     () => regenerateOrdering(),
     [sectionColumns, regenerateOrdering, spacingSize, sidebarWidth, windowWidth]
   );
-
-  const sectionMap = useMemo(() => {
-    const map: Record<string, BoardSection> = {};
-    for (const boardSection of boardSections) {
-      map[boardSection.section.section_id] = boardSection;
-    }
-    return map;
-  }, [boardSections]);
 
   // syncing block order to database
   useEffect(() => {
@@ -331,7 +312,6 @@ export default function Board({ boardId }: { boardId: string }) {
               boardSections={boardSections}
               sectionColumns={sectionColumns}
               sectionRefs={sectionRefs}
-              sectionMap={sectionMap}
               draggedBlocks={draggedBlocks}
               selectedBlocks={selectedBlocks}
               dropIndicatorId={dropIndicatorId}
@@ -346,7 +326,6 @@ export default function Board({ boardId }: { boardId: string }) {
                   boardSections={boardSections}
                   sectionColumns={sectionColumns}
                   sectionRefs={sectionRefs}
-                  sectionMap={sectionMap}
                   draggedBlocks={draggedBlocks}
                   selectedBlocks={selectedBlocks}
                   dropIndicatorId={dropIndicatorId}

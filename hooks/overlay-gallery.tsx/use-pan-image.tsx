@@ -1,3 +1,5 @@
+// click to drag behavior in overlay-gallery
+
 import { useEffect, useRef, useState } from "react";
 
 export function usePanImage(

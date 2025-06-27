@@ -14,7 +14,7 @@ export async function forkSection({
   orderInBoard: number;
   newOwnerUserId: string | null;
 }): Promise<{ newSectionId: string } | null> {
-  // Step 1: Clone the section
+  // STEP 1: Clone the section
   const cloneResult = await cloneSection({
     originalSection,
     destinationBoardId,
@@ -25,12 +25,12 @@ export async function forkSection({
   if (!cloneResult) return null;
   const newSectionId = cloneResult.newSectionId;
 
-  // Step 2: Clone its blocks
+  // STEP 2: Clone its blocks
   await cloneBlocksFromSections({
     [originalSection.section_id]: newSectionId,
   });
 
-  // Step 3: Link cloned section to board (handles board_sections + hydration)
+  // STEP 3: Link cloned section to board (handles board_sections + hydration)
   await linkSectionToBoard({
     destinationBoardId,
     sectionToLink: newSectionId,

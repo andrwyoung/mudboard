@@ -1,3 +1,5 @@
+// this is how we lay out the thumbnail you see on the dashboard
+
 import { Block, MudboardImage } from "@/types/block-types";
 import { THUMBNAIL_ASPECT_MAP } from "@/types/upload-settings";
 import { getImageUrl } from "@/utils/get-image-url";

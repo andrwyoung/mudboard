@@ -7,14 +7,11 @@ export function canEditBlock(block: Block): boolean {
   const positionedBlock = useLayoutStore
     .getState()
     .positionedBlockMap.get(block.block_id);
-  if (!positionedBlock) return false;
+  if (!positionedBlock) return false; // if block don't exist. then no
 
-  const { boardSections } = useMetadataStore.getState();
-  const matchingSection = boardSections.find(
-    (bs) => bs.section.section_id === positionedBlock.sectionId
-  );
-
-  if (!matchingSection) return false;
+  const { boardSectionMap } = useMetadataStore.getState();
+  const matchingSection = boardSectionMap[positionedBlock.sectionId];
+  if (!matchingSection) return false; // if section don't exit. then no
 
   return canEditSection(matchingSection.section);
 }

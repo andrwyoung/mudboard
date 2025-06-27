@@ -20,6 +20,7 @@ import HelpModal from "@/components/modals/help-modal";
 import { FaQuestion } from "react-icons/fa6";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { canEditSection } from "@/lib/auth/can-edit-section";
+import { useMetadataStore } from "@/store/metadata-store";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -27,7 +28,6 @@ type CanvasProps = {
   boardSections: BoardSection[];
   sectionColumns: SectionColumns;
   sectionRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
-  sectionMap: Record<string, BoardSection>;
 
   draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
@@ -43,7 +43,6 @@ export default function Canvas({
   boardSections,
   sectionColumns,
   sectionRefs,
-  sectionMap,
   draggedBlocks,
   selectedBlocks,
   dropIndicatorId,
@@ -55,15 +54,16 @@ export default function Canvas({
   const [helpOpen, setHelpOpen] = useState(false);
 
   const mirrorKey = isMirror ? "mirror" : "main";
-  // overlay gallery stuff
   const { isOpen: overlayGalleryIsOpen, overlayBlock: overlayGalleryBlock } =
     useOverlayStore(mirrorKey);
 
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
+  const boardSectionMap = useMetadataStore((s) => s.boardSectionMap);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [scrollY, setScrollY] = useState(0);
-  // track scroll behavior for virtualization
+
+  // when we scroll past a section. highlight it
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || isMirror) return;
@@ -87,7 +87,7 @@ export default function Canvas({
 
         if (scrollTop >= top - 100 && scrollTop < top + height - 100) {
           // Give some buffer with -100
-          setSelectedSection(sectionMap[sectionId]);
+          setSelectedSection(boardSectionMap[sectionId]);
           break;
         }
       }
@@ -95,7 +95,7 @@ export default function Canvas({
 
     el.addEventListener("scroll", onScroll);
     return () => el.removeEventListener("scroll", onScroll);
-  }, [sectionMap, sectionRefs, setSelectedSection, isMirror]);
+  }, [boardSectionMap, sectionRefs, setSelectedSection, isMirror]);
 
   return (
     <div
@@ -185,10 +185,7 @@ export default function Canvas({
                         }
                       />
                     )}
-                    <SectionHeader
-                      section={sectionMap[sectionId].section}
-                      canEdit={canEdit}
-                    />
+                    <SectionHeader section={section} canEdit={canEdit} />
                     {columns && (
                       <SectionGallery
                         isMirror={isMirror}

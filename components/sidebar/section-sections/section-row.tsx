@@ -1,7 +1,5 @@
 // you know in the sidebar, there's a list of sections you can click?
-// this component is one of those rows
-
-// sorry. component naming
+// this component simply renders a single row
 
 import { useSelectionStore } from "@/store/selection-store";
 import { BoardSection } from "@/types/board-types";

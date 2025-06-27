@@ -1,3 +1,5 @@
+// I want to DEPRECATE this in favor of use-cursor-zoom.tsx
+
 import { MAX_OVERLAY_ZOOM } from "@/types/constants";
 import { useCallback, useEffect } from "react";
 

@@ -1,3 +1,5 @@
+// when you click "+ Add Section" this is the dialog that pops up
+
 "use client";
 
 import { FaPlus } from "react-icons/fa";

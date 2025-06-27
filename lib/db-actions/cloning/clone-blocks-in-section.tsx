@@ -40,6 +40,8 @@ export async function cloneBlocksFromSections(
     crop: block.crop,
 
     cloned_from: block.block_id,
+
+    // REMEMBER: update clone-blocks.tsx too
   }));
 
   // insert the new blocks with new section_id

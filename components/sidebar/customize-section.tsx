@@ -1,8 +1,4 @@
-// this component is everything inside the "change look" dropdown
-// (or whatever I ended up to naming it....)
-// it's the "mirror mode" button and the slider to change column number
-
-// I really do need to come up with a better name for it
+// this component renders that "Board options" dropdown
 
 import { useMetadataStore } from "@/store/metadata-store";
 import { useThumbnailStore } from "@/store/thumbnail-store";

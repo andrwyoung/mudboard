@@ -17,11 +17,10 @@ type MetadataStore = {
   profile: UserProfile | null;
   setProfile: (profile: UserProfile | null) => void;
 
-  // sections: Section[];
-  // setSections: (section: Section[]) => void;
-
   boardSections: BoardSection[];
   setBoardSections: (bs: BoardSection[]) => void;
+  boardSectionMap: Record<string, BoardSection>;
+  regenerateBoardSectionMap: () => void;
 
   clearAll: () => void;
 };
@@ -35,11 +34,21 @@ export const useMetadataStore = create<MetadataStore>((set, get) => ({
   profile: null,
   setProfile: (profile) => set({ profile }),
 
-  // sections: [] as Section[],
-  // setSections: (sections: Section[]) => set({ sections }),
-
   boardSections: [] as BoardSection[],
-  setBoardSections: (boardSections: BoardSection[]) => set({ boardSections }),
+  setBoardSections: (boardSections: BoardSection[]) => {
+    set({ boardSections });
+    get().regenerateBoardSectionMap(); // regenerate immediately after updating
+  },
+  boardSectionMap: {},
+  regenerateBoardSectionMap: () => {
+    const boardSections = get().boardSections;
+    const boardSectionMap: Record<string, BoardSection> = {};
+    for (const bs of boardSections) {
+      boardSectionMap[bs.section.section_id] = bs;
+    }
+
+    set({ boardSectionMap });
+  },
 
   clearAll: () => set({ boardSections: [] as BoardSection[], board: null }),
 }));

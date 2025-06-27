@@ -35,6 +35,7 @@ export async function linkSectionToBoard({
 
   //
   // STEP 2: now grab that board section along with the section
+  // IMPORTANT: notice we grab board_sections_with_stats. note we also do this in fetch-db-sections.tsx
   const { data: boardSectionData, error } = await supabase
     .from("board_sections_with_stats")
     .select("*, section:sections(*)")

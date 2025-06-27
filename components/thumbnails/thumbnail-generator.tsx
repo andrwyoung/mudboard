@@ -1,3 +1,9 @@
+// KEY FILE: this is where all the thumbnail generation things "dock"
+
+// how this works:
+// in this file we render some canvases wayyy offscreen
+// then we call a function in thumbnail-store.tsx that "captures" that image and uploads it
+
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import React, { useEffect, useMemo, useRef, useState } from "react";

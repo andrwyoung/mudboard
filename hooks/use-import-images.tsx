@@ -1,4 +1,5 @@
-// here's the file we use to import images, but mainly here to handle the drag and drop behaviors.
+// here's the file we call when you drag images INTO my app
+
 // upload-images.tsx (which is called here) is the one handling the meat of the logic/uploading
 
 import { useEffect, useRef } from "react";

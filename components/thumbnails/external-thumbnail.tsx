@@ -1,3 +1,6 @@
+// this is how we lay out the thumbnail you see when you send
+// a mudboard to your friends (if you have friends) through text
+
 import { Block, MudboardImage } from "@/types/block-types";
 import { getImageUrl } from "@/utils/get-image-url";
 import Image from "next/image";
