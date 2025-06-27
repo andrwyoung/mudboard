@@ -1,4 +1,5 @@
-// mark a section for deletion both in the database and locally
+// mark a board_section for deletion both in the database and locally
+// (maybe) delete a section. depends what soft-delete-section.tsx decides
 
 import { BoardSection } from "@/types/board-types";
 import { supabase } from "@/utils/supabase";

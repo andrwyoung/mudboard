@@ -1,3 +1,7 @@
+// situation: section exists. I want to use that section in my board. How?
+
+// this function solves that by "linking" that section to our board
+
 import { TablesInsert } from "@/types/supabase";
 import { supabase } from "@/utils/supabase";
 import { fetchSupabaseBlocks } from "../fetch-db-blocks";

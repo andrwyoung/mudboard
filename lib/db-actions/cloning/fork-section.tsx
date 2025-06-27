@@ -1,3 +1,7 @@
+// situation: I like section. I want to copy section. How?
+
+// this function does that
+
 import { cloneSection } from "./clone-section";
 import { cloneBlocksFromSections } from "./clone-blocks-in-section";
 import { Section } from "@/types/board-types";

@@ -1,4 +1,4 @@
-// this function takes a number of blocks then clones it into the specified section
+// take my list of blocks. clone it. add cloned blocks to section I want
 
 import { supabase } from "@/utils/supabase";
 import { TablesInsert } from "@/types/supabase";

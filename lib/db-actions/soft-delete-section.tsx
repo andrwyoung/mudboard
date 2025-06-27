@@ -1,3 +1,7 @@
+// DATABASE only
+
+// KEY FILE (layer 2): mark a section as deleted. mark it's blocks as deleted
+
 import { SectionWithStats } from "@/types/stat-types";
 import { supabase } from "@/utils/supabase";
 

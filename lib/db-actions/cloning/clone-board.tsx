@@ -1,4 +1,4 @@
-// clone a board. currenly only used to make Demo boards
+// clone a board. (right now only used to make Demo boards)
 
 import { supabase } from "@/utils/supabase";
 import { createNewBoard } from "../create-new-board";

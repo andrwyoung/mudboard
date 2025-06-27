@@ -1,4 +1,4 @@
-// grab all the board_sections
+// grab all the sections that are in a board
 
 // IMPORTANT: notice we grab board_sections_with_stats
 // instead of simply board_sections

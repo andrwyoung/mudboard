@@ -1,10 +1,8 @@
-// this funcion PURELY create a section in the database.
-// since there are a lot of different scenarios where we create a section
-// this is just a utility function for others to use
+// make new section in database. link that section to board
 
-// namely this function isn't responsible to (1) check whether a user is logged in
-// nor does (2) it update the new section locally.
-// the functions calling this should do that if applicable
+// this function DOES NOT:
+// - check if user is logged in
+// - update section locally
 
 import { supabase } from "@/utils/supabase";
 import { BoardSection } from "@/types/board-types";

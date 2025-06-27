@@ -1,3 +1,5 @@
+// DATABASE + LOCAL (sync-local-order.tsx)
+
 // this is the function that syncs the block order to supabase
 
 import { BlockInsert } from "@/types/block-types";

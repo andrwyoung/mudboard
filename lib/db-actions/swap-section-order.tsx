@@ -1,3 +1,7 @@
+// LOCAL + DATABASE
+
+// swap a section
+
 import { supabase } from "@/utils/supabase";
 import { BoardSection } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";

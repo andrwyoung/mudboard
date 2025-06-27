@@ -1,5 +1,6 @@
-// this is currently used after deleting a section
-// we want to rearrange the indexes of the section so they make sense
+// if indexes are wrong, reorder
+// honestly I don't know why I have this around....
+// might be DEPRECATED, but idk
 
 import { supabase } from "@/utils/supabase";
 import { useMetadataStore } from "@/store/metadata-store";

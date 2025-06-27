@@ -1,8 +1,5 @@
-// NOTE: stuff related to this file are very likely to case an error
-// so be CAREFUL when changing things
-
-// this function grabs all the blocks from the database then shoves them
-// into the types that we created
+// grab blocks from database. convert to naming convention we use locally
+// if it's an image, convert to MudboardImage. if text, convert to TextBlock
 
 import {
   Block,

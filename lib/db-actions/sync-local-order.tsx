@@ -1,3 +1,8 @@
+// LOCAL only
+
+// update the positions and block order locally
+// (only used by sync-order.tsx)
+
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { PositionedBlock } from "@/types/sync-types";

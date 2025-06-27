@@ -1,6 +1,4 @@
-// this function clones the entry for "sections" and then links this
-// new section to your board via "board_sections"
-
+// make a copy of my section
 // this function does NOT clone blocks
 
 import { Section } from "@/types/board-types";
