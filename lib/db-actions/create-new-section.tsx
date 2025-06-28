@@ -8,6 +8,7 @@ import { supabase } from "@/utils/supabase";
 import { BoardSection } from "@/types/board-types";
 import { TablesInsert } from "@/types/supabase";
 import { DEFAULT_COLUMNS } from "@/types/constants";
+import { useLayoutStore } from "@/store/layout-store";
 
 export async function createSupabaseBoardSection({
   board_id,
@@ -56,9 +57,15 @@ export async function createSupabaseBoardSection({
     throw new Error("Failed to link section to board");
   }
 
-  // IMPORTANT (kind of fragile sorry). initialize visualColumnNumber
   const boardSection = boardSectionData as BoardSection;
-  boardSection.section.visualColumnNum = boardSection.section.saved_column_num;
+
+  // Register column count in the layout store
+  useLayoutStore
+    .getState()
+    .setVisualNumColsForSection(
+      boardSection.section.section_id,
+      boardSection.section.saved_column_num
+    );
 
   return boardSection;
 }

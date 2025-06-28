@@ -64,19 +64,14 @@ export function useInitBoard(
 
         let boardSections = await fetchSupabaseSections(boardId);
 
+        // set the visual num cols
+        const setVisualNumColsForSection =
+          useLayoutStore.getState().setVisualNumColsForSection;
         boardSections.forEach((boardSection) => {
           const section = boardSection.section;
-
-          // REMEMBER: set the visualSectionNum so we don't touch the real saved_column_num
-          // I know....this is very fragile. I always forget too
-          section.visualColumnNum = section.saved_column_num;
-
-          console.log(
-            section.is_public,
-            section.is_forkable,
-            section.is_linkable,
-            section.is_on_marketplace,
-            section.first_published_at
+          setVisualNumColsForSection(
+            section.section_id,
+            section.saved_column_num
           );
         });
 

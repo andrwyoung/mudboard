@@ -61,6 +61,7 @@ type Props = {
   handleItemClick: (block: Block, e: React.MouseEvent) => void;
   scrollY: number;
   triggerImagePicker: (columnIndex?: number, rowIndex?: number) => void;
+  visualNumCols: number;
 };
 
 function ColumnComponent({
@@ -76,6 +77,7 @@ function ColumnComponent({
   handleItemClick,
   scrollY,
   triggerImagePicker,
+  visualNumCols,
 }: Props) {
   const sectionId = section.section_id;
 
@@ -187,7 +189,7 @@ function ColumnComponent({
                 onClick={(e) => handleItemClick(block, e)}
                 shouldEagerLoad={shouldEagerLoad}
                 columnWidth={columnWidth}
-                numCols={section.visualColumnNum}
+                numCols={visualNumCols}
                 addImage={() => triggerImagePicker(columnIndex, index + 1)}
                 addText={() =>
                   createTextBlock(section.section_id, columnIndex, index + 1)
@@ -216,15 +218,12 @@ function ColumnComponent({
           // }}
         />
       </SortableContext>
-      {!wholeGalleryEmpty &&
-        canEdit &&
-        !mirrorMode &&
-        section.visualColumnNum <= 6 && (
-          <BlockAdder
-            addImage={() => triggerImagePicker(columnIndex)}
-            addText={() => createTextBlock(section.section_id, columnIndex)}
-          />
-        )}
+      {!wholeGalleryEmpty && canEdit && !mirrorMode && visualNumCols <= 6 && (
+        <BlockAdder
+          addImage={() => triggerImagePicker(columnIndex)}
+          addText={() => createTextBlock(section.section_id, columnIndex)}
+        />
+      )}
     </div>
   );
 }

@@ -5,40 +5,40 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
-import { setVisualColumnNum } from "@/lib/local-actions/set-visual-columns";
+import { setVisualNumCols } from "@/lib/local-actions/set-visual-columns";
 import { FaSave } from "react-icons/fa";
 import { cn } from "@/utils/utils";
 import { updateSectionColumnNum } from "@/lib/db-actions/update-section-columns";
 
 type Props = {
   sectionId: string;
-  visualColumnNum: number;
+  visualNumCols: number;
   savedColumnNum: number;
   canEdit: boolean;
 };
 
 export default function SectionColumnSelector({
   sectionId,
-  visualColumnNum,
+  visualNumCols,
   savedColumnNum,
   canEdit,
 }: Props) {
   return (
     <div className="flex flex-row-reverse items-center gap-2">
-      {canEdit && visualColumnNum !== savedColumnNum && (
+      {canEdit && visualNumCols !== savedColumnNum && (
         <FaSave
           className="cursor-pointer hover:text-accent transition-all duration-200"
           title="Save Number of Columns"
           onClick={() =>
-            updateSectionColumnNum(sectionId, visualColumnNum, canEdit)
+            updateSectionColumnNum(sectionId, visualNumCols, canEdit)
           }
         />
       )}
       <Select
-        value={visualColumnNum.toString()}
+        value={visualNumCols.toString()}
         onValueChange={(val) => {
           const newVal = parseInt(val);
-          setVisualColumnNum(sectionId, newVal);
+          setVisualNumCols(sectionId, newVal);
         }}
       >
         <SelectTrigger id={`select-trigger-${sectionId}`}>
@@ -47,7 +47,7 @@ export default function SectionColumnSelector({
             transition-colors duration-200 "
             title="Change Column Number"
           >
-            Columns: {visualColumnNum}
+            Columns: {visualNumCols}
           </div>
         </SelectTrigger>
         <SelectContent>
@@ -60,8 +60,7 @@ export default function SectionColumnSelector({
                 <div className="flex items-center gap-1 justify-between w-full">
                   <span
                     className={cn(
-                      isHighlighted &&
-                        n.toString() !== visualColumnNum.toString()
+                      isHighlighted && n.toString() !== visualNumCols.toString()
                         ? "font-semibold"
                         : ""
                     )}
@@ -69,7 +68,7 @@ export default function SectionColumnSelector({
                     {n}
                   </span>
                   {isHighlighted &&
-                    n.toString() !== visualColumnNum.toString() && (
+                    n.toString() !== visualNumCols.toString() && (
                       <span className="text-xs text-primary italic">saved</span>
                     )}
                 </div>

@@ -32,6 +32,10 @@ export default function SectionHeader({
   const isEditing =
     useLoadingStore.getState().editingSectionId === section.section_id;
 
+  const visualNumCols = useLayoutStore((s) =>
+    s.getVisualNumColsForSection(section.section_id)
+  );
+
   const textColor = mode === "main" ? "text-primary" : "text-white";
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
@@ -88,7 +92,7 @@ export default function SectionHeader({
           <div className="hidden sm:block">
             <SectionColumnSelector
               sectionId={section.section_id}
-              visualColumnNum={section.visualColumnNum}
+              visualNumCols={visualNumCols}
               savedColumnNum={section.saved_column_num}
               canEdit={canEdit}
             />

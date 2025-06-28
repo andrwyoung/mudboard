@@ -54,6 +54,10 @@ export default function SectionGallery({
     (s) => s.removeBlockFromSelection
   );
 
+  const visualNumCols = useLayoutStore((s) =>
+    s.getVisualNumColsForSection(section.section_id)
+  );
+
   const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
 
   const { isOpen: overlayGalleryIsOpen, openOverlay: openOverlayGallery } =
@@ -66,12 +70,12 @@ export default function SectionGallery({
   const columnWidth = useMemo(() => {
     if (typeof window === "undefined") return 0;
 
-    const totalGapSpacing = spacingSize * (section.visualColumnNum - 1);
+    const totalGapSpacing = spacingSize * (visualNumCols - 1);
     const totalSidePadding = gallerySpacingSize * 2;
 
     const availableWidth =
       window.innerWidth - totalGapSpacing - totalSidePadding - sidebarWidth;
-    const width = availableWidth / section.visualColumnNum;
+    const width = availableWidth / visualNumCols;
 
     console.log(
       "column width is around: ",
@@ -82,7 +86,7 @@ export default function SectionGallery({
       sidebarWidth
     );
     return width;
-  }, [spacingSize, gallerySpacingSize, section.visualColumnNum, sidebarWidth]);
+  }, [spacingSize, gallerySpacingSize, visualNumCols, sidebarWidth]);
 
   // when clicking on an image
   const handleItemClick = useCallback(
@@ -159,7 +163,7 @@ export default function SectionGallery({
         } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
         style={{
           gridTemplateColumns: `repeat(${
-            forceMobileColumns ? MOBILE_COLUMN_NUMBER : section.visualColumnNum
+            forceMobileColumns ? MOBILE_COLUMN_NUMBER : visualNumCols
           }, minmax(0, 1fr))`,
         }}
         aria-hidden={overlayGalleryIsOpen ? "true" : "false"}
@@ -211,6 +215,7 @@ export default function SectionGallery({
               handleItemClick={handleItemClick}
               scrollY={scrollY}
               triggerImagePicker={triggerImagePicker}
+              visualNumCols={visualNumCols}
             />
           </DroppableColumn>
           // </div>

@@ -7,6 +7,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { PositionedBlock } from "@/types/sync-types";
 import { shouldSyncSectionLayout } from "../columns/should-sync-indexes";
+import { Section } from "@/types/board-types";
 
 export function commitToSectionColumns(
   positionedBlocks: PositionedBlock[],
@@ -17,7 +18,7 @@ export function commitToSectionColumns(
     .boardSections.reduce((acc, bs) => {
       acc[bs.section.section_id] = bs.section;
       return acc;
-    }, {} as Record<string, { saved_column_num: number; visualColumnNum?: number }>);
+    }, {} as Record<string, Section>);
 
   const layoutStore = useLayoutStore.getState();
 

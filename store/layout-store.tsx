@@ -33,6 +33,11 @@ type LayoutStore = {
   forceMobileColumns: boolean;
   toggleMobileColumns: () => void;
 
+  visualNumColsMap: Record<string, number>;
+  setVisualNumColsMap: (map: Record<string, number>) => void;
+  setVisualNumColsForSection: (sectionId: string, numCols: number) => void;
+  getVisualNumColsForSection: (sectionId: string) => number;
+
   visualOverridesMap: Map<string, VisualOverride>;
   setVisualOverride: (
     blockId: string,
@@ -81,8 +86,7 @@ export const useLayoutStore = create<LayoutStore>()(
         // in case sectionColumns[sectionId] doesn't exist
         const boardSections = useMetadataStore.getState().boardSections;
         const savedNumCols =
-          boardSections.find((bs) => bs.section.section_id === sectionId)
-            ?.section.visualColumnNum ?? DEFAULT_COLUMNS;
+          get().getVisualNumColsForSection(sectionId) ?? DEFAULT_COLUMNS;
 
         const current =
           state.sectionColumns[sectionId] ??
@@ -115,7 +119,7 @@ export const useLayoutStore = create<LayoutStore>()(
 
       const trueNumCols = get().forceMobileColumns
         ? MOBILE_COLUMN_NUMBER
-        : section.visualColumnNum;
+        : get().getVisualNumColsForSection(sectionId);
 
       const useExplicitPositioning = trueNumCols === section.saved_column_num;
 
@@ -146,6 +150,26 @@ export const useLayoutStore = create<LayoutStore>()(
       set({ forceMobileColumns: !current });
 
       get().regenerateAllSections();
+    },
+
+    visualNumColsMap: {},
+    setVisualNumColsMap: (map) => set({ visualNumColsMap: map }),
+    setVisualNumColsForSection: (sectionId, numCols) =>
+      set((state) => ({
+        visualNumColsMap: {
+          ...state.visualNumColsMap,
+          [sectionId]: numCols,
+        },
+      })),
+
+    getVisualNumColsForSection: (sectionId) => {
+      const value = get().visualNumColsMap[sectionId];
+      if (value === undefined) {
+        throw new Error(
+          `Missing visualNumColsMap entry for section ${sectionId}`
+        );
+      }
+      return value;
     },
 
     visualOverridesMap: new Map<string, VisualOverride>(),
@@ -269,6 +293,7 @@ export const useLayoutStore = create<LayoutStore>()(
         positionedBlockMap: new Map(),
         masterBlockOrder: [],
         visualOverridesMap: new Map(),
+        visualNumColsMap: {},
       }),
   }))
 );

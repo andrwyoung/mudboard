@@ -11,18 +11,19 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { commitToSectionColumns } from "../../lib/db-actions/sync-local-order";
 import { useLayoutStore } from "@/store/layout-store";
 import { shouldSyncSectionLayout } from "../../lib/columns/should-sync-indexes";
+import { Section } from "@/types/board-types";
 
 function positionedBlocksToUpdates(
   blocks: PositionedBlock[],
   forceMobileColumns: boolean
 ): Partial<BlockInsert>[] {
-  // don't sync col_index and row_index if saved_column_number does not equal visualColumnNumber
+  // don't sync col_index and row_index if saved_column_number does not equal visualcolnum
   const sectionMap = useMetadataStore
     .getState()
     .boardSections.reduce((acc, bs) => {
       acc[bs.section.section_id] = bs.section;
       return acc;
-    }, {} as Record<string, { saved_column_num: number; visualColumnNum?: number }>);
+    }, {} as Record<string, Section>);
 
   return blocks
     .filter(({ block }) => !block.block_id.startsWith("temp-"))
