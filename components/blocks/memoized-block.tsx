@@ -153,6 +153,13 @@ function BlockComponent({
       <ContextMenuContent>
         {block.block_type === "image" && (
           <>
+            <ContextMenuItem
+              onClick={() => {
+                throw new Error("AHH!");
+              }}
+            >
+              Copy Image
+            </ContextMenuItem>
             <ContextMenuItem onClick={() => openOverlay(block)}>
               Expand
             </ContextMenuItem>

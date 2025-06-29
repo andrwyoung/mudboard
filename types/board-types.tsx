@@ -33,7 +33,7 @@ export type Section = {
   // shared_with: string[] ;
 
   saved_column_num: number;
-  visualColumnNum: number; // generated and used by us
+  visualColumnNum: number; // DEPRECATED
 };
 
 export type BoardSection = {

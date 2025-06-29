@@ -52,8 +52,8 @@ function hexToHSV(hex: string): { h: number; s: number; v: number } {
 }
 
 export function useEyedropper(
-  imageBlock: MudboardImage,
-  selectedBlock: Block,
+  imageUrl: string,
+  blockDimensions: { width?: number; height: number },
   initialSize: { width: number; height: number } | null,
   zoomLevel: number,
   isFlipped: boolean,
@@ -74,46 +74,40 @@ export function useEyedropper(
 
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.src = getImageUrl(imageBlock.image_id, imageBlock.file_ext, "full");
+    img.src = imageUrl;
 
     img.onload = () => {
-      if (!selectedBlock.width || !selectedBlock.height) return;
+      if (!blockDimensions.width || !blockDimensions.height) return;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      canvas.width = selectedBlock.width;
-      canvas.height = selectedBlock.height;
+      canvas.width = blockDimensions.width;
+      canvas.height = blockDimensions.height;
 
       if (isFlipped) {
         // Flip horizontally
-        ctx.translate(selectedBlock.width, 0);
+        ctx.translate(blockDimensions.width, 0);
         ctx.scale(-1, 1);
       }
 
-      ctx.drawImage(img, 0, 0, selectedBlock.width, selectedBlock.height);
+      ctx.drawImage(img, 0, 0, blockDimensions.width, blockDimensions.height);
 
       if (isFlipped) {
         // Reset transform so it doesn't affect future drawings
         ctx.setTransform(1, 0, 0, 1, 0, 0);
       }
     };
-  }, [
-    imageBlock.image_id,
-    imageBlock.file_ext,
-    selectedBlock.width,
-    selectedBlock.height,
-    isFlipped,
-  ]);
+  }, [blockDimensions.width, blockDimensions.height, isFlipped]);
 
   // when the mouse moves in eyedropper mode! then sample
   function onMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     const canvas = canvasRef.current;
-    if (!canvas || !selectedBlock.width) return;
+    if (!canvas || !blockDimensions.width) return;
 
     const scaleFactorX =
-      selectedBlock.width / (initialSize?.width ?? selectedBlock.width);
+      blockDimensions.width / (initialSize?.width ?? blockDimensions.width);
     const scaleFactorY =
-      selectedBlock.height / (initialSize?.height ?? selectedBlock.height);
+      blockDimensions.height / (initialSize?.height ?? blockDimensions.height);
 
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.floor(((e.clientX - rect.left) / zoomLevel) * scaleFactorX);
@@ -144,6 +138,7 @@ export function useEyedropper(
 
   return {
     canvasRef,
+    blockDimensions,
     hoveredColor,
     setHoveredColor,
     onMouseMove,

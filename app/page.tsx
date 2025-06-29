@@ -3,9 +3,7 @@
 "use client";
 
 import Logo from "@/components/ui/logo";
-
 import { useEffect, useState } from "react";
-import FillingDot from "@/components/ui/filling-dot";
 import PricingTable from "@/components/landing-page/pricing-v2";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
@@ -13,86 +11,21 @@ import Image from "next/image";
 import {
   DASHBOARD_LINK,
   DEMO_BOARD_LINK,
-  INTEREST_LINK,
   LOGIN_LINK,
   NEW_BOARD_LINK,
 } from "@/types/constants";
 import Link from "next/link";
-import { FaPinterestP } from "react-icons/fa6";
-import { SiAdobephotoshop } from "react-icons/si";
 import { useMetadataStore } from "@/store/metadata-store";
 import {
   GlobalAnnouncement,
   SHOW_GLOBAL_ANNOUNCEMENT,
 } from "@/types/constants/error-message";
-
-function FAQItem({
-  question,
-  children,
-}: {
-  question: string;
-  children: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div
-      className="border-2 border-border rounded-md py-2 px-4 group transition-all text-left cursor-pointer"
-      onClick={() => setOpen((prev) => !prev)}
-    >
-      <div className="w-full flex gap-4 items-center justify-between transition-colors hover:text-accent">
-        <h3 className="text-lg font-semibold select-none">{question}</h3>
-        {/* <ChevronDown
-          className={`w-5 h-5 transition-transform duration-300 ${
-            open ? "rotate-180" : ""
-          }`}
-        /> */}
-        <FillingDot selected={open} />
-      </div>
-      <div
-        className={`select-none text-[0.9375rem] leading-relaxed transition-all duration-300 ${
-          open
-            ? "max-h-40 mb-2 mt-4 opacity-100"
-            : "max-h-0 opacity-0 overflow-hidden"
-        }`}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function ComparisonTile({
-  title,
-  icon,
-  children,
-  highlight = false,
-}: {
-  title: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`border-2 rounded-lg p-4 ${
-        highlight ? "border-accent bg-accent/10" : "border-border bg-primary/20"
-      }`}
-    >
-      <div className="flex flex-row gap-3 items-center mb-2 ">
-        <div>{icon}</div>
-        <h3 className={`text-xl font-semibold ${highlight ? "" : ""}`}>
-          {title}
-        </h3>
-      </div>
-
-      <p className="text-[0.9375rem]">{children}</p>
-    </div>
-  );
-}
+import FAQ from "@/components/landing-page/faq";
+import ComparisonTable from "@/components/landing-page/comparison";
+import LandingPageDemo from "@/components/landing-page/tools-demo";
+import Testimonials from "@/components/landing-page/testimonials";
 
 export default function Home() {
-  // const [copiedEmail, setCopiedEmail] = useState(false);
   const user = useMetadataStore((s) => s.user);
 
   const [scrolled, setScrolled] = useState(false);
@@ -173,21 +106,28 @@ export default function Home() {
               className=" self-center w-full text-center
             rounded-lg p-2 mb-48"
             >
-              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 leading-12 sm:leading-14 md:leading-18">
-                Draw more. Organize less.
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 leading-12 sm:leading-14 md:leading-18 max-w-4xl">
+                {/* Draw more. Organize less. */}
+                {/* Stay in touch with your inspiration. */}
+                References that remember.
+                {/* Revisit what inspired you. */}
+                {/* Remember what inspired you. */}
               </h1>
               <div className="flex flex-col items-center">
                 <p className="max-w-lg text-sm text-accent font-bold">
                   Early testing • Come try it!
                 </p>
-                {/* <p className="text-md mb-14 w-full">
-                  For illustrators who’d rather sketch than spend 30 minutes
-                  <br />
-                  building a ref board.
-                </p> */}
-                <p className="text-lg mb-14 w-full font-semibold">
+                {/* <p className="text-lg mb-14 w-full font-semibold">
                   For illustrators who’d rather draw than organize reference
                   images
+                </p> */}
+                {/* <p className="text-lg mb-14 w-full font-semibold max-w-xl">
+                  A workspace for illustrators to organize and reuse reference
+                  images. So you're ready to ignite inspiration when it matters.
+                </p> */}
+                <p className="text-lg mb-14 w-full font-semibold max-w-xl">
+                  A workspace to organize and reuse your favorite images. So you
+                  always find what you saved for a reason.
                 </p>
               </div>
 
@@ -234,75 +174,23 @@ export default function Home() {
             <Features />
           </div>
 
-          <div className="flex flex-col items-center gap-2 mb-32">
+          {/* <div className="flex flex-col items-center gap-2 mb-32">
             <h1 className="font-semibold text-lg">A Mudboard in the wild</h1>
             <div className="max-w-4xl rounded-lg overflow-hidden border-3 border-secondary">
               <Image
-                src={"/screeny.png"}
+                src={"/screeny3.png"}
                 alt={"Mudboard Screenshot"}
-                width={1860}
-                height={971}
+                width={1685}
+                height={943}
               />
             </div>
-          </div>
+          </div> */}
 
-          <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-0 mb-24">
-            <h2 className="text-2xl font-bold mb-6 text-center">
-              How is Mudboard different?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm sm:text-base">
-              <ComparisonTile
-                title="Pinterest"
-                icon={<FaPinterestP className="size-5" />}
-              >
-                Great for collecting and discovering ideas. Mudboard focuses on{" "}
-                <strong>organizing and viewing</strong> your images.
-              </ComparisonTile>
+          <LandingPageDemo />
 
-              <ComparisonTile
-                title="PureRef"
-                icon={
-                  <Image
-                    src="/purref.png"
-                    alt="Mudboard M"
-                    height={18}
-                    width={18}
-                    className="-translate-y-[2px]"
-                  />
-                }
-              >
-                Amazing for custom layouts. But Mudboard trades flexibility for
-                speed, so is designed to <strong>get you going faster</strong>.
-              </ComparisonTile>
+          <Testimonials />
 
-              <ComparisonTile
-                title="Drawing Apps"
-                icon={<SiAdobephotoshop className="size-5" />}
-              >
-                Mudboard doesn&apos;t replace these. Instead, it helps organize
-                references outside your canvas so you can{" "}
-                <strong> focus on drawing</strong>.
-              </ComparisonTile>
-
-              <ComparisonTile
-                title="Mudboard"
-                highlight
-                icon={
-                  <Image
-                    src="/M.png"
-                    alt="Mudboard M"
-                    height={22}
-                    width={22}
-                    className="-translate-y-[2px]"
-                  />
-                }
-              >
-                I wanted something to drop in images and draw. No setup, no
-                shortcuts to memorize, no endless rearranging. Hopefully it
-                helps you too!
-              </ComparisonTile>
-            </div>
-          </div>
+          <ComparisonTable />
 
           <Image
             src="/1white.png"
@@ -315,9 +203,7 @@ export default function Home() {
           {/* PRICING */}
 
           <div className="mb-24 max-w-3xl">
-            <h2 className="text-2xl font-bold text-center">
-              Planned Pricing (not implemented yet)
-            </h2>
+            <h2 className="text-3xl font-bold text-center mb-1">Pricing</h2>
             {/* <p className="text-center mb-8 text-sm">
               Pricing isn&apos;t final yet, but here&apos;s the ballpark
               estimate for what I&apos;ll launch with. Later I was probably
@@ -326,7 +212,7 @@ export default function Home() {
             </p> */}
             <p className="text-center text-sm text-muted mb-6 font-semibold">
               Firsts 300 users get the Lifetime license for <strong>$20</strong>{" "}
-              (normally $25).
+              .
             </p>
             {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2"> */}
             <div>
@@ -337,130 +223,7 @@ export default function Home() {
             </p> */}
           </div>
 
-          <div className="w-full max-w-2xl mx-auto px-1 md:px-6 mb-20">
-            <h2 className="text-4xl font-semibold mb-6 text-center">FAQ</h2>
-            <div className="space-y-4">
-              <FAQItem question="Do I need to sign up to use the app?">
-                <span className="text-accent font-bold">No sign-up needed</span>{" "}
-                to make and share boards! You only need to sign up if you want
-                to <strong>save</strong> a board.
-              </FAQItem>
-              {/* <FAQItem question="What does it mean to claim a board?">
-                Claiming a board means that it&apos;s linked to your account and
-                no one can else edit it. Note that claiming does not neccesarily
-                mean that it won&apos;t expire, since Free accounts can only
-                keep 1 board around permanently.
-              </FAQItem> */}
-              <FAQItem question="Who can see or edit my board?">
-                All boards are{" "}
-                <span className="text-accent font-bold">
-                  private by default
-                </span>
-                . They can&apos;t be found unless you share the link, and
-                can&apos;t be edited unless you allow it in your settings.
-              </FAQItem>
-              {/* <FAQItem question="How does Free Tier work?">
-                Free users get{" "}
-                <span className="text-accent font-bold">full access</span> to
-                all features. You can create any number of boards, but only 1 of
-                those will stay forever. The rest will be auto deleted after 7
-                days to keep things light and storage friendly, or you can keep
-                them too by upgrading before they expire!
-              </FAQItem>
-              <FAQItem question="Is the second tier really unlimited storage?">
-                During beta, yes! We&apos;ll introduce tiers later, but early
-                users keep their ability to upload unlimited images and lock in
-                their pricing{" "}
-                <span className="text-accent font-bold">now and forever</span>.
-                We may add limits when we support larger files (like video or
-                uncompressed uploads), but this won&apos;t affect your current
-                tier.
-              </FAQItem> */}
-              {/* <FAQItem question="Do you provide one time payment options?">
-                I really love how Clip Studio Paint and Procreate are one time
-                payments. But since we&apos;re on the cloud and have ongoing
-                storage/hosting costs on our end, we&apos;ve gone with a monthly
-                model to keep things simple (and so we don&apos;t need to run
-                ads).
-              </FAQItem> */}
-              {/* <FAQItem question="Will my boards be deleted after pricing is implemented?">
-                Right now no (mainly cause I haven&apos;t built the
-                deletion/limit part yet lol). I do delete{" "}
-                <strong>unsaved boards</strong> after 7 days of creation, but if
-                you create and save a board before limits are in place, I
-                probably won&apos;t mess with it (
-                <span className="text-accent font-bold">
-                  but be reasonable please
-                </span>
-                ...don&apos;t go making like 20 test boards)
-              </FAQItem> */}
-              {/* <FAQItem question="What happens to my boards if I cancel?">
-                To keep storage costs manageable (and protect against abuse),
-                boards are deleted 7 days after cancellation. But feel free to
-                reach out if you would like to work something out!
-              </FAQItem> */}
-              {/* <FAQItem question="What's the best way to reach out?">
-                We would love to hear from you:{" "}
-                <button
-                  type="button"
-                  className="w-fit cursor-pointer text-accent hover:text-accent hover:underline"
-                  onClick={(e) => {
-                    e.stopPropagation();
-
-                    navigator.clipboard.writeText("andrew@mudboard.com");
-                    setCopiedEmail(true);
-                    setTimeout(() => setCopiedEmail(false), 2000);
-                  }}
-                >
-                  {copiedEmail ? "Email Copied!" : "Click to Copy Email"}
-                </button>
-              </FAQItem> */}
-              <FAQItem question="Will you train AI or sell my artwork/data?">
-                No.
-              </FAQItem>
-              <FAQItem question="Will you add [that feature I’m hoping for]?">
-                Probably! You can check out this{" "}
-                <Link
-                  href="/roadmap"
-                  className="text-accent underline hover:text-white transition-all duration-200 font-bold"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  public roadmap
-                </Link>{" "}
-                of what&apos;s planned/prioritized.
-                <br />
-                <br />
-                If you&apos;d like to get involved and have a say with
-                Mudboard&apos;s direction, you can{" "}
-                <a
-                  href={INTEREST_LINK}
-                  className="text-accent underline hover:text-white transition-all duration-200 font-bold"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  sign up here
-                </a>{" "}
-                to get updates or even become a tester!
-              </FAQItem>
-              {/* <FAQItem question="How do I reach out or get involved?">
-                Great question! We’re always looking for early testers and folks
-                to help shape the direction of this app. You can find out{" "}
-                <Link
-                  href="/get-involved"
-                  className="text-accent underline hover:text-white transition-all duration-200 font-bold"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  more info here
-                </Link>
-                .
-              </FAQItem> */}
-            </div>
-          </div>
+          <FAQ />
 
           <Image
             src="/2white.png"

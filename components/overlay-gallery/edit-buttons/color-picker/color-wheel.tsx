@@ -14,7 +14,7 @@ export default function ColorWheel({
   isColorLight: boolean;
 }) {
   return (
-    <div className="absolute bottom-4 right-4 z-60 flex flex-col items-center ">
+    <div className="flex flex-col items-center ">
       <p className="text-xs font-mono text-stone-200 font-bold text-center">
         {hoveredColor.replace("#", "").toUpperCase()}
       </p>

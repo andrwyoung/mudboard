@@ -30,7 +30,7 @@ const plans: Plan[] = [
     features: [
       { label: "3 Boards", status: "good" },
       { label: "All core features", status: "good" },
-      { label: "No publishing Modules", status: "bad" },
+      { label: "No publishing Mudkits", status: "bad" },
     ],
     ctaText: "Try the Demo",
     ctaHref: "/demo",
@@ -39,11 +39,11 @@ const plans: Plan[] = [
     name: "Lifetime",
     description: "Buy once. Use forever",
     price: "$20 one-time",
-    oldPrice: "$25",
+    oldPrice: "20% off",
     features: [
       { label: "Generous storage (10k+ images)", status: "good" },
       { label: "All core features", status: "good" },
-      { label: "Publish, Clone and Remix Modules", status: "good" },
+      { label: "Publish, Clone and Remix Mudkits", status: "good" },
       { label: "Early user street cred", status: "good" },
       { label: "No collaboration", status: "bad" },
       // { label: "No uncompressed uploads", status: "bad" },
@@ -74,7 +74,7 @@ const plans: Plan[] = [
 
   {
     name: "More Coming Soon",
-    description: "Monthly plan for professionals and teams (Coming Soon):",
+    description: "Monthly plan for professionals and teams ($7/month):",
     // price: "TBD",
     features: [
       // { label: "Unlimited images", status: "neutral" },
@@ -161,8 +161,8 @@ export default function PricingTable() {
               <div className="flex flex-col mb-8 h-12">
                 <p className="font-header text-2xl font-bold ">{plan.price}</p>
                 {plan.oldPrice && (
-                  <p className="font-header text-xs font-semibold text-white">
-                    Normally {plan.oldPrice}
+                  <p className="font-header text-sm font-semibold text-white px-1">
+                    {plan.oldPrice}
                   </p>
                 )}
               </div>

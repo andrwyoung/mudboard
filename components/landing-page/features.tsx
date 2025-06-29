@@ -1,9 +1,7 @@
 // landing page stuff
 
 import React from "react";
-import { FaBook, FaCloud, FaPaperPlane } from "react-icons/fa";
-import { MdPalette, MdImage } from "react-icons/md";
-import { TbLayoutSidebarFilled } from "react-icons/tb";
+import { FaLeaf, FaSeedling, FaSun } from "react-icons/fa6";
 
 type FeatureItemProps = {
   title: string;
@@ -14,11 +12,13 @@ type FeatureItemProps = {
 function FeatureItem({ title, icon, children }: FeatureItemProps) {
   return (
     <div>
-      <div className="flex gap-2 items-center mb-2">
-        <div className="text-accent">{icon}</div>
+      <div className="flex flex-col gap-2 mb-4">
+        <div className="text-accent text-xl">{icon}</div>
         <h2 className="font-semibold text-xl">{title}</h2>
       </div>
+      {/* <div className="h-px bg-stone-300 w-8 my-4" /> */}
       <p className="leading-relaxed text-[0.9375rem]">{children}</p>
+      {/* <div className="text-accent text-xl mt-4">{icon}</div> */}
     </div>
   );
 }
@@ -26,8 +26,33 @@ function FeatureItem({ title, icon, children }: FeatureItemProps) {
 export default function Features() {
   return (
     <>
+      {/* <FeatureItem icon={<FaSun />} title="Focus on drawing">
+        Spend <strong>more time drawing</strong> than managing your references.
+        Drop in images and get started. No setup,{" "}
+        <strong>no distractions</strong>.
+      </FeatureItem> */}
+      <FeatureItem icon={<FaSun />} title="Focus on drawing">
+        Spend <strong>more time drawing</strong>, not managing your references.
+        No setup, no distractions.
+      </FeatureItem>
+      <FeatureItem icon={<FaLeaf />} title="Reuse your references">
+        Save your best images as reusable{" "}
+        <span className="text-accent font-bold"> Mudkits</span>. So you can{" "}
+        <strong>build</strong> on what inspired you.
+      </FeatureItem>
+      {/* <FeatureItem icon={<FaSeedling />} title="Inspire others">
+        Share your Mudkits to the public{" "}
+        <span className="text-accent font-bold"> Greenhouse</span> to showcase
+        your collections and build your <strong>library</strong>.
+      </FeatureItem> */}
+      <FeatureItem icon={<FaSeedling />} title="Inspire others">
+        Share your Mudkits in the{" "}
+        <span className="text-accent font-bold"> Greenhouse</span>, a public
+        library of inspiring reference sets.
+      </FeatureItem>
+
       {/* <h1>Features</h1> */}
-      <FeatureItem icon={<MdPalette />} title="Upload and Draw">
+      {/* <FeatureItem icon={<MdPalette />} title="Upload and Draw">
         Drop in images and <strong>just draw</strong>. Without ads, clutter or
         endless rearranging.
       </FeatureItem>
@@ -57,7 +82,7 @@ export default function Features() {
       <FeatureItem icon={<FaPaperPlane />} title="So Sharable">
         All boards have a sharable link. <strong>Send to clients</strong>,
         classmates, or your future self.
-      </FeatureItem>
+      </FeatureItem> */}
     </>
   );
 }

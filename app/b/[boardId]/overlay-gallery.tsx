@@ -4,21 +4,24 @@
 import { Block, MudboardImage } from "@/types/block-types";
 import NextImage from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { FaAdjust, FaArrowsAltH, FaMinus, FaPlus } from "react-icons/fa";
-import { FaChevronLeft, FaEyeDropper, FaXmark } from "react-icons/fa6";
+import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaChevronLeft, FaXmark } from "react-icons/fa6";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useCenteredZoom } from "@/hooks/overlay-gallery.tsx/use-center-zoom";
 import { useEyedropper } from "@/hooks/overlay-gallery.tsx/use-eyedropper";
 import { useLayoutStore } from "@/store/layout-store";
 import { useMetadataStore } from "@/store/metadata-store";
-import ColorWheel from "@/components/overlay-gallery/color-wheel";
-import GreyscaleWheel from "@/components/overlay-gallery/gs-color-wheel";
+import ColorWheel from "@/components/overlay-gallery/edit-buttons/color-picker/color-wheel";
+import GreyscaleWheel from "@/components/overlay-gallery/edit-buttons/color-picker/gs-color-wheel";
 import { getImageUrl } from "@/utils/get-image-url";
 import { usePanImage } from "@/hooks/overlay-gallery.tsx/use-pan-image";
 import { useGetInitialSizeOnLayout } from "@/hooks/overlay-gallery.tsx/use-get-initial-size";
 import { updateGreyscaleSupabase } from "@/lib/db-actions/block-editing.tsx/update-greyscale";
 import { updateFlippedSupabase } from "@/lib/db-actions/block-editing.tsx/update-flip";
 import { canEditSection } from "@/lib/auth/can-edit-section";
+import { GreyscaleToggleButton } from "@/components/overlay-gallery/edit-buttons/greyscale-button";
+import { FlippedToggleButton } from "@/components/overlay-gallery/edit-buttons/mirror-button";
+import { EyedropperToggleButton } from "@/components/overlay-gallery/edit-buttons/color-picker/eyedropper-button";
 
 type OverlayModes = "drag" | "eyedropper";
 
@@ -84,7 +87,6 @@ export default function OverlayGallery({
 
   // candy
   const showDebug = false;
-  const [greyscaleClicked, setGreyscaleClicked] = useState(false);
   const [blockOrder, setBlockOrder] = useState<number | undefined>(undefined);
   const [sectionOrder, setSectionOrder] = useState<number | undefined>(
     undefined
@@ -185,7 +187,7 @@ export default function OverlayGallery({
     isColorLight,
     hoveredHSV,
   } = useEyedropper(
-    imageBlock,
+    getImageUrl(imageBlock.image_id, imageBlock.file_ext, "full"),
     selectedBlock,
     initialSize,
     zoomLevel,
@@ -235,7 +237,6 @@ export default function OverlayGallery({
             scrollbar-none scrollbar-thumb-rounded scrollbar-thumb-background scrollbar-track-transparent
              ${!showOverlayUI ? "cursor-none" : ""}`}
         onClick={() => closeOverlayGallery()}
-        style={{}}
       >
         <div className="grid place-items-center min-w-full min-h-full">
           <div className="px-12 py-12 box-content">
@@ -302,18 +303,20 @@ export default function OverlayGallery({
         hoveredHSV &&
         eyedropperPos && (
           <>
-            {isGreyscale ? (
-              <GreyscaleWheel
-                hoveredColor={hoveredColor}
-                luminance={hoveredHSV.v}
-              />
-            ) : (
-              <ColorWheel
-                hoveredColor={hoveredColor}
-                hoveredHSV={hoveredHSV}
-                isColorLight={isColorLight}
-              />
-            )}
+            <div className="absolute bottom-4 right-4 z-60 ">
+              {isGreyscale ? (
+                <GreyscaleWheel
+                  hoveredColor={hoveredColor}
+                  luminance={hoveredHSV.v}
+                />
+              ) : (
+                <ColorWheel
+                  hoveredColor={hoveredColor}
+                  hoveredHSV={hoveredHSV}
+                  isColorLight={isColorLight}
+                />
+              )}
+            </div>
 
             <div
               className={`fixed pointer-events-none z-70 flex items-baseline gap-2 px-2 py-1 
@@ -380,23 +383,17 @@ export default function OverlayGallery({
         >
           <FaPlus />
         </button>
-        <button
-          title="Use Eyedropper"
-          onClick={() =>
+        <EyedropperToggleButton
+          isEyedropperActive={overlayMode === "eyedropper"}
+          onToggle={() =>
             setOverlayMode((m) => (m === "drag" ? "eyedropper" : "drag"))
           }
-          className={`cursor-pointer hover:text-accent hover:bg-white transition-all p-2 rounded-lg ${
-            overlayMode === "eyedropper" ? "bg-white text-stone-800/80" : ""
-          }`}
-        >
-          <FaEyeDropper />
-        </button>
-        <button
-          onClick={() => {
+        />
+        <GreyscaleToggleButton
+          isGreyscale={isGreyscale}
+          onToggle={() => {
             const newValue = !isGreyscale;
-            setIsGreyscale(() => {
-              return newValue;
-            });
+            setIsGreyscale(newValue);
             updateGreyscaleSupabase(
               selectedBlock.block_id,
               newValue,
@@ -405,27 +402,13 @@ export default function OverlayGallery({
             setVisualOverride(selectedBlock.block_id, {
               is_greyscale: newValue,
             });
-
-            setGreyscaleClicked(true);
-            setTimeout(() => setGreyscaleClicked(false), 400); // match animation duration
           }}
-          title="Toggle Greyscale"
-          className={`p-2 rounded-lg cursor-pointer  group transition-all  ${
-            isGreyscale ? "bg-white text-stone-800/80" : ""
-          }`}
-        >
-          <FaAdjust
-            className={`transition-transform duration-400 ${
-              greyscaleClicked ? "animate-spin-once" : ""
-            }`}
-          />
-        </button>
-        <button
-          onClick={() => {
+        />
+        <FlippedToggleButton
+          isFlipped={isFlipped}
+          onToggle={() => {
             const newValue = !isFlipped;
-            setIsFlipped(() => {
-              return newValue;
-            });
+            setIsFlipped(newValue);
             updateFlippedSupabase(
               selectedBlock.block_id,
               newValue,
@@ -435,13 +418,7 @@ export default function OverlayGallery({
               is_flipped: newValue,
             });
           }}
-          title="Flip Horizontally"
-          className={`p-2 rounded-lg cursor-pointer hover:text-accent hover:scale-110 active:scale-95 group transition-all  ${
-            isFlipped ? "bg-white text-stone-800/80" : ""
-          }`}
-        >
-          <FaArrowsAltH className={`transition-transform duration-400`} />
-        </button>
+        />
       </div>
 
       <div
