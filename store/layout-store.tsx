@@ -165,9 +165,10 @@ export const useLayoutStore = create<LayoutStore>()(
     getVisualNumColsForSection: (sectionId) => {
       const value = get().visualNumColsMap[sectionId];
       if (value === undefined) {
-        throw new Error(
+        console.error(
           `Missing visualNumColsMap entry for section ${sectionId}`
         );
+        return DEFAULT_COLUMNS;
       }
       return value;
     },

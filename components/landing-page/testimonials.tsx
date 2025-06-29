@@ -19,7 +19,7 @@ export default function Testimonials() {
       {/* <h2 className="text-xl font-semibold mb-2"></h2> */}
       <div className="h-px bg-stone-300 w-8 mb-8" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm sm:text-base">
-        <TestimonialCard author="Jenna, illustrator and designer">
+        <TestimonialCard author="Jenna, illustrator">
           It&apos;s great that everything is in one place! It&apos;s clear this
           was made by an artist.
         </TestimonialCard>

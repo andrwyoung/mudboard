@@ -45,7 +45,7 @@ export default function PinnedImageViewer({
     // hoveredHSV,
     // isColorLight,
   } = useEyedropper(
-    image,
+    getImageUrl(image.image_id, image.file_ext, "full"),
     block,
     initialSize,
     zoomLevel,
