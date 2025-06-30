@@ -1,6 +1,7 @@
 import { Enums } from "./supabase";
 
 export const INDEX_MULTIPLIER = 10
+export const MAX_FREE_TIER_BOARDS = 3
 
 
 export const SCROLLBAR_STYLE = "scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-primary scrollbar-track-transparent"
@@ -38,6 +39,7 @@ export const SUPPORT_EMAIL = "andrew@mudboard.com"
 export const NEW_BOARD_LINK = "/b/new"
 export const DEMO_BOARD_LINK = "/demo"
 export const DASHBOARD_LINK = "/dashboard"
+export const PRICING_PAGE = "/#pricing"
 export const LOGIN_LINK = "/login"
 export const ROADMAP_LINK = "https://jondrew.notion.site/Mudboard-Roadmap-2162e809fa4e80eb94add8aa315c769d?source=copy_link"
 

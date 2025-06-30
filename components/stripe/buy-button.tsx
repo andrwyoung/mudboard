@@ -1,10 +1,10 @@
 "use client";
-import { STRIPE_DISABLED, StripeProduct } from "@/types/stripe-settings";
+import { STRIPE_DISABLED } from "@/types/stripe-settings";
 import { Button } from "../ui/button";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
+import { startCheckout } from "@/lib/stripe/start-checkout";
 
 export default function BuyButton() {
   const user = useMetadataStore((s) => s.user);
@@ -19,25 +19,8 @@ export default function BuyButton() {
     }
 
     setLoading(true);
-    try {
-      const res = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        body: JSON.stringify({
-          userId: user.id,
-          product: "license" as StripeProduct,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Stripe checkout failed");
-
-      const { url } = await res.json();
-      window.location.href = url;
-    } catch (e) {
-      console.error(e);
-      toast.error("Failed to load checkout");
-    } finally {
-      setLoading(false);
-    }
+    await startCheckout(user.id, "license");
+    setLoading(false);
   }
 
   return (

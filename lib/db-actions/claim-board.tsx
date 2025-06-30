@@ -9,6 +9,7 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { Enums } from "@/types/supabase";
 import { supabase } from "@/lib/supabase/supabase-client";
 import { toast } from "sonner";
+import { currentUserCanCreateBoardsFromDB } from "../tiers/user-can-create-boards";
 
 export async function claimBoard() {
   const board = useMetadataStore.getState().board;
@@ -17,6 +18,13 @@ export async function claimBoard() {
 
   // board must exist and user must be logged in
   if (!board || !user) return;
+
+  // check if they're allowed to
+
+  const canCreate = await currentUserCanCreateBoardsFromDB();
+  if (!canCreate) {
+    return;
+  }
 
   // race condition safe
   // STEP 1: claim the board itself

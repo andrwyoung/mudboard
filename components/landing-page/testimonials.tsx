@@ -15,11 +15,11 @@ function TestimonialCard({
 
 export default function Testimonials() {
   return (
-    <section className="w-full max-w-2xl mx-auto px-4 sm:px-6 md:px-0 mb-36 flex flex-col items-center">
+    <section className="w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-0 mb-36 flex flex-col items-center">
       {/* <h2 className="text-xl font-semibold mb-2"></h2> */}
       <div className="h-px bg-stone-300 w-8 mb-8" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm sm:text-base">
-        <TestimonialCard author="Jenna, illustrator">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-sm sm:text-base">
+        <TestimonialCard author="Cecilia Y, concept artist">
           It&apos;s great that everything is in one place! It&apos;s clear this
           was made by an artist.
         </TestimonialCard>
@@ -27,10 +27,10 @@ export default function Testimonials() {
           I love being able to reuse and find my references easily. The
           eyedropper is especially nice.
         </TestimonialCard>
-        {/* <TestimonialCard author="Cecilia, concept artist">
-          My students love sharing their Mudkits. It’s way more engaging than
-          mood boards in a slideshow.
-        </TestimonialCard> */}
+        <TestimonialCard author="Jenneth L, illustrator">
+          Mudboard is such a cool resource for creatives. The interface is so
+          intuitive!
+        </TestimonialCard>
       </div>
     </section>
   );

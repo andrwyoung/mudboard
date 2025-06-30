@@ -6,6 +6,7 @@ import Image from "next/image";
 import { SupportEmailAddress } from "@/utils/support-email";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/supabase-client";
+import { useMetadataStore, UserProfile } from "@/store/metadata-store";
 
 export default function CheckoutSuccessPage() {
   const [status, setStatus] = useState<"pending" | "success" | "error">(
@@ -25,7 +26,7 @@ export default function CheckoutSuccessPage() {
         return;
       }
 
-      const { data: profile, error: profileError } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from("users")
         .select("tier")
         .eq("user_id", user.id)
@@ -36,7 +37,11 @@ export default function CheckoutSuccessPage() {
         return;
       }
 
+      const profile = profileData as UserProfile;
+
       if (profile?.tier === "beta") {
+        useMetadataStore.getState().setProfile(profile);
+
         clearInterval(interval);
         setStatus("success");
         setTimeout(() => {

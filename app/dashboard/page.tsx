@@ -9,7 +9,12 @@ import { useEffect, useState } from "react";
 import { Board } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 import Link from "next/link";
-import { DEFAULT_BOARD_TITLE, NEW_BOARD_LINK } from "@/types/constants";
+import {
+  DEFAULT_BOARD_TITLE,
+  MAX_FREE_TIER_BOARDS,
+  NEW_BOARD_LINK,
+  PRICING_PAGE,
+} from "@/types/constants";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +34,8 @@ import BoardCard from "./dashboard-card";
 import { softDeleteBoard } from "@/lib/db-actions/soft-delete-board";
 import { BoardWithStats } from "@/types/stat-types";
 import { getUserBoardsWithStats } from "@/lib/db-actions/explore/get-user-board-with-stats";
+import { currentLocalUserHasLicense } from "@/lib/tiers/user-has-license";
+import { FaSeedling } from "react-icons/fa6";
 
 type DashboardMode = "board" | "sections";
 
@@ -38,6 +45,10 @@ export default function DashboardPage() {
   const user = useMetadataStore((s) => s.user);
   const [boardToDelete, setBoardToDelete] = useState<Board | null>(null);
   const [dashboardMode, setDashboardMode] = useState<DashboardMode>("board");
+
+  const hasLicense = currentLocalUserHasLicense();
+  const canCreateBoards =
+    hasLicense || userBoards.length < MAX_FREE_TIER_BOARDS;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -110,9 +121,10 @@ export default function DashboardPage() {
         <div className="flex flex-col max-w-5xl">
           <div className="flex flex-row lg:flex-col justify-between items-center w-full min-w-32 mx-auto mb-2">
             <div>
-              <h1 className="lg:hidden flex text-3xl font-bold text-white">
-                Dashboard
-              </h1>
+              <div className="lg:hidden flex flex-col text-white">
+                <h1 className="text-3xl font-bold">Dashboard</h1>
+                <p>{hasLicense ? "Free" : "Oh my"}</p>
+              </div>
 
               <div className="hidden lg:flex flex-col gap-2 my-12 items-center  text-white">
                 <h1 className="font-semibold">Select View:</h1>
@@ -144,13 +156,25 @@ export default function DashboardPage() {
             <div className="flex flex-row lg:flex-col gap-2">
               <Link
                 href={NEW_BOARD_LINK}
-                className={`hidden sm:flex gap-2 cursor-pointer items-center px-3 border-2 border-white justify-center
-                rounded-md text-white text-sm font-header transition-all duration-300
-                hover:text-white hover:border-accent hover:bg-accent/30  py-1
-                `}
+                onClick={(e) => {
+                  if (!canCreateBoards) {
+                    e.preventDefault();
+                    toast.error(
+                      "You’ve reached your board limit. Upgrade to remove limit"
+                    );
+                  }
+                }}
+                className={`hidden sm:flex `}
                 title="Create a New Board"
               >
-                New Board
+                <Button
+                  type="button"
+                  className="font-header text-sm"
+                  variant="outline_accent"
+                  disabled={!canCreateBoards}
+                >
+                  New Board
+                </Button>
               </Link>
               <Button
                 onClick={handleLogout}
@@ -162,7 +186,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className=" justify-start md:justify-center flex lg:hidden ">
+          {/* <div className=" justify-start md:justify-center flex lg:hidden ">
             <div className="flex gap-2 py-0.5 px-1 border-2 rounded-md bg-background">
               <Button
                 variant={
@@ -185,14 +209,35 @@ export default function DashboardPage() {
                 Sections
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {userBoards.length > 0 ? (
           <div className="flex flex-col gap-8">
-            <h1 className="hidden lg:flex text-3xl font-bold text-white">
-              Dashboard
-            </h1>
+            <div className="hidden lg:flex justify-between items-center text-white">
+              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <div className=" flex flex-col items-end">
+                <p className="text-sm opacity-80">
+                  {hasLicense
+                    ? "License active"
+                    : `${MAX_FREE_TIER_BOARDS - userBoards.length} free board${
+                        MAX_FREE_TIER_BOARDS - userBoards.length === 1
+                          ? ""
+                          : "s"
+                      } left`}
+                </p>
+                {!hasLicense && (
+                  <Link
+                    type="button"
+                    href={PRICING_PAGE}
+                    className="font-header text-accent hover:text-white transition-all duration-200
+                    cursor-pointer hover:underline text-left flex gap-2 items-center"
+                  >
+                    <FaSeedling /> Get License
+                  </Link>
+                )}
+              </div>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
               {userBoards.map((board) => (
                 <BoardCard

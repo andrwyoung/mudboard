@@ -52,7 +52,7 @@ export default function Home() {
           {!user ? (
             <Link
               href={LOGIN_LINK}
-              className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
+              className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-white text-sm font-header transition-all duration-500
                 hover:text-white hover:bg-white/30 
                 `}
@@ -64,7 +64,7 @@ export default function Home() {
             <Link
               href={DASHBOARD_LINK}
               data-umami-event={`Landing page: Dashboard`}
-              className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
+              className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-white text-sm font-header transition-all duration-500
                 hover:text-white hover:bg-white/30 
                 `}
@@ -75,7 +75,7 @@ export default function Home() {
           <Link
             href={DEMO_BOARD_LINK}
             data-umami-event={`Landing page: Demo Board Navbar`}
-            className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
+            className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
                 rounded-md text-primary text-lg font-header transition-all duration-500
                 hover:text-white hover:bg-accent/90 
                 `}
@@ -107,7 +107,7 @@ export default function Home() {
               className=" self-center w-full text-center
             rounded-lg p-2 mb-48"
             >
-              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 leading-12 sm:leading-14 md:leading-18 max-w-4xl">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-10 sm:leading-14 md:leading-18 max-w-4xl">
                 {/* Draw more. Organize less. */}
                 {/* Stay in touch with your inspiration. */}
                 References that remember.
@@ -115,7 +115,7 @@ export default function Home() {
                 {/* Remember what inspired you. */}
               </h1>
               <div className="flex flex-col items-center">
-                <p className="max-w-lg text-sm text-accent font-bold">
+                <p className="max-w-lg text-xs sm:text-sm text-accent font-bold">
                   Early testing • Come try it!
                 </p>
                 {/* <p className="text-lg mb-14 w-full font-semibold">
@@ -126,7 +126,7 @@ export default function Home() {
                   A workspace for illustrators to organize and reuse reference
                   images. So you're ready to ignite inspiration when it matters.
                 </p> */}
-                <p className="text-lg mb-14 w-full font-semibold max-w-xl">
+                <p className="text-sm sm:text-lg mb-14 w-full font-semibold max-w-xl">
                   A workspace to organize and reuse your favorite images. So you
                   always find what you saved for a reason.
                 </p>
@@ -196,6 +196,7 @@ export default function Home() {
           <ComparisonTable />
 
           <Image
+            id="pricing"
             src="/1white.png"
             alt="Board not found"
             width={375}
