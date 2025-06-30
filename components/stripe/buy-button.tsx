@@ -42,7 +42,7 @@ export default function BuyButton() {
       className={`w-full font-header bg-secondary`}
       title="Buy Mudboard License"
       onClick={handleCheckout}
-      disabled={loading}
+      disabled={process.env.NODE_ENV === "production" ? true : false}
     >
       {loading ? "Redirecting..." : "Get License"}
     </Button>
