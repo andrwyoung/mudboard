@@ -5,7 +5,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
-import { setVisualNumCols } from "@/lib/local-actions/set-visual-columns";
+import { setVisualNumCols } from "@/lib/local-helpers/set-visual-columns";
 import { FaSave } from "react-icons/fa";
 import { cn } from "@/utils/utils";
 import { updateSectionColumnNum } from "@/lib/db-actions/update-section-columns";

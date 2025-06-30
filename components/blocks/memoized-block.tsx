@@ -25,6 +25,7 @@ import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blo
 import { getImageUrl } from "@/utils/get-image-url";
 import { usePanelStore } from "@/store/panel-store";
 import { useLayoutStore } from "@/store/layout-store";
+import { copyImageToClipboard } from "@/lib/local-helpers/copy-image-to-clipboard";
 
 export function BlockChooser({
   canEdit,
@@ -154,8 +155,16 @@ function BlockComponent({
         {block.block_type === "image" && (
           <>
             <ContextMenuItem
-              onClick={() => {
-                throw new Error("AHH!");
+              onClick={async () => {
+                if (block.data) {
+                  const image = block.data as MudboardImage;
+                  const url = getImageUrl(
+                    image.image_id,
+                    image.file_ext,
+                    "full"
+                  );
+                  await copyImageToClipboard(url);
+                }
               }}
             >
               Copy Image

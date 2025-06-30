@@ -1,5 +1,9 @@
 import Stripe from "stripe";
-import { STRIPE_IS_PROD, StripeProduct, UserTier } from "./stripe-settings";
+import {
+  STRIPE_IS_PROD,
+  StripeProduct,
+  UserTier,
+} from "../../types/stripe-settings";
 
 const key = STRIPE_IS_PROD
   ? process.env.STRIPE_SECRET_KEY!

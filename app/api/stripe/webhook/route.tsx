@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { createClientSudo } from "@/lib/supabase/supabase-server";
 import { headers } from "next/headers";
 import { STRIPE_IS_PROD, StripeProduct } from "@/types/stripe-settings";
-import { getTierLevel, stripeClient } from "@/types/stripe-helpers";
+import { getTierLevel, stripeClient } from "@/lib/stripe/stripe-helpers";
 
 const endpointSecret = STRIPE_IS_PROD
   ? process.env.STRIPE_WEBHOOK_SECRET!

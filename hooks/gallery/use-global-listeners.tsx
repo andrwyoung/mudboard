@@ -10,8 +10,11 @@ import { useGetScope } from "../use-get-scope";
 import { useUndoStore } from "@/store/undo-store";
 import { deleteBlocksWithUndo } from "@/lib/undoable-actions/undoable-delete-blocks";
 import { canEditBlock } from "@/lib/auth/can-edit-block";
-import { Block } from "@/types/block-types";
+import { Block, MudboardImage } from "@/types/block-types";
 import { useLayoutStore } from "@/store/layout-store";
+import { toast } from "sonner";
+import { getImageUrl } from "@/utils/get-image-url";
+import { copyImageToClipboard } from "@/lib/local-helpers/copy-image-to-clipboard";
 
 export function useGlobalListeners({
   setMarqueRect,
@@ -35,7 +38,7 @@ export function useGlobalListeners({
 
   // Keyboard controls
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
+    async function handleKeyDown(e: KeyboardEvent) {
       const activeEl = document.activeElement;
       const isTyping =
         activeEl?.tagName === "INPUT" ||
@@ -92,6 +95,31 @@ export function useGlobalListeners({
       if (e.key === "Escape") {
         if (galleryIsOpen) return;
         deselectBlocks();
+      }
+
+      // COPY image
+      const isCopy = (e.metaKey || e.ctrlKey) && e.key === "c";
+      if (isCopy) {
+        const selected: Block[] = Object.values(selectedBlocks).filter(
+          (b) => b.block_type === "image" && b.data
+        );
+
+        if (selected.length === 0) {
+          // Let default copy behavior run (e.g. copying text)
+          return;
+        }
+
+        if (selected.length > 1) {
+          toast.error("Only copying one image at a time is supported.");
+          return;
+        }
+
+        const firstImageBlock = selected[0];
+        const image = firstImageBlock.data as MudboardImage;
+        const url = getImageUrl(image.image_id, image.file_ext, "full");
+        await copyImageToClipboard(url);
+
+        e.preventDefault(); // prevent default copy behavior if we handled it
       }
     }
 
