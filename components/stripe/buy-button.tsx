@@ -29,7 +29,7 @@ export default function BuyButton() {
       className={`w-full font-header bg-secondary`}
       title="Buy Mudboard License"
       onClick={handleCheckout}
-      disabled={STRIPE_DISABLED ? true : false}
+      disabled={STRIPE_DISABLED}
     >
       {loading ? "Redirecting..." : "Get License"}
     </Button>
