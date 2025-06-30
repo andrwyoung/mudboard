@@ -1,4 +1,8 @@
-import { LICENSE_SANDBOX_PRICE_ID } from "@/types/constants";
+import {
+  LICENSE_PRICE_ID,
+  LICENSE_SANDBOX_PRICE_ID,
+  STRIPE_IS_LIVE,
+} from "@/types/constants";
 import { createClientSudo } from "@/lib/supabase/supabase-server";
 import { NextRequest, NextResponse } from "next/server";
 import { stripeClient } from "@/lib/stripe-setup";
@@ -24,7 +28,7 @@ export async function POST(req: NextRequest) {
       payment_method_types: ["card"],
       line_items: [
         {
-          price: LICENSE_SANDBOX_PRICE_ID,
+          price: STRIPE_IS_LIVE ? LICENSE_PRICE_ID : LICENSE_SANDBOX_PRICE_ID,
           quantity: 1,
         },
       ],
