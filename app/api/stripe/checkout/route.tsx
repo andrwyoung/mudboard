@@ -7,10 +7,10 @@ import {
   STRIPE_IS_PROD,
   STRIPE_PRICE_IDS,
   STRIPE_SUCCESS_PATH,
-  stripeClient,
   StripeProduct,
   VALID_STRIPE_PRODUCTS,
 } from "@/types/stripe-settings";
+import { stripeClient } from "@/types/stripe-helpers";
 
 export async function POST(req: NextRequest) {
   if (STRIPE_DISABLED) {

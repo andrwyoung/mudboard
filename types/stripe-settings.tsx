@@ -1,4 +1,3 @@
-import Stripe from "stripe";
 import { Enums } from "./supabase";
 
 export const STRIPE_IS_PROD = process.env.NODE_ENV === "production";
@@ -27,18 +26,3 @@ export const VALID_STRIPE_PRODUCTS = Object.keys(
   STRIPE_PRICE_IDS
 ) as StripeProduct[];
 export type UserTier = Enums<"tier_level">;
-
-export function getTierLevel(tier: StripeProduct): UserTier {
-  if (tier === "license") {
-    return "beta";
-  }
-  return "free";
-}
-
-const key = STRIPE_IS_PROD
-  ? process.env.STRIPE_SECRET_KEY!
-  : process.env.STRIPE_SANDBOX_SECRET_KEY!;
-
-export const stripeClient = new Stripe(key, {
-  apiVersion: "2025-05-28.basil",
-});
