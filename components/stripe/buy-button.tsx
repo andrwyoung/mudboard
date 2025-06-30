@@ -5,10 +5,13 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { startCheckout } from "@/lib/stripe/start-checkout";
+import { currentLocalUserHasLicense } from "@/lib/tiers/user-has-license";
 
 export default function BuyButton() {
   const user = useMetadataStore((s) => s.user);
   const router = useRouter();
+
+  const hasLicense = currentLocalUserHasLicense();
 
   const [loading, setLoading] = useState(false);
 
@@ -24,14 +27,20 @@ export default function BuyButton() {
   }
 
   return (
-    <Button
-      variant="secondary"
-      className={`w-full font-header bg-secondary`}
-      title="Buy Mudboard License"
-      onClick={handleCheckout}
-      disabled={STRIPE_DISABLED}
-    >
-      {loading ? "Redirecting..." : "Get License"}
-    </Button>
+    <>
+      {hasLicense ? (
+        <h1 className="w-full text-center opacity-90">License Active</h1>
+      ) : (
+        <Button
+          variant="secondary"
+          className={`w-full font-header bg-secondary`}
+          title="Buy Mudboard License"
+          onClick={handleCheckout}
+          disabled={STRIPE_DISABLED}
+        >
+          {loading ? "Redirecting..." : "Get License"}
+        </Button>
+      )}
+    </>
   );
 }
