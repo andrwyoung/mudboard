@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import Stripe from "stripe";
 import { createClientSudo } from "@/lib/supabase/supabase-server";
 import { Enums } from "@/types/supabase";
-
-const stripe = new Stripe(process.env.STRIPE_SANDBOX_KEY!, {
-  apiVersion: "2025-05-28.basil",
-});
+import { stripeClient } from "@/lib/stripe-setup";
 
 function getTierLevel(tier: string): Enums<"tier_level"> {
   if (tier === "license") {
@@ -16,20 +12,18 @@ function getTierLevel(tier: string): Enums<"tier_level"> {
   return "free";
 }
 
-// This is your Stripe CLI/Webhook secret (starts with "whsec_...")
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const endpointSecret = process.env.STRIPE_SANDBOX_WEBHOOK_SECRET!;
 
 export async function POST(req: Request) {
-  const body = await req.text(); // raw body
-  const headersList = await headers();
-  const sig = headersList.get("stripe-signature");
+  const body = await req.text();
+  const sig = req.headers.get("stripe-signature");
 
   let event: Stripe.Event;
 
   try {
     if (!sig || !endpointSecret) throw new Error("Missing signature or secret");
 
-    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+    event = stripeClient.webhooks.constructEvent(body, sig, endpointSecret);
   } catch (err) {
     console.error("Webhook signature verification failed.", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });

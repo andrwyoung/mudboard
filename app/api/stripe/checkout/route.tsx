@@ -1,11 +1,7 @@
 import { LICENSE_SANDBOX_PRICE_ID } from "@/types/constants";
 import { createClientSudo } from "@/lib/supabase/supabase-server";
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SANDBOX_KEY!, {
-  apiVersion: "2025-05-28.basil",
-});
+import { stripeClient } from "@/lib/stripe-setup";
 
 export async function POST(req: NextRequest) {
   const supabase = await createClientSudo();
@@ -23,7 +19,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const session = await stripe.checkout.sessions.create({
+    const session = await stripeClient.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [
