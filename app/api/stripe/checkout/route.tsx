@@ -1,13 +1,22 @@
-import {
-  LICENSE_PRICE_ID,
-  LICENSE_SANDBOX_PRICE_ID,
-  STRIPE_IS_LIVE,
-} from "@/types/constants";
+import {} from "@/types/constants";
 import { createClientSudo } from "@/lib/supabase/supabase-server";
 import { NextRequest, NextResponse } from "next/server";
-import { stripeClient } from "@/lib/stripe-setup";
+import {
+  STRIPE_CANCEL_PATH,
+  STRIPE_DISABLED,
+  STRIPE_IS_PROD,
+  STRIPE_PRICE_IDS,
+  STRIPE_SUCCESS_PATH,
+  stripeClient,
+  StripeProduct,
+  VALID_STRIPE_PRODUCTS,
+} from "@/types/stripe-settings";
 
 export async function POST(req: NextRequest) {
+  if (STRIPE_DISABLED) {
+    return new NextResponse("Stripe is disabled", { status: 403 });
+  }
+
   const supabase = await createClientSudo();
   const {
     data: { user },
@@ -22,21 +31,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
+  const body = await req.json();
+  const productType: StripeProduct = body.product;
+
+  if (!VALID_STRIPE_PRODUCTS.includes(productType)) {
+    return new NextResponse("Invalid product type", { status: 400 });
+  }
+
+  if (!productType) {
+    throw new Error("Failed to get product type");
+  }
+
   try {
     const session = await stripeClient.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [
         {
-          price: STRIPE_IS_LIVE ? LICENSE_PRICE_ID : LICENSE_SANDBOX_PRICE_ID,
+          price: STRIPE_IS_PROD
+            ? STRIPE_PRICE_IDS[productType].live
+            : STRIPE_PRICE_IDS[productType].sandbox,
           quantity: 1,
         },
       ],
-      success_url: `${req.nextUrl.origin}/dashboard?checkout=success`,
-      cancel_url: `${req.nextUrl.origin}/dashboard?checkout=cancelled`,
+      success_url: `${req.nextUrl.origin}${STRIPE_SUCCESS_PATH}?product=${productType}`,
+      cancel_url: `${req.nextUrl.origin}${STRIPE_CANCEL_PATH}`,
       metadata: {
         user_id: user.id,
-        type: "license",
+        type: productType,
       },
     });
 

@@ -8,6 +8,7 @@ import {
   GlobalAnnouncement,
   SHOW_GLOBAL_ANNOUNCEMENT,
 } from "@/types/constants/error-message";
+import { SupportEmailAddress } from "@/utils/support-email";
 
 export default function NotFoundComponent({
   pageTitle = "Page",
@@ -34,13 +35,7 @@ export default function NotFoundComponent({
         </p>
         {pageTitle !== "Page" && (
           <p>
-            Mistake? Please reach out:{" "}
-            <a
-              href="mailto:andrew@mudboard.com"
-              className="underline hover:text-accent duration-200 transition-all"
-            >
-              andrew@mudboard.com
-            </a>
+            Mistake? Please reach out: <SupportEmailAddress />
           </p>
         )}
         {SHOW_GLOBAL_ANNOUNCEMENT && (

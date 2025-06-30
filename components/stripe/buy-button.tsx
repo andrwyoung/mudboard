@@ -1,4 +1,5 @@
 "use client";
+import { STRIPE_DISABLED, StripeProduct } from "@/types/stripe-settings";
 import { Button } from "../ui/button";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useRouter } from "next/navigation";
@@ -21,7 +22,10 @@ export default function BuyButton() {
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({
+          userId: user.id,
+          product: "license" as StripeProduct,
+        }),
       });
 
       if (!res.ok) throw new Error("Stripe checkout failed");
@@ -42,7 +46,7 @@ export default function BuyButton() {
       className={`w-full font-header bg-secondary`}
       title="Buy Mudboard License"
       onClick={handleCheckout}
-      disabled={process.env.NODE_ENV === "production" ? true : false}
+      disabled={STRIPE_DISABLED ? true : false}
     >
       {loading ? "Redirecting..." : "Get License"}
     </Button>

@@ -1,6 +1,7 @@
 "use client";
 import { AccordianWrapper } from "../ui/accordian-wrapper";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { SupportEmailAddress } from "@/utils/support-email";
 
 const faqClass = "font-header text-md ml-2";
 
@@ -62,14 +63,7 @@ export default function HelpModal({
           <div className="mt-2">
             <p className="mb-2 font-header font-semibold">Something Else?</p>
             <p>
-              Reach out via email at{" "}
-              <a
-                href="mailto:andrew@mudboard.com"
-                className="underline hover:text-accent duration-200 transition-all"
-              >
-                andrew@mudboard.com
-              </a>
-              .
+              Reach out via email at <SupportEmailAddress />.
             </p>
           </div>
         </div>
