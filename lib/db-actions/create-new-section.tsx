@@ -4,7 +4,7 @@
 // - check if user is logged in
 // - update section locally
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { BoardSection } from "@/types/board-types";
 import { TablesInsert } from "@/types/supabase";
 import { DEFAULT_COLUMNS } from "@/types/constants";

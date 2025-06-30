@@ -3,7 +3,7 @@
 import { CopyToClipboard } from "@/components/ui/click-to-copy";
 import { Tables } from "@/types/supabase";
 import { buildMudboardLink } from "@/utils/build-mudboard-link";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import React from "react";
 import { useEffect, useState } from "react";
 

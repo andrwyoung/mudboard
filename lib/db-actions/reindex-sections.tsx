@@ -2,7 +2,7 @@
 // honestly I don't know why I have this around....
 // might be DEPRECATED, but idk
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { useMetadataStore } from "@/store/metadata-store";
 import { BoardSection } from "@/types/board-types";
 import { canEditBoard } from "@/lib/auth/can-edit-board";

@@ -4,7 +4,7 @@
 
 import { useMetadataStore } from "@/store/metadata-store";
 import { TablesInsert } from "@/types/supabase";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { User } from "@supabase/supabase-js";
 import { useEffect } from "react";
 import { toast } from "sonner";

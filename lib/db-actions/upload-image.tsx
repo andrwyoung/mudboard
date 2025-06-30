@@ -1,7 +1,7 @@
 // this is the function that actually uploads images along with it's variants
 // to supabase, then creates metadata in the images and blocks table
 
-import { supabase } from "../../utils/supabase";
+import { supabase } from "../supabase/supabase-client";
 import {
   BlockDownload,
   BlockInsert,

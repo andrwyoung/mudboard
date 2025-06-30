@@ -1,7 +1,7 @@
 // take a section. copy all blocks inside that section. put all those blocks into new section.
 // repeat
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { TablesInsert } from "@/types/supabase";
 
 export async function cloneBlocksFromSections(

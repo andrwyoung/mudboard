@@ -1,5 +1,5 @@
 import { CropRect } from "@/types/block-types";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 
 export async function updateCropSupabase(
   blockId: string,

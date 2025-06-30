@@ -3,7 +3,7 @@
 // this function solves that by "linking" that section to our board
 
 import { TablesInsert } from "@/types/supabase";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { fetchSupabaseBlocks } from "../fetch-db-blocks";
 import { BoardSection } from "@/types/board-types";
 import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";

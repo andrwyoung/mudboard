@@ -3,7 +3,7 @@ import { useUndoStore } from "@/store/undo-store";
 import { Block } from "@/types/block-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { softDeleteBlocks } from "../db-actions/soft-delete-blocks";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { putBackBlocks } from "./put-back-blocks";
 
 export async function deleteBlocksWithUndo(blocks: Block[]) {

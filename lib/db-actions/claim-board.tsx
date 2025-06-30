@@ -7,7 +7,7 @@
 
 import { useMetadataStore } from "@/store/metadata-store";
 import { Enums } from "@/types/supabase";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { toast } from "sonner";
 
 export async function claimBoard() {

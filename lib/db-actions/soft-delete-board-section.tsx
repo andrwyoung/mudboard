@@ -2,7 +2,7 @@
 // (maybe) delete a section. depends what soft-delete-section.tsx decides
 
 import { BoardSection } from "@/types/board-types";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { toast } from "sonner";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useSelectionStore } from "@/store/selection-store";

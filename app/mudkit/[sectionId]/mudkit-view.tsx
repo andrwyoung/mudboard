@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BoardSection, Section } from "@/types/board-types";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";
 import SectionGallery from "@/app/b/[boardId]/gallery";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";

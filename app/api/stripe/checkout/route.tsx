@@ -1,0 +1,48 @@
+import { LICENSE_SANDBOX_PRICE_ID } from "@/types/constants";
+import { createClientSudo } from "@/lib/supabase/supabase-server";
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SANDBOX_KEY!, {
+  apiVersion: "2025-05-28.basil",
+});
+
+export async function POST(req: NextRequest) {
+  const supabase = await createClientSudo();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error) {
+    throw new Error("Failed to get user");
+  }
+
+  if (!user?.id) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: LICENSE_SANDBOX_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+      success_url: `${req.nextUrl.origin}/dashboard?checkout=success`,
+      cancel_url: `${req.nextUrl.origin}/dashboard?checkout=cancelled`,
+      metadata: {
+        user_id: user.id,
+        type: "license",
+      },
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    console.error("Stripe checkout error:", err);
+    return new NextResponse("Failed to create Stripe session", { status: 500 });
+  }
+}

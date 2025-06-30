@@ -1,6 +1,6 @@
 // lib/db-actions/update-section-columns.tsx
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { toast } from "sonner";

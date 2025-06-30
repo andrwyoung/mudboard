@@ -2,7 +2,7 @@
 
 "use client";
 import { useState } from "react";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { useMetadataStore } from "@/store/metadata-store";
 import { isValidEmail } from "@/components/modals/login-modal"; // or move this too
 

@@ -3,7 +3,7 @@ import {
   DEFAULT_FILE_MIME,
   thumbnailNames,
 } from "@/types/upload-settings";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 
 export const uploadThumbnail = async (
   dataUrl: string,

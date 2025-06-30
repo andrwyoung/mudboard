@@ -2,7 +2,7 @@
 
 // swap a section
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { BoardSection } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 import { canEditBoard } from "../auth/can-edit-board";

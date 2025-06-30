@@ -11,6 +11,7 @@ import Image from "next/image";
 import {
   DASHBOARD_LINK,
   DEMO_BOARD_LINK,
+  INTEREST_LINK,
   LOGIN_LINK,
   NEW_BOARD_LINK,
 } from "@/types/constants";
@@ -135,6 +136,7 @@ export default function Home() {
               <div className="flex flex-col items-center justify-center gap-2">
                 <Link
                   href={DEMO_BOARD_LINK}
+                  title="Demo board link"
                   className="flex flex-col px-6 py-2 bg-accent justify-center
                 rounded-md text-primary text-xl font-header transition-all duration-300
                 hover:text-white hover:bg-accent/90"
@@ -154,6 +156,7 @@ export default function Home() {
                   className="font-header font-semibold hover:underline hover:text-accent 
                 cursor-pointer select-none transition-all duration-300 text-sm"
                   data-umami-event={`Landing page: Blank Board`}
+                  title="New board link"
                 >
                   Or Start a Blank Board
                 </Link>
@@ -225,6 +228,36 @@ export default function Home() {
 
           <FAQ />
 
+          <section className="w-full text-center mb-24 px-6 flex flex-col items-center">
+            <h2 className="text-2xl sm:text-3xl font-bold max-w-xl mb-2">
+              Bring your favorite references into your workflow.
+            </h2>
+            <p className="text-sm font-medium mb-6">
+              Try the demo board! No signup required.
+            </p>
+
+            <div className="flex flex-col gap-2 mt-4">
+              <Link
+                href={DEMO_BOARD_LINK}
+                title="Demo board link"
+                className="px-6 py-2 bg-accent text-primary text-lg rounded-md font-header
+              hover:bg-accent/90 hover:text-white transition-all duration-300"
+              >
+                Try Demo Board
+              </Link>
+              <p className="font-regular text-sm">- or -</p>
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href={INTEREST_LINK}
+                className="text-sm font-header hover:underline text-white hover:text-accent"
+                title="Mudboard interest form"
+              >
+                Follow along for the journey
+              </Link>
+            </div>
+          </section>
+
           <Image
             src="/2white.png"
             alt="Board not found"
@@ -232,6 +265,7 @@ export default function Home() {
             height={150}
           />
         </div>
+
         {/* FOOTER */}
         <footer className="mb-8">
           <a

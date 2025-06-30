@@ -38,7 +38,7 @@ export default function FAQ() {
   //   const [copiedEmail, setCopiedEmail] = useState(false);
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-1 md:px-6 mb-20">
+    <div className="w-full max-w-2xl mx-auto px-1 md:px-6 mb-32">
       <h2 className="text-4xl font-semibold mb-6 text-center">FAQ</h2>
       <div className="space-y-4">
         <FAQItem question="Do I need to sign up to use the app?">

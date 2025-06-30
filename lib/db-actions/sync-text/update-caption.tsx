@@ -1,6 +1,6 @@
 // this is how we add a caption. mainly for image blocks
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { useLayoutStore } from "@/store/layout-store";
 import { Block } from "@/types/block-types";
 

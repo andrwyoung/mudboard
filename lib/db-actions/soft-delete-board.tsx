@@ -4,7 +4,7 @@
 
 // this function DOES NOT: remove it locally
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { SoftDeleteSections } from "./soft-delete-section";
 
 export async function softDeleteBoard(boardId: string, userId: string) {

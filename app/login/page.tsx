@@ -8,7 +8,7 @@ import { InputDark } from "@/components/ui/input-dark";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
 import { useEffect } from "react";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {

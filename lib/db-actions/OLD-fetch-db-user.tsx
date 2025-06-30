@@ -1,7 +1,7 @@
 // DEPRECATED: in favor of real auth use-user.tsx
 
 import { User } from "@/types/board-types";
-import { supabase } from "../../utils/supabase";
+import { supabase } from "../supabase/supabase-client";
 
 export async function fetchSupabaseUser(userId: string): Promise<User> {
   const { data, error } = await supabase

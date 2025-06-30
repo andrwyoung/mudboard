@@ -2,7 +2,7 @@
 
 "use client";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import Logo from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";

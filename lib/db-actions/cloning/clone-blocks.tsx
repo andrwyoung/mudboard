@@ -1,6 +1,6 @@
 // take my list of blocks. clone it. add cloned blocks to section I want
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { TablesInsert } from "@/types/supabase";
 import { Block } from "@/types/block-types";
 import { v4 as uuidv4 } from "uuid";

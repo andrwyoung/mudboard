@@ -1,6 +1,6 @@
 // clone a board. (right now only used to make Demo boards)
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { createNewBoard } from "../create-new-board";
 import { checkIfBoardExists } from "../check-board-exist";
 import { toast } from "sonner";

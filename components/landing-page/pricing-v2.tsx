@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { FaXmark, FaCheck } from "react-icons/fa6";
 import { INTEREST_LINK } from "@/types/constants";
+import React from "react";
+import BuyButton from "../stripe/buy-button";
 
 type Feature = {
   label: string;
@@ -16,6 +18,7 @@ type Plan = {
   features: Feature[];
   ctaText?: string;
   ctaHref?: string;
+  cta?: React.ReactNode;
   highlight?: boolean;
   badge?: string;
   badgeColor?: string;
@@ -34,6 +37,17 @@ const plans: Plan[] = [
     ],
     ctaText: "Try the Demo",
     ctaHref: "/demo",
+    cta: (
+      <Link
+        href="/demo"
+        className="w-full mt-4 block"
+        data-umami-event={`Landing page: Pricing CTA Demo Board`}
+      >
+        <Button variant="secondary" className={`w-full font-header`}>
+          Try the Demo
+        </Button>
+      </Link>
+    ),
   },
   {
     name: "Lifetime",
@@ -50,6 +64,7 @@ const plans: Plan[] = [
     ],
     ctaText: "Join the Waitlist",
     ctaHref: INTEREST_LINK,
+    cta: <BuyButton />,
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",
@@ -191,24 +206,7 @@ export default function PricingTable() {
                 <p className="text-xs mt-4 text-muted">{plan.note}</p>
               )}
             </div>
-            {plan.ctaText && plan.ctaHref && (
-              <Link
-                href={plan.ctaHref}
-                className="w-full mt-4 block"
-                target={plan.highlight ? "_blank" : undefined}
-                rel={plan.highlight ? "noopener noreferrer" : undefined}
-                data-umami-event={`Landing page: Pricing CTA ${plan.name}`}
-              >
-                <Button
-                  variant="secondary"
-                  className={`w-full font-header ${
-                    plan.highlight ? "bg-secondary" : ""
-                  }`}
-                >
-                  {plan.ctaText}
-                </Button>
-              </Link>
-            )}
+            {plan.cta}
           </div>
         ))}
       </div>

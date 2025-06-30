@@ -1,7 +1,7 @@
 // feel like title is pretty self explanatory lol
 
 import { Board } from "@/types/board-types";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 
 export async function checkIfBoardExists(
   boardId: string

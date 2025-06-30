@@ -3,7 +3,7 @@
 // this is the function that syncs the block order to supabase
 
 import { BlockInsert } from "@/types/block-types";
-import { supabase } from "../../utils/supabase";
+import { supabase } from "../../lib/supabase/supabase-client";
 import { PositionedBlock } from "@/types/sync-types";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { SYNC_BATCH_SIZE } from "@/types/upload-settings";

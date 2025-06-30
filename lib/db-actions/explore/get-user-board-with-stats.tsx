@@ -1,5 +1,5 @@
 import { BoardWithStats } from "@/types/stat-types";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 
 export async function getUserBoardsWithStats(
   userId: string

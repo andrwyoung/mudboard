@@ -9,7 +9,7 @@ import {
   ImageDownload,
   TextBlockType,
 } from "@/types/block-types";
-import { supabase } from "../../utils/supabase";
+import { supabase } from "../supabase/supabase-client";
 import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
 
 export async function fetchSupabaseBlocks(

@@ -40,3 +40,6 @@ export const LOGIN_LINK = "/login"
 export const ROADMAP_LINK = "https://jondrew.notion.site/Mudboard-Roadmap-2162e809fa4e80eb94add8aa315c769d?source=copy_link"
 
 export const INTEREST_LINK = "https://forms.gle/QA96JUcRRP5YSqRT6"
+
+export const LICENSE_SANDBOX_PRICE_ID = "price_1RfWTIQoMcencYPuYkMzd3Kr"
+export const LICENSE_PRICE_ID = "price_1RfXbrJcOESYvFKz9eJD9EB5"

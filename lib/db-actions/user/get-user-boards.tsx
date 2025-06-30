@@ -4,7 +4,7 @@
 // we're logged in as
 
 import { Board } from "@/types/board-types";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 
 export async function getUserBoards(userId: string): Promise<Board[]> {
   const { data, error } = await supabase

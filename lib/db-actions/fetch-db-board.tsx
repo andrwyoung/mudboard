@@ -2,7 +2,7 @@
 // if this fails we're screwed
 
 import { Board } from "@/types/board-types"; // adjust path as needed
-import { supabase } from "../../utils/supabase";
+import { supabase } from "../supabase/supabase-client";
 
 export async function fetchSupabaseBoard(boardId: string): Promise<Board> {
   const { data, error } = await supabase

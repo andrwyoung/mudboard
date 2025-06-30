@@ -1,5 +1,5 @@
 import { SectionWithStats } from "@/types/stat-types";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 
 export default async function fetchMudkits(): Promise<SectionWithStats[]> {
   const { data, error } = await supabase

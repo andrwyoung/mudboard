@@ -3,7 +3,7 @@
 import { Block, BlockInsert, TextBlockType } from "@/types/block-types";
 import { TEXT_BLOCK_HEIGHT } from "@/types/upload-settings";
 import { v4 as uuidv4 } from "uuid";
-import { supabase } from "../../../utils/supabase";
+import { supabase } from "../../supabase/supabase-client";
 import { useLayoutStore } from "@/store/layout-store";
 import { findShortestColumn } from "../../columns/column-helpers";
 import { canEditBoard } from "@/lib/auth/can-edit-board";

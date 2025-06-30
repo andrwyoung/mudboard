@@ -4,7 +4,7 @@
 // instead of simply board_sections
 
 import { BoardSection } from "@/types/board-types";
-import { supabase } from "../../utils/supabase";
+import { supabase } from "../supabase/supabase-client";
 
 export async function fetchSupabaseSections(
   boardId: string

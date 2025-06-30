@@ -1,5 +1,5 @@
 import { DEFAULT_FILE_EXT } from "@/types/upload-settings";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 
 export const checkThumbnailExists = async (
   boardId: string,

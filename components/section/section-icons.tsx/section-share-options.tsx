@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Section } from "@/types/board-types";
 import { FaLink, FaLeaf } from "react-icons/fa";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 import { useMetadataStore } from "@/store/metadata-store";
 import { CheckField } from "@/components/ui/check-field";
 import { SECTION_BASE_URL } from "@/types/constants";

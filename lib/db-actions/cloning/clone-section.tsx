@@ -3,7 +3,7 @@
 
 import { Section } from "@/types/board-types";
 import { TablesInsert } from "@/types/supabase";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/supabase-client";
 
 export async function cloneSection({
   originalSection,
