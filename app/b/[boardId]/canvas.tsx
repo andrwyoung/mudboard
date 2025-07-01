@@ -3,7 +3,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import OverlayGallery from "./overlay-gallery";
-import { useUIStore } from "@/store/ui-store";
+import { useMeasureStore, useUIStore } from "@/store/ui-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
 import { ExtFileDropTarget, MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
@@ -11,7 +11,7 @@ import SectionGallery from "./gallery";
 import { BoardSection, SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
 import { useOverlayStore } from "@/store/overlay-store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelectionStore } from "@/store/selection-store";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import DroppableGallerySection from "@/components/drag/droppable-gallery-section";
@@ -61,7 +61,13 @@ export default function Canvas({
   const boardSectionMap = useMetadataStore((s) => s.boardSectionMap);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [scrollY, setScrollY] = useState(0);
+  const setScroll = useMeasureStore((s) => s.setScroll);
+
+  const sortedBoardSections = useMemo(() => {
+    return boardSections
+      .slice()
+      .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+  }, [boardSections]);
 
   // when we scroll past a section. highlight it
   useEffect(() => {
@@ -69,7 +75,7 @@ export default function Canvas({
     if (!el || isMirror) return;
 
     const onScroll = () => {
-      setScrollY(el.scrollTop);
+      setScroll(el.scrollTop);
 
       // detecting which section we're in
       const scrollTop = el.scrollTop;
@@ -95,7 +101,7 @@ export default function Canvas({
 
     el.addEventListener("scroll", onScroll);
     return () => el.removeEventListener("scroll", onScroll);
-  }, [boardSectionMap, sectionRefs, setSelectedSection, isMirror]);
+  }, [setScroll, boardSectionMap, sectionRefs, setSelectedSection, isMirror]);
 
   return (
     <div
@@ -136,71 +142,69 @@ export default function Canvas({
       >
         <div style={{ direction: "ltr" }} className="flex flex-col gap-2 ">
           <MirrorContext.Provider value={isMirror}>
-            {boardSections
-              .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0))
-              .map((boardSection) => {
-                const section = boardSection.section;
-                const sectionId = section.section_id;
-                const columns = sectionColumns[sectionId];
-                const isLinked = isLinkedSection(boardSection);
+            {sortedBoardSections.map((boardSection) => {
+              console.log("regenerating board sections");
+              const section = boardSection.section;
+              const sectionId = section.section_id;
+              const columns = sectionColumns[sectionId];
+              const isLinked = isLinkedSection(boardSection);
 
-                const canBoardEdit = canEditBoard();
-                const canSectionEdit = canEditSection(section);
-                const canEdit = canBoardEdit && canSectionEdit;
+              const canBoardEdit = canEditBoard();
+              const canSectionEdit = canEditSection(section);
+              const canEdit = canBoardEdit && canSectionEdit;
 
-                return (
-                  <div
-                    key={sectionId}
-                    ref={(el) => {
-                      const key = isMirror ? `mirror-${sectionId}` : sectionId;
-                      sectionRefs.current[key] = el;
-                    }}
-                    className={`relative  ${
-                      canBoardEdit && !canSectionEdit
-                        ? "bg-primary/15 rounded-lg"
-                        : ""
-                    } `}
-                    onDragOver={() => {
-                      if (isDraggingExtFile) {
-                        setExtFileOverSection({ section, mirror: mirrorKey });
+              return (
+                <div
+                  key={sectionId}
+                  ref={(el) => {
+                    const key = isMirror ? `mirror-${sectionId}` : sectionId;
+                    sectionRefs.current[key] = el;
+                  }}
+                  className={`relative  ${
+                    canBoardEdit && !canSectionEdit
+                      ? "bg-primary/15 rounded-lg"
+                      : ""
+                  } `}
+                  onDragOver={() => {
+                    if (isDraggingExtFile) {
+                      setExtFileOverSection({ section, mirror: mirrorKey });
+                    }
+                  }}
+                >
+                  {canBoardEdit && (
+                    <DroppableGallerySection
+                      canEdit={canEdit}
+                      sectionId={section.section_id}
+                      isLinked={isLinked}
+                      isMirror={isMirror}
+                      isActive={
+                        draggedBlocks != null &&
+                        draggedBlocks != undefined &&
+                        draggedBlocks.length > MAX_DRAGGED_ITEMS
                       }
-                    }}
-                  >
-                    {canBoardEdit && (
-                      <DroppableGallerySection
-                        canEdit={canEdit}
-                        sectionId={section.section_id}
-                        isLinked={isLinked}
-                        isMirror={isMirror}
-                        isActive={
-                          draggedBlocks != null &&
-                          draggedBlocks != undefined &&
-                          draggedBlocks.length > MAX_DRAGGED_ITEMS
-                        }
-                        isExternalDrag={
-                          isDraggingExtFile &&
-                          extFileOverSection?.section.section_id ===
-                            section.section_id &&
-                          extFileOverSection.mirror === mirrorKey
-                        }
-                      />
-                    )}
-                    <SectionHeader section={section} canEdit={canEdit} />
-                    {columns && (
-                      <SectionGallery
-                        isMirror={isMirror}
-                        section={section}
-                        columns={columns}
-                        draggedBlocks={draggedBlocks}
-                        scrollY={scrollY}
-                        selectedBlocks={selectedBlocks}
-                        overId={dropIndicatorId}
-                        canEdit={canEdit}
-                      />
-                    )}
-                  </div>
-                );
-              })}
+                      isExternalDrag={
+                        isDraggingExtFile &&
+                        extFileOverSection?.section.section_id ===
+                          section.section_id &&
+                        extFileOverSection.mirror === mirrorKey
+                      }
+                    />
+                  )}
+                  <SectionHeader section={section} canEdit={canEdit} />
+                  {columns && (
+                    <SectionGallery
+                      isMirror={isMirror}
+                      section={section}
+                      columns={columns}
+                      draggedBlocks={draggedBlocks}
+                      selectedBlocks={selectedBlocks}
+                      overId={dropIndicatorId}
+                      canEdit={canEdit}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </MirrorContext.Provider>
         </div>
       </div>

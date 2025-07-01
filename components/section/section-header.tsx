@@ -15,26 +15,31 @@ import SectionColumnSelector from "./section-icons.tsx/change-columns-select";
 import SectionShareDialog from "./section-icons.tsx/section-share-options";
 import { FaLock } from "react-icons/fa6";
 import { updateSectionDescription } from "@/lib/db-actions/sync-text/update-section-description";
+import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 
 export default function SectionHeader({
   section,
   canEdit,
-  mode = "main",
+  scope = "main",
 }: {
   section: Section;
   canEdit: boolean;
-  mode?: CanvasScope;
+  scope?: CanvasScope;
 }) {
   const title = section?.title;
   const description = section?.description;
   const isEditing =
     useLoadingStore.getState().editingSectionId === section.section_id;
 
-  const visualNumCols = useLayoutStore((s) =>
+  console.log("regenerating section header");
+  const visualNumColsMirror = useSecondaryLayoutStore((s) => s.visualColumnNum);
+  const visualNumColsMain = useLayoutStore((s) =>
     s.getVisualNumColsForSection(section.section_id)
   );
+  const visualNumCols =
+    scope === "mirror" ? visualNumColsMirror : visualNumColsMain;
 
-  const textColor = mode === "main" ? "text-primary" : "text-white";
+  const textColor = scope === "main" ? "text-primary" : "text-white";
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
 
@@ -65,7 +70,7 @@ export default function SectionHeader({
               mirrorMode ? "opacity-50" : "opacity-80"
             }`}
           >
-            {!canEdit && mode === "main" && (
+            {!canEdit && scope === "main" && (
               <FaLock
                 title="Editing is Locked"
                 className={`opacity-50 size-4.5`}
@@ -93,6 +98,7 @@ export default function SectionHeader({
               visualNumCols={visualNumCols}
               savedColumnNum={section.saved_column_num}
               canEdit={canEdit}
+              scope={scope}
             />
           </div>
         </div>

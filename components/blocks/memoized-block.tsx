@@ -26,17 +26,16 @@ import { getImageUrl } from "@/utils/get-image-url";
 import { usePanelStore } from "@/store/panel-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { copyImageToClipboard } from "@/lib/local-helpers/copy-image-to-clipboard";
+import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 
 export function BlockChooser({
   canEdit,
   block,
-  shouldEagerLoad,
   columnWidth,
   numCols,
 }: {
   canEdit: boolean;
   block: Block;
-  shouldEagerLoad: boolean;
   columnWidth: number;
   numCols: number;
 }) {
@@ -46,7 +45,6 @@ export function BlockChooser({
         <ImageBlock
           canEdit={canEdit}
           block={block}
-          shouldEagerLoad={shouldEagerLoad}
           columnWidth={columnWidth}
           numCols={numCols}
         />
@@ -66,7 +64,6 @@ function BlockComponent({
   isSelected,
   isDragging,
   onClick,
-  shouldEagerLoad,
   columnWidth,
   numCols,
   addImage,
@@ -77,15 +74,21 @@ function BlockComponent({
   isSelected: boolean;
   isDragging: boolean;
   onClick: (e: React.MouseEvent) => void;
-  shouldEagerLoad: boolean;
   columnWidth: number;
   numCols: number;
   addImage: () => void;
   addText: () => void;
 }) {
-  const position = useLayoutStore((s) => s.getBlockPosition(block.block_id));
   const isMirror = useIsMirror();
   const scope = useGetScope();
+
+  const mirrorPosition = useSecondaryLayoutStore((s) =>
+    s.getBlockPosition(block.block_id)
+  );
+  const mainPosition = useLayoutStore((s) =>
+    s.getBlockPosition(block.block_id)
+  );
+  const position = isMirror ? mirrorPosition : mainPosition;
 
   const { openOverlay } = useOverlayStore(scope);
 
@@ -144,7 +147,6 @@ function BlockComponent({
             <BlockChooser
               canEdit={canEdit}
               block={block}
-              shouldEagerLoad={shouldEagerLoad}
               columnWidth={columnWidth}
               numCols={numCols}
             />

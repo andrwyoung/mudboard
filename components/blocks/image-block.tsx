@@ -22,12 +22,10 @@ import { MAX_COLUMNS } from "@/types/constants";
 export function ImageBlock({
   canEdit,
   block,
-  shouldEagerLoad,
   numCols,
 }: {
   canEdit: boolean;
   block: Block;
-  shouldEagerLoad: boolean;
   columnWidth: number;
   numCols: number;
 }) {
@@ -172,7 +170,6 @@ export function ImageBlock({
             ${captionIsActive && false ? "rounded-t-sm" : "rounded-sm"}
             ${overrides?.is_greyscale ? "grayscale" : ""}
                   ${overrides?.is_flipped ? "transform scale-x-[-1]" : ""}`}
-              loading={shouldEagerLoad ? "eager" : "lazy"}
               draggable={false}
             />
           </div>

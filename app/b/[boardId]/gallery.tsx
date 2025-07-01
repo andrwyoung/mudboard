@@ -5,7 +5,7 @@
 
 "use client";
 import { DroppableColumn } from "@/components/drag/droppable-column";
-import { useUIStore } from "@/store/ui-store";
+import { useMeasureStore, useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
 import React, { useCallback, useMemo } from "react";
 import { MemoizedDroppableColumn } from "./columns";
@@ -13,18 +13,17 @@ import { MirrorContext } from "./board";
 import Image from "next/image";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
-import { useGetScope } from "@/hooks/use-get-scope";
 import { useLayoutStore } from "@/store/layout-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import { Section } from "@/types/board-types";
 import { MOBILE_COLUMN_NUMBER } from "@/types/constants";
+import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 
 export default function SectionGallery({
   section,
   columns,
   draggedBlocks,
-  scrollY,
   selectedBlocks,
   overId,
   canEdit,
@@ -33,19 +32,17 @@ export default function SectionGallery({
   section: Section;
   columns: Block[][];
   draggedBlocks: Block[] | null;
-  scrollY: number;
   selectedBlocks: Record<string, Block>;
   overId: string | null;
   canEdit: boolean;
   isMirror?: boolean;
 }) {
-  const canvasScope = isMirror ? "mirror" : "main";
-  const scope = useGetScope();
+  const scope = isMirror ? "mirror" : "main";
 
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
-  const sidebarWidth = useLayoutStore((s) => s.sidebarWidth);
-  const forceMobileColumns = useLayoutStore((s) => s.forceMobileColumns);
+  const sidebarWidth = useMeasureStore((s) => s.sidebarWidth);
+  const forceMobileColumns = useUIStore((s) => s.forceMobileColumns);
 
   const lastSelectedBlock = useSelectionStore((s) => s.lastSelectedBlock);
   const addBlocksToSelection = useSelectionStore((s) => s.addBlocksToSelection);
@@ -54,14 +51,22 @@ export default function SectionGallery({
     (s) => s.removeBlockFromSelection
   );
 
-  const visualNumCols = useLayoutStore((s) =>
+  const visualNumColsMirror = useSecondaryLayoutStore((s) => s.visualColumnNum);
+  const visualNumColsMain = useLayoutStore((s) =>
     s.getVisualNumColsForSection(section.section_id)
   );
+  const visualNumCols = isMirror ? visualNumColsMirror : visualNumColsMain;
 
-  const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
+  const masterBlockOrderMirror = useSecondaryLayoutStore(
+    (s) => s.masterBlockOrder
+  );
+  const masterBlockOrderMain = useLayoutStore((s) => s.masterBlockOrder);
+  const masterBlockOrder = isMirror
+    ? masterBlockOrderMirror
+    : masterBlockOrderMain;
 
   const { isOpen: overlayGalleryIsOpen, openOverlay: openOverlayGallery } =
-    useOverlayStore(canvasScope);
+    useOverlayStore(scope);
 
   const isEmpty = columns.every((col) => col.length === 0);
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
@@ -96,7 +101,7 @@ export default function SectionGallery({
 
       if (event.detail === 2 && block.block_type === "image") {
         console.log("Double clicked:", block);
-        selectOnlyThisBlock(canvasScope, block);
+        selectOnlyThisBlock(scope, block);
         openOverlayGallery(block);
         return;
       }
@@ -121,7 +126,7 @@ export default function SectionGallery({
           const inRange = masterBlockOrder
             .slice(start, end + 1)
             .map((b) => b.block);
-          addBlocksToSelection(canvasScope, inRange);
+          addBlocksToSelection(scope, inRange);
           return;
         }
       }
@@ -131,12 +136,12 @@ export default function SectionGallery({
         if (isAlreadySelected) {
           removeBlockFromSelection(block);
         } else {
-          addBlocksToSelection(canvasScope, [block]);
+          addBlocksToSelection(scope, [block]);
         }
         return;
       }
 
-      selectOnlyThisBlock(canvasScope, block);
+      selectOnlyThisBlock(scope, block);
     },
     [
       selectOnlyThisBlock,
@@ -144,7 +149,7 @@ export default function SectionGallery({
       addBlocksToSelection,
       openOverlayGallery,
       selectedBlocks,
-      canvasScope,
+      scope,
       lastSelectedBlock,
       masterBlockOrder,
     ]
@@ -213,7 +218,6 @@ export default function SectionGallery({
               draggedBlocks={draggedBlocks}
               selectedBlocks={selectedBlocks}
               handleItemClick={handleItemClick}
-              scrollY={scrollY}
               triggerImagePicker={triggerImagePicker}
               visualNumCols={visualNumCols}
             />

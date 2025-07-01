@@ -13,6 +13,7 @@ import { usePanelStore } from "@/store/panel-store";
 import { useExploreStore } from "@/store/explore-store";
 import { cloneBlocksToSection } from "@/lib/drag-handling/handle-clone-section-drop";
 import { handleClonedBlockDrop } from "@/lib/drag-handling/handle-clone-block-drop";
+import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 
 export function getMovingItem(
   activeId: string,
@@ -112,7 +113,9 @@ export function useGalleryHandlers({
         initDraggedBlock = positionedBlockMap.get(rawBlockId)?.block;
       } else {
         // if it's in the mirror side, then we need to grab from the explore panel
-        const results = useExploreStore.getState().getBlocks([rawBlockId]);
+        const results = useSecondaryLayoutStore
+          .getState()
+          .getBlocks([rawBlockId]);
         if (results.length === 1) {
           initDraggedBlock = results[0];
         }
@@ -135,7 +138,9 @@ export function useGalleryHandlers({
             .map((id) => positionedBlockMap.get(id)?.block)
             .filter((b): b is Block => Boolean(b));
         } else {
-          draggedGroup = useExploreStore.getState().getBlocks(selectedIds);
+          draggedGroup = useSecondaryLayoutStore
+            .getState()
+            .getBlocks(selectedIds);
         }
 
         setDraggedBlocks(draggedGroup);

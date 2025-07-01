@@ -9,12 +9,14 @@ import { setVisualNumCols } from "@/lib/local-helpers/set-visual-columns";
 import { FaSave } from "react-icons/fa";
 import { cn } from "@/utils/utils";
 import { updateSectionColumnNum } from "@/lib/db-actions/update-section-columns";
+import { CanvasScope } from "@/types/board-types";
 
 type Props = {
   sectionId: string;
   visualNumCols: number;
   savedColumnNum: number;
   canEdit: boolean;
+  scope: CanvasScope;
 };
 
 export default function SectionColumnSelector({
@@ -22,6 +24,7 @@ export default function SectionColumnSelector({
   visualNumCols,
   savedColumnNum,
   canEdit,
+  scope,
 }: Props) {
   return (
     <div className="flex flex-row-reverse items-center gap-2">
@@ -38,7 +41,7 @@ export default function SectionColumnSelector({
         value={visualNumCols.toString()}
         onValueChange={(val) => {
           const newVal = parseInt(val);
-          setVisualNumCols(sectionId, newVal);
+          setVisualNumCols(sectionId, savedColumnNum, newVal, scope);
         }}
       >
         <SelectTrigger id={`select-trigger-${sectionId}`}>

@@ -16,7 +16,7 @@ import Sidebar from "./sidebar";
 import { Block } from "@/types/block-types";
 import { useImageImport } from "@/hooks/use-import-images";
 import { useLayoutStore } from "@/store/layout-store";
-import { useUIStore } from "@/store/ui-store";
+import { useMeasureStore, useUIStore } from "@/store/ui-store";
 import {
   DndContext,
   DragOverlay,
@@ -100,9 +100,9 @@ export default function Board({ boardId }: { boardId: string }) {
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   // virtualization
-  const windowWidth = useLayoutStore((s) => s.windowWidth);
-  const setSidebarWidth = useLayoutStore((s) => s.setSidebarWidth);
-  const sidebarWidth = useLayoutStore((s) => s.sidebarWidth);
+  const windowWidth = useMeasureStore((s) => s.windowWidth);
+  const setSidebarWidth = useMeasureStore((s) => s.setSidebarWidth);
+  const sidebarWidth = useMeasureStore((s) => s.sidebarWidth);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);

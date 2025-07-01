@@ -11,7 +11,7 @@ import { CAPTION_HEIGHT } from "@/types/upload-settings";
 
 export function generatePositionedBlocks(
   sectionColumns: SectionColumns,
-  sectionOrder: { sectionId: string; order_index: number }[],
+  sortedSectionIds: string[],
   sidebarWidth: number,
   windowWidth: number,
   spacingSize: number
@@ -21,10 +21,6 @@ export function generatePositionedBlocks(
 } {
   const positionedBlocksBySection: Record<string, PositionedBlock[][]> = {};
   const map = new Map<string, PositionedBlock>();
-
-  const sortedSectionIds = sectionOrder
-    .sort((a, b) => a.order_index - b.order_index)
-    .map((entry) => entry.sectionId);
 
   for (const sectionId of sortedSectionIds) {
     const columns = sectionColumns[sectionId];

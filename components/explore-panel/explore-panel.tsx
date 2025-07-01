@@ -10,6 +10,9 @@ import { Section } from "@/types/board-types";
 import SectionGallery from "@/app/b/[boardId]/gallery";
 import SectionHeader from "../section/section-header";
 import { Block } from "@/types/block-types";
+import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
+import OverlayGallery from "@/app/b/[boardId]/overlay-gallery";
+import { useOverlayStore } from "@/store/overlay-store";
 
 export default function ExplorePanel({
   draggedBlocks,
@@ -21,11 +24,16 @@ export default function ExplorePanel({
   const allMudkits = useExploreStore((s) => s.allMudkits);
 
   const boardSections = useMetadataStore((s) => s.boardSections ?? []);
+  const overlaySelectedBlock = useOverlayStore("mirror").overlayBlock;
 
-  const selectedSection = useExploreStore((s) => s.selectedSection);
-  const setSelectedSection = useExploreStore((s) => s.setSelectedSection);
-  const exploreSectionColumns = useExploreStore((s) => s.sectionColumns);
-  const setExploreSectionColumns = useExploreStore((s) => s.setSectionColumns);
+  const {
+    selectedSection,
+    setSelectedSection,
+    columns: secondaryColumns,
+    setColumns: setSecondaryColumns,
+    setVisualColumnNum,
+    regenerateOrder,
+  } = useSecondaryLayoutStore();
 
   const userId = useMetadataStore((s) => s.user?.id);
   const { userMudkits, otherMudkits } = useMemo(() => {
@@ -48,14 +56,20 @@ export default function ExplorePanel({
       section.saved_column_num
     );
 
-    section.visualColumnNum = section.saved_column_num;
+    setVisualColumnNum(section.saved_column_num);
 
     setSelectedSection(section);
-    setExploreSectionColumns(sectionColumns);
+    setSecondaryColumns(sectionColumns);
+
+    regenerateOrder();
   };
 
   return (
     <div className="h-full overflow-y-auto py-4 px-4 bg-primary flex flex-col gap-8">
+      {overlaySelectedBlock && (
+        <OverlayGallery isMirror={true} selectedBlock={overlaySelectedBlock} />
+      )}
+
       {/* --- PUBLIC MUDKITS --- */}
       <div>
         <h3 className="text-white text-md font-bold mb-2">My Mudkits</h3>
@@ -92,15 +106,14 @@ export default function ExplorePanel({
           <SectionHeader
             section={selectedSection}
             canEdit={false}
-            mode="mirror"
+            scope="mirror"
           />
 
           <SectionGallery
             isMirror={true}
             section={selectedSection}
-            columns={exploreSectionColumns}
+            columns={secondaryColumns}
             draggedBlocks={draggedBlocks}
-            scrollY={0}
             selectedBlocks={selectedBlocks}
             overId={null}
             canEdit={false}

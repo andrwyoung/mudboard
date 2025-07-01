@@ -20,9 +20,12 @@ type UIStore = {
 
   prettyMode: boolean;
   setPrettyMode: (d: boolean) => void;
+
+  forceMobileColumns: boolean;
+  toggleMobileColumns: () => void;
 };
 
-export const useUIStore = create<UIStore>((set) => ({
+export const useUIStore = create<UIStore>((set, get) => ({
   mirrorMode: false,
   toggleMirrorMode: () =>
     set((state) => ({
@@ -40,4 +43,30 @@ export const useUIStore = create<UIStore>((set) => ({
 
   prettyMode: true,
   setPrettyMode: (d) => set({ prettyMode: d }),
+
+  forceMobileColumns: false,
+  toggleMobileColumns: () => {
+    const current = get().forceMobileColumns;
+    set({ forceMobileColumns: !current });
+  },
+}));
+
+type MeasureStore = {
+  sidebarWidth: number;
+  setSidebarWidth: (width: number) => void;
+  windowWidth: number;
+  setWindowWidth: (width: number) => void;
+
+  scroll: number;
+  setScroll: (scroll: number) => void;
+};
+
+export const useMeasureStore = create<MeasureStore>((set) => ({
+  sidebarWidth: 0,
+  setSidebarWidth: (width: number) => set({ sidebarWidth: width }),
+  windowWidth: 0,
+  setWindowWidth: (width: number) => set({ windowWidth: width }),
+
+  scroll: 0,
+  setScroll: (scroll: number) => set({ scroll }),
 }));

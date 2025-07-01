@@ -22,6 +22,11 @@ import { canEditSection } from "@/lib/auth/can-edit-section";
 import { GreyscaleToggleButton } from "@/components/overlay-gallery/edit-buttons/greyscale-button";
 import { FlippedToggleButton } from "@/components/overlay-gallery/edit-buttons/mirror-button";
 import { EyedropperToggleButton } from "@/components/overlay-gallery/edit-buttons/color-picker/eyedropper-button";
+import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
+import {
+  getNextImageFrom,
+  getPrevImageFrom,
+} from "@/lib/local-helpers/get-prev-next-image";
 
 type OverlayModes = "drag" | "eyedropper";
 
@@ -37,12 +42,28 @@ export default function OverlayGallery({
     setOverlayBlock: setSelectedBlock,
   } = useOverlayStore(isMirror ? "mirror" : "main");
 
+  // note we never need visual overrides for mirror
   const visualOverridesMap = useLayoutStore((s) => s.visualOverridesMap);
   const setVisualOverride = useLayoutStore((s) => s.setVisualOverride);
 
-  const getNextImage = useLayoutStore((s) => s.getNextImage);
-  const getPrevImage = useLayoutStore((s) => s.getPrevImage);
+  const masterBlockOrderMain = useLayoutStore((s) => s.masterBlockOrder);
+  const masterBlockOrderMirror = useSecondaryLayoutStore(
+    (s) => s.masterBlockOrder
+  );
+  const masterBlockOrder = isMirror
+    ? masterBlockOrderMirror
+    : masterBlockOrderMain;
+
+  const getNextImage = React.useCallback(
+    (id: string) => getNextImageFrom(masterBlockOrder, id),
+    [masterBlockOrder]
+  );
+  const getPrevImage = React.useCallback(
+    (id: string) => getPrevImageFrom(masterBlockOrder, id),
+    [masterBlockOrder]
+  );
   const imageBlock = selectedBlock.data as MudboardImage;
+
   const [overlayMode, setOverlayMode] = useState<OverlayModes>("drag");
   const [isGreyscale, setIsGreyscale] = useState(
     visualOverridesMap.get(selectedBlock.block_id)?.is_greyscale ?? false
@@ -86,12 +107,19 @@ export default function OverlayGallery({
   } | null>(null);
 
   // candy
-  const showDebug = false;
+  const showDebug = true;
   const [blockOrder, setBlockOrder] = useState<number | undefined>(undefined);
   const [sectionOrder, setSectionOrder] = useState<number | undefined>(
     undefined
   );
-  const getBlockPosition = useLayoutStore((s) => s.getBlockPosition);
+  const getBlockPositionMain = useLayoutStore((s) => s.getBlockPosition);
+  const getBlockPositionMirror = useSecondaryLayoutStore(
+    (s) => s.getBlockPosition
+  );
+  const getBlockPosition = isMirror
+    ? getBlockPositionMirror
+    : getBlockPositionMain;
+
   const boardSections = useMetadataStore((s) => s.boardSections);
   const section = boardSections.find(
     (s) => s.section.section_id === selectedBlock.section_id
@@ -394,14 +422,17 @@ export default function OverlayGallery({
           onToggle={() => {
             const newValue = !isGreyscale;
             setIsGreyscale(newValue);
-            updateGreyscaleSupabase(
-              selectedBlock.block_id,
-              newValue,
-              canSectionEdit
-            );
-            setVisualOverride(selectedBlock.block_id, {
-              is_greyscale: newValue,
-            });
+
+            if (!isMirror) {
+              updateGreyscaleSupabase(
+                selectedBlock.block_id,
+                newValue,
+                canSectionEdit
+              );
+              setVisualOverride(selectedBlock.block_id, {
+                is_greyscale: newValue,
+              });
+            }
           }}
         />
         <FlippedToggleButton
@@ -409,14 +440,17 @@ export default function OverlayGallery({
           onToggle={() => {
             const newValue = !isFlipped;
             setIsFlipped(newValue);
-            updateFlippedSupabase(
-              selectedBlock.block_id,
-              newValue,
-              canSectionEdit
-            );
-            setVisualOverride(selectedBlock.block_id, {
-              is_flipped: newValue,
-            });
+
+            if (!isMirror) {
+              updateFlippedSupabase(
+                selectedBlock.block_id,
+                newValue,
+                canSectionEdit
+              );
+              setVisualOverride(selectedBlock.block_id, {
+                is_flipped: newValue,
+              });
+            }
           }}
         />
       </div>

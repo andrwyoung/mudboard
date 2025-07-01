@@ -6,6 +6,7 @@ export function shouldSyncSectionLayout(
   section: Section,
   forceMobileColumns: boolean
 ) {
+  console.log("determing should sync");
   const visualNumCols = useLayoutStore
     .getState()
     .getVisualNumColsForSection(section.section_id);

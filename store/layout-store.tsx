@@ -10,7 +10,7 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { useMetadataStore } from "./metadata-store";
-import { useUIStore } from "./ui-store";
+import { useMeasureStore, useUIStore } from "./ui-store";
 import { syncOrderToSupabase } from "@/store/layout-core/sync-order";
 import { SectionColumns } from "@/types/board-types";
 import { Block, VisualOverride } from "@/types/block-types";
@@ -27,11 +27,8 @@ type LayoutStore = {
     sectionId: string,
     fn: (prev: Block[][]) => Block[][]
   ) => void;
-  regenerateSectionColumns: (sectionId: string) => void;
+  regenerateSectionColumns: (sectionId: string, savedColumnNum: number) => void;
   regenerateAllSections: () => void;
-
-  forceMobileColumns: boolean;
-  toggleMobileColumns: () => void;
 
   visualNumColsMap: Record<string, number>;
   setVisualNumColsMap: (map: Record<string, number>) => void;
@@ -50,24 +47,11 @@ type LayoutStore = {
   positionedBlockMap: Map<string, PositionedBlock>; // derived position map
   masterBlockOrder: PositionedBlock[]; // derived order
   regenerateOrderingInternally: () => void;
-  regenerateOrder: (
-    orderedSections: {
-      sectionId: string;
-      order_index: number;
-    }[]
-  ) => void;
+  regenerateOrder: (sortedSectionIds: string[]) => void;
 
   getBlockPosition: (blockId: string) => PositionedBlock | undefined;
-  getNextImage: (currentId: string) => PositionedBlock | null;
-  getPrevImage: (currentId: string) => PositionedBlock | null;
 
-  // SECTION 3. measuring
-  sidebarWidth: number;
-  setSidebarWidth: (width: number) => void;
-  windowWidth: number;
-  setWindowWidth: (width: number) => void;
-
-  // SECTION 4
+  // SECTION 3
   // TODO: per section dirty tracking
   layoutDirty: boolean;
   setLayoutDirty: (d: boolean) => void;
@@ -85,6 +69,8 @@ export const useLayoutStore = create<LayoutStore>()(
         // these 2 variables are used to generate a fall back
         // in case sectionColumns[sectionId] doesn't exist
         const boardSections = useMetadataStore.getState().boardSections;
+
+        console.log("updateColumnsInASection section");
         const savedNumCols =
           get().getVisualNumColsForSection(sectionId) ?? DEFAULT_COLUMNS;
 
@@ -101,27 +87,16 @@ export const useLayoutStore = create<LayoutStore>()(
         };
       });
     },
-    regenerateSectionColumns: (sectionId: string) => {
+    regenerateSectionColumns: (sectionId: string, savedColumnNum: number) => {
       const currentColumns = get().sectionColumns[sectionId];
       const blocksInSection = currentColumns?.flat() ?? [];
 
-      const section = useMetadataStore
-        .getState()
-        .boardSections.find(
-          (bs) => bs.section.section_id === sectionId
-        )?.section;
-
-      if (!section) {
-        throw new Error(
-          `regenerateSectionColumns: No section found with id ${sectionId}`
-        );
-      }
-
-      const trueNumCols = get().forceMobileColumns
+      console.log("regenerating section");
+      const trueNumCols = useUIStore.getState().forceMobileColumns
         ? MOBILE_COLUMN_NUMBER
         : get().getVisualNumColsForSection(sectionId);
 
-      const useExplicitPositioning = trueNumCols === section.saved_column_num;
+      const useExplicitPositioning = trueNumCols === savedColumnNum;
 
       const newCols = generateColumnsFromBlockLayout(
         blocksInSection,
@@ -140,16 +115,20 @@ export const useLayoutStore = create<LayoutStore>()(
     regenerateAllSections: () => {
       const { sectionColumns, regenerateSectionColumns } = get();
       for (const sectionId of Object.keys(sectionColumns)) {
-        regenerateSectionColumns(sectionId);
+        const section = useMetadataStore
+          .getState()
+          .boardSections.find(
+            (bs) => bs.section.section_id === sectionId
+          )?.section;
+
+        if (!section) {
+          throw new Error(
+            `regenerateSectionColumns: No section found with id ${sectionId}`
+          );
+        }
+
+        regenerateSectionColumns(sectionId, section.saved_column_num);
       }
-    },
-
-    forceMobileColumns: false,
-    toggleMobileColumns: () => {
-      const current = get().forceMobileColumns;
-      set({ forceMobileColumns: !current });
-
-      get().regenerateAllSections();
     },
 
     visualNumColsMap: {},
@@ -165,9 +144,7 @@ export const useLayoutStore = create<LayoutStore>()(
     getVisualNumColsForSection: (sectionId) => {
       const value = get().visualNumColsMap[sectionId];
       if (value === undefined) {
-        console.error(
-          `Missing visualNumColsMap entry for section ${sectionId}`
-        );
+        console.warn(`Missing visualNumColsMap entry for section ${sectionId}`);
         return DEFAULT_COLUMNS;
       }
       return value;
@@ -197,30 +174,23 @@ export const useLayoutStore = create<LayoutStore>()(
     masterBlockOrder: [],
     regenerateOrderingInternally: () => {
       const boardSections = useMetadataStore.getState().boardSections;
-      const sectionOrder = boardSections
-        .slice() // avoid mutating original
+      const sortedSectionIds = boardSections
+        .slice()
         .sort((a, b) => a.order_index - b.order_index)
-        .map((bs) => ({
-          sectionId: bs.section.section_id,
-          order_index: bs.order_index,
-        }));
+        .map((bs) => bs.section.section_id);
 
-      get().regenerateOrder(sectionOrder);
+      get().regenerateOrder(sortedSectionIds);
     },
-    regenerateOrder: (
-      orderedSections: {
-        sectionId: string;
-        order_index: number;
-      }[]
-    ) => {
+    regenerateOrder: (sortedSectionIds: string[]) => {
       console.log("regenerating layout");
 
-      const { sectionColumns: columns, sidebarWidth, windowWidth } = get();
+      const { sectionColumns: columns } = get();
       const spacingSize = useUIStore.getState().spacingSize;
+      const { sidebarWidth, windowWidth } = useMeasureStore.getState();
 
       const { orderedBlocks, positionedBlockMap } = generatePositionedBlocks(
         columns,
-        orderedSections,
+        sortedSectionIds,
         sidebarWidth,
         windowWidth,
         spacingSize
@@ -233,37 +203,6 @@ export const useLayoutStore = create<LayoutStore>()(
     },
 
     getBlockPosition: (blockId) => get().positionedBlockMap.get(blockId),
-    //  regenerateSectionLayout: (sectionId: string) => {const columns = get().sectionColumns;
-    //   generatePositionedBlocks(columns)},
-
-    getNextImage: (currentId) => {
-      const flat = get().masterBlockOrder;
-      const currentIndex = flat.findIndex(
-        (b) => b.block.block_id === currentId
-      );
-      return (
-        flat
-          .slice(currentIndex + 1)
-          .find((b) => b.block.block_type === "image") ?? null
-      );
-    },
-    getPrevImage: (currentId) => {
-      const flat = get().masterBlockOrder;
-      const currentIndex = flat.findIndex(
-        (b) => b.block.block_id === currentId
-      );
-      return (
-        [...flat.slice(0, currentIndex)]
-          .reverse()
-          .find((b) => b.block.block_type === "image") ?? null
-      );
-    },
-
-    // SECTION: measuring
-    sidebarWidth: 0,
-    setSidebarWidth: (width: number) => set({ sidebarWidth: width }),
-    windowWidth: 0,
-    setWindowWidth: (width: number) => set({ windowWidth: width }),
 
     // SECTION: sycing to database
     //

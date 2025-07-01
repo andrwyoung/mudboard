@@ -2,9 +2,10 @@ import { useEffect } from "react";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { MOBILE_BREAKPOINT } from "@/types/constants";
+import { useMeasureStore, useUIStore } from "@/store/ui-store";
 
 export function useMobileColumnResizeEffect(sectionIds: string[]) {
-  const setWindowWidth = useLayoutStore((s) => s.setWindowWidth);
+  const setWindowWidth = useMeasureStore((s) => s.setWindowWidth);
   const setShowBlurImg = useLoadingStore((s) => s.setShowBlurImg);
 
   useEffect(() => {
@@ -21,13 +22,16 @@ export function useMobileColumnResizeEffect(sectionIds: string[]) {
       setWindowWidth(width);
 
       const isMobile = width < MOBILE_BREAKPOINT;
-      const { forceMobileColumns, toggleMobileColumns } =
-        useLayoutStore.getState();
+      const regenerateAllSections =
+        useLayoutStore.getState().regenerateAllSections;
+      const { forceMobileColumns, toggleMobileColumns } = useUIStore.getState();
 
       if (isMobile && !forceMobileColumns) {
         toggleMobileColumns();
+        regenerateAllSections();
       } else if (!isMobile && forceMobileColumns) {
         toggleMobileColumns();
+        regenerateAllSections();
       }
 
       if (timeout) clearTimeout(timeout);

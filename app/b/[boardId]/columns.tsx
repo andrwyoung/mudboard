@@ -7,10 +7,7 @@ import { Block } from "@/types/block-types";
 import React from "react";
 import { MemoizedDropIndicator } from "@/components/drag/drag-indicator";
 import { useUIStore } from "@/store/ui-store";
-import {
-  IMAGE_OVERSCAN_SIZE,
-  MAX_DRAGGED_ITEMS,
-} from "@/types/upload-settings";
+import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import { useGetScope } from "@/hooks/use-get-scope";
 import { useIsMirror } from "./board";
 import BlockAdder from "@/components/blocks/add-a-block";
@@ -59,7 +56,6 @@ type Props = {
   draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
   handleItemClick: (block: Block, e: React.MouseEvent) => void;
-  scrollY: number;
   triggerImagePicker: (columnIndex?: number, rowIndex?: number) => void;
   visualNumCols: number;
 };
@@ -75,7 +71,6 @@ function ColumnComponent({
   draggedBlocks,
   selectedBlocks,
   handleItemClick,
-  scrollY,
   triggerImagePicker,
   visualNumCols,
 }: Props) {
@@ -84,9 +79,6 @@ function ColumnComponent({
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
-  // const overscan = OVERSCAN_SIZE;
-  const viewportHeight = window.innerHeight;
-  // const isEmpty = column.length === 0;
 
   const enableDragIndicators =
     draggedBlocks !== null &&
@@ -143,10 +135,7 @@ function ColumnComponent({
         )} */}
 
         {/* {visibleItems.map(({ block, top, height }) => { */}
-        {items.map(({ block, top }, index) => {
-          const shouldEagerLoad =
-            top < scrollY + viewportHeight + IMAGE_OVERSCAN_SIZE;
-
+        {items.map(({ block }, index) => {
           return (
             <div
               key={`${block.block_id}`}
@@ -187,7 +176,6 @@ function ColumnComponent({
                   !!draggedBlocks?.some((b) => b.block_id === block.block_id)
                 }
                 onClick={(e) => handleItemClick(block, e)}
-                shouldEagerLoad={shouldEagerLoad}
                 columnWidth={columnWidth}
                 numCols={visualNumCols}
                 addImage={() => triggerImagePicker(columnIndex, index + 1)}

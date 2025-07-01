@@ -19,6 +19,8 @@ import {
 import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
 import { useMetadataStore } from "@/store/metadata-store";
 import { useGlobalListeners } from "@/hooks/gallery/use-global-listeners";
+import { useMeasureStore, useUIStore } from "@/store/ui-store";
+import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 
 interface Props {
   sectionId: string;
@@ -70,7 +72,7 @@ export default function MudkitView({ sectionId }: Props) {
 
       const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
       if (isMobile) {
-        useLayoutStore.setState({ forceMobileColumns: true });
+        useUIStore.setState({ forceMobileColumns: true });
       }
 
       setSection(sectionData);
@@ -81,10 +83,8 @@ export default function MudkitView({ sectionId }: Props) {
       setSectionColumns({
         [section.section_id]: generated,
       });
-      useLayoutStore.getState().setWindowWidth(window.innerWidth); // needed for regenerating order
-      useLayoutStore
-        .getState()
-        .regenerateOrder([{ sectionId: section.section_id, order_index: 0 }]);
+      useMeasureStore.getState().setWindowWidth(window.innerWidth); // needed for regenerating order
+      useSecondaryLayoutStore.getState().regenerateOrder();
 
       console.log(
         "master block order: ",
@@ -132,7 +132,6 @@ export default function MudkitView({ sectionId }: Props) {
                 section={section}
                 columns={sectionColumns[section.section_id]}
                 draggedBlocks={null}
-                scrollY={0}
                 selectedBlocks={selectedBlocks}
                 overId={null}
               />
