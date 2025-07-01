@@ -19,7 +19,7 @@ import { Section } from "@/types/board-types";
 import { MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 
-export default function SectionGallery({
+function SectionGallery({
   section,
   columns,
   canEdit,
@@ -216,3 +216,5 @@ export default function SectionGallery({
     </MirrorContext.Provider>
   );
 }
+
+export default React.memo(SectionGallery);

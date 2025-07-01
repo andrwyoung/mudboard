@@ -169,6 +169,8 @@ export function useGalleryHandlers({
       const scope = idMatch[0];
       const unscopedId = idMatch[1];
 
+      console.log("full over Id: ", fullId);
+
       if (!unscopedId || !rect) {
         setDropIndicatorId(null);
         return;

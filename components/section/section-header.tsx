@@ -16,8 +16,9 @@ import SectionShareDialog from "./section-icons.tsx/section-share-options";
 import { FaLock } from "react-icons/fa6";
 import { updateSectionDescription } from "@/lib/db-actions/sync-text/update-section-description";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
+import React from "react";
 
-export default function SectionHeader({
+function SectionHeader({
   section,
   canEdit,
   scope = "main",
@@ -119,3 +120,5 @@ export default function SectionHeader({
     </div>
   );
 }
+
+export default React.memo(SectionHeader);
