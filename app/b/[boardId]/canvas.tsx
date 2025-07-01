@@ -107,6 +107,7 @@ function Canvas({
       className={`relative h-full w-full ${
         isMirror ? "bg-stone-300 text-white" : "bg-background"
       }`}
+      data-id="canvas"
     >
       <AnimatePresence>
         {overlayGalleryIsOpen && overlayGalleryBlock && (

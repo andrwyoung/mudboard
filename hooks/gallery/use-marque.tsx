@@ -30,13 +30,15 @@ export function useMarque({
       const clickedId = (e.target as HTMLElement)
         .closest("[data-id]")
         ?.getAttribute("data-id");
-      if (
-        clickedId?.includes("::block-") ||
-        clickedId === "context-menu" ||
-        clickedId === "pinned-panel-dropzone"
-      )
+      if (clickedId?.includes("::block-") || clickedId === "context-menu")
         return;
       deselectBlocks();
+
+      if (
+        !clickedId ||
+        (clickedId !== "canvas" && !clickedId.includes("::col-"))
+      )
+        return;
 
       startX = e.clientX;
       startY = e.clientY;
