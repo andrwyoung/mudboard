@@ -81,6 +81,7 @@ export const useSelectionStore = create<SelectionStore>((set, get) => ({
 
   setSelectedBlocks: (scope, blocks, lastSelected) =>
     set({
+      currentScope: scope,
       selectedBlocks: blocks,
       lastSelectedBlock: lastSelected,
     }),

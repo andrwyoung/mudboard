@@ -9,7 +9,6 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { SYNC_BATCH_SIZE } from "@/types/upload-settings";
 import { useMetadataStore } from "@/store/metadata-store";
 import { commitToSectionColumns } from "../../lib/db-actions/sync-local-order";
-import { useLayoutStore } from "@/store/layout-store";
 import { shouldSyncSectionLayout } from "../../lib/columns/should-sync-indexes";
 import { Section } from "@/types/board-types";
 import { useUIStore } from "../ui-store";

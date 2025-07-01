@@ -9,7 +9,6 @@ import { MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
 import SectionGallery from "./gallery";
 import { BoardSection, SectionColumns } from "@/types/board-types";
-import { Block } from "@/types/block-types";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelectionStore } from "@/store/selection-store";
@@ -30,7 +29,6 @@ type CanvasProps = {
   sectionColumns: SectionColumns;
   sectionRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
 
-  selectedBlocks: Record<string, Block>;
   isDraggingExtFile: boolean;
 };
 
@@ -39,7 +37,6 @@ function Canvas({
   boardSections,
   sectionColumns,
   sectionRefs,
-  selectedBlocks,
   isDraggingExtFile,
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
@@ -190,7 +187,6 @@ function Canvas({
                       isMirror={isMirror}
                       section={section}
                       columns={columns}
-                      selectedBlocks={selectedBlocks}
                       canEdit={canEdit}
                     />
                   )}

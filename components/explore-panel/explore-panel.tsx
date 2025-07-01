@@ -9,16 +9,11 @@ import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-colum
 import { Section } from "@/types/board-types";
 import SectionGallery from "@/app/b/[boardId]/gallery";
 import SectionHeader from "../section/section-header";
-import { Block } from "@/types/block-types";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 import OverlayGallery from "@/app/b/[boardId]/overlay-gallery";
 import { useOverlayStore } from "@/store/overlay-store";
 
-export default function ExplorePanel({
-  selectedBlocks,
-}: {
-  selectedBlocks: Record<string, Block>;
-}) {
+export default function ExplorePanel() {
   const allMudkits = useExploreStore((s) => s.allMudkits);
 
   const boardSections = useMetadataStore((s) => s.boardSections ?? []);
@@ -111,7 +106,6 @@ export default function ExplorePanel({
             isMirror={true}
             section={selectedSection}
             columns={secondaryColumns}
-            selectedBlocks={selectedBlocks}
             canEdit={false}
           />
         </div>

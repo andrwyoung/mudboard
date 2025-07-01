@@ -86,7 +86,6 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // selection stuff
   const selectedSection = useSelectionStore((s) => s.selectedSection);
-  const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   // virtualization
@@ -200,7 +199,6 @@ export default function Board({ boardId }: { boardId: string }) {
       draggedBlocks,
       setDraggedBlocks,
       deselectBlocks,
-      selectedBlocks,
       initialPointerYRef,
     }
   );
@@ -295,7 +293,6 @@ export default function Board({ boardId }: { boardId: string }) {
               boardSections={boardSections}
               sectionColumns={sectionColumns}
               sectionRefs={sectionRefs}
-              selectedBlocks={selectedBlocks}
               isDraggingExtFile={isDraggingExtFile}
             />
             <div className="hidden lg:flex  h-full">
@@ -309,7 +306,7 @@ export default function Board({ boardId }: { boardId: string }) {
                 >
                   {panelMode === "focus" && <PinnedPanel />}
                   {process.env.NODE_ENV === "development" ? (
-                    <ExplorePanel selectedBlocks={selectedBlocks} />
+                    <ExplorePanel />
                   ) : (
                     <div className="h-full w-full font-header text-2xl text-primary flex items-center justify-center bg-primary/40">
                       Panel Under Construction

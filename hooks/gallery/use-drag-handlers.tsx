@@ -10,11 +10,11 @@ import { PositionedBlock } from "@/types/sync-types";
 import { handleSectionDrop } from "@/lib/drag-handling/handle-section-drop";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import { usePanelStore } from "@/store/panel-store";
-import { useExploreStore } from "@/store/explore-store";
 import { cloneBlocksToSection } from "@/lib/drag-handling/handle-clone-section-drop";
 import { handleClonedBlockDrop } from "@/lib/drag-handling/handle-clone-block-drop";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 import { useDragStore } from "@/store/drag-store";
+import { useSelectionStore } from "@/store/selection-store";
 
 export function getMovingItem(
   activeId: string,
@@ -47,7 +47,6 @@ type UseGalleryHandlersProps = {
   draggedBlocks: Block[] | null;
   setDraggedBlocks: (img: Block[] | null) => void;
   deselectBlocks: () => void;
-  selectedBlocks: Record<string, Block>;
   initialPointerYRef: React.RefObject<number | null>;
 };
 
@@ -59,7 +58,6 @@ export function useGalleryHandlers({
   draggedBlocks,
   setDraggedBlocks,
   deselectBlocks,
-  selectedBlocks,
   initialPointerYRef,
 }: UseGalleryHandlersProps) {
   // caching for handleDragMove
@@ -89,11 +87,6 @@ export function useGalleryHandlers({
       document.body.classList.add("cursor-grabbing");
       // deselectBlocks();
 
-      // console.log(
-      //   "starting drag. here's positioned block map: ",
-      //   positionedBlockMap
-      // );
-
       // cache blockRefs map so move doesn't have to recompute
       blockRectsRef.current = new Map();
       document.querySelectorAll<HTMLElement>("[data-id]").forEach((el) => {
@@ -120,6 +113,8 @@ export function useGalleryHandlers({
           initDraggedBlock = results[0];
         }
       }
+
+      const selectedBlocks = useSelectionStore.getState().selectedBlocks;
 
       if (!initDraggedBlock || !selectedBlocks) return;
 
@@ -152,7 +147,7 @@ export function useGalleryHandlers({
         initialPointerYRef.current = activatorEvent.touches[0]?.clientY ?? null;
       }
     },
-    [sectionColumns, selectedBlocks]
+    [sectionColumns]
   );
 
   const handleDragMove = useCallback(

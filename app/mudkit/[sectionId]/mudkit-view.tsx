@@ -7,7 +7,6 @@ import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-colum
 import SectionGallery from "@/app/b/[boardId]/gallery";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import OverlayGallery from "@/app/b/[boardId]/overlay-gallery";
-import { useSelectionStore } from "@/store/selection-store";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useResetState } from "@/hooks/user-reset-state";
 import { useLayoutStore } from "@/store/layout-store";
@@ -30,8 +29,6 @@ export default function MudkitView({ sectionId }: Props) {
   const [section, setSection] = useState<Section | null>(null);
   const [loading, setLoading] = useState(true);
   const setBoardSections = useMetadataStore((s) => s.setBoardSections);
-
-  const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
 
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
@@ -131,7 +128,6 @@ export default function MudkitView({ sectionId }: Props) {
                 canEdit={false} // purely view only on this page
                 section={section}
                 columns={sectionColumns[section.section_id]}
-                selectedBlocks={selectedBlocks}
               />
             </div>
           )}

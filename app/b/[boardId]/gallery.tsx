@@ -22,13 +22,11 @@ import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 export default function SectionGallery({
   section,
   columns,
-  selectedBlocks,
   canEdit,
   isMirror = false,
 }: {
   section: Section;
   columns: Block[][];
-  selectedBlocks: Record<string, Block>;
   canEdit: boolean;
   isMirror?: boolean;
 }) {
@@ -39,6 +37,7 @@ export default function SectionGallery({
   const sidebarWidth = useMeasureStore((s) => s.sidebarWidth);
   const forceMobileColumns = useUIStore((s) => s.forceMobileColumns);
 
+  const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const lastSelectedBlock = useSelectionStore((s) => s.lastSelectedBlock);
   const addBlocksToSelection = useSelectionStore((s) => s.addBlocksToSelection);
   const selectOnlyThisBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
