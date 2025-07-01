@@ -18,6 +18,7 @@ import {
 } from "@/types/constants";
 import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
 import { useMetadataStore } from "@/store/metadata-store";
+import { useGlobalListeners } from "@/hooks/gallery/use-global-listeners";
 
 interface Props {
   sectionId: string;
@@ -98,7 +99,7 @@ export default function MudkitView({ sectionId }: Props) {
   }, [sectionId, setSectionColumns, setBoardSections]);
 
   useMobileColumnResizeEffect(section?.section_id ? [section.section_id] : []);
-  // useGlobalListeners();
+  useGlobalListeners();
 
   if (loading) return null;
 

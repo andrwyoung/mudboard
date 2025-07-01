@@ -25,11 +25,26 @@ import FAQ from "@/components/landing-page/faq";
 import ComparisonTable from "@/components/landing-page/comparison";
 import LandingPageDemo from "@/components/landing-page/tools-demo";
 import Testimonials from "@/components/landing-page/testimonials";
+import { MarqueBox } from "@/components/board/marque";
+import { useTextMarque } from "@/hooks/gallery/use-landing-marque";
 
 export default function Home() {
   const user = useMetadataStore((s) => s.user);
 
   const [scrolled, setScrolled] = useState(false);
+
+  const [marqueRect, setMarqueRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
+
+  const { highlightedIndexes } = useTextMarque({
+    setMarqueRect,
+    getMarqueTargets: () =>
+      Array.from(document.querySelectorAll("[data-marque-track]")),
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,6 +57,8 @@ export default function Home() {
 
   return (
     <div className="w-full h-full bg-primary">
+      {marqueRect && <MarqueBox marqueRect={marqueRect} />}
+
       <div
         className={`z-12 flex flex-row justify-between px-8 py-4 fixed top-0 w-screen h-16 transition-colors duration-500 ${
           scrolled ? "bg-primary/95 backdrop-blur-md" : "bg-transparent"
@@ -107,7 +124,17 @@ export default function Home() {
               className=" self-center w-full text-center
             rounded-lg p-2 mb-48"
             >
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-10 sm:leading-14 md:leading-18 max-w-4xl">
+              <h1
+                data-id="hero"
+                data-marque-track
+                className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-10
+                   sm:leading-14 md:leading-18 max-w-4xl transition-colors duration-200
+                ${
+                  highlightedIndexes.includes("hero")
+                    ? "text-accent"
+                    : "text-white"
+                }`}
+              >
                 {/* Draw more. Organize less. */}
                 {/* Stay in touch with your inspiration. */}
                 References that remember.
@@ -126,7 +153,16 @@ export default function Home() {
                   A workspace for illustrators to organize and reuse reference
                   images. So you're ready to ignite inspiration when it matters.
                 </p> */}
-                <p className="text-sm sm:text-lg mb-14 w-full font-semibold max-w-xl">
+                <p
+                  data-id="subheader"
+                  data-marque-track
+                  className={`text-sm sm:text-lg mb-14 w-full font-semibold max-w-xl 
+                    transition-colors duration-200 ${
+                      highlightedIndexes.includes("subheader")
+                        ? "text-accent"
+                        : "text-white"
+                    }`}
+                >
                   A workspace to organize and reuse your favorite images. So you
                   always find what you saved for a reason.
                 </p>
@@ -152,9 +188,16 @@ export default function Home() {
                 </Link>
 
                 <Link
+                  data-id="new_board"
+                  data-marque-track
                   href={NEW_BOARD_LINK}
-                  className="font-header font-semibold hover:underline hover:text-accent 
-                cursor-pointer select-none transition-all duration-300 text-sm"
+                  className={`font-header font-semibold hover:underline hover:text-accent 
+                cursor-pointer select-none transition-all duration-300 text-sm
+                ${
+                  highlightedIndexes.includes("new_board")
+                    ? "text-accent"
+                    : "text-white"
+                }`}
                   data-umami-event={`Landing page: Blank Board`}
                   title="New board link"
                 >
@@ -174,7 +217,7 @@ export default function Home() {
 
           {/* FEATURES */}
           <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-32 text-left">
-            <Features />
+            <Features highlightedIndexes={highlightedIndexes} />
           </div>
 
           {/* <div className="flex flex-col items-center gap-2 mb-32">

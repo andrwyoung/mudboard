@@ -7,11 +7,25 @@ type FeatureItemProps = {
   title: string;
   icon?: React.ReactNode;
   children: React.ReactNode;
+  highlightedIndexes: string[];
 };
 
-function FeatureItem({ title, icon, children }: FeatureItemProps) {
+function FeatureItem({
+  title,
+  icon,
+  children,
+  highlightedIndexes,
+}: FeatureItemProps) {
+  const isHighlighted = highlightedIndexes.includes(title);
+
   return (
-    <div>
+    <div
+      data-id={title}
+      data-marque-track
+      className={`transition-all duration-200 ${
+        isHighlighted ? "text-accent" : "text-white"
+      }`}
+    >
       <div className="flex flex-col gap-2 mb-4">
         <div className="text-accent text-xl">{icon}</div>
         <h2 className="font-semibold text-xl">{title}</h2>
@@ -23,7 +37,11 @@ function FeatureItem({ title, icon, children }: FeatureItemProps) {
   );
 }
 
-export default function Features() {
+export default function Features({
+  highlightedIndexes,
+}: {
+  highlightedIndexes: string[];
+}) {
   return (
     <>
       {/* <FeatureItem icon={<FaSun />} title="Focus on drawing">
@@ -31,11 +49,19 @@ export default function Features() {
         Drop in images and get started. No setup,{" "}
         <strong>no distractions</strong>.
       </FeatureItem> */}
-      <FeatureItem icon={<FaSun />} title="Focus on drawing">
+      <FeatureItem
+        icon={<FaSun />}
+        title="Focus on drawing"
+        highlightedIndexes={highlightedIndexes}
+      >
         Spend <strong>more time drawing</strong>, not managing your references.
         No setup, no distractions.
       </FeatureItem>
-      <FeatureItem icon={<FaLeaf />} title="Reuse your references">
+      <FeatureItem
+        icon={<FaLeaf />}
+        title="Reuse your references"
+        highlightedIndexes={highlightedIndexes}
+      >
         Save your best images as reusable{" "}
         <span className="text-accent font-bold"> Mudkits</span>. So you can{" "}
         <strong>build</strong> on what inspired you.
@@ -45,7 +71,11 @@ export default function Features() {
         <span className="text-accent font-bold"> Greenhouse</span> to showcase
         your collections and build your <strong>library</strong>.
       </FeatureItem> */}
-      <FeatureItem icon={<FaSeedling />} title="Inspire others">
+      <FeatureItem
+        icon={<FaSeedling />}
+        title="Inspire others"
+        highlightedIndexes={highlightedIndexes}
+      >
         Share your Mudkits in the{" "}
         <span className="text-accent font-bold"> Greenhouse</span>, a public
         library of inspiring reference sets.

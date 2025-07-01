@@ -48,6 +48,7 @@ import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener
 import { useInitExplore } from "@/hooks/use-init-explore";
 import ExplorePanel from "@/components/explore-panel/explore-panel";
 import { MarqueBox } from "@/components/board/marque";
+import { useMarque } from "@/hooks/gallery/use-marque";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -181,9 +182,8 @@ export default function Board({ boardId }: { boardId: string }) {
 
   //
   // keyboard listeners
-  useGlobalListeners({
-    setMarqueRect,
-  });
+  useGlobalListeners();
+  useMarque({ setMarqueRect });
 
   // handling importing images
   const onlyOneSectionMode = boardSections.length === 1;
