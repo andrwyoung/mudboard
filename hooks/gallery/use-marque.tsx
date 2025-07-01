@@ -16,6 +16,7 @@ export function useMarque({
   >;
 }) {
   const blockRectsRef = useRef<Map<string, DOMRect>>(new Map());
+  const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
 
   // this is the marque tool
   useEffect(() => {
@@ -111,7 +112,4 @@ export function useMarque({
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [deselectBlocks]);
-}
-function deselectBlocks() {
-  throw new Error("Function not implemented.");
 }
