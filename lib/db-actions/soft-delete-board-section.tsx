@@ -1,3 +1,5 @@
+// DATABASE + LOCAL
+
 // mark a board_section for deletion both in the database and locally
 // (maybe) delete a section. depends what soft-delete-section.tsx decides
 

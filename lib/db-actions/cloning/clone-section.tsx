@@ -1,3 +1,5 @@
+// DATABASE only
+
 // make a copy of my section
 // this function does NOT clone blocks
 

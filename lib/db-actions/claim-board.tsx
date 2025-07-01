@@ -1,3 +1,5 @@
+// DATABASE + LOCAL
+
 // 1. user must be logged in
 // 2. if board has not been claimed already, then claim it
 // 3. update locally

@@ -1,3 +1,5 @@
+// SUPABASE
+
 // this is the function that sends the magic link for people to log in
 
 "use client";

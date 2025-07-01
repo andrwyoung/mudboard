@@ -1,5 +1,6 @@
-// situation: section exists. I want to use that section in my board. How?
+// DATABASE + LOCAL
 
+// situation: section exists. I want to use that section in my board. How?
 // this function solves that by "linking" that section to our board
 
 import { TablesInsert } from "@/types/supabase";

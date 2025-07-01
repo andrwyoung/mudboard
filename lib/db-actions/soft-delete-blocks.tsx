@@ -1,3 +1,5 @@
+// DATABASE + LOCAL
+
 // mark a block deleted in the database and locally
 
 import { supabase } from "@/lib/supabase/supabase-client";

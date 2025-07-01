@@ -1,3 +1,5 @@
+// DATABASE only
+
 import { CropRect } from "@/types/block-types";
 import { supabase } from "@/lib/supabase/supabase-client";
 

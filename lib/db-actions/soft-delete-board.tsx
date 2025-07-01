@@ -1,3 +1,5 @@
+// DATABASE only
+
 // 1. mark a board deleted
 // 2. mark all a board's board_sections deleted
 // 3. (maybe) mark a section as deleted depending on what soft-delete-section.tsx does

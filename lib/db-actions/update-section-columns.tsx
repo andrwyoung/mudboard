@@ -1,3 +1,5 @@
+// DATABASE + LOCAL
+
 // lib/db-actions/update-section-columns.tsx
 
 import { supabase } from "@/lib/supabase/supabase-client";

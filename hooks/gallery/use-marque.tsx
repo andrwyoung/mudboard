@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { useSelectionStore } from "@/store/selection-store";
 import { Block } from "@/types/block-types";
 import { useLayoutStore } from "@/store/layout-store";

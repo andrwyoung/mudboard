@@ -15,7 +15,7 @@ import { useGetScope } from "@/hooks/use-get-scope";
 import { useIsMirror } from "./board";
 import BlockAdder from "@/components/blocks/add-a-block";
 import { Section } from "@/types/board-types";
-import { createTextBlock } from "@/lib/db-actions/sync-text/text-block-actions";
+import { createTextBlock } from "@/lib/db-actions/sync-text/create-text-block";
 
 // virtualization
 function getBlockLayout(

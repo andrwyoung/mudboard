@@ -1,3 +1,5 @@
+// DATABASE + LOCAL
+
 // 1. create the board
 // 2. create the default section. Important because all boards need at least 1 section. but it's
 // ok if this fails to make a new section because on init-board we catch this edge case

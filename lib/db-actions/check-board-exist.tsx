@@ -1,4 +1,4 @@
-// feel like title is pretty self explanatory lol
+// DATABASE FETCH
 
 import { Board } from "@/types/board-types";
 import { supabase } from "@/lib/supabase/supabase-client";

@@ -1,3 +1,5 @@
+// DATABASE only. Upload
+
 // this is the function that actually uploads images along with it's variants
 // to supabase, then creates metadata in the images and blocks table
 

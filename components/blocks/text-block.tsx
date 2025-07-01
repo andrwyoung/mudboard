@@ -1,8 +1,8 @@
 // this what a text block looks like
 
 import { Block, TextBlockType } from "@/types/block-types";
-import { updateTextBlockText } from "@/lib/db-actions/sync-text/text-block-actions";
 import InlineEditTextarea from "../ui/inline-textarea";
+import { updateTextBlockText } from "@/lib/db-actions/sync-text/update-text-block-text";
 
 export default function TextBlock({
   block,

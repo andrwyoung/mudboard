@@ -1,3 +1,5 @@
+// DATABASE only
+
 // take my list of blocks. clone it. add cloned blocks to section I want
 
 import { supabase } from "@/lib/supabase/supabase-client";

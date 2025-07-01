@@ -1,3 +1,5 @@
+// DATABASE only
+
 // clone a board. (right now only used to make Demo boards)
 
 import { supabase } from "@/lib/supabase/supabase-client";

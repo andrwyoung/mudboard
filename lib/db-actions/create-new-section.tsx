@@ -1,3 +1,5 @@
+// DATABASE only. TODO: maybe....?
+
 // make new section in database. link that section to board
 
 // this function DOES NOT:

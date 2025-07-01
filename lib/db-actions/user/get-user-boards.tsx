@@ -1,3 +1,5 @@
+// DATABASE FETCH
+
 // get all the boards that belong to 1 user
 
 // TODO: hmmm we should probably double check that the userId really is the one

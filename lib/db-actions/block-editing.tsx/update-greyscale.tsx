@@ -1,3 +1,5 @@
+// DATABASE only
+
 import { supabase } from "@/lib/supabase/supabase-client";
 
 export async function updateGreyscaleSupabase(

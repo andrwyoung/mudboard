@@ -1,3 +1,5 @@
+// DATABASE FETCH
+
 import { Section } from "@/types/board-types";
 import { supabase } from "@/lib/supabase/supabase-client";
 

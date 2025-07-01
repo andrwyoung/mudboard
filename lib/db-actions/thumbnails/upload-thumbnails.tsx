@@ -1,3 +1,7 @@
+// DATABASE only
+
+// given a thumbnail, upload it.
+
 import {
   DEFAULT_FILE_EXT,
   DEFAULT_FILE_MIME,

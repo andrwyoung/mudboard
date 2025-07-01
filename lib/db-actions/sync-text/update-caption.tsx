@@ -1,3 +1,4 @@
+// UNUSED
 // this is how we add a caption. mainly for image blocks
 
 import { supabase } from "@/lib/supabase/supabase-client";

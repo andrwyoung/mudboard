@@ -1,3 +1,5 @@
+// DATABASE FETCH
+
 import { SectionWithStats } from "@/types/stat-types";
 import { supabase } from "@/lib/supabase/supabase-client";
 

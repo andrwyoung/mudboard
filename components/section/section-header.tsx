@@ -3,10 +3,7 @@
 
 import { CanvasScope, Section } from "@/types/board-types";
 import InlineEditText from "../ui/inline-edit";
-import {
-  updateSectionDescription,
-  updateSectionTitle,
-} from "@/lib/db-actions/sync-text/update-section-text";
+import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-title";
 import { useLoadingStore } from "@/store/loading-store";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import InlineEditTextarea from "../ui/inline-textarea";
@@ -17,6 +14,7 @@ import SectionAddImageButton from "./section-icons.tsx/add-image-button";
 import SectionColumnSelector from "./section-icons.tsx/change-columns-select";
 import SectionShareDialog from "./section-icons.tsx/section-share-options";
 import { FaLock } from "react-icons/fa6";
+import { updateSectionDescription } from "@/lib/db-actions/sync-text/update-section-description";
 
 export default function SectionHeader({
   section,

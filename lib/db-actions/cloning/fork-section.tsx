@@ -1,5 +1,6 @@
-// situation: I like section. I want to copy section. How?
+// DATABASE + LOCAL (link-section.tsx)
 
+// situation: I like section. I want to copy section. How?
 // this function does that
 
 import { cloneSection } from "./clone-section";
