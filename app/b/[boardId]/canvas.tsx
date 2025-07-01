@@ -5,15 +5,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import OverlayGallery from "./overlay-gallery";
 import { useMeasureStore, useUIStore } from "@/store/ui-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
-import { ExtFileDropTarget, MirrorContext } from "./board";
+import { MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
 import SectionGallery from "./gallery";
 import { BoardSection, SectionColumns } from "@/types/board-types";
 import { Block } from "@/types/block-types";
 import { useOverlayStore } from "@/store/overlay-store";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelectionStore } from "@/store/selection-store";
-import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import DroppableGallerySection from "@/components/drag/droppable-gallery-section";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import HelpModal from "@/components/modals/help-modal";
@@ -21,6 +20,8 @@ import { FaQuestion } from "react-icons/fa6";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { canEditSection } from "@/lib/auth/can-edit-section";
 import { useMetadataStore } from "@/store/metadata-store";
+import React from "react";
+import { useDragStore } from "@/store/drag-store";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -29,26 +30,17 @@ type CanvasProps = {
   sectionColumns: SectionColumns;
   sectionRefs: React.RefObject<Record<string, HTMLDivElement | null>>;
 
-  draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
-
-  dropIndicatorId: string | null;
   isDraggingExtFile: boolean;
-  extFileOverSection: ExtFileDropTarget;
-  setExtFileOverSection: (s: ExtFileDropTarget) => void;
 };
 
-export default function Canvas({
+function Canvas({
   isMirror,
   boardSections,
   sectionColumns,
   sectionRefs,
-  draggedBlocks,
   selectedBlocks,
-  dropIndicatorId,
   isDraggingExtFile,
-  extFileOverSection,
-  setExtFileOverSection,
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -62,6 +54,16 @@ export default function Canvas({
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const setScroll = useMeasureStore((s) => s.setScroll);
+  const assignSectionRef = useCallback(
+    (sectionId: string) => (el: HTMLDivElement | null) => {
+      const key = isMirror ? `mirror-${sectionId}` : sectionId;
+      sectionRefs.current[key] = el;
+    },
+    [isMirror, sectionRefs]
+  );
+
+  const setExtFileOverSection = useDragStore((s) => s.setExtFileOverSection);
+  const extFileOverSection = useDragStore((s) => s.extFileOverSection);
 
   const sortedBoardSections = useMemo(() => {
     return boardSections
@@ -156,10 +158,7 @@ export default function Canvas({
               return (
                 <div
                   key={sectionId}
-                  ref={(el) => {
-                    const key = isMirror ? `mirror-${sectionId}` : sectionId;
-                    sectionRefs.current[key] = el;
-                  }}
+                  ref={assignSectionRef(sectionId)}
                   className={`relative  ${
                     canBoardEdit && !canSectionEdit
                       ? "bg-primary/15 rounded-lg"
@@ -177,11 +176,6 @@ export default function Canvas({
                       sectionId={section.section_id}
                       isLinked={isLinked}
                       isMirror={isMirror}
-                      isActive={
-                        draggedBlocks != null &&
-                        draggedBlocks != undefined &&
-                        draggedBlocks.length > MAX_DRAGGED_ITEMS
-                      }
                       isExternalDrag={
                         isDraggingExtFile &&
                         extFileOverSection?.section.section_id ===
@@ -196,9 +190,7 @@ export default function Canvas({
                       isMirror={isMirror}
                       section={section}
                       columns={columns}
-                      draggedBlocks={draggedBlocks}
                       selectedBlocks={selectedBlocks}
-                      overId={dropIndicatorId}
                       canEdit={canEdit}
                     />
                   )}
@@ -222,3 +214,5 @@ export default function Canvas({
     </div>
   );
 }
+
+export default React.memo(Canvas);

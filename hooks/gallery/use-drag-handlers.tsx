@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 import { Block } from "@/types/block-types";
 import { handleBlockDrop } from "@/lib/drag-handling/handle-block-drop";
-import { BoardSection, SectionColumns } from "@/types/board-types";
+import { BoardSection, Section, SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
 import { handleSectionDrop } from "@/lib/drag-handling/handle-section-drop";
 import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
@@ -14,6 +14,7 @@ import { useExploreStore } from "@/store/explore-store";
 import { cloneBlocksToSection } from "@/lib/drag-handling/handle-clone-section-drop";
 import { handleClonedBlockDrop } from "@/lib/drag-handling/handle-clone-block-drop";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
+import { useDragStore } from "@/store/drag-store";
 
 export function getMovingItem(
   activeId: string,
@@ -45,8 +46,6 @@ type UseGalleryHandlersProps = {
   ) => void;
   draggedBlocks: Block[] | null;
   setDraggedBlocks: (img: Block[] | null) => void;
-  dropIndicatorId: string | null;
-  setDropIndicatorId: (id: string | null) => void;
   deselectBlocks: () => void;
   selectedBlocks: Record<string, Block>;
   initialPointerYRef: React.RefObject<number | null>;
@@ -59,8 +58,6 @@ export function useGalleryHandlers({
   updateSections,
   draggedBlocks,
   setDraggedBlocks,
-  dropIndicatorId,
-  setDropIndicatorId,
   deselectBlocks,
   selectedBlocks,
   initialPointerYRef,
@@ -68,6 +65,9 @@ export function useGalleryHandlers({
   // caching for handleDragMove
   const blockRectsRef = useRef<Map<string, DOMRect>>(new Map());
   const overIdRef = useRef<string | null>(null);
+
+  const dropIndicatorId = useDragStore((s) => s.dropIndicatorId);
+  const setDropIndicatorId = useDragStore((s) => s.setDropIndicatorId);
 
   useEffect(() => {
     overIdRef.current = dropIndicatorId;
@@ -266,8 +266,26 @@ export function useGalleryHandlers({
       console.log("drop match: ", dropMatch);
       console.log("ActiveId ", activeId);
 
-      // first we deal with block reorganization
+      // helper function
+      function handleSectionLevelDrop(targetSection: Section) {
+        if (cloneBlock) {
+          cloneBlocksToSection({
+            blocks: draggedBlocks ?? [],
+            sectionColumns,
+            updateSections,
+            targetSection,
+          });
+        } else {
+          handleSectionDrop({
+            activeBlocksWithPos,
+            sectionColumns,
+            updateSections,
+            targetSection,
+          });
+        }
+      }
 
+      // first we deal with block reorganization
       if (dropMatch) {
         const toSectionId = String(dropMatch[1]);
         const toColumnIndex = Number(dropMatch[2]);
@@ -277,36 +295,17 @@ export function useGalleryHandlers({
 
         // the case where we're dragging too many blocks
         if (draggedBlocks.length > MAX_DRAGGED_ITEMS) {
-          const targetBoardSection = boardSections.find(
+          const targetSection = boardSections.find(
             (bs) => bs.section.section_id === toSectionId
-          );
-          const targetSection = targetBoardSection?.section;
-
+          )?.section;
           if (!targetSection) return;
-          if (cloneBlock) {
-            console.log("here1");
-            cloneBlocksToSection({
-              blocks: draggedBlocks,
-              sectionColumns,
-              updateSections,
-              targetSection,
-            });
-          } else {
-            console.log("here2");
-            handleSectionDrop({
-              activeBlocksWithPos,
-              sectionColumns,
-              updateSections,
-              targetSection,
-            });
-          }
 
+          handleSectionLevelDrop(targetSection);
           setDraggedBlocks(null);
           return;
         }
 
         if (cloneBlock) {
-          console.log("here3");
           handleClonedBlockDrop({
             block: draggedBlocks[0],
             toSectionId,
@@ -329,22 +328,7 @@ export function useGalleryHandlers({
         const sectionIndex = Number(sectionMatch[1]);
         const targetSection = boardSections[sectionIndex].section;
 
-        if (cloneBlock) {
-          console.log("here5");
-          cloneBlocksToSection({
-            blocks: draggedBlocks ?? [],
-            sectionColumns,
-            updateSections,
-            targetSection,
-          });
-        } else {
-          handleSectionDrop({
-            activeBlocksWithPos,
-            sectionColumns,
-            updateSections,
-            targetSection,
-          });
-        }
+        handleSectionLevelDrop(targetSection);
       }
 
       setDraggedBlocks(null);

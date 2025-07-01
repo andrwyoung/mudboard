@@ -13,6 +13,7 @@ import { useIsMirror } from "./board";
 import BlockAdder from "@/components/blocks/add-a-block";
 import { Section } from "@/types/board-types";
 import { createTextBlock } from "@/lib/db-actions/sync-text/create-text-block";
+import { useDragStore } from "@/store/drag-store";
 
 // virtualization
 function getBlockLayout(
@@ -52,8 +53,6 @@ type Props = {
   column: Block[];
   columnWidth: number;
   columnIndex: number;
-  overId: string | null;
-  draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
   handleItemClick: (block: Block, e: React.MouseEvent) => void;
   triggerImagePicker: (columnIndex?: number, rowIndex?: number) => void;
@@ -67,8 +66,6 @@ function ColumnComponent({
   column,
   columnWidth,
   columnIndex,
-  overId,
-  draggedBlocks,
   selectedBlocks,
   handleItemClick,
   triggerImagePicker,
@@ -79,6 +76,9 @@ function ColumnComponent({
   const spacingSize = useUIStore((s) => s.spacingSize);
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
+
+  const draggedBlocks = useDragStore((s) => s.draggedBlocks);
+  const overId = useDragStore((s) => s.dropIndicatorId);
 
   const enableDragIndicators =
     draggedBlocks !== null &&

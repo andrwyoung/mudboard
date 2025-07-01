@@ -15,10 +15,8 @@ import OverlayGallery from "@/app/b/[boardId]/overlay-gallery";
 import { useOverlayStore } from "@/store/overlay-store";
 
 export default function ExplorePanel({
-  draggedBlocks,
   selectedBlocks,
 }: {
-  draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
 }) {
   const allMudkits = useExploreStore((s) => s.allMudkits);
@@ -113,9 +111,7 @@ export default function ExplorePanel({
             isMirror={true}
             section={selectedSection}
             columns={secondaryColumns}
-            draggedBlocks={draggedBlocks}
             selectedBlocks={selectedBlocks}
-            overId={null}
             canEdit={false}
           />
         </div>

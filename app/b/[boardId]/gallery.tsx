@@ -15,7 +15,6 @@ import { useImagePicker } from "@/hooks/use-image-picker";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import { Section } from "@/types/board-types";
 import { MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
@@ -23,17 +22,13 @@ import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 export default function SectionGallery({
   section,
   columns,
-  draggedBlocks,
   selectedBlocks,
-  overId,
   canEdit,
   isMirror = false,
 }: {
   section: Section;
   columns: Block[][];
-  draggedBlocks: Block[] | null;
   selectedBlocks: Record<string, Block>;
-  overId: string | null;
   canEdit: boolean;
   isMirror?: boolean;
 }) {
@@ -159,13 +154,9 @@ export default function SectionGallery({
     <MirrorContext.Provider value={isMirror}>
       {fileInput}
       <div
-        className={`grid h-full relative ${
-          draggedBlocks ? "cursor-grabbing" : "cursor-default"
-        } ${
-          draggedBlocks?.length && draggedBlocks.length > MAX_DRAGGED_ITEMS
-            ? ""
-            : ""
-        } ${overlayGalleryIsOpen ? "pointer-events-none" : ""}`}
+        className={`grid h-full relative  ${
+          overlayGalleryIsOpen ? "pointer-events-none" : ""
+        }`}
         style={{
           gridTemplateColumns: `repeat(${
             forceMobileColumns ? MOBILE_COLUMN_NUMBER : visualNumCols
@@ -214,8 +205,6 @@ export default function SectionGallery({
               column={column}
               columnWidth={columnWidth}
               columnIndex={columnIndex}
-              overId={overId}
-              draggedBlocks={draggedBlocks}
               selectedBlocks={selectedBlocks}
               handleItemClick={handleItemClick}
               triggerImagePicker={triggerImagePicker}

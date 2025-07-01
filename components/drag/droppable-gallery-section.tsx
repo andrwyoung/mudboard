@@ -2,6 +2,8 @@
 // it's important only because it lets people know that you can drop into sections
 
 import { useGetScope } from "@/hooks/use-get-scope";
+import { useDragStore } from "@/store/drag-store";
+import { MAX_DRAGGED_ITEMS } from "@/types/upload-settings";
 import { useDroppable } from "@dnd-kit/core";
 import React from "react";
 
@@ -10,17 +12,18 @@ export default function DroppableGallerySection({
   sectionId,
   isLinked,
   isMirror,
-  isActive,
   isExternalDrag,
 }: {
   canEdit: boolean;
   sectionId: string;
   isLinked: boolean;
   isMirror: boolean;
-  isActive: boolean;
   isExternalDrag: boolean;
 }) {
   const scope = useGetScope();
+
+  const draggedBlocks = useDragStore((s) => s.draggedBlocks);
+  const isActive = draggedBlocks && draggedBlocks.length > MAX_DRAGGED_ITEMS;
 
   const { setNodeRef, isOver, over } = useDroppable({
     id: `gallery-${scope}-${sectionId}`,

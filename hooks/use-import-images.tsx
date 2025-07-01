@@ -10,23 +10,19 @@ import { isImageUrl } from "@/utils/upload-helpers";
 import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 import { canEditBoard } from "../lib/auth/can-edit-board";
 import { tryImportImageFromUrl } from "@/lib/upload-images/url-handling/import-image-from-url";
-import { ExtFileDropTarget } from "@/app/b/[boardId]/board";
+import { ExtFileDropTarget, useDragStore } from "@/store/drag-store";
 
 export function useImageImport({
   selectedSection,
-  setIsDraggingExtFile,
-  setDraggedExtFileCount,
-  extFileOverSection,
-  setExtFileOverSection,
   onlyOneSectionMode,
 }: {
   selectedSection: Section | null;
-  setIsDraggingExtFile: (isDragging: boolean) => void;
-  setDraggedExtFileCount: (count: number | null) => void;
-  extFileOverSection: ExtFileDropTarget;
-  setExtFileOverSection: (s: ExtFileDropTarget) => void;
   onlyOneSectionMode: boolean;
 }) {
+  const setIsDraggingExtFile = useDragStore((s) => s.setIsDraggingExtFile);
+  const extFileOverSection = useDragStore((s) => s.extFileOverSection);
+  const setExtFileOverSection = useDragStore((s) => s.setExtFileOverSection);
+
   const extFileOverSectionRef = useRef<ExtFileDropTarget>(extFileOverSection);
   useEffect(() => {
     extFileOverSectionRef.current = extFileOverSection;
@@ -51,13 +47,6 @@ export function useImageImport({
       if (isFile || isLinkOrHtml) {
         dragCounter++;
         setIsDraggingExtFile(true);
-
-        // Only set count if we're dragging files
-        if (isFile && items) {
-          setDraggedExtFileCount(items.length);
-        } else {
-          setDraggedExtFileCount(null); // we don’t know count for link/image drag
-        }
       }
     }
 
@@ -79,7 +68,6 @@ export function useImageImport({
       dragCounter = 0;
       setIsDraggingExtFile(false);
       setExtFileOverSection(null);
-      setDraggedExtFileCount(null);
 
       // this the section we want to drop into
       let section = extFileOverSectionRef.current;

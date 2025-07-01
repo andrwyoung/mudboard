@@ -19,7 +19,6 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useMeasureStore, useUIStore } from "@/store/ui-store";
 import {
   DndContext,
-  DragOverlay,
   MouseSensor,
   pointerWithin,
   TouchSensor,
@@ -27,7 +26,6 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { useGalleryHandlers } from "@/hooks/gallery/use-drag-handlers";
-import Image from "next/image";
 import { useMetadataStore } from "@/store/metadata-store";
 import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 import { useLoadingStore } from "@/store/loading-store";
@@ -39,7 +37,6 @@ import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
 import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
 import WelcomeModal from "@/components/modals/welcome-modal";
-import { Section } from "@/types/board-types";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
 import PinnedPanel from "@/components/pinned-panel/pinned-panel";
@@ -49,32 +46,25 @@ import { useInitExplore } from "@/hooks/use-init-explore";
 import ExplorePanel from "@/components/explore-panel/explore-panel";
 import { MarqueBox } from "@/components/board/marque";
 import { useMarque } from "@/hooks/gallery/use-marque";
+import { useDragStore } from "@/store/drag-store";
+import DragOverlayBlock from "@/components/drag/drag-overlay";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
 export const useIsMirror = () => useContext(MirrorContext);
-
-export type ExtFileDropTarget = {
-  section: Section;
-  mirror: "main" | "mirror";
-} | null;
 
 export default function Board({ boardId }: { boardId: string }) {
   const [isExpired, setIsExpired] = useState(false);
   const [welcomeModalOpen, setWelcomeModalOpen] = useState(false);
 
   // when dragging new images from local computer
-  const [isDraggingExtFile, setIsDraggingExtFile] = useState(false);
-  const [extFileOverSection, setExtFileOverSection] =
-    useState<ExtFileDropTarget>(null);
-  const [draggedExtFileCount, setDraggedExtFileCount] = useState<number | null>(
-    null
-  );
-  console.log(draggedExtFileCount);
+
   const canBoardEdit = canEditBoard();
 
   // when dragging blocks
-  const [draggedBlocks, setDraggedBlocks] = useState<Block[] | null>(null);
+  const draggedBlocks = useDragStore((s) => s.draggedBlocks);
+  const setDraggedBlocks = useDragStore((s) => s.setDraggedBlocks);
+  const isDraggingExtFile = useDragStore((s) => s.isDraggingExtFile);
 
   // sidebar
 
@@ -109,7 +99,6 @@ export default function Board({ boardId }: { boardId: string }) {
   const updateSectionColumns = useLayoutStore((s) => s.updateColumnsInASection);
 
   // for dragging and stuff
-  const [dropIndicatorId, setDropIndicatorId] = useState<string | null>(null);
   const initialPointerYRef = useRef<number | null>(null);
 
   // marque
@@ -192,10 +181,6 @@ export default function Board({ boardId }: { boardId: string }) {
     (onlyOneSectionMode ? boardSections[0].section : null);
   useImageImport({
     selectedSection: autoSelectedSection,
-    setIsDraggingExtFile,
-    setDraggedExtFileCount,
-    extFileOverSection,
-    setExtFileOverSection,
     onlyOneSectionMode,
   });
 
@@ -214,8 +199,6 @@ export default function Board({ boardId }: { boardId: string }) {
       },
       draggedBlocks,
       setDraggedBlocks,
-      dropIndicatorId,
-      setDropIndicatorId,
       deselectBlocks,
       selectedBlocks,
       initialPointerYRef,
@@ -312,29 +295,9 @@ export default function Board({ boardId }: { boardId: string }) {
               boardSections={boardSections}
               sectionColumns={sectionColumns}
               sectionRefs={sectionRefs}
-              draggedBlocks={draggedBlocks}
               selectedBlocks={selectedBlocks}
-              dropIndicatorId={dropIndicatorId}
               isDraggingExtFile={isDraggingExtFile}
-              setExtFileOverSection={setExtFileOverSection}
-              extFileOverSection={extFileOverSection}
             />
-            {false && mirrorMode && (
-              <div className="hidden lg:flex w-full h-full">
-                <Canvas
-                  isMirror={true}
-                  boardSections={boardSections}
-                  sectionColumns={sectionColumns}
-                  sectionRefs={sectionRefs}
-                  draggedBlocks={draggedBlocks}
-                  selectedBlocks={selectedBlocks}
-                  dropIndicatorId={dropIndicatorId}
-                  isDraggingExtFile={isDraggingExtFile}
-                  extFileOverSection={extFileOverSection}
-                  setExtFileOverSection={setExtFileOverSection}
-                />
-              </div>
-            )}
             <div className="hidden lg:flex  h-full">
               {panelMode !== "none" && windowWidth != 0 && (
                 <ResizablePinnedPanel
@@ -346,10 +309,7 @@ export default function Board({ boardId }: { boardId: string }) {
                 >
                   {panelMode === "focus" && <PinnedPanel />}
                   {process.env.NODE_ENV === "development" ? (
-                    <ExplorePanel
-                      draggedBlocks={draggedBlocks}
-                      selectedBlocks={selectedBlocks}
-                    />
+                    <ExplorePanel selectedBlocks={selectedBlocks} />
                   ) : (
                     <div className="h-full w-full font-header text-2xl text-primary flex items-center justify-center bg-primary/40">
                       Panel Under Construction
@@ -361,37 +321,7 @@ export default function Board({ boardId }: { boardId: string }) {
           </div>
         </main>
 
-        <DragOverlay dropAnimation={null}>
-          {draggedBlocks && draggedBlocks.length > 0 && (
-            <div className="relative">
-              {draggedBlocks[0].block_type === "image" &&
-                draggedBlocks[0].data &&
-                "fileName" in draggedBlocks[0].data && (
-                  <Image
-                    src={draggedBlocks[0].data.fileName}
-                    alt={
-                      draggedBlocks[0].caption ??
-                      draggedBlocks[0].data.original_name
-                    }
-                    width={draggedBlocks[0].width}
-                    height={draggedBlocks[0].height}
-                    tabIndex={-1}
-                    className="rounded-md object-cover backdrop-blur-md opacity-80 transition-transform
-                    duration-200 ease-out scale-105 shadow-xl rotate-1"
-                  />
-                )}
-
-              {draggedBlocks.length > 1 && (
-                <div
-                  className="absolute bottom-0 font-header right-0 bg-white px-3 py-1 
-                text-md text-primary rounded-lg"
-                >
-                  {draggedBlocks.length}
-                </div>
-              )}
-            </div>
-          )}
-        </DragOverlay>
+        <DragOverlayBlock />
       </DndContext>
       <WelcomeModal open={welcomeModalOpen} setOpen={setWelcomeModalOpen} />
     </div>
