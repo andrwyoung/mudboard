@@ -15,6 +15,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { VisualOverride } from "@/types/block-types";
 import { MOBILE_BREAKPOINT, MOBILE_COLUMN_NUMBER } from "@/types/constants";
+import { useUIStore } from "@/store/ui-store";
 
 export function useInitBoard(
   boardId: string,
@@ -119,7 +120,7 @@ export function useInitBoard(
         // STEP 4: generate the columns
         const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
         if (isMobile) {
-          useLayoutStore.setState({ forceMobileColumns: true });
+          useUIStore.setState({ forceMobileColumns: true });
         }
 
         const initColumns: SectionColumns = {};

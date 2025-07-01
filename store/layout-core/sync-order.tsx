@@ -12,6 +12,7 @@ import { commitToSectionColumns } from "../../lib/db-actions/sync-local-order";
 import { useLayoutStore } from "@/store/layout-store";
 import { shouldSyncSectionLayout } from "../../lib/columns/should-sync-indexes";
 import { Section } from "@/types/board-types";
+import { useUIStore } from "../ui-store";
 
 function positionedBlocksToUpdates(
   blocks: PositionedBlock[],
@@ -60,7 +61,7 @@ export async function syncOrderToSupabase(
   }
 
   // should you sync column indexes
-  const forceMobileColumns = useLayoutStore.getState().forceMobileColumns;
+  const forceMobileColumns = useUIStore.getState().forceMobileColumns;
 
   // use position map to sync
   const updates = positionedBlocksToUpdates(

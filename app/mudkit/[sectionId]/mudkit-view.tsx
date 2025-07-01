@@ -131,9 +131,7 @@ export default function MudkitView({ sectionId }: Props) {
                 canEdit={false} // purely view only on this page
                 section={section}
                 columns={sectionColumns[section.section_id]}
-                draggedBlocks={null}
                 selectedBlocks={selectedBlocks}
-                overId={null}
               />
             </div>
           )}
