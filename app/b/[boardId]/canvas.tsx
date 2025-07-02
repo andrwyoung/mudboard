@@ -8,7 +8,7 @@ import { SCROLLBAR_STYLE } from "@/types/constants";
 import { MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
 import SectionGallery from "./gallery";
-import { BoardSection, SectionColumns } from "@/types/board-types";
+import { BoardSection, CanvasScope, SectionColumns } from "@/types/board-types";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelectionStore } from "@/store/selection-store";
@@ -164,7 +164,21 @@ function Canvas({
                   } `}
                   onDragOver={() => {
                     if (isDraggingExtFile) {
-                      setExtFileOverSection({ section, mirror: mirrorKey });
+                      const next = {
+                        section,
+                        mirror: mirrorKey as CanvasScope,
+                      };
+
+                      // Prevent setting the same object repeatedly
+                      const current = extFileOverSection;
+                      const isSame =
+                        current?.section.section_id ===
+                          next.section.section_id &&
+                        current?.mirror === next.mirror;
+
+                      if (!isSame) {
+                        setExtFileOverSection(next);
+                      }
                     }
                   }}
                 >

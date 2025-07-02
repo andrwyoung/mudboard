@@ -16,7 +16,7 @@ export default function RefreshButton() {
     if (isSpinning) return; // prevent double tapping
     setIsSpinning(true);
 
-    if (user?.id) fetchMudkits(user.id);
+    fetchMudkits(user?.id);
 
     setTimeout(() => {
       setIsSpinning(false);

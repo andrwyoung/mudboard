@@ -1,6 +1,6 @@
 import { useMetadataStore } from "@/store/metadata-store";
 import { getHasLicense } from "./user-has-license";
-import { getUserBoardsWithStats } from "../db-actions/explore/get-user-board-with-stats";
+import { fetchUserBoardsWithStats } from "../db-actions/explore/fetch-user-board-with-stats";
 import { MAX_FREE_TIER_BOARDS } from "@/types/constants";
 import { toast } from "sonner";
 import { startCheckout } from "../stripe/start-checkout";
@@ -22,7 +22,7 @@ export async function currentUserCanCreateBoardsFromDB(): Promise<boolean> {
 
   if (getHasLicense(profile.tier)) return true;
 
-  const boardCount = await getUserBoardsWithStats(user.id);
+  const boardCount = await fetchUserBoardsWithStats(user.id);
   const canCreate = boardCount.length < MAX_FREE_TIER_BOARDS;
   if (!canCreate) {
     toast.error("You’ve reached your limit of 3 boards.", {

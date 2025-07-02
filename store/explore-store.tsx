@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { BoardWithStats, SectionWithStats } from "@/types/stat-types";
-import { getUserBoardsWithStats } from "@/lib/db-actions/explore/get-user-board-with-stats";
-import fetchMudkits from "@/lib/db-actions/explore/get-mudkits";
+import { fetchUserBoardsWithStats } from "@/lib/db-actions/explore/fetch-user-board-with-stats";
+import fetchMudkits from "@/lib/db-actions/explore/fetch-mudkits";
 
 export type ExploreMode = "search" | "focus";
 export type MudkitType = "mine" | "others";
@@ -33,7 +33,7 @@ export const useExploreStore = create<ExploreStore>((set) => ({
 
   userBoards: [],
   fetchUserBoards: async (userId: string) => {
-    const boards = await getUserBoardsWithStats(userId);
+    const boards = await fetchUserBoardsWithStats(userId);
     set({ userBoards: boards });
   },
 

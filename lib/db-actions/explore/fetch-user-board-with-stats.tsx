@@ -3,7 +3,7 @@
 import { BoardWithStats } from "@/types/stat-types";
 import { supabase } from "@/lib/supabase/supabase-client";
 
-export async function getUserBoardsWithStats(
+export async function fetchUserBoardsWithStats(
   userId: string
 ): Promise<BoardWithStats[]> {
   const { data, error } = await supabase

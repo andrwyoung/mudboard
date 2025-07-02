@@ -69,7 +69,7 @@ function SectionHeader({
             />
           </div>
           {!canEdit && username && (
-            <h3 className="ml-4 text-xs font-semibold">
+            <h3 className="ml-4 text-xs font-semibold mb-4">
               Planted by: {username}
             </h3>
           )}

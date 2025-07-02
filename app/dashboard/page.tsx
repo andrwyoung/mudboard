@@ -33,7 +33,7 @@ import {
 import BoardCard from "./dashboard-card";
 import { softDeleteBoard } from "@/lib/db-actions/soft-delete-board";
 import { BoardWithStats } from "@/types/stat-types";
-import { getUserBoardsWithStats } from "@/lib/db-actions/explore/get-user-board-with-stats";
+import { fetchUserBoardsWithStats } from "@/lib/db-actions/explore/fetch-user-board-with-stats";
 import { currentLocalUserHasLicense } from "@/lib/tiers/user-has-license";
 import { FaSeedling } from "react-icons/fa6";
 
@@ -59,7 +59,7 @@ export default function DashboardPage() {
     async function initBoards() {
       if (!user) return;
 
-      const boards = await getUserBoardsWithStats(user.id);
+      const boards = await fetchUserBoardsWithStats(user.id);
       setUserBoards(boards);
     }
 
