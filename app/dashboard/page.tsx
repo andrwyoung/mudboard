@@ -145,7 +145,10 @@ export default function DashboardPage() {
                         ? "dashboard_sidebar_selected"
                         : "dashboard_sidebar_unselected"
                     }
-                    onClick={() => setDashboardMode("sections")}
+                    onClick={() => {
+                      toast("Under Construction. Thanks for your patience!");
+                      setDashboardMode("sections");
+                    }}
                   >
                     Mudkits
                   </Button>

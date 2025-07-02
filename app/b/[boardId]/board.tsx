@@ -305,13 +305,7 @@ export default function Board({ boardId }: { boardId: string }) {
                   }
                 >
                   {panelMode === "focus" && <PinnedPanel />}
-                  {process.env.NODE_ENV === "development" ? (
-                    <ExplorePanel />
-                  ) : (
-                    <div className="h-full w-full font-header text-2xl text-primary flex items-center justify-center bg-primary/40">
-                      Panel Under Construction
-                    </div>
-                  )}
+                  {panelMode === "explore" && <ExplorePanel />}
                 </ResizablePinnedPanel>
               )}
             </div>
