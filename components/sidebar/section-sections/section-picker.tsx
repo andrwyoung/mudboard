@@ -1,3 +1,4 @@
+// UNUSED
 // when you click "+ Add Section" this is the dialog that pops up
 
 "use client";
@@ -17,9 +18,10 @@ import { getOrphanedSectionsForUser } from "@/lib/db-actions/user-sections.tsx/f
 import { SectionWithStats } from "@/types/stat-types";
 import { getUserBoardSections } from "@/lib/db-actions/user-sections.tsx/fetch-user-board-sections";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
-import { SectionSelectButton } from "./section-picker-groupings";
+import { MudkitSelectButton } from "./OLD-mudkit-selectors";
 import Link from "next/link";
 import { buildMudboardLink } from "@/utils/build-mudboard-link";
+
 import InfoTooltip from "@/components/ui/info-tooltip";
 
 const accordianClass = "text-primary font-header text-md";
@@ -144,7 +146,7 @@ export default function SectionPickerDialog({
                     </Link>
                     <div className="p-1 bg-white/80 rounded-lg">
                       {sections.map((section) => (
-                        <SectionSelectButton
+                        <MudkitSelectButton
                           key={`${section.section_id} - ${boardId}`}
                           section={section}
                           isSelected={selectedSection === section.section_id}
@@ -181,7 +183,7 @@ export default function SectionPickerDialog({
             >
               <div className="flex flex-col bg-white p-2 rounded-lg">
                 {allUserOrphanedSections.map((section) => (
-                  <SectionSelectButton
+                  <MudkitSelectButton
                     key={section.section_id}
                     section={section}
                     isSelected={selectedSection === section.section_id}

@@ -26,7 +26,6 @@ export function ImageBlock({
 }: {
   canEdit: boolean;
   block: Block;
-  columnWidth: number;
   numCols: number;
 }) {
   const img = block.data as MudboardImage;

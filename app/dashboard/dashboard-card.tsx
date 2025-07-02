@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FaTrashAlt } from "react-icons/fa";
 import Image from "next/image";
-import { formatCreationDate, formatUpdateTime } from "@/utils/time-formatters";
+import { formatCreationDate } from "@/utils/time-formatters";
 import { FaArrowRight } from "react-icons/fa6";
 import { getThumbnailUrl } from "@/utils/get-thumbnail-url";
 import { useState } from "react";
@@ -95,10 +95,10 @@ export default function BoardCard({
 
         <div className="text-xs">
           <p>Created: {formatCreationDate(board.created_at)}</p>
-          <p>
+          {/* <p>
             Last Updated:{" "}
             {board.updated_at ? formatUpdateTime(board.updated_at) : "Never"}
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

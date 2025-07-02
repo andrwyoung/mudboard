@@ -57,7 +57,7 @@ export default function CustomizeSection() {
                   toast.success("Copied Board Link!");
                 }}
                 className="flex items-center px-2 mt-2 mb-1 gap-1 text-white text-sm font-bold font-header
-            cursor-pointer hover:text-accent transition-all duration-300"
+            cursor-pointer hover:text-accent transition-all duration-100"
               >
                 <FaCopy />
                 Copy Board Link

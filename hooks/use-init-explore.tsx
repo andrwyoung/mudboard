@@ -7,11 +7,12 @@ export function useInitExplore() {
   const { fetchMudkits, fetchUserBoards } = useExploreStore();
 
   useEffect(() => {
-    if (!user) return;
-
     const fetch = async () => {
-      await fetchMudkits(user.id);
-      await fetchUserBoards(user.id);
+      await fetchMudkits(user?.id);
+
+      if (user?.id) {
+        await fetchUserBoards(user.id);
+      }
     };
 
     fetch();

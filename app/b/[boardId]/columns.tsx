@@ -176,7 +176,6 @@ function ColumnComponent({
                   !!draggedBlocks?.some((b) => b.block_id === block.block_id)
                 }
                 onClick={(e) => handleItemClick(block, e)}
-                columnWidth={columnWidth}
                 numCols={visualNumCols}
                 addImage={() => triggerImagePicker(columnIndex, index + 1)}
                 addText={() =>

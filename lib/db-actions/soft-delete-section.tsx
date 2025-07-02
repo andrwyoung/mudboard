@@ -28,6 +28,7 @@ export async function SoftDeleteSections(
   // delete section if:
   // 1. you own it (or is unclaimed)
   // 2. and it's the very last one
+  // 3. and it's not public
   const sectionIdsToDelete = stats
     .filter(
       (stat) =>

@@ -4,12 +4,10 @@ import PinnedImageViewer from "./pinned-image";
 import { usePanelStore } from "@/store/panel-store";
 import { useRef, useState } from "react";
 import { useGetInitialSizeOnLayout } from "@/hooks/overlay-gallery.tsx/use-get-initial-size";
-import { FaXmark } from "react-icons/fa6";
+import ClosePanelButton from "./close-panel-button";
 
 export default function PinnedPanel() {
   const pinnedBlock = usePanelStore((s) => s.pinnedBlock);
-
-  const closePanel = usePanelStore((s) => s.closePanel);
 
   const image = pinnedBlock?.data as MudboardImage;
 
@@ -34,15 +32,7 @@ export default function PinnedPanel() {
         />
       </div>
 
-      <div
-        className={`absolute top-4 right-4  
-         cursor-pointer text-lg z-100`}
-        onClick={() => {
-          closePanel();
-        }}
-      >
-        <FaXmark />
-      </div>
+      <ClosePanelButton />
 
       {pinnedBlock && image ? (
         <div

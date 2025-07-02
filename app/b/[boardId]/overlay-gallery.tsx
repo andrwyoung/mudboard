@@ -107,7 +107,7 @@ export default function OverlayGallery({
   } | null>(null);
 
   // candy
-  const showDebug = true;
+  const showDebug = false;
   const [blockOrder, setBlockOrder] = useState<number | undefined>(undefined);
   const [sectionOrder, setSectionOrder] = useState<number | undefined>(
     undefined

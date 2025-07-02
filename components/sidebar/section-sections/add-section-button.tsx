@@ -17,63 +17,66 @@ export default function AddSectionButton({
   const setEditingSectionId = useLoadingStore((s) => s.setEditingSectionId);
   const [open, setOpen] = useState(false);
 
+  const handleAddSection = async (chosenSectionId: string | null) => {
+    if (!board) return;
+
+    try {
+      let newSection: BoardSection | null;
+      // if not ID was given, then it means we make a new section
+      if (chosenSectionId === null) {
+        newSection = await addNewSection({
+          board_id: board.board_id,
+          order_index: boardSections.length,
+        });
+      } else {
+        // else, we link that new section here
+        newSection = await linkSectionToBoard({
+          destinationBoardId: board.board_id,
+          sectionToLink: chosenSectionId,
+          orderInBoard: boardSections.length,
+        });
+      }
+
+      if (newSection) {
+        setTimeout(() => {
+          const sectionEl =
+            sectionRefs.current?.[newSection.section.section_id];
+          setEditingSectionId(newSection.section.section_id);
+          if (sectionEl) {
+            sectionEl.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        }, 100);
+      }
+
+      console.log("Selected Section ID:", chosenSectionId);
+    } catch (error) {
+      console.error("Failed to add section", error);
+    }
+  };
+
   return (
     <>
       <button
         type="button"
+        aria-label="Create a new section"
+        title="Create a new section"
         className="text-primary-foreground hover:underline hover:underline-offset-2 
         transition-all duration-300 cursor-pointer px-4
-        flex gap-1 items-center text-sm"
-        onClick={() => setOpen(true)}
+        flex gap-1 items-center text-sm
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+        onClick={() => handleAddSection(null)}
       >
-        <FaPlus className="size-2" />
+        <FaPlus className="size-2" aria-hidden="true" />
         Add Section
       </button>
 
       <SectionPickerDialog
         open={open}
         setOpen={setOpen}
-        onAddSection={async (chosenSectionId) => {
-          // Handle selection here, e.g. scroll to section or insert content
-
-          if (!board) return;
-
-          try {
-            let newSection: BoardSection | null;
-            // if not ID was given, then it means we make a new section
-            if (chosenSectionId === null) {
-              newSection = await addNewSection({
-                board_id: board.board_id,
-                order_index: boardSections.length,
-              });
-            } else {
-              // else, we link that new section here
-              newSection = await linkSectionToBoard({
-                destinationBoardId: board.board_id,
-                sectionToLink: chosenSectionId,
-                orderInBoard: boardSections.length,
-              });
-            }
-
-            if (newSection) {
-              setTimeout(() => {
-                const sectionEl =
-                  sectionRefs.current?.[newSection.section.section_id];
-                setEditingSectionId(newSection.section.section_id);
-                if (sectionEl) {
-                  sectionEl.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  });
-                }
-              }, 100);
-            }
-
-            console.log("Selected Section ID:", chosenSectionId);
-          } catch (error) {
-            console.error("Failed to add section", error);
-          }
-        }}
+        onAddSection={handleAddSection}
       />
     </>
   );

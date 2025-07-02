@@ -84,29 +84,8 @@ export type Database = {
             foreignKeyName: "blocks_cloned_from_fkey"
             columns: ["cloned_from"]
             isOneToOne: false
-            referencedRelation: "section_stats"
-            referencedColumns: ["section_id"]
-          },
-          {
-            foreignKeyName: "blocks_cloned_from_fkey"
-            columns: ["cloned_from"]
-            isOneToOne: false
-            referencedRelation: "section_with_stats"
-            referencedColumns: ["section_id"]
-          },
-          {
-            foreignKeyName: "blocks_cloned_from_fkey"
-            columns: ["cloned_from"]
-            isOneToOne: false
-            referencedRelation: "sections"
-            referencedColumns: ["section_id"]
-          },
-          {
-            foreignKeyName: "blocks_cloned_from_fkey"
-            columns: ["cloned_from"]
-            isOneToOne: false
-            referencedRelation: "user_board_sections"
-            referencedColumns: ["section_id"]
+            referencedRelation: "blocks"
+            referencedColumns: ["block_id"]
           },
           {
             foreignKeyName: "blocks_image_id_fkey"
@@ -729,6 +708,8 @@ export type Database = {
           saved_column_num: number | null
           section_id: string | null
           shallow_copy_count: number | null
+          ss_is_public: boolean | null
+          username: string | null
         }
         Relationships: []
       }

@@ -6,10 +6,11 @@ import { create } from "zustand";
 import { useMeasureStore, useUIStore } from "./ui-store";
 import { generateColumnsFromBlockLayout } from "@/lib/columns/generate-columns";
 import { generatePositionedBlocks } from "./layout-core/positioning/generate-block-positions";
+import { SectionWithStats } from "@/types/stat-types";
 
 type SecondaryLayoutStore = {
-  selectedSection: Section | null;
-  setSelectedSection: (section: Section) => void;
+  selectedSection: SectionWithStats | null;
+  setSelectedSection: (section: SectionWithStats) => void;
 
   columns: Block[][]; // source of truth
   setColumns: (cols: Block[][]) => void;
@@ -31,7 +32,7 @@ type SecondaryLayoutStore = {
 export const useSecondaryLayoutStore = create<SecondaryLayoutStore>(
   (set, get) => ({
     selectedSection: null,
-    setSelectedSection: (section: Section | null) =>
+    setSelectedSection: (section: SectionWithStats | null) =>
       set({ selectedSection: section }),
 
     columns: [],
@@ -93,6 +94,13 @@ export const useSecondaryLayoutStore = create<SecondaryLayoutStore>(
         .filter((block): block is Block => !!block);
     },
 
-    reset: () => set({}),
+    reset: () =>
+      set({
+        selectedSection: null,
+        columns: [],
+        visualColumnNum: DEFAULT_COLUMNS,
+        positionedBlockMap: new Map(),
+        masterBlockOrder: [],
+      }),
   })
 );

@@ -71,7 +71,7 @@ export default function AccountSyncSection() {
                 href={DASHBOARD_LINK}
                 className="flex gap-1 items-center
               text-primary cursor-pointer hover:text-accent 
-            transition-all duration-300 font-header text-xs font-bold"
+            transition-all duration-100 font-header text-xs font-bold"
               >
                 <FaHome />
                 Dashboard
@@ -95,7 +95,7 @@ export default function AccountSyncSection() {
                 title="Login Button"
                 className="rounded-lg bg-background text-primary font-header text-xs
                  flex items-center gap-1
-                  cursor-pointer hover:text-accent transition-all duration-200 font-bold"
+                  cursor-pointer hover:text-accent transition-all duration-100 font-bold"
                 onClick={() => setLoginModalOpen(true)}
               >
                 <LuLogIn className="size-4" />

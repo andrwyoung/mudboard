@@ -25,7 +25,7 @@ interface Props {
   sectionId: string;
 }
 
-export default function MudkitView({ sectionId }: Props) {
+export default function MudkitPage({ sectionId }: Props) {
   const [section, setSection] = useState<Section | null>(null);
   const [loading, setLoading] = useState(true);
   const setBoardSections = useMetadataStore((s) => s.setBoardSections);

@@ -31,24 +31,15 @@ import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 export function BlockChooser({
   canEdit,
   block,
-  columnWidth,
   numCols,
 }: {
   canEdit: boolean;
   block: Block;
-  columnWidth: number;
   numCols: number;
 }) {
   switch (block.block_type) {
     case "image":
-      return (
-        <ImageBlock
-          canEdit={canEdit}
-          block={block}
-          columnWidth={columnWidth}
-          numCols={numCols}
-        />
-      );
+      return <ImageBlock canEdit={canEdit} block={block} numCols={numCols} />;
     case "text":
       return <TextBlock block={block} canEdit={canEdit} />;
     case "spacer":
@@ -64,7 +55,6 @@ function BlockComponent({
   isSelected,
   isDragging,
   onClick,
-  columnWidth,
   numCols,
   addImage,
   addText,
@@ -74,7 +64,6 @@ function BlockComponent({
   isSelected: boolean;
   isDragging: boolean;
   onClick: (e: React.MouseEvent) => void;
-  columnWidth: number;
   numCols: number;
   addImage: () => void;
   addText: () => void;
@@ -144,12 +133,7 @@ function BlockComponent({
                 {/* , t:{position?.top}, h:{position?.height} */}
               </h1>
             )}
-            <BlockChooser
-              canEdit={canEdit}
-              block={block}
-              columnWidth={columnWidth}
-              numCols={numCols}
-            />
+            <BlockChooser canEdit={canEdit} block={block} numCols={numCols} />
           </SortableBlock>
         </div>
       </ContextMenuTrigger>

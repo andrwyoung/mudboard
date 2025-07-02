@@ -187,7 +187,7 @@ export default function SectionRow({
                   />
                 ) : (
                   <h2
-                    className={`text-lg  transition-all duration-300 
+                    className={`text-lg  
                     truncate whitespace-nowrap overflow-hidden min-w-0
                     ${
                       isLinked

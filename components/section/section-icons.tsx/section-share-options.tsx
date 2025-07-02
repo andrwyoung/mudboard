@@ -15,6 +15,9 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { CheckField } from "@/components/ui/check-field";
 import { SECTION_BASE_URL } from "@/types/constants";
 import { FaCopy, FaSeedling } from "react-icons/fa6";
+import { BeanIcon } from "@/components/ui/bean-icon";
+import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
+import { fireConfetti } from "@/utils/fire-confetti";
 
 type ShareableSectionField =
   | "is_public"
@@ -85,11 +88,12 @@ export default function SectionShareDialog({
 
     const updates: Record<string, boolean | string> = { [field]: value };
 
-    if (
-      field === "is_public" &&
+    const isFirstMarketplacePublish =
+      field === "is_on_marketplace" &&
       value === true &&
-      !section.first_published_at
-    ) {
+      !section.first_published_at;
+
+    if (isFirstMarketplacePublish) {
       updates.first_published_at = new Date().toISOString();
     }
 
@@ -117,20 +121,29 @@ export default function SectionShareDialog({
     }));
 
     toast.success(value ? toastText.on : toastText.off);
+    if (isFirstMarketplacePublish) {
+      fireConfetti(); // 🎉 Celebrate!
+    }
   };
 
   return (
     <>
       {canEdit ? (
         <button
-          title="Open Sharing Options"
           onClick={() => setOpen(true)}
+          type="button"
+          title={section.is_public ? "Open Sharing Options" : "Plant a Mudkit"}
+          aria-label={"Open Sharing Options"}
           className="hover:text-accent cursor-pointer transition-all duration-200 "
         >
           {section.is_public ? (
-            <FaSeedling className="size-4.5 mr-[1px]" />
+            section.is_on_marketplace ? (
+              <FaSeedling className="size-4.5 mr-[1px]" />
+            ) : (
+              <FaLeaf className="size-5 mr-[1px]" />
+            )
           ) : (
-            <FaLeaf className="size-5 mr-[1px]" />
+            <BeanIcon className="size-5 mr-[1px] -translate-y-[2px]" />
           )}
         </button>
       ) : (
@@ -188,20 +201,18 @@ export default function SectionShareDialog({
               </div>
             </div>
           ) : (
-            <div className="text-sm text-primary leading-relaxed my-3 space-y-4">
+            <div className="text-sm text-primary leading-relaxed mt-3 mb-6 space-y-4">
               <div>
-                <p className="text-sm text-primary mt-1">
-                  Mudkits are reusable, shareable reference kits. You can
+                <p className="text-sm text-primary mt-1 mb-6">
+                  Mudkits are{" "}
+                  <strong>reusable, shareable reference kits</strong>. You can
                   publish this section to share it with others — or just reuse
                   it in your own boards.
                 </p>
               </div>
 
-              <div className="mt-2">
-                <strong className="block">
-                  What happens when you publish?
-                </strong>
-                <ul className="list-disc list-inside text-xs text-muted-foreground mt-1 space-y-1">
+              <AccordianWrapper title="What happens when you publish?">
+                <ul className="list-disc list-inside text-xs text-primary space-y-1">
                   <li>Your kit gets its own public link</li>
                   <li>
                     If shared on the marketplace, others can clone or link it
@@ -210,7 +221,7 @@ export default function SectionShareDialog({
                   <li>Only you can edit the original section</li>
                   <li>You can unpublish or make it private anytime</li>
                 </ul>
-              </div>
+              </AccordianWrapper>
             </div>
           )}
 

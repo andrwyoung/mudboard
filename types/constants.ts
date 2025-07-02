@@ -5,6 +5,8 @@ export const MAX_FREE_TIER_BOARDS = 3
 
 
 export const SCROLLBAR_STYLE = "scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-primary scrollbar-track-transparent"
+export const SCROLLBAR_STYLE_WHITE = "scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-white scrollbar-track-transparent"
+export const ACCESSIBLE_BUTTON = "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
 
 // UI variables
 export const MIN_COLUMNS = 1;

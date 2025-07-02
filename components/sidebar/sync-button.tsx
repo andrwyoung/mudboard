@@ -2,6 +2,7 @@
 // most of the logic here is just so that it spins and looks cool
 
 import { useLayoutStore } from "@/store/layout-store";
+import { ACCESSIBLE_BUTTON } from "@/types/constants";
 import { useState } from "react";
 import { MdSync } from "react-icons/md";
 import { toast } from "sonner";
@@ -11,9 +12,12 @@ export default function SyncButton() {
 
   const [isSpinning, setIsSpinning] = useState(false);
   return (
-    <div
-      className="text-sm flex flex-row gap-1 items-center text-accent
-  cursor-pointer w-fit group"
+    <button
+      type="button"
+      aria-label="Sync layout"
+      title="Sync layout"
+      className={`text-sm flex flex-row gap-1 items-center text-accent
+        cursor-pointer w-fit group ${ACCESSIBLE_BUTTON}`}
       onClick={async () => {
         if (isSpinning) return; // prevent double tapping
 
@@ -31,6 +35,7 @@ export default function SyncButton() {
       <MdSync
         className={`h-4.5 w-4.5 group-hover:scale-105 font-semibold
     ${isSpinning ? "animate-spin-twice" : "group-hover:rotate-12"}`}
+        aria-hidden="true"
       />
       <p className="font-semibold font-header">
         {isSpinning
@@ -39,6 +44,6 @@ export default function SyncButton() {
           ? "Unsaved Changes"
           : "Synced!"}
       </p>
-    </div>
+    </button>
   );
 }

@@ -20,10 +20,12 @@ import React from "react";
 
 function SectionHeader({
   section,
+  username,
   canEdit,
   scope = "main",
 }: {
   section: Section;
+  username?: string;
   canEdit: boolean;
   scope?: CanvasScope;
 }) {
@@ -49,21 +51,28 @@ function SectionHeader({
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row justify-between items-center pt-6 pb-0 px-3">
-        <div className="flex w-48 sm:w-xs md:w-sm">
-          <InlineEditText
-            isEditable={canEdit}
-            value={title && title.trim() != "" ? title : null}
-            unnamedPlaceholder={
-              canEdit ? "Double click to add Title" : "Untitled Section"
-            }
-            autofocus={isEditing}
-            placeholder="Add title"
-            onChange={(newTitle) => {
-              updateSectionTitle(section.section_id, newTitle, canEdit);
-            }}
-            className={`text-lg sm:text-xl md:text-2xl text-left  ${textColor} `}
-          />
+      <div className="flex flex-row justify-between items-start pt-3 pb-0 px-3">
+        <div className="flex flex-col gap-0">
+          <div className="flex  w-48 sm:w-xs md:w-sm">
+            <InlineEditText
+              isEditable={canEdit}
+              value={title && title.trim() != "" ? title : null}
+              unnamedPlaceholder={
+                canEdit ? "Double click to add Title" : "Untitled Section"
+              }
+              autofocus={isEditing}
+              placeholder="Add title"
+              onChange={(newTitle) => {
+                updateSectionTitle(section.section_id, newTitle, canEdit);
+              }}
+              className={`text-lg sm:text-xl md:text-2xl text-left  ${textColor} `}
+            />
+          </div>
+          {!canEdit && username && (
+            <h3 className="ml-4 text-xs font-semibold">
+              Planted by: {username}
+            </h3>
+          )}
         </div>
         <div className={`flex flex-col items-end gap-2 ${textColor}`}>
           <div

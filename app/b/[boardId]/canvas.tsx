@@ -136,7 +136,7 @@ function Canvas({
           direction: isMirror ? "ltr" : "rtl",
           paddingLeft: gallerySpacingSize,
           paddingRight: gallerySpacingSize,
-          // paddingTop: gallerySpacingSize,
+          paddingTop: gallerySpacingSize * 2,
           paddingBottom: gallerySpacingSize,
         }}
       >

@@ -21,7 +21,7 @@ export function PanelToggleButton({
   return (
     <button
       type="button"
-      className={`flex items-center gap-2 cursor-pointer group transition-all duration-300 px-2 rounded-sm
+      className={`flex items-center gap-2 cursor-pointer group px-2 rounded-sm
         py-0.5 ${
           isActive ? "bg-accent text-primary" : "text-white hover:text-accent"
         }`}
