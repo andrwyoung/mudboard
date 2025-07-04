@@ -19,6 +19,8 @@ export default function SearchMode({
   const userMudkits = useExploreStore((s) => s.userMudkits);
   const otherMudkits = useExploreStore((s) => s.otherMudkits);
 
+  const tempMudkits = useExploreStore((s) => s.tempMudkits);
+
   const [showAdded, setShowAdded] = useState(false);
   const boardSectionIds = new Set(boardSections.map((s) => s.section_id));
   const activeUserMudkits = userMudkits.filter(
@@ -45,8 +47,22 @@ export default function SearchMode({
           My Mudkits <FaLeaf />
         </h3>
 
-        {userMudkits.length > 0 ? (
+        {userMudkits.length > 0 || tempMudkits.length > 0 ? (
           <>
+            {tempMudkits.length > 0 && (
+              <div className="p-1 bg-muted rounded-lg mb-1">
+                {tempMudkits.map((section) => (
+                  <MudkitSelectButtonExplore
+                    key={section.section_id}
+                    section={section}
+                    onClick={() => handleFetchMudkit(section)}
+                    isGrouped={false}
+                    isSelected={false}
+                    temporary
+                  />
+                ))}
+              </div>
+            )}
             {activeUserMudkits.length === 0 ? (
               <>
                 {addedUserMudkits.length > 0 && (
@@ -64,9 +80,6 @@ export default function SearchMode({
                     onClick={() => handleFetchMudkit(section)}
                     isGrouped={false}
                     isSelected={false}
-                    disabled={boardSections.some(
-                      (s) => s.section_id === section.section_id
-                    )}
                     showIconForIsOnMarketplace
                   />
                 ))}

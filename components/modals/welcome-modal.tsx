@@ -34,17 +34,19 @@ const welcomePages: Record<
     title: "Welcome to the Greenhouse!",
     body: (
       <div>
-        <p className="text-sm text-primary mt-2 mb-1">
-          Wish it were <strong>easier to find</strong> your favorite refs?
-        </p>
-        <p className="text-sm text-primary mt-1 mb-6">
-          Or reuse something you loved <strong>from another project</strong>?
-        </p>
-        <p className="text-sm text-primary mb-10">
+        <p className="text-sm text-primary mb-8 mt-2">
           The Greenhouse is your{" "}
           <span className="font-semibold">personal reference library</span>
           —and a space to explore ideas from others.
         </p>
+        <p className="text-sm text-primary mb-1">
+          It makes it <strong>easier to find</strong> your favorite refs.
+        </p>
+
+        <p className="text-sm text-primary mb-1">
+          Or reuse something you loved <strong>from another project</strong>.
+        </p>
+        <p className="text-sm text-primary mb-10">Take a look around!</p>
         <p className="text-sm text-primary mb-2 text-center">
           When you&apos;re ready, finish the tutorial at a
           <BeanIcon className="inline -translate-y-[1px] ml-1.5 mr-0.5 size-4" />{" "}

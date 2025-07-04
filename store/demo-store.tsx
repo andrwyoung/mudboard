@@ -1,9 +1,12 @@
+import { fireConfetti } from "@/utils/fire-confetti";
 import { create } from "zustand";
 
 export type ModalType = "welcome" | "greenhouse";
 
 type DemoStore = {
   showGreenhousePopup: boolean;
+  hasFiredConfetti: boolean;
+  fireConfetti: () => void;
 
   isDemoBoard: boolean;
   setDemoBoardYes: () => void;
@@ -15,6 +18,14 @@ type DemoStore = {
 
 export const useDemoStore = create<DemoStore>((set, get) => ({
   showGreenhousePopup: false,
+
+  hasFiredConfetti: false,
+  fireConfetti: () => {
+    if (!get().hasFiredConfetti) {
+      fireConfetti();
+      set({ hasFiredConfetti: true });
+    }
+  },
 
   isDemoBoard: false,
   setDemoBoardYes: () =>

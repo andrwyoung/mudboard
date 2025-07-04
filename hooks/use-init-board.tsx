@@ -9,7 +9,7 @@ import { useSelectionStore } from "@/store/selection-store";
 import { SectionColumns } from "@/types/board-types";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { useResetState } from "./user-reset-state";
+import { useResetState } from "./use-reset-state";
 import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-columns";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";

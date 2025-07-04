@@ -489,6 +489,7 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          has_fired_confetti: boolean | null
           role: Database["public"]["Enums"]["admin_level"] | null
           tier: Database["public"]["Enums"]["tier_level"]
           user_id: string
@@ -497,6 +498,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
+          has_fired_confetti?: boolean | null
           role?: Database["public"]["Enums"]["admin_level"] | null
           tier?: Database["public"]["Enums"]["tier_level"]
           user_id?: string
@@ -505,6 +507,7 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string
+          has_fired_confetti?: boolean | null
           role?: Database["public"]["Enums"]["admin_level"] | null
           tier?: Database["public"]["Enums"]["tier_level"]
           user_id?: string
@@ -610,6 +613,7 @@ export type Database = {
           expired_at: string | null
           image_count: number | null
           is_demo: boolean | null
+          mudkit_count: number | null
           password_hash: string | null
           real_block_count: number | null
           saved_column_num: number | null
@@ -735,6 +739,7 @@ export type Database = {
           section_id: string | null
           shallow_copy_count: number | null
           title: string | null
+          username: string | null
         }
         Relationships: [
           {

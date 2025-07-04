@@ -17,7 +17,11 @@ import { SECTION_BASE_URL } from "@/types/constants";
 import { FaCopy, FaSeedling } from "react-icons/fa6";
 import { BeanIcon } from "@/components/ui/bean-icon";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
-import { fireConfetti } from "@/utils/fire-confetti";
+import { useExploreStore } from "@/store/explore-store";
+import { SectionWithStats } from "@/types/stat-types";
+import { useLayoutStore } from "@/store/layout-store";
+import { useDemoStore } from "@/store/demo-store";
+import { fireUserConfetti } from "@/lib/db-actions/fire-user-confetti";
 
 type ShareableSectionField =
   | "is_public"
@@ -81,7 +85,7 @@ export default function SectionShareDialog({
     value: boolean,
     toastText: { on: string; off: string }
   ) => {
-    if (user?.id !== section.owned_by) {
+    if (section.owned_by && user?.id !== section.owned_by) {
       console.warn("Incorrect User, not saving");
       return;
     }
@@ -97,13 +101,26 @@ export default function SectionShareDialog({
       updates.first_published_at = new Date().toISOString();
     }
 
-    const { error } = await supabase
-      .from("sections")
-      .update(updates)
-      .eq("section_id", section.section_id);
-    if (error) {
-      toast.error(`Failed to update ${field}`);
-      return;
+    // don't allow publishing sections without any blocks
+    if (field === "is_public" && value) {
+      const numBlocks = useLayoutStore
+        .getState()
+        .sectionColumns[section.section_id].flat().length;
+      if (numBlocks === 0) {
+        toast.error("Please at least add 1 block");
+        return;
+      }
+    }
+
+    if (section.owned_by) {
+      const { error } = await supabase
+        .from("sections")
+        .update(updates)
+        .eq("section_id", section.section_id);
+      if (error) {
+        toast.error(`Failed to update ${field}`);
+        return;
+      }
     }
 
     useMetadataStore.setState((s) => ({
@@ -122,7 +139,33 @@ export default function SectionShareDialog({
 
     toast.success(value ? toastText.on : toastText.off);
     if (isFirstMarketplacePublish) {
-      fireConfetti(); // 🎉 Celebrate!
+      fireUserConfetti(); // 🎉 Celebrate!
+    }
+
+    // DEMO: handle temporary Mudkits
+    if (!section.owned_by && field === "is_public") {
+      const { tempMudkits, setTempMudkits } = useExploreStore.getState();
+
+      if (value) {
+        useDemoStore.getState().fireConfetti();
+
+        // Prevent duplicate entries
+        const alreadyExists = tempMudkits.some(
+          (s) => s.section_id === section.section_id
+        );
+        if (!alreadyExists) {
+          const mudkit: SectionWithStats = {
+            ...section,
+          };
+          setTempMudkits([...tempMudkits, mudkit]);
+        }
+      } else {
+        // Remove the section from tempMudkits
+        const filtered = tempMudkits.filter(
+          (s) => s.section_id !== section.section_id
+        );
+        setTempMudkits(filtered);
+      }
     }
   };
 
@@ -168,37 +211,51 @@ export default function SectionShareDialog({
           {published ? (
             <div>
               <p className="text-sm">
-                This Section has been published as a Mudkit.
+                This Section is published as a Mudkit. Find it in the
+                <FaLeaf className="inline -translate-y-[1px] ml-1 mr-0.5" />{" "}
+                <strong>Greenhouse</strong>
               </p>
-              <div className="flex flex-col gap-4 mt-2">
-                {shareOptions.map(
-                  ({ label, desc, field, gated, flip, disabled }) => (
-                    <div className="flex flex-col" key={field + label}>
-                      <CheckField
-                        isChecked={
-                          flip ? !section[field] : section[field] ?? false
-                        }
-                        onChange={(val) =>
-                          updateField(field, flip ? !val : val, {
-                            on: `${label} enabled`,
-                            off: `${label} disabled`,
-                          })
-                        }
-                        text={label}
-                        isDisabled={disabled}
-                      />
-                      <div className={`text-xs text-muted-foreground pl-6`}>
-                        {desc}
-                        {gated && (
-                          <span className="ml-2 italic text-[11px] text-emerald-600">
-                            {gated}
-                          </span>
-                        )}
+              {section.owned_by ? (
+                <div className="flex flex-col gap-4 mt-2">
+                  {shareOptions.map(
+                    ({ label, desc, field, gated, flip, disabled }) => (
+                      <div className="flex flex-col" key={field + label}>
+                        <CheckField
+                          isChecked={
+                            flip ? !section[field] : section[field] ?? false
+                          }
+                          onChange={(val) =>
+                            updateField(field, flip ? !val : val, {
+                              on: `${label} enabled`,
+                              off: `${label} disabled`,
+                            })
+                          }
+                          text={label}
+                          isDisabled={disabled}
+                        />
+                        <div className={`text-xs text-muted-foreground pl-6`}>
+                          {desc}
+                          {gated && (
+                            <span className="ml-2 italic text-[11px] text-emerald-600">
+                              {gated}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )
-                )}
-              </div>
+                    )
+                  )}
+                </div>
+              ) : (
+                <div className="text-sm mt-8 mb-8 text-center italic">
+                  <p className="">
+                    This is a <strong>temporary</strong> Mudkit.
+                  </p>
+                  <p>
+                    Make an account and <strong>save board</strong> to share and
+                    reuse.
+                  </p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-sm text-primary leading-relaxed mt-3 mb-6 space-y-4">
@@ -233,13 +290,8 @@ export default function SectionShareDialog({
                     off: "Mudkit Unpublished.",
                   })
                 }
-                disabled={!section.owned_by}
               >
-                {!section.owned_by
-                  ? "Save Board to Enable Publishing"
-                  : published
-                  ? "Unpublish"
-                  : "Publish Mudkit!"}
+                {published ? "Unpublish" : "Publish Mudkit!"}
               </Button>
               {published && (
                 <Button variant="secondary" onClick={copyLink}>
@@ -248,6 +300,11 @@ export default function SectionShareDialog({
                 </Button>
               )}
             </div>
+            <p className="text-xs mt-1">
+              {!section.owned_by &&
+                !published &&
+                "This board hasn’t been saved yet — your Mudkit will be temporary."}
+            </p>
           </DialogFooter>
         </DialogContent>
       </Dialog>

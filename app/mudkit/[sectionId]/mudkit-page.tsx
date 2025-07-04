@@ -8,7 +8,7 @@ import SectionGallery from "@/app/b/[boardId]/gallery";
 import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import OverlayGallery from "@/app/b/[boardId]/overlay-gallery";
 import { useOverlayStore } from "@/store/overlay-store";
-import { useResetState } from "@/hooks/user-reset-state";
+import { useResetState } from "@/hooks/use-reset-state";
 import { useLayoutStore } from "@/store/layout-store";
 import {
   MOBILE_BREAKPOINT,

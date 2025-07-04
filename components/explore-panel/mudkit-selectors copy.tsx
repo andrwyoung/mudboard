@@ -11,6 +11,7 @@ type Props = {
   isGrouped?: boolean;
   disabled?: boolean;
   showIconForIsOnMarketplace?: boolean;
+  temporary?: boolean;
 };
 
 export function MudkitSelectButtonExplore({
@@ -21,14 +22,14 @@ export function MudkitSelectButtonExplore({
   isGrouped = true,
   disabled = false,
   showIconForIsOnMarketplace = false,
+  temporary = false,
 }: Props) {
   const title = section.title;
   const sectionId = section.section_id;
 
-  const blockCount = "block_count" in section ? section.block_count : 0;
-  const shallowCopyCount =
-    "shallow_copy_count" in section ? section.shallow_copy_count : 0;
-  const lastCopy = shallowCopyCount <= 1;
+  const blockCount = section.block_count;
+  const shallowCopyCount = section.shallow_copy_count;
+  const lastCopy = !!(shallowCopyCount && shallowCopyCount <= 1);
 
   return (
     <button
@@ -60,15 +61,28 @@ export function MudkitSelectButtonExplore({
         </div>
 
         <div className="grid grid-cols-[1fr_1fr_36px] w-30">
-          <p className="flex gap-1.5 items-center font-header text-start font-medium text-xs">
-            <FaCube className="opacity-60" title="Number of Blocks in Mudkit" />{" "}
-            {blockCount}
-          </p>
+          {blockCount && (
+            <p className="flex gap-1.5 items-center font-header text-start font-medium text-xs">
+              <FaCube
+                className="opacity-60"
+                title="Number of Blocks in Mudkit"
+              />
+              {blockCount}
+            </p>
+          )}
           {showIconForIsOnMarketplace && section.is_on_marketplace && (
             <FaSeedling
               className="opacity-60"
               title="Mudkit is shared publically"
             />
+          )}
+          {temporary && (
+            <div
+              className="px-2 text-xs font-header bg-accent/60 rounded-lg"
+              title="Mudkit is shared publically"
+            >
+              temp
+            </div>
           )}
           {isGrouped && (
             <div className="flex justify-end items-center gap-0.5">

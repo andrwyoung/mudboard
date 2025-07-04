@@ -13,15 +13,15 @@ export type BoardStats = {
 };
 
 export type SectionStats = {
-  section_id: string;
+  section_id?: string;
 
-  block_count: number; // how many NOT DELETED blocks are in here
-  saved_column_num: number;
+  block_count?: number; // how many NOT DELETED blocks are in here
+  saved_column_num?: number;
   is_shared?: boolean; // is_public AND is_on_marketplace
   ss_is_public?: boolean; // is_public (but we keep another copy around for fun)
-  shallow_copy_count: number; // how many TOTAL NOT DELETED board_sections refer to this one (including your own). we display this if shared == true
-  personal_copy_count: number; // subset of shallow_copy_count. How many times YOU use this section internally
-  fork_count: number; // how many other sections were copied from this one
+  shallow_copy_count?: number; // how many TOTAL NOT DELETED board_sections refer to this one (including your own). we display this if shared == true
+  personal_copy_count?: number; // subset of shallow_copy_count. How many times YOU use this section internally
+  fork_count?: number; // how many other sections were copied from this one
 
   username?: string;
 };
