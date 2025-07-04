@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaLeaf, FaTrashAlt } from "react-icons/fa";
 import Image from "next/image";
 import { formatCreationDate } from "@/utils/time-formatters";
 import { FaArrowRight } from "react-icons/fa6";
@@ -53,8 +53,16 @@ export default function BoardCard({
             {board.title ?? "Untitled Board"}
           </Link>
           <p className="text-xs text-primary font-bold">
-            {board.section_count ?? 0} sections • {board.block_count ?? 0}{" "}
-            blocks
+            {board.section_count ?? 0}{" "}
+            {board.section_count === 1 ? "section" : "sections"}{" "}
+            {board.mudkit_count > 0 && (
+              <span className="inline-flex items-center gap-1 font-bold">
+                (<FaLeaf className="inline-block translate-y-[1px]" />
+                {board.mudkit_count} )
+              </span>
+            )}{" "}
+            • {board.block_count ?? 0}{" "}
+            {board.block_count === 1 ? "block" : "blocks"}
           </p>
         </div>
         <div className="flex gap-2 items-center shrink-0">

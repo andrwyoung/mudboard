@@ -96,10 +96,9 @@ export default function SearchMode({
                       <MudkitSelectButtonExplore
                         key={section.section_id}
                         section={section}
-                        onClick={() => {}}
+                        onClick={() => handleFetchMudkit(section)}
                         isGrouped={false}
                         isSelected={false}
-                        disabled
                         showIconForIsOnMarketplace
                       />
                     ))}

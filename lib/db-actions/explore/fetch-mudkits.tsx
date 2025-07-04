@@ -27,7 +27,8 @@ export default async function fetchMudkits(userId?: string): Promise<{
     .from("section_with_stats")
     .select("*")
     .eq("is_public", true)
-    .eq("is_on_marketplace", true);
+    .eq("is_on_marketplace", true)
+    .not("owned_by", "is", null);
 
   if (userId) {
     otherQuery = otherQuery.neq("owned_by", userId);

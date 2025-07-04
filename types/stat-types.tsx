@@ -8,6 +8,8 @@ export type BoardStats = {
   real_block_count: number; // ALL blocks in the linked sections, regardless of deleted status
   block_count: number; // NOT DELETED blocks in all board_sections
   image_count: number; // NOT DELETED image blocks
+
+  mudkit_count: number; // number of section that is_public
 };
 
 export type SectionStats = {

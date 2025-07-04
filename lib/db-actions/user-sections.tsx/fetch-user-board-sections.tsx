@@ -1,3 +1,4 @@
+// UNUSED. since section-picker is not used for now
 // DATABASE FETCH
 
 import { UserBoardSection } from "@/types/board-types";
