@@ -55,8 +55,6 @@ export const useIsMirror = () => useContext(MirrorContext);
 
 export default function Board({ boardId }: { boardId: string }) {
   const [isExpired, setIsExpired] = useState(false);
-  const [welcomeModalOpen, setWelcomeModalOpen] = useState(false);
-
   // when dragging new images from local computer
 
   const canBoardEdit = canEditBoard();
@@ -115,7 +113,7 @@ export default function Board({ boardId }: { boardId: string }) {
   );
 
   // KEY SECTION: Initializers
-  useInitBoard(boardId, setIsExpired, setWelcomeModalOpen); // MAIN: grabs all blocks, sections etc
+  useInitBoard(boardId, setIsExpired); // MAIN: grabs all blocks, sections etc
   useInitExplore(); // side quest. grabs all relevant mudkits
 
   // KEY SECTION: regenerates the order whenever the screen size changes
@@ -314,7 +312,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
         <DragOverlayBlock />
       </DndContext>
-      <WelcomeModal open={welcomeModalOpen} setOpen={setWelcomeModalOpen} />
+      <WelcomeModal />
     </div>
   );
 }

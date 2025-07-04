@@ -27,9 +27,11 @@ export function useMarque({
     function handleMouseDown(e: MouseEvent) {
       if (e.button !== 0) return; // only do left click
 
-      const clickedId = (e.target as HTMLElement)
-        .closest("[data-id]")
-        ?.getAttribute("data-id");
+      const target = e.target as HTMLElement;
+
+      if (target.closest("textarea, input")) return;
+
+      const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
       if (clickedId?.includes("::block-") || clickedId === "context-menu")
         return;
       deselectBlocks();

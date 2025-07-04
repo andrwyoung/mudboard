@@ -1,3 +1,4 @@
+import { useDemoStore } from "@/store/demo-store";
 import { PanelMode, usePanelStore } from "@/store/panel-store";
 import { FaImage } from "react-icons/fa";
 import { FaLeaf } from "react-icons/fa6";
@@ -26,7 +27,14 @@ export function PanelToggleButton({
           isActive ? "bg-accent text-primary" : "text-white hover:text-accent"
         }`}
       onClick={() => {
-        setPanelMode(isActive ? "none" : mode);
+        const nextMode = isActive ? "none" : mode;
+        setPanelMode(nextMode);
+
+        // trigger Demo modal if explore mode
+        // openModal checks internally whether it should open
+        if (nextMode === "explore") {
+          useDemoStore.getState().openModal("greenhouse");
+        }
       }}
       title={title}
     >

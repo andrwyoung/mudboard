@@ -26,7 +26,7 @@ export default function ExploreSingleMudkitMode({
       <button
         type="button"
         className="text-white hover:text-accent transition-all duration-200 w-fit 
-        cursor-pointer flex items-center font-header gap-2 font-semibold mb-12 
+        cursor-pointer flex items-center font-header gap-2 font-semibold mb-2 
         opacity-80 hover:opacity-100"
         onClick={backButton}
         aria-label="Go back to all mudkits"
@@ -35,6 +35,9 @@ export default function ExploreSingleMudkitMode({
         <FaArrowAltCircleLeft className="size-5" /> Back
       </button>
 
+      <p className="mb-6 text-sm font-medium text-center">
+        Drag any image into your board to reuse or remix it!{" "}
+      </p>
       <SectionHeader
         section={selectedSection}
         canEdit={false}

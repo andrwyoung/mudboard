@@ -15,7 +15,7 @@ import {
 } from "@/types/upload-settings";
 import { toast } from "sonner";
 import { runWithConcurrency } from "../../utils/concurrency-helper";
-import { uploadImageToSupabase } from "../db-actions/upload-image";
+import { uploadImageToSupabase } from "../db-actions/upload-single-image";
 import { v4 as uuidv4 } from "uuid";
 import { CompressedImage, convertToWebP } from "./processing/compress-image";
 import {

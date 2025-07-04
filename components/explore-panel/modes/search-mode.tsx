@@ -35,7 +35,7 @@ export default function SearchMode({
       </div>
       <div className="flex flex-row justify-between items-start mb-8">
         <p className="text-sm font-semibold">
-          Drag any image into your board to reuse or remix it!
+          Reuse your own Mudkits or explore community made ones.
         </p>
         <RefreshButton />
       </div>

@@ -24,8 +24,8 @@ export default function Testimonials() {
           was made by an artist.
         </TestimonialCard>
         <TestimonialCard author="Jonathan, art tutor">
-          I love being able to reuse and find my references easily. The
-          eyedropper is especially nice.
+          I used to constantly lose my references. Now everything’s organized,
+          reusable, and just there when I need it.
         </TestimonialCard>
         <TestimonialCard author="Jenneth L, illustrator">
           Mudboard is such a cool resource for creatives. The interface is so

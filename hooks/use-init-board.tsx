@@ -16,11 +16,11 @@ import { useLoadingStore } from "@/store/loading-store";
 import { VisualOverride } from "@/types/block-types";
 import { MOBILE_BREAKPOINT, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { useUIStore } from "@/store/ui-store";
+import { useDemoStore } from "@/store/demo-store";
 
 export function useInitBoard(
   boardId: string,
-  setIsExpired: (s: boolean) => void,
-  setWelcomeModalOpen: (s: boolean) => void
+  setIsExpired: (s: boolean) => void
 ) {
   const setBoardSections = useMetadataStore((s) => s.setBoardSections);
   const setBoard = useMetadataStore((s) => s.setBoard);
@@ -55,8 +55,11 @@ export function useInitBoard(
           setIsExpired(true);
         }
 
-        if (board.is_demo && board.user_id === null) {
-          setWelcomeModalOpen(true);
+        // is this a DEMO BOARD
+        const isDemo = board.is_demo && board.user_id === null;
+        if (isDemo) {
+          useDemoStore.getState().setDemoBoardYes();
+          useDemoStore.getState().openModal("welcome");
         }
 
         //

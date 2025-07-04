@@ -205,9 +205,8 @@ export default function SectionShareDialog({
               <div>
                 <p className="text-sm text-primary mt-1 mb-6">
                   Mudkits are{" "}
-                  <strong>reusable, shareable reference kits</strong>. You can
-                  publish this section to share it with others — or just reuse
-                  it in your own boards.
+                  <strong>reusable, shareable reference kits</strong>. Share it
+                  with others — or just reuse it in your own boards.
                 </p>
               </div>
 
@@ -215,8 +214,8 @@ export default function SectionShareDialog({
                 <ul className="list-disc list-inside text-xs text-primary space-y-1">
                   <li>Your kit gets its own public link</li>
                   <li>
-                    If shared on the marketplace, others can clone or link it
-                    from the Explore panel
+                    If shared to community, others can use it in their
+                    Greenhouse.
                   </li>
                   <li>Only you can edit the original section</li>
                   <li>You can unpublish or make it private anytime</li>
