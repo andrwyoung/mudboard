@@ -35,8 +35,8 @@ export default function ExploreSingleMudkitMode({
         <FaArrowAltCircleLeft className="size-5" /> Back
       </button>
 
-      <p className="mb-6 text-sm font-medium text-center">
-        Drag any image into your board to reuse or remix it!{" "}
+      <p className="self-center mb-6 text-sm text-center px-4 py-1 bg-background text-primary w-fit rounded-lg font-semibold">
+        Drag any image into your board to make a copy!{" "}
       </p>
       <SectionHeader
         section={selectedSection}

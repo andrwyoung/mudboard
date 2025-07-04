@@ -27,7 +27,7 @@ export function MudkitSelectButton({
   const blockCount = "block_count" in section ? section.block_count : 0;
   const shallowCopyCount =
     "shallow_copy_count" in section ? section.shallow_copy_count : 0;
-  const lastCopy = shallowCopyCount <= 1;
+  const lastCopy = shallowCopyCount && shallowCopyCount <= 1;
 
   return (
     <button

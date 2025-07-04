@@ -258,9 +258,9 @@ export default function SectionShareDialog({
               )}
             </div>
           ) : (
-            <div className="text-sm text-primary leading-relaxed mt-3 mb-6 space-y-4">
+            <div className="text-sm text-primary leading-relaxed mt-3 space-y-4">
               <div>
-                <p className="text-sm text-primary mt-1 mb-6">
+                <p className="text-sm text-primary mt-1 mb-12">
                   Mudkits are{" "}
                   <strong>reusable, shareable reference kits</strong>. Share it
                   with others — or just reuse it in your own boards.
