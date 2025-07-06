@@ -26,13 +26,13 @@ type Plan = {
 
 const plans: Plan[] = [
   {
-    name: "Starter",
+    name: "Free",
     description: "Try it out!",
     price: "$0",
     features: [
       { label: "3 Boards", status: "good" },
-      { label: "All core features", status: "good" },
-      { label: "No publishing Mudkits", status: "bad" },
+      { label: "All core features ", status: "good" },
+      // { label: "No publishing Mudkits", status: "bad" },
     ],
     ctaText: "Try the Demo",
     ctaHref: "/demo",
@@ -47,6 +47,7 @@ const plans: Plan[] = [
         </Button>
       </Link>
     ),
+    note: "*During testing: Reach out to remove 3 board limit.",
   },
   {
     name: "Lifetime",
@@ -55,7 +56,8 @@ const plans: Plan[] = [
     oldPrice: "20% off",
     features: [
       { label: "Generous storage (10k+ images)", status: "good" },
-      { label: "All core features", status: "good" },
+      { label: "Unlimited Boards and Sections", status: "good" },
+      // { label: "All core features", status: "good" },
       { label: "Publish, Clone and Remix Mudkits", status: "good" },
       { label: "Early user street cred", status: "good" },
       { label: "No collaboration", status: "bad" },
@@ -84,7 +86,6 @@ const plans: Plan[] = [
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",
-    // note: "*Includes around 10,000+ compressed images per user. For most people, that’s effectively unlimited.",
   },
   // {
   //   name: "Pro",
