@@ -247,16 +247,17 @@ export default function Home() {
           {/* PRICING */}
 
           <div className="mb-24 max-w-3xl">
-            <h2 className="text-3xl font-bold text-center mb-1">Pricing</h2>
-            {/* <p className="text-center mb-8 text-sm">
-              Pricing isn&apos;t final yet, but here&apos;s the ballpark
-              estimate for what I&apos;ll launch with. Later I was probably
-              gonna do a $6-7 tier with more limited features and a $12-15 tier.
-              Really, the reason I charge is to protect me from storage costs.
-            </p> */}
-            <p className="text-center text-sm text-muted mb-6 font-semibold">
+            <h2 className="text-3xl font-bold text-center mb-1">
+              Pricing (Planned)
+            </h2>
+
+            {/* <p className="text-center text-sm text-muted mb-6 font-semibold">
               Firsts 300 users get the Lifetime license for <strong>$20</strong>{" "}
               .
+            </p> */}
+            <p className="text-center text-sm text-muted mb-6 font-semibold">
+              We&apos;re still testing, so pricing isn&apos;t implemented. But
+              here&apos;s a general idea of what it will be.
             </p>
             {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2"> */}
             <div>

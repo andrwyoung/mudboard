@@ -3,7 +3,6 @@ import { Button } from "../ui/button";
 import { FaXmark, FaCheck } from "react-icons/fa6";
 import { INTEREST_LINK } from "@/types/constants";
 import React from "react";
-import BuyButton from "../stripe/buy-button";
 
 type Feature = {
   label: string;
@@ -64,7 +63,24 @@ const plans: Plan[] = [
     ],
     ctaText: "Join the Waitlist",
     ctaHref: INTEREST_LINK,
-    cta: <BuyButton />,
+    // cta: <BuyButton />,
+    cta: (
+      <a
+        href={INTEREST_LINK}
+        className="w-full mt-4 block"
+        data-umami-event={`Landing page: Pricing CTA Demo Board`}
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Mudboard Waitlist"
+      >
+        <Button
+          variant="secondary"
+          className={`w-full font-header bg-secondary`}
+        >
+          Join the Waitlist
+        </Button>
+      </a>
+    ),
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",
