@@ -135,11 +135,8 @@ export default function Home() {
                     : "text-white"
                 }`}
               >
-                {/* Draw more. Organize less. */}
-                {/* Stay in touch with your inspiration. */}
-                References that remember.
-                {/* Revisit what inspired you. */}
-                {/* Remember what inspired you. */}
+                Draw more. Organize less.
+                {/* References that remember. */}
               </h1>
               <div className="flex flex-col items-center">
                 <p className="max-w-lg text-xs sm:text-sm text-accent font-bold">
