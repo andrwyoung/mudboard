@@ -212,6 +212,11 @@ export async function uploadImages(
         is_flipped: null,
         is_greyscale: null,
         crop: null,
+
+        canvas_x: null,
+        canvas_y: null,
+        canvas_scale: null,
+        canvas_z: null,
       };
 
       const newCols = [...prevCols];

@@ -39,6 +39,11 @@ export async function createTextBlock(
     is_flipped: null,
     is_greyscale: null,
     crop: null,
+
+    canvas_x: null,
+    canvas_y: null,
+    canvas_scale: null,
+    canvas_z: null,
   };
 
   // first slap it into local
