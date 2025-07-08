@@ -5,7 +5,7 @@ import { INTEREST_LINK } from "@/types/constants";
 import React from "react";
 
 type Feature = {
-  label: string;
+  label: React.ReactNode;
   status: "good" | "bad" | "neutral";
 };
 
@@ -55,12 +55,24 @@ const plans: Plan[] = [
     price: "$20 one-time",
     oldPrice: "20% off",
     features: [
-      { label: "Generous storage (10k+ images)", status: "good" },
+      {
+        label: (
+          <>
+            Generous storage
+            <br /> (10k+ images)
+          </>
+        ),
+        status: "good",
+      },
       { label: "Unlimited Boards and Sections", status: "good" },
       // { label: "All core features", status: "good" },
       { label: "Publish, Clone and Remix Mudkits", status: "good" },
       { label: "Early user street cred", status: "good" },
-      { label: "No collaboration", status: "bad" },
+      {
+        label: <>I like you a lot</>,
+        status: "good",
+      },
+      // { label: "No collaboration", status: "bad" },
       // { label: "No uncompressed uploads", status: "bad" },
     ],
     ctaText: "Join the Waitlist",
@@ -106,15 +118,16 @@ const plans: Plan[] = [
 
   {
     name: "More Coming Soon",
-    description: "Monthly plan for professionals and teams ($7/month):",
+    description: "Optional monthly plan for teams (planned $7/month)",
     // price: "TBD",
     features: [
       // { label: "Unlimited images", status: "neutral" },
-      { label: "Timed Gesture Drawings", status: "neutral" },
+      // { label: "Timed Gesture Drawings", status: "neutral" },
       { label: "Collaboration + Versioning", status: "neutral" },
       { label: "Uncompressed uploads", status: "neutral" },
+      { label: "Advanced sharing controls", status: "neutral" },
       { label: "Portfolio Features", status: "neutral" },
-      // { label: "Early access to new features", status: "neutral" },
+      // { label: "Note: plan to implement some monthly plan", status: "neutral" },
     ],
     // ctaText: "Upgrade to Pro",
     // ctaHref: "/upgrade",
@@ -198,7 +211,7 @@ export default function PricingTable() {
                   </p>
                 )}
               </div>
-              <p className="text-sm mb-2 font-semibold">{plan.description}</p>
+              <p className="text-sm mb-4 font-semibold">{plan.description}</p>
               <ul className="text-sm mb-2 space-y-3">
                 {plan.features.map((feature, j) => (
                   <li

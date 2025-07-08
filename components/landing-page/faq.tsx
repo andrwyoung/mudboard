@@ -24,7 +24,7 @@ function FAQItem({
       <div
         className={`select-none text-[0.9375rem] leading-relaxed transition-all duration-300 ${
           open
-            ? "max-h-40 mb-2 mt-4 opacity-100"
+            ? "max-h-64 mb-2 mt-4 opacity-100"
             : "max-h-0 opacity-0 overflow-hidden"
         }`}
       >
@@ -45,11 +45,27 @@ export default function FAQ() {
           <strong>save</strong> a board.
         </FAQItem>
 
-        <FAQItem question="Who can see or edit my board?">
-          All boards are{" "}
+        <FAQItem question="Will I ever be forced into a subscription?">
+          No. The lifetime license is built to have{" "}
+          <span className="font-bold text-accent">everything you need</span> for
+          a personal use tool. None of those features (or their future updates)
+          will be gated.
+          <br />
+          <br /> The monthly plan is for teams and pros who need more: like real
+          time collaboration or more granular sharing controls. If you
+          don&apos;t need those, <strong>you&apos;re not missing out</strong>.
+          <br />
+          <br />I don&apos;t like it when tools suddenly switch to subscription.
+          So I&apos;m trying to set expectations early: yes, there is an option
+          for subscription. But it is <strong>not required</strong> to access
+          the core tool
+        </FAQItem>
+
+        <FAQItem question="Who can see my board/sections?">
+          All boards and sections are{" "}
           <span className="text-accent font-bold">private by default</span>.
           They can&apos;t be found unless you share the link, and can&apos;t be
-          edited unless you allow it in your settings.
+          edited by others (at the moment)
         </FAQItem>
 
         <FAQItem question="Will you train AI or sell my artwork/data?">
