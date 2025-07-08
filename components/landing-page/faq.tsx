@@ -65,7 +65,7 @@ export default function FAQ() {
           All boards and sections are{" "}
           <span className="text-accent font-bold">private by default</span>.
           They can&apos;t be found unless you share the link, and can&apos;t be
-          edited by others (at the moment)
+          edited by others (at the moment).
         </FAQItem>
 
         <FAQItem question="Will you train AI or sell my artwork/data?">
