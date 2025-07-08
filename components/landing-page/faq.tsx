@@ -45,6 +45,19 @@ export default function FAQ() {
           <strong>save</strong> a board.
         </FAQItem>
 
+        <FAQItem question="What does Early Supporter mean?">
+          The Early Supporter license is a{" "}
+          <span className="font-bold text-accent">one-time payment</span>,{" "}
+          limited time offer, that gives you <strong>lifetime access</strong> to
+          all currently listed features. It&apos;s a thank-you for supporting
+          the app early — you’ll keep these features forever, even if we
+          introduce monthly plans later.
+          <br />
+          <br />
+          Future tools (like collaboration or portfolio features) may live in
+          new plans, but your core experience <strong>won’t change</strong>.
+        </FAQItem>
+
         {/* <FAQItem question="Will I ever be forced into a subscription?">
           No. The lifetime license is built to have{" "}
           <span className="font-bold text-accent">everything you need</span> for

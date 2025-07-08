@@ -50,10 +50,10 @@ const plans: Plan[] = [
     note: "*During testing: Reach out to remove 3 board limit.",
   },
   {
-    name: "Lifetime",
-    description: "Buy once. Use forever",
+    name: "Early Supporter",
+    description: "Lifetime access to all current features:",
     price: "$20 one-time",
-    oldPrice: "20% off",
+    // oldPrice: "20% off",
     features: [
       {
         label: (
@@ -98,6 +98,7 @@ const plans: Plan[] = [
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",
+    // note: "You’ll keep these features for life — it’s our thank-you for believing early. Future tools may require a plan.",
   },
   // {
   //   name: "Pro",
@@ -202,7 +203,7 @@ export default function PricingTable() {
               </div>
             )}
             <div className="flex-grow mb-6">
-              <h3 className="text-md font-bold mb-2">{plan.name}</h3>
+              <h3 className="text-md font-bold mt-4 mb-1">{plan.name}</h3>
               <div className="flex flex-col mb-8 h-12">
                 <p className="font-header text-2xl font-bold ">{plan.price}</p>
                 {plan.oldPrice && (
