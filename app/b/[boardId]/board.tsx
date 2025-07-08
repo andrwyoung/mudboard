@@ -48,6 +48,7 @@ import { MarqueBox } from "@/components/board/marque";
 import { useMarque } from "@/hooks/gallery/use-marque";
 import { useDragStore } from "@/store/drag-store";
 import DragOverlayBlock from "@/components/drag/drag-overlay";
+import FreeformCanvas from "./freeform-canvas";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -65,7 +66,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const isDraggingExtFile = useDragStore((s) => s.isDraggingExtFile);
 
   // sidebar
-
+  const freeformMode = useUIStore((s) => s.freeformMode);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
   const spacingSize = useUIStore((s) => s.spacingSize);
 
@@ -91,6 +92,7 @@ export default function Board({ boardId }: { boardId: string }) {
   const setSidebarWidth = useMeasureStore((s) => s.setSidebarWidth);
   const sidebarWidth = useMeasureStore((s) => s.sidebarWidth);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLDivElement | null>(null);
 
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const updateSectionColumns = useLayoutStore((s) => s.updateColumnsInASection);
@@ -234,7 +236,9 @@ export default function Board({ boardId }: { boardId: string }) {
           isLinkedSection(boardSections[0]) ? "bg-secondary/20" : "bg-accent/20"
         }`}
         >
-          <div className="text-3xl font-header ">Drop Images!</div>
+          <div className="text-3xl font-header text-stone-800">
+            Drop Images!
+          </div>
         </div>
       )}
 
@@ -286,13 +290,23 @@ export default function Board({ boardId }: { boardId: string }) {
                 : "duration-500 opacity-100"
             }`}
           >
-            <Canvas
-              isMirror={false}
-              boardSections={boardSections}
-              sectionColumns={sectionColumns}
-              sectionRefs={sectionRefs}
-              isDraggingExtFile={isDraggingExtFile}
-            />
+            <div ref={canvasRef} className="flex-1">
+              {freeformMode && selectedSection ? (
+                <FreeformCanvas
+                  blocks={sectionColumns[
+                    selectedSection.section.section_id
+                  ].flat()}
+                />
+              ) : (
+                <Canvas
+                  isMirror={false}
+                  boardSections={boardSections}
+                  sectionColumns={sectionColumns}
+                  sectionRefs={sectionRefs}
+                  isDraggingExtFile={isDraggingExtFile}
+                />
+              )}
+            </div>
             <div className="hidden lg:flex  h-full">
               {panelMode !== "none" && windowWidth != 0 && (
                 <ResizablePinnedPanel

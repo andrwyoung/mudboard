@@ -15,6 +15,7 @@ import { useLoadingStore } from "@/store/loading-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { PinnedModeToggle } from "@/components/ui/sidebar/pinned-toggle";
 import { useMetadataStore } from "@/store/metadata-store";
+import { FreeFormToggle } from "@/components/ui/sidebar/freeform-toggle";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -53,11 +54,9 @@ export default function Sidebar({
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
 
-          <div className="px-4 flex flex-col gap-4">
-            <div className="px-4">
-              {/* <MirrorModeToggle /> */}
-              <PinnedModeToggle />
-            </div>
+          <div className="px-8 flex flex-col gap-6">
+            {process.env.NODE_ENV === "development" && <FreeFormToggle />}
+            <PinnedModeToggle />
           </div>
         </div>
       </div>

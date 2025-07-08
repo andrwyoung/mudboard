@@ -23,6 +23,9 @@ type UIStore = {
 
   forceMobileColumns: boolean;
   toggleMobileColumns: () => void;
+
+  freeformMode: boolean;
+  toggleFreeformMode: () => void;
 };
 
 export const useUIStore = create<UIStore>((set, get) => ({
@@ -49,6 +52,12 @@ export const useUIStore = create<UIStore>((set, get) => ({
     const current = get().forceMobileColumns;
     set({ forceMobileColumns: !current });
   },
+
+  freeformMode: false,
+  toggleFreeformMode: () =>
+    set((state) => ({
+      freeformMode: !state.freeformMode,
+    })),
 }));
 
 type MeasureStore = {

@@ -46,6 +46,11 @@ export type Block = {
   crop: CropRect | null;
 
   cloned_from?: string;
+
+  canvas_x: number | null;
+  canvas_y: number | null;
+  canvas_scale: number | null;
+  canvas_z: number | null;
 };
 
 export type MudboardImage = {

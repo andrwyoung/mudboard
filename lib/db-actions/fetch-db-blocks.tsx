@@ -65,6 +65,11 @@ export async function fetchSupabaseBlocks(
         is_greyscale,
         crop,
         cloned_from,
+
+        canvas_x,
+        canvas_y,
+        canvas_z,
+        canvas_scale,
       } = block;
 
       const incompleteImageBlock: Omit<Block, "data"> = {
@@ -83,6 +88,11 @@ export async function fetchSupabaseBlocks(
         is_greyscale,
         crop: crop as CropRect,
         cloned_from: cloned_from ?? undefined,
+
+        canvas_x,
+        canvas_y,
+        canvas_z,
+        canvas_scale,
       };
 
       if (block_type === "image" && image) {

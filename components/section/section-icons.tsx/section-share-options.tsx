@@ -40,7 +40,7 @@ type ShareOption = {
 
 const shareOptions: ShareOption[] = [
   {
-    label: "Feature on Marketplace",
+    label: "Share with Community",
     desc: "Let others discover this kit publicly",
     field: "is_on_marketplace",
     gated: "License required (Free in Beta)",
