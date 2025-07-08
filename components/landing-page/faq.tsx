@@ -45,7 +45,7 @@ export default function FAQ() {
           <strong>save</strong> a board.
         </FAQItem>
 
-        <FAQItem question="Will I ever be forced into a subscription?">
+        {/* <FAQItem question="Will I ever be forced into a subscription?">
           No. The lifetime license is built to have{" "}
           <span className="font-bold text-accent">everything you need</span> for
           a personal use tool. None of those features (or their future updates)
@@ -59,7 +59,7 @@ export default function FAQ() {
           So I&apos;m trying to set expectations early: yes, there is an option
           for subscription. But it is <strong>not required</strong> to access
           the core tool
-        </FAQItem>
+        </FAQItem> */}
 
         <FAQItem question="Who can see my board/sections?">
           All boards and sections are{" "}
