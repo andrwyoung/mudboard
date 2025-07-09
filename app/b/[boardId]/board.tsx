@@ -16,7 +16,7 @@ import Sidebar from "./sidebar";
 import { Block } from "@/types/block-types";
 import { useImageImport } from "@/hooks/use-import-images";
 import { useLayoutStore } from "@/store/layout-store";
-import { useMeasureStore, useUIStore } from "@/store/ui-store";
+import { canvasRef, useMeasureStore, useUIStore } from "@/store/ui-store";
 import {
   DndContext,
   MouseSensor,
@@ -56,6 +56,7 @@ export const useIsMirror = () => useContext(MirrorContext);
 
 export default function Board({ boardId }: { boardId: string }) {
   const [isExpired, setIsExpired] = useState(false);
+  const boardInit = useLoadingStore((s) => s.boardInitialized);
   // when dragging new images from local computer
 
   const canBoardEdit = canEditBoard();
@@ -92,7 +93,6 @@ export default function Board({ boardId }: { boardId: string }) {
   const setSidebarWidth = useMeasureStore((s) => s.setSidebarWidth);
   const sidebarWidth = useMeasureStore((s) => s.sidebarWidth);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
-  const canvasRef = useRef<HTMLDivElement | null>(null);
 
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const updateSectionColumns = useLayoutStore((s) => s.updateColumnsInASection);
@@ -291,11 +291,12 @@ export default function Board({ boardId }: { boardId: string }) {
             }`}
           >
             <div ref={canvasRef} className="flex-1">
-              {freeformMode && selectedSection ? (
+              {freeformMode && selectedSection && boardInit ? (
                 <FreeformCanvas
                   blocks={sectionColumns[
                     selectedSection.section.section_id
                   ].flat()}
+                  section={selectedSection.section}
                 />
               ) : (
                 <Canvas

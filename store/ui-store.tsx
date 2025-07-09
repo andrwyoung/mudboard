@@ -3,6 +3,7 @@
 // for virtualization
 
 import { DEFAULT_GALLERY_SPACING, DEFAULT_SPACING } from "@/types/constants";
+import { createRef } from "react";
 import { create } from "zustand";
 
 type UIStore = {
@@ -59,6 +60,8 @@ export const useUIStore = create<UIStore>((set, get) => ({
       freeformMode: !state.freeformMode,
     })),
 }));
+
+export const canvasRef = createRef<HTMLDivElement>();
 
 type MeasureStore = {
   sidebarWidth: number;

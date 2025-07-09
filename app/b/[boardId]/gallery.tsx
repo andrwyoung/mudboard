@@ -54,7 +54,7 @@ function SectionGallery({
   const masterBlockOrderMirror = useSecondaryLayoutStore(
     (s) => s.masterBlockOrder
   );
-  const masterBlockOrderMain = useLayoutStore((s) => s.masterBlockOrder);
+  const masterBlockOrderMain = useLayoutStore((s) => s.sectionBlockOrder);
   const masterBlockOrder = isMirror
     ? masterBlockOrderMirror
     : masterBlockOrderMain;

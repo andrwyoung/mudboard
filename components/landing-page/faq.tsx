@@ -45,13 +45,12 @@ export default function FAQ() {
           <strong>save</strong> a board.
         </FAQItem>
 
-        <FAQItem question="What does Early Supporter mean?">
+        <FAQItem question="What does Early Supporter do?">
           The Early Supporter license is a{" "}
-          <span className="font-bold text-accent">one-time payment</span>,{" "}
-          limited time offer, that gives you <strong>lifetime access</strong> to
-          all currently listed features. It&apos;s a thank-you for supporting
-          the app early — you’ll keep these features forever, even if we
-          introduce monthly plans later.
+          <span className="font-bold text-accent">one-time payment</span>, that
+          gives you <strong>lifetime access</strong> to all currently listed
+          features. It&apos;s a thank-you for supporting the app early. You’ll
+          keep these features forever, even if we introduce monthly plans later.
           <br />
           <br />
           Future tools (like collaboration or portfolio features) may live in

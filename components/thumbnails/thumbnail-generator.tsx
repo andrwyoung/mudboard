@@ -33,7 +33,7 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
   const extThumbnailUrl = useThumbnailStore((s) => s.extThumbnailUrl);
 
   const [regenerationQueued, setRegenerationQueued] = useState(false);
-  const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
+  const masterBlockOrder = useLayoutStore((s) => s.sectionBlockOrder);
 
   const boardSections = useMetadataStore((s) => s.boardSections);
   const section = boardSections[0].section;

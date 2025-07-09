@@ -17,6 +17,7 @@ import { VisualOverride } from "@/types/block-types";
 import { MOBILE_BREAKPOINT, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { useUIStore } from "@/store/ui-store";
 import { useDemoStore } from "@/store/demo-store";
+import { FreeformPosition, useFreeformStore } from "@/store/freeform-store";
 
 export function useInitBoard(
   boardId: string,
@@ -105,9 +106,16 @@ export function useInitBoard(
         const sectionIds = sections.map((s) => s.section_id);
         const blocksBySection = await fetchSupabaseBlocks(sectionIds);
 
-        // populate the gallery overrides
+        // populate the gallery overrides AND freeform gallery positions
         const setVisualOverride = useLayoutStore.getState().setVisualOverride;
-        for (const blocks of Object.values(blocksBySection)) {
+        const positionMap: Record<
+          string,
+          Record<string, FreeformPosition>
+        > = {};
+
+        for (const [sectionId, blocks] of Object.entries(blocksBySection)) {
+          positionMap[sectionId] = {};
+
           for (const block of blocks) {
             const overrides: Partial<VisualOverride> = {};
             if (block.is_flipped) overrides.is_flipped = block.is_flipped;
@@ -117,8 +125,16 @@ export function useInitBoard(
             if (Object.keys(overrides).length > 0) {
               setVisualOverride(block.block_id, overrides);
             }
+
+            positionMap[sectionId][block.block_id] = {
+              x: block.canvas_x ?? null,
+              y: block.canvas_y ?? null,
+              z: block.canvas_z ?? 0,
+              scale: block.canvas_scale ?? 1,
+            };
           }
         }
+        useFreeformStore.getState().bulkSetPositions(positionMap);
 
         // STEP 4: generate the columns
         const isMobile = window.innerWidth < MOBILE_BREAKPOINT;

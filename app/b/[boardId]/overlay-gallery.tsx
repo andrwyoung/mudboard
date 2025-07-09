@@ -46,7 +46,7 @@ export default function OverlayGallery({
   const visualOverridesMap = useLayoutStore((s) => s.visualOverridesMap);
   const setVisualOverride = useLayoutStore((s) => s.setVisualOverride);
 
-  const masterBlockOrderMain = useLayoutStore((s) => s.masterBlockOrder);
+  const masterBlockOrderMain = useLayoutStore((s) => s.sectionBlockOrder);
   const masterBlockOrderMirror = useSecondaryLayoutStore(
     (s) => s.masterBlockOrder
   );
