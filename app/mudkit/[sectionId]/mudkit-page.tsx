@@ -85,7 +85,7 @@ export default function MudkitPage({ sectionId }: Props) {
 
       console.log(
         "master block order: ",
-        useLayoutStore.getState().sectionBlockOrder
+        useLayoutStore.getState().masterBlockOrder
       );
 
       setLoading(false);

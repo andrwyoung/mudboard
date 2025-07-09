@@ -44,8 +44,8 @@ type LayoutStore = {
 
   // SECTION 2
 
-  positionedBlockMap: Map<string, PositionedBlock>; // derived position map
-  sectionBlockOrder: PositionedBlock[]; // derived order
+  positionedBlockMap: Map<string, PositionedBlock>; // derived. position map blockId -> posBlock
+  masterBlockOrder: PositionedBlock[]; // derived. sectionId -> posBlocks[]
   regenerateOrderingInternally: () => void;
   regenerateOrder: (sortedSectionIds: string[]) => void;
 
@@ -171,7 +171,7 @@ export const useLayoutStore = create<LayoutStore>()(
     //
 
     positionedBlockMap: new Map(),
-    sectionBlockOrder: [],
+    masterBlockOrder: [],
     regenerateOrderingInternally: () => {
       const boardSections = useMetadataStore.getState().boardSections;
       const sortedSectionIds = boardSections
@@ -198,7 +198,7 @@ export const useLayoutStore = create<LayoutStore>()(
 
       set({
         positionedBlockMap,
-        sectionBlockOrder: orderedBlocks,
+        masterBlockOrder: orderedBlocks,
       });
     },
 
@@ -216,7 +216,7 @@ export const useLayoutStore = create<LayoutStore>()(
       const boardId = useMetadataStore.getState().board?.board_id;
 
       if (layoutDirty && boardId) {
-        const flat = get().sectionBlockOrder;
+        const flat = get().masterBlockOrder;
         const success = await syncOrderToSupabase(flat);
         if (success) {
           set({ layoutDirty: false });
@@ -231,7 +231,7 @@ export const useLayoutStore = create<LayoutStore>()(
       set({
         sectionColumns: {},
         positionedBlockMap: new Map(),
-        sectionBlockOrder: [],
+        masterBlockOrder: [],
         visualOverridesMap: new Map(),
         visualNumColsMap: {},
       }),

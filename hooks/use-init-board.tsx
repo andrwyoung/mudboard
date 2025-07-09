@@ -69,6 +69,9 @@ export function useInitBoard(
 
         let boardSections = await fetchSupabaseSections(boardId);
 
+        // Fallback sort in case Supabase ordering is unreliable
+        boardSections.sort((a, b) => a.order_index - b.order_index);
+
         // set the visual num cols
         const setVisualNumColsForSection =
           useLayoutStore.getState().setVisualNumColsForSection;

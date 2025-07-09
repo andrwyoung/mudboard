@@ -16,11 +16,13 @@ export function generatePositionedBlocks(
   windowWidth: number,
   spacingSize: number
 ): {
-  orderedBlocks: PositionedBlock[];
+  orderedBlocks: Record<string, PositionedBlock[]>;
   positionedBlockMap: Map<string, PositionedBlock>;
 } {
   const positionedBlocksBySection: Record<string, PositionedBlock[][]> = {};
   const map = new Map<string, PositionedBlock>();
+
+  const orderedBlocks: Record<string, PositionedBlock[]> = {};
 
   for (const sectionId of sortedSectionIds) {
     const columns = sectionColumns[sectionId];
@@ -77,77 +79,81 @@ export function generatePositionedBlocks(
       }
       positionedBlocksBySection[sectionId].push(positionedCol);
     }
-  }
 
-  const orderedBlocks = generateOrderedBlocks(positionedBlocksBySection, map);
+    // generate the master order map
+    orderedBlocks[sectionId] = generateOrderedBlocksForSection(
+      positionedBlocksBySection[sectionId],
+      map
+    );
+  }
 
   return { orderedBlocks, positionedBlockMap: map };
 }
 
 // ordering the blocks by true value
-function generateOrderedBlocks(
-  positionedBlocksBySection: Record<string, PositionedBlock[][]>,
+function generateOrderedBlocksForSection(
+  positionedBlockColumns: PositionedBlock[][],
   positionedBlockMap: Map<string, PositionedBlock>
 ): PositionedBlock[] {
   const ordered: PositionedBlock[] = [];
   const visited = new Set<string>();
 
-  for (const columns of Object.values(positionedBlocksBySection)) {
-    const pointers = Array(columns.length).fill(0); // index within each column
-    let hasUnvisited = true;
+  const pointers = Array(positionedBlockColumns.length).fill(0); // index within each column
+  let hasUnvisited = true;
 
-    while (hasUnvisited) {
-      hasUnvisited = false;
+  while (hasUnvisited) {
+    hasUnvisited = false;
 
-      // Step 1: find the anchor block in the leftmost column
-      let anchorBlock: PositionedBlock | null = null;
-      let anchorCol = 0;
+    // Step 1: find the anchor block in the leftmost column
+    let anchorBlock: PositionedBlock | null = null;
+    let anchorCol = 0;
 
-      for (let col = 0; col < columns.length; col++) {
-        while (
-          pointers[col] < columns[col].length &&
-          visited.has(columns[col][pointers[col]].block.block_id)
-        ) {
-          pointers[col]++;
-        }
+    for (let col = 0; col < positionedBlockColumns.length; col++) {
+      while (
+        pointers[col] < positionedBlockColumns[col].length &&
+        visited.has(positionedBlockColumns[col][pointers[col]].block.block_id)
+      ) {
+        pointers[col]++;
+      }
 
-        if (pointers[col] < columns[col].length) {
-          anchorBlock = columns[col][pointers[col]];
-          anchorCol = col;
+      if (pointers[col] < positionedBlockColumns[col].length) {
+        anchorBlock = positionedBlockColumns[col][pointers[col]];
+        anchorCol = col;
+        break;
+      }
+    }
+
+    if (!anchorBlock) break;
+
+    const anchorMid = anchorBlock.top + anchorBlock.height / 2;
+
+    // Step 2: sweep left-to-right across all columns
+    for (let col = anchorCol; col < positionedBlockColumns.length; col++) {
+      for (let i = pointers[col]; i < positionedBlockColumns[col].length; i++) {
+        const block = positionedBlockColumns[col][i];
+        const id = block.block.block_id;
+        if (visited.has(id)) continue;
+
+        if (block.top <= anchorMid) {
+          // KEY SECITON: we push the block here
+          ordered.push(block);
+          // then we update it with the correct order_index
+          const positioned = positionedBlockMap.get(block.block.block_id);
+          if (positioned) {
+            positioned.orderIndex = ordered.length - 1;
+          }
+
+          visited.add(id);
+          pointers[col] = i + 1;
+        } else {
           break;
         }
       }
-
-      if (!anchorBlock) break;
-
-      const anchorMid = anchorBlock.top + anchorBlock.height / 2;
-
-      // Step 2: sweep left-to-right across all columns
-      for (let col = anchorCol; col < columns.length; col++) {
-        for (let i = pointers[col]; i < columns[col].length; i++) {
-          const block = columns[col][i];
-          const id = block.block.block_id;
-          if (visited.has(id)) continue;
-
-          if (block.top <= anchorMid) {
-            // KEY SECITON: we push the block here
-            ordered.push(block);
-            // then we update it with the correct order_index
-            const positioned = positionedBlockMap.get(block.block.block_id);
-            if (positioned) {
-              positioned.orderIndex = ordered.length - 1;
-            }
-
-            visited.add(id);
-            pointers[col] = i + 1;
-          } else {
-            break;
-          }
-        }
-      }
-
-      hasUnvisited = pointers.some((ptr, col) => ptr < columns[col].length);
     }
+
+    hasUnvisited = pointers.some(
+      (ptr, col) => ptr < positionedBlockColumns[col].length
+    );
   }
 
   return ordered;

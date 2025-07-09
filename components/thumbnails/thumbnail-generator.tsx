@@ -18,6 +18,7 @@ import { Block } from "@/types/block-types";
 import { DEFAULT_BOARD_TITLE } from "@/types/constants";
 import { useThumbnailStore } from "@/store/thumbnail-store";
 import { Board } from "@/types/board-types";
+import { PositionedBlock } from "@/types/sync-types";
 
 export type ThumbnailGeneratorHandle = {
   generate: () => void;
@@ -33,7 +34,7 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
   const extThumbnailUrl = useThumbnailStore((s) => s.extThumbnailUrl);
 
   const [regenerationQueued, setRegenerationQueued] = useState(false);
-  const masterBlockOrder = useLayoutStore((s) => s.sectionBlockOrder);
+  const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
 
   const boardSections = useMetadataStore((s) => s.boardSections);
   const section = boardSections[0].section;
@@ -43,8 +44,29 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
       ? section.saved_column_num
       : THUMBNAIL_COLUMNS;
 
+  const allBlocks: PositionedBlock[] = useMemo(() => {
+    const blocks: PositionedBlock[] = [];
+
+    // sort defensively
+    const sortedSections = [...boardSections].sort(
+      (a, b) => a.order_index - b.order_index
+    );
+
+    for (const section of sortedSections) {
+      const sectionBlocks = masterBlockOrder[section.section.section_id] ?? [];
+
+      for (const block of sectionBlocks) {
+        blocks.push(block);
+        if (blocks.length === 30) break;
+      }
+
+      if (blocks.length === 30) break;
+    }
+
+    return blocks;
+  }, [boardSections, masterBlockOrder]);
+
   const blocks: Block[][] = useMemo(() => {
-    const allBlocks = (masterBlockOrder ?? []).slice(0, 30);
     const imageBlocks = allBlocks
       .map((b) => b.block)
       .filter((block) => block.block_type === "image");
@@ -57,7 +79,7 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
     });
 
     return cols;
-  }, [masterBlockOrder, columnsToRender]);
+  }, [masterBlockOrder, columnsToRender, allBlocks]);
 
   // mount the refs to the generator store
   useEffect(() => {
