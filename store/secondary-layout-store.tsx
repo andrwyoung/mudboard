@@ -79,7 +79,7 @@ export const useSecondaryLayoutStore = create<SecondaryLayoutStore>(
 
       set({
         positionedBlockMap,
-        masterBlockOrder: orderedBlocks,
+        masterBlockOrder: orderedBlocks[sectionId] ?? [],
       });
     },
 

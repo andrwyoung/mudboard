@@ -10,66 +10,61 @@ import { SYNC_BATCH_SIZE } from "@/types/upload-settings";
 import { useMetadataStore } from "@/store/metadata-store";
 import { commitToSectionColumns } from "../../lib/db-actions/sync-local-order";
 import { shouldSyncSectionLayout } from "../../lib/columns/should-sync-indexes";
-import { Section } from "@/types/board-types";
 import { useUIStore } from "../ui-store";
+import { canEditSection } from "@/lib/auth/can-edit-section";
 
 function positionedBlocksToUpdates(
   blocks: PositionedBlock[],
-  forceMobileColumns: boolean
+  shouldSyncColPos: boolean
 ): Partial<BlockInsert>[] {
-  // don't sync col_index and row_index if saved_column_number does not equal visualcolnum
-  const sectionMap = useMetadataStore
-    .getState()
-    .boardSections.reduce((acc, bs) => {
-      acc[bs.section.section_id] = bs.section;
-      return acc;
-    }, {} as Record<string, Section>);
-
   return blocks
     .filter(({ block }) => !block.block_id.startsWith("temp-"))
     .map(({ block, colIndex, rowIndex, orderIndex }) => {
-      const section = sectionMap[block.section_id];
-      const shouldSyncLayout = shouldSyncSectionLayout(
-        section,
-        forceMobileColumns
-      );
-
-      const update: Partial<BlockInsert> = {
+      const base = {
         block_id: block.block_id,
         section_id: block.section_id,
         order_index: orderIndex,
       };
 
-      if (shouldSyncLayout) {
-        update.col_index = colIndex;
-        update.row_index = rowIndex;
-      }
-
-      return update;
+      // only sync order_index if columnNum !== visualNumCol,
+      return shouldSyncColPos
+        ? { ...base, col_index: colIndex, row_index: rowIndex }
+        : base;
     });
 }
 
-export async function syncOrderToSupabase(
+export async function syncSectionOrderToSupabase(
+  sectionId: string,
   positionedBlocks: PositionedBlock[]
 ): Promise<boolean> {
+  // first check if we SHOULD sync section
+  //
+  // grab section
+  const section = useMetadataStore
+    .getState()
+    .boardSections.find((bs) => bs.section.section_id === sectionId)?.section;
+
+  if (!section) {
+    console.error("Missing Section when syncing!!");
+    return false;
+  }
+
   // check for access
-  const canWrite = canEditBoard();
+  const canWrite = canEditBoard() && canEditSection(section);
   if (!canWrite) {
     console.warn("No write access: not syncing order");
     return false;
   }
 
-  // should you sync column indexes
+  // if visualNumCols !== section.saved_column_num, exit
   const forceMobileColumns = useUIStore.getState().forceMobileColumns;
+  const shouldSyncColPos = shouldSyncSectionLayout(section, forceMobileColumns);
 
   // use position map to sync
-  const updates = positionedBlocksToUpdates(
-    positionedBlocks,
-    forceMobileColumns
-  );
+  const updates = positionedBlocksToUpdates(positionedBlocks, shouldSyncColPos);
   console.log("Syncing block order to Supabase via update:", updates);
 
-  // step 1: update block order
+  // KEY SECTION: update block order to Supabase
   const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   for (let i = 0; i < updates.length; i += SYNC_BATCH_SIZE) {
@@ -82,13 +77,14 @@ export async function syncOrderToSupabase(
       console.error("Batch error:", results);
       return false;
     }
-
     // trottle requests
     await sleep(50);
   }
 
-  // update locally
-  commitToSectionColumns(positionedBlocks, forceMobileColumns);
+  // locally: save the colIndex rowIndex into each Block
+  if (shouldSyncColPos) {
+    commitToSectionColumns(sectionId, positionedBlocks);
+  }
 
   console.log("Finished syncing block order to Supabase");
 

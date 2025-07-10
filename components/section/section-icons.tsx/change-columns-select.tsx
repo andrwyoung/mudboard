@@ -8,7 +8,7 @@ import { MAX_COLUMNS, MIN_COLUMNS } from "@/types/constants";
 import { setVisualNumCols } from "@/lib/local-helpers/set-visual-columns";
 import { FaSave } from "react-icons/fa";
 import { cn } from "@/utils/utils";
-import { updateSectionColumnNum } from "@/lib/db-actions/update-section-columns";
+import { saveSectionColumnNum } from "@/lib/db-actions/save-section-columns";
 import { CanvasScope } from "@/types/board-types";
 
 type Props = {
@@ -33,7 +33,7 @@ export default function SectionColumnSelector({
           className="cursor-pointer hover:text-accent transition-all duration-200"
           title="Save Number of Columns"
           onClick={() =>
-            updateSectionColumnNum(sectionId, visualNumCols, canEdit)
+            saveSectionColumnNum(sectionId, visualNumCols, canEdit)
           }
         />
       )}

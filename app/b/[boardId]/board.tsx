@@ -95,7 +95,9 @@ export default function Board({ boardId }: { boardId: string }) {
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
-  const updateSectionColumns = useLayoutStore((s) => s.updateColumnsInASection);
+  const updateColumnsInASection = useLayoutStore(
+    (s) => s.updateColumnsInASection
+  );
 
   // for dragging and stuff
   const initialPointerYRef = useRef<number | null>(null);
@@ -193,7 +195,7 @@ export default function Board({ boardId }: { boardId: string }) {
         updates: Record<string, (prev: Block[][]) => Block[][]>
       ) => {
         for (const [sectionId, fn] of Object.entries(updates)) {
-          updateSectionColumns(sectionId, fn);
+          updateColumnsInASection(sectionId, fn);
         }
       },
       draggedBlocks,

@@ -11,7 +11,7 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { useMetadataStore } from "./metadata-store";
 import { useMeasureStore, useUIStore } from "./ui-store";
-import { syncOrderToSupabase } from "@/store/layout-core/sync-order";
+import { syncSectionOrderToSupabase } from "@/store/layout-core/sync-order";
 import { SectionColumns } from "@/types/board-types";
 import { Block, VisualOverride } from "@/types/block-types";
 import { PositionedBlock } from "@/types/sync-types";
@@ -45,7 +45,7 @@ type LayoutStore = {
   // SECTION 2
 
   positionedBlockMap: Map<string, PositionedBlock>; // derived. position map blockId -> posBlock
-  masterBlockOrder: PositionedBlock[]; // derived. sectionId -> posBlocks[]
+  masterBlockOrder: Record<string, PositionedBlock[]>; // derived. sectionId -> posBlocks[]
   regenerateOrderingInternally: () => void;
   regenerateOrder: (sortedSectionIds: string[]) => void;
 
@@ -53,8 +53,9 @@ type LayoutStore = {
 
   // SECTION 3
   // TODO: per section dirty tracking
-  layoutDirty: boolean;
-  setLayoutDirty: (d: boolean) => void;
+  layoutDirtyMap: Record<string, boolean>;
+  setLayoutDirtyForSection: (sectionId: string) => void;
+  isAnyLayoutDirty: () => boolean;
 
   syncLayout: () => Promise<boolean>;
   clearAll: () => void;
@@ -66,11 +67,6 @@ export const useLayoutStore = create<LayoutStore>()(
     setSectionColumns: (cols: SectionColumns) => set({ sectionColumns: cols }),
     updateColumnsInASection: (sectionId, fn) => {
       set((state) => {
-        // these 2 variables are used to generate a fall back
-        // in case sectionColumns[sectionId] doesn't exist
-        const boardSections = useMetadataStore.getState().boardSections;
-
-        console.log("updateColumnsInASection section");
         const savedNumCols =
           get().getVisualNumColsForSection(sectionId) ?? DEFAULT_COLUMNS;
 
@@ -78,14 +74,16 @@ export const useLayoutStore = create<LayoutStore>()(
           state.sectionColumns[sectionId] ??
           Array.from({ length: savedNumCols }, () => []);
         const updated = fn(current);
+
         return {
           sectionColumns: {
             ...state.sectionColumns,
             [sectionId]: updated,
           },
-          layoutDirty: true,
         };
       });
+
+      get().setLayoutDirtyForSection(sectionId);
     },
     regenerateSectionColumns: (sectionId: string, savedColumnNum: number) => {
       const currentColumns = get().sectionColumns[sectionId];
@@ -104,12 +102,12 @@ export const useLayoutStore = create<LayoutStore>()(
         useExplicitPositioning
       );
 
+      // get().setLayoutDirtyForSection(sectionId);
       set((state) => ({
         sectionColumns: {
           ...state.sectionColumns,
           [sectionId]: newCols,
         },
-        layoutDirty: true,
       }));
     },
     regenerateAllSections: () => {
@@ -171,7 +169,7 @@ export const useLayoutStore = create<LayoutStore>()(
     //
 
     positionedBlockMap: new Map(),
-    masterBlockOrder: [],
+    masterBlockOrder: {},
     regenerateOrderingInternally: () => {
       const boardSections = useMetadataStore.getState().boardSections;
       const sortedSectionIds = boardSections
@@ -208,30 +206,56 @@ export const useLayoutStore = create<LayoutStore>()(
     //
     //
 
-    layoutDirty: false,
-    setLayoutDirty: (d) => set({ layoutDirty: d }),
+    layoutDirtyMap: {},
+    setLayoutDirtyForSection: (sectionId: string) =>
+      set((state) => ({
+        layoutDirtyMap: {
+          ...state.layoutDirtyMap,
+          [sectionId]: true,
+        },
+      })),
+    isAnyLayoutDirty: () => {
+      return Object.values(get().layoutDirtyMap).some((v) => v === true);
+    },
 
     syncLayout: async () => {
-      const { layoutDirty } = get();
+      const layoutDirtyMap = get().layoutDirtyMap;
+      const dirtySectionIds = Object.keys(layoutDirtyMap);
       const boardId = useMetadataStore.getState().board?.board_id;
 
-      if (layoutDirty && boardId) {
-        const flat = get().masterBlockOrder;
-        const success = await syncOrderToSupabase(flat);
+      if (!boardId || dirtySectionIds.length === 0) return true;
+      const blockOrders = get().masterBlockOrder;
+      const updatedLayoutDirtyMap = { ...layoutDirtyMap };
+
+      let allSucceeded = true;
+
+      for (const sectionId of dirtySectionIds) {
+        const success = await syncSectionOrderToSupabase(
+          sectionId,
+          blockOrders[sectionId]
+        );
+
         if (success) {
-          set({ layoutDirty: false });
+          delete updatedLayoutDirtyMap[sectionId];
+        } else {
+          allSucceeded = false;
         }
-        console.log("Syncing success?? ", success);
-        return success;
       }
-      return true;
+
+      set({ layoutDirtyMap: updatedLayoutDirtyMap });
+
+      console.log(
+        `Syncing ${dirtySectionIds.length} sections. Success: `,
+        allSucceeded
+      );
+      return allSucceeded;
     },
 
     clearAll: () =>
       set({
         sectionColumns: {},
         positionedBlockMap: new Map(),
-        masterBlockOrder: [],
+        masterBlockOrder: {},
         visualOverridesMap: new Map(),
         visualNumColsMap: {},
       }),

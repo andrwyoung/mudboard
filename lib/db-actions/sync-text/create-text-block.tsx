@@ -47,8 +47,9 @@ export async function createTextBlock(
   };
 
   // first slap it into local
-  const updateColumns = useLayoutStore.getState().updateColumnsInASection;
-  updateColumns(sectionId, (prevCols) => {
+  const updateColumnsInASection =
+    useLayoutStore.getState().updateColumnsInASection;
+  updateColumnsInASection(sectionId, (prevCols) => {
     const updated = [...prevCols];
     const updatedCol = [...(updated[colIndex] ?? [])];
     updatedCol.splice(rowIndex, 0, block); // insert at rowIndex

@@ -339,7 +339,7 @@ export async function uploadImages(
   toast.dismiss(toastId);
   if (successfulUploads > 0) {
     // we may have incorrect versions of the order, so trigger a sync
-    useLayoutStore.setState({ layoutDirty: true });
+    useLayoutStore.getState().setLayoutDirtyForSection(sectionId);
     toast.success(
       `Successfully uploaded ${successfulUploads} of ${totalUploads} images!`
     );

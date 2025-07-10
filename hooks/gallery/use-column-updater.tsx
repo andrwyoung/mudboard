@@ -1,3 +1,5 @@
+// DEPRECATED. in favor of layout-store.tsx
+
 // this hook's only job is to setLayoutDirty whenever we change the columns
 // it exist because I don't want to have to remember to setLayoutDirty
 // whenever I call setColumns, so this hook just simplifies that
@@ -10,7 +12,7 @@ export function useColumnUpdater(
   setter: React.Dispatch<React.SetStateAction<SectionColumns>>
 ) {
   return (sectionId: string, fn: (prev: Block[][]) => Block[][]) => {
-    useLayoutStore.getState().setLayoutDirty(true);
+    useLayoutStore.getState().setLayoutDirtyForSection(sectionId);
 
     setter((prev) => ({
       ...prev,

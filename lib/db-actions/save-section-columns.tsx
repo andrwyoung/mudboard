@@ -7,7 +7,7 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { toast } from "sonner";
 
-export async function updateSectionColumnNum(
+export async function saveSectionColumnNum(
   sectionId: string,
   newColumnNum: number,
   canEdit: boolean
@@ -17,7 +17,7 @@ export async function updateSectionColumnNum(
     return;
   }
 
-  // STEP 2: update number of columns
+  // STEP 1: update number of columns locally
   useMetadataStore.setState((s) => ({
     boardSections: s.boardSections.map((bs) =>
       bs.section.section_id === sectionId
@@ -29,14 +29,15 @@ export async function updateSectionColumnNum(
     ),
   }));
 
-  // update remotely
+  // sync order remotely
   // STEP 2: sync the layout locally and remotely so we have a good
   await useLayoutStore.getState().syncLayout();
 
-  // // STEP 3: regenerate the real columns
+  // useLayoutStore.getState().setLayoutDirtyForSection(sectionId);
+
   // useLayoutStore.getState().regenerateSectionColumns(sectionId);
 
-  // STEP 2: save the column number
+  // STEP 3: save the column number remotely
   await supabase
     .from("sections")
     .update({ saved_column_num: newColumnNum })

@@ -25,7 +25,6 @@ export type ThumbnailGeneratorHandle = {
 };
 
 export default function ThumbnailGenerator({ board }: { board: Board }) {
-  const layoutDirty = useLayoutStore((state) => state.layoutDirty);
   const externalRef = useRef<HTMLDivElement | null>(null);
   const dashboardRef = useRef<HTMLDivElement | null>(null);
 
@@ -43,6 +42,13 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
     section.saved_column_num >= 3 && section.saved_column_num <= 5
       ? section.saved_column_num
       : THUMBNAIL_COLUMNS;
+
+  const isThumbnailDirty = useLayoutStore((state) => {
+    const layoutMap = state.layoutDirtyMap;
+    return boardSections
+      .slice(0, 3) // ← top N sections
+      .some((s) => layoutMap[s.section.section_id] === true);
+  });
 
   const allBlocks: PositionedBlock[] = useMemo(() => {
     const blocks: PositionedBlock[] = [];
@@ -79,7 +85,7 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
     });
 
     return cols;
-  }, [masterBlockOrder, columnsToRender, allBlocks]);
+  }, [columnsToRender, allBlocks]);
 
   // mount the refs to the generator store
   useEffect(() => {
@@ -106,10 +112,10 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
 
   // queuing regeneration
   useEffect(() => {
-    if (layoutDirty && !regenerationQueued) {
+    if (isThumbnailDirty && !regenerationQueued) {
       setRegenerationQueued(true);
     }
-  }, [layoutDirty, generateThumbnails, regenerationQueued]);
+  }, [isThumbnailDirty, generateThumbnails, regenerationQueued]);
 
   useEffect(() => {
     if (!regenerationQueued || !board) return;

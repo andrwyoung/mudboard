@@ -8,7 +8,7 @@ import { MdSync } from "react-icons/md";
 import { toast } from "sonner";
 
 export default function SyncButton() {
-  const layoutDirty = useLayoutStore((s) => s.layoutDirty);
+  const isAnyLayoutDirty = useLayoutStore((s) => s.isAnyLayoutDirty());
 
   const [isSpinning, setIsSpinning] = useState(false);
   return (
@@ -40,7 +40,7 @@ export default function SyncButton() {
       <p className="font-semibold font-header">
         {isSpinning
           ? "Syncing..."
-          : layoutDirty
+          : isAnyLayoutDirty
           ? "Unsaved Changes"
           : "Synced!"}
       </p>

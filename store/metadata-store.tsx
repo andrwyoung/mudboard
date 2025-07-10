@@ -19,7 +19,7 @@ type MetadataStore = {
 
   boardSections: BoardSection[];
   setBoardSections: (bs: BoardSection[]) => void;
-  boardSectionMap: Record<string, BoardSection>;
+  boardSectionMap: Record<string, BoardSection>; // section_id -> boardSection
   regenerateBoardSectionMap: () => void;
 
   clearAll: () => void;
