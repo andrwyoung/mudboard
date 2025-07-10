@@ -159,7 +159,7 @@ export async function uploadImages(
     //
 
     const objectUrl = URL.createObjectURL(variants.full.file);
-    const { width, height } = variants.full;
+    const { width, height } = variants.medium;
 
     const newImage: MudboardImage = {
       image_id,
