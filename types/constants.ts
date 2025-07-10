@@ -49,3 +49,7 @@ export const INTEREST_LINK = "https://forms.gle/QA96JUcRRP5YSqRT6"
 
 
 
+
+// thumbnail constants
+export const NUM_SECTION_TO_CHECK = 3;
+export const NUM_BLOCKS_TO_GRAB = 30;

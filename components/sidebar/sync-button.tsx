@@ -1,6 +1,7 @@
 // this is the little sync button thing
 // most of the logic here is just so that it spins and looks cool
 
+import { useFreeformStore } from "@/store/freeform-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { ACCESSIBLE_BUTTON } from "@/types/constants";
 import { useState } from "react";
@@ -8,7 +9,11 @@ import { MdSync } from "react-icons/md";
 import { toast } from "sonner";
 
 export default function SyncButton() {
-  const isAnyLayoutDirty = useLayoutStore((s) => s.isAnyLayoutDirty());
+  const isAnyGridLayoutDirty = useLayoutStore((s) => s.isAnyLayoutDirty());
+  const isAnyFreeformLayoutDirty = useFreeformStore((s) =>
+    s.isAnyFreeformDirty()
+  );
+  const anythingDirty = isAnyFreeformLayoutDirty || isAnyGridLayoutDirty;
 
   const [isSpinning, setIsSpinning] = useState(false);
   return (
@@ -22,7 +27,12 @@ export default function SyncButton() {
         if (isSpinning) return; // prevent double tapping
 
         setIsSpinning(true);
-        const success = await useLayoutStore.getState().syncLayout();
+        const layoutSuccess = await useLayoutStore.getState().syncLayout();
+        const freeformSuccess = await useFreeformStore
+          .getState()
+          .syncFreeform();
+
+        const success = layoutSuccess && freeformSuccess;
 
         setTimeout(() => {
           setIsSpinning(false);
@@ -40,7 +50,7 @@ export default function SyncButton() {
       <p className="font-semibold font-header">
         {isSpinning
           ? "Syncing..."
-          : isAnyLayoutDirty
+          : anythingDirty
           ? "Unsaved Changes"
           : "Synced!"}
       </p>

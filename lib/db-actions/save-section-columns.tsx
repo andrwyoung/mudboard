@@ -31,9 +31,8 @@ export async function saveSectionColumnNum(
 
   // sync order remotely
   // STEP 2: sync the layout locally and remotely so we have a good
+  useLayoutStore.getState().setLayoutDirtyForSection(sectionId);
   await useLayoutStore.getState().syncLayout();
-
-  // useLayoutStore.getState().setLayoutDirtyForSection(sectionId);
 
   // useLayoutStore.getState().regenerateSectionColumns(sectionId);
 

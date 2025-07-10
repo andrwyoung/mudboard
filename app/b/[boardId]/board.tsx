@@ -27,7 +27,6 @@ import {
 } from "@dnd-kit/core";
 import { useGalleryHandlers } from "@/hooks/gallery/use-drag-handlers";
 import { useMetadataStore } from "@/store/metadata-store";
-import { AUTOSYNC_DELAY } from "@/types/upload-settings";
 import { useLoadingStore } from "@/store/loading-store";
 import { useSelectionStore } from "@/store/selection-store";
 import Canvas from "./canvas";
@@ -125,15 +124,6 @@ export default function Board({ boardId }: { boardId: string }) {
     () => regenerateOrdering(),
     [sectionColumns, regenerateOrdering, spacingSize, sidebarWidth, windowWidth]
   );
-
-  // syncing block order to database
-  useEffect(() => {
-    const interval = setInterval(() => {
-      useLayoutStore.getState().syncLayout();
-    }, AUTOSYNC_DELAY);
-
-    return () => clearInterval(interval);
-  }, []);
 
   // SECTION: blur image when resizing window
   //

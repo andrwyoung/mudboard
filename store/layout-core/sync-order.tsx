@@ -12,16 +12,19 @@ import { commitToSectionColumns } from "../../lib/db-actions/sync-local-order";
 import { shouldSyncSectionLayout } from "../../lib/columns/should-sync-indexes";
 import { useUIStore } from "../ui-store";
 import { canEditSection } from "@/lib/auth/can-edit-section";
+import { runSupabaseBatchUpdates } from "@/lib/db-actions/run-batch-updates";
 
 function positionedBlocksToUpdates(
   blocks: PositionedBlock[],
   shouldSyncColPos: boolean
 ): Partial<BlockInsert>[] {
   return blocks
-    .filter(({ block }) => !block.block_id.startsWith("temp-"))
+    .filter(
+      ({ block }) => !!block.block_id && !block.block_id.startsWith("temp-")
+    )
     .map(({ block, colIndex, rowIndex, orderIndex }) => {
       const base = {
-        block_id: block.block_id,
+        block_id: block.block_id as string,
         section_id: block.section_id,
         order_index: orderIndex,
       };
@@ -65,21 +68,8 @@ export async function syncSectionOrderToSupabase(
   console.log("Syncing block order to Supabase via update:", updates);
 
   // KEY SECTION: update block order to Supabase
-  const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
-  for (let i = 0; i < updates.length; i += SYNC_BATCH_SIZE) {
-    const batch = updates.slice(i, i + SYNC_BATCH_SIZE);
-    const batchPromises = batch.map(({ block_id, ...rest }) =>
-      supabase.from("blocks").update(rest).eq("block_id", block_id)
-    );
-    const results = await Promise.all(batchPromises);
-    if (results.some((r) => r.error)) {
-      console.error("Batch error:", results);
-      return false;
-    }
-    // trottle requests
-    await sleep(50);
-  }
+  const success = await runSupabaseBatchUpdates(updates, "Sync Order");
+  if (!success) return false;
 
   // locally: save the colIndex rowIndex into each Block
   if (shouldSyncColPos) {

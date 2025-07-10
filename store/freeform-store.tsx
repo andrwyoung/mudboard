@@ -1,3 +1,5 @@
+import { syncFreeformToSupabase } from "@/lib/syncing/sync-freeform";
+import { scheduleFreeformSync } from "@/lib/syncing/sync-schedulers";
 import { create } from "zustand";
 
 export type CameraType = {
@@ -38,6 +40,15 @@ type FreeformStore = {
     map: Record<string, Record<string, FreeformPosition>>
   ) => void;
 
+  // SECTION: syncing
+  freeformDirtyMap: Record<string, boolean>;
+  setFreeformDirtyForSection: (sectionId: string) => void;
+  clearFreeformDirtyForSection: (sectionId: string) => void;
+  isFreeformDirty: (sectionId: string) => boolean;
+  isAnyFreeformDirty: () => boolean;
+
+  syncFreeform: () => Promise<boolean>;
+
   reset: () => void;
 };
 
@@ -71,7 +82,7 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
   setEditMode: (edit: boolean) => set({ editMode: edit }),
 
   positionMap: {},
-  setPositionForBlock: (sectionId, blockId, posOrFn) =>
+  setPositionForBlock: (sectionId, blockId, posOrFn) => {
     set((state) => {
       const section = state.positionMap[sectionId] ?? {};
       const prev = section[blockId] ?? {
@@ -99,11 +110,61 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
           },
         },
       };
-    }),
+    });
+
+    get().setFreeformDirtyForSection(sectionId);
+  },
   bulkSetPositions: (map) =>
     set(() => ({
       positionMap: map,
     })),
+
+  // SECTION: syncing;
+  freeformDirtyMap: {},
+  setFreeformDirtyForSection: (sectionId) =>
+    set((state) => {
+      scheduleFreeformSync();
+      return {
+        freeformDirtyMap: {
+          ...state.freeformDirtyMap,
+          [sectionId]: true,
+        },
+      };
+    }),
+
+  clearFreeformDirtyForSection: (sectionId) =>
+    set((state) => {
+      const map = { ...state.freeformDirtyMap };
+      delete map[sectionId];
+      return { freeformDirtyMap: map };
+    }),
+  isFreeformDirty: (sectionId) => {
+    return get().freeformDirtyMap[sectionId] === true;
+  },
+  isAnyFreeformDirty: () => {
+    return Object.values(get().freeformDirtyMap).some((v) => v);
+  },
+
+  syncFreeform: async () => {
+    const { positionMap, freeformDirtyMap, clearFreeformDirtyForSection } =
+      get();
+
+    let allSuccessful = true;
+    for (const [sectionId, isDirty] of Object.entries(freeformDirtyMap)) {
+      if (!isDirty) continue;
+
+      const positions = positionMap[sectionId];
+      if (!positions) continue;
+
+      const success = await syncFreeformToSupabase(sectionId, positions);
+      if (success) {
+        clearFreeformDirtyForSection(sectionId);
+      } else {
+        allSuccessful = false;
+      }
+    }
+    return allSuccessful;
+  },
 
   reset: () =>
     set(() => ({

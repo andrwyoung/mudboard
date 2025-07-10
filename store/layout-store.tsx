@@ -18,6 +18,7 @@ import { PositionedBlock } from "@/types/sync-types";
 import { generatePositionedBlocks } from "@/store/layout-core/positioning/generate-block-positions";
 import { DEFAULT_COLUMNS, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { generateColumnsFromBlockLayout } from "@/lib/columns/generate-columns";
+import { scheduleGridSync } from "@/lib/syncing/sync-schedulers";
 
 type LayoutStore = {
   // SECTION 1
@@ -208,12 +209,15 @@ export const useLayoutStore = create<LayoutStore>()(
 
     layoutDirtyMap: {},
     setLayoutDirtyForSection: (sectionId: string) =>
-      set((state) => ({
-        layoutDirtyMap: {
-          ...state.layoutDirtyMap,
-          [sectionId]: true,
-        },
-      })),
+      set((state) => {
+        scheduleGridSync(); // schedule sync
+        return {
+          layoutDirtyMap: {
+            ...state.layoutDirtyMap,
+            [sectionId]: true,
+          },
+        };
+      }),
     isAnyLayoutDirty: () => {
       return Object.values(get().layoutDirtyMap).some((v) => v === true);
     },

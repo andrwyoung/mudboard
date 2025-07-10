@@ -15,7 +15,11 @@ import { checkThumbnailExists } from "@/lib/db-actions/thumbnails/check-thumbnai
 import ExternalThumbnail from "./external-thumbnail";
 import DashboardThumbnail from "./dashboard-thumbnail";
 import { Block } from "@/types/block-types";
-import { DEFAULT_BOARD_TITLE } from "@/types/constants";
+import {
+  DEFAULT_BOARD_TITLE,
+  NUM_BLOCKS_TO_GRAB,
+  NUM_SECTION_TO_CHECK,
+} from "@/types/constants";
 import { useThumbnailStore } from "@/store/thumbnail-store";
 import { Board } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
@@ -32,8 +36,12 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
   const dashThumbnailUrl = useThumbnailStore((s) => s.dashThumbnailUrl);
   const extThumbnailUrl = useThumbnailStore((s) => s.extThumbnailUrl);
 
-  const [regenerationQueued, setRegenerationQueued] = useState(false);
   const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
+
+  // scheduling a regeneration time
+  const [regenerationQueued, setRegenerationQueued] = useState(false);
+  const [thumbnailReady, setThumbnailReady] = useState(false);
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const boardSections = useMetadataStore((s) => s.boardSections);
   const section = boardSections[0].section;
@@ -46,7 +54,7 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
   const isThumbnailDirty = useLayoutStore((state) => {
     const layoutMap = state.layoutDirtyMap;
     return boardSections
-      .slice(0, 3) // ← top N sections
+      .slice(0, NUM_SECTION_TO_CHECK)
       .some((s) => layoutMap[s.section.section_id] === true);
   });
 
@@ -63,10 +71,10 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
 
       for (const block of sectionBlocks) {
         blocks.push(block);
-        if (blocks.length === 30) break;
+        if (blocks.length === NUM_BLOCKS_TO_GRAB) break;
       }
 
-      if (blocks.length === 30) break;
+      if (blocks.length === NUM_BLOCKS_TO_GRAB) break;
     }
 
     return blocks;
@@ -110,13 +118,28 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
     maybeGenerate();
   }, [board]);
 
-  // queuing regeneration
+  // queuing regeneration if layout dirty has been changed
   useEffect(() => {
-    if (isThumbnailDirty && !regenerationQueued) {
-      setRegenerationQueued(true);
+    if (isThumbnailDirty) {
+      // Dirty: cancel any pending regeneration
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+        debounceTimeout.current = null;
+      }
+      setThumbnailReady(true); // we're waiting for clean
+      return;
     }
-  }, [isThumbnailDirty, generateThumbnails, regenerationQueued]);
 
+    // Only schedule if we were ready and things are now clean
+    if (thumbnailReady) {
+      debounceTimeout.current = setTimeout(() => {
+        setRegenerationQueued(true);
+        setThumbnailReady(false); // reset the state
+      }, 1000); // debounce time after becoming clean
+    }
+  }, [isThumbnailDirty, thumbnailReady]);
+
+  // actually run generation
   useEffect(() => {
     if (!regenerationQueued || !board) return;
 
