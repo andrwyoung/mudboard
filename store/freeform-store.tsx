@@ -29,7 +29,8 @@ type FreeformStore = {
   editMode: boolean;
   setEditMode: (edit: boolean) => void;
 
-  positionMap: Record<string, Record<string, FreeformPosition>>;
+  positionMap: Record<string, Record<string, FreeformPosition>>; // sectionId -> blockId -> freeform position
+  getBlockPosition: (sectionId: string, blockId: string) => FreeformPosition;
   setPositionForBlock: (
     sectionId: string,
     blockId: string,
@@ -90,6 +91,16 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
     set({ editMode: edit });
   },
   positionMap: {},
+  getBlockPosition: (sectionId: string, blockId: string) => {
+    return (
+      get().positionMap[sectionId]?.[blockId] ?? {
+        x: 0,
+        y: 0,
+        z: 0,
+        scale: 1,
+      }
+    );
+  },
   setPositionForBlock: (sectionId, blockId, posOrFn) => {
     set((state) => {
       const section = state.positionMap[sectionId] ?? {};

@@ -3,7 +3,13 @@ import { useSelectionStore } from "@/store/selection-store";
 import { Block } from "@/types/block-types";
 import { BlockChooser } from "../blocks/memoized-block";
 import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
-import { AllBorderHandles } from "./resize/all-borders-handler";
+import { SideBorder } from "./resize/side-border";
+import {
+  ALL_CORNERS,
+  ALL_SIDES,
+  BlockScreenRect,
+} from "@/types/freeform-types";
+import { CornerHandles } from "./resize/corner-resize";
 
 const draggingRefs: Record<string, boolean> = {};
 const lastMouse: Record<string, { x: number; y: number }> = {};
@@ -19,22 +25,17 @@ export function BlockRenderer({
   editMode: boolean;
   spacebarDown: boolean;
 }) {
-  const { getCamera, positionMap } = useFreeformStore();
+  const { getCamera, getBlockPosition } = useFreeformStore();
   const camera = getCamera(sectionId);
-  const pos = positionMap[sectionId]?.[block.block_id] ?? {
-    x: 0,
-    y: 0,
-    z: 0,
-    scale: 1,
-  };
+  const blockPos = getBlockPosition(sectionId, block.block_id);
 
   const selectOnlyThisBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const isSelected = !!selectedBlocks[block.block_id];
 
-  const worldX = pos.x ?? 0;
-  const worldY = pos.y ?? 0;
-  const worldScale = pos.scale ?? 1;
+  const worldX = blockPos.x ?? 0;
+  const worldY = blockPos.y ?? 0;
+  const worldScale = blockPos.scale ?? 1;
 
   const screenX = worldX * camera.scale + camera.x;
   const screenY = worldY * camera.scale + camera.y;
@@ -43,6 +44,13 @@ export function BlockRenderer({
   const scaledBlockWidth =
     (block.width ?? COMPRESSED_IMAGE_WIDTH) * screenScale;
   const scaledBlockHeight = block.height * screenScale;
+
+  const blockScreenRect: BlockScreenRect = {
+    x: screenX,
+    y: screenY,
+    width: scaledBlockWidth,
+    height: scaledBlockHeight,
+  };
 
   function handleMouseDown(blockId: string, camera: CameraType) {
     draggingRefs[blockId] = true;
@@ -75,15 +83,31 @@ export function BlockRenderer({
 
   return (
     <div>
-      {editMode && isSelected && (
-        <AllBorderHandles
-          blockScreenRect={{
-            x: screenX,
-            y: screenY,
-            width: scaledBlockWidth,
-            height: scaledBlockHeight,
-          }}
-        />
+      {editMode && (
+        <>
+          {ALL_SIDES.map((side) => (
+            <SideBorder
+              key={side}
+              side={side}
+              block={block}
+              blockScreenRect={blockScreenRect}
+              blockPosition={blockPos}
+              camera={camera}
+              isSelected={isSelected}
+            />
+          ))}
+          {ALL_CORNERS.map((corner) => (
+            <CornerHandles
+              key={corner}
+              corner={corner}
+              block={block}
+              blockScreenRect={blockScreenRect}
+              blockPosition={blockPos}
+              camera={camera}
+              isSelected={isSelected}
+            />
+          ))}
+        </>
       )}
 
       <div

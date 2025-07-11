@@ -32,7 +32,11 @@ export function useMarque({
       if (target.closest("textarea, input")) return;
 
       const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
-      if (clickedId?.includes("::block-") || clickedId === "context-menu")
+      if (
+        clickedId?.includes("::block-") ||
+        clickedId === "context-menu" ||
+        clickedId?.includes("resize-")
+      )
         return;
       deselectBlocks();
 
