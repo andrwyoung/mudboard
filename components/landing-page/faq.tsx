@@ -44,7 +44,7 @@ export default function FAQ() {
           make and share boards! You only need to sign up if you want to{" "}
           <strong>save</strong> a board.
         </FAQItem>
-
+        {/* 
         <FAQItem question="What does Early Supporter do?">
           The Early Supporter license is a{" "}
           <span className="font-bold text-accent">one-time payment</span>, that
@@ -55,7 +55,7 @@ export default function FAQ() {
           <br />
           Future tools (like collaboration or portfolio features) may live in
           new plans, but your core experience <strong>won’t change</strong>.
-        </FAQItem>
+        </FAQItem> */}
 
         {/* <FAQItem question="Will I ever be forced into a subscription?">
           No. The lifetime license is built to have{" "}

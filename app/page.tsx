@@ -104,7 +104,7 @@ export default function Home() {
 
       <div className="absolute inset-0 overflow-hidden z-0">
         <Image
-          src="/hero3.png"
+          src="/hero4.png"
           alt="Gallery of images"
           fill
           className="w-full h-full object-cover opacity-20"

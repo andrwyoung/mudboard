@@ -13,9 +13,10 @@ import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
 import ThumbnailGenerator from "@/components/thumbnails/thumbnail-generator";
 import { useLoadingStore } from "@/store/loading-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
-import { PinnedModeToggle } from "@/components/ui/sidebar/pinned-toggle";
+import { PanelToggleButton } from "@/components/ui/sidebar/pinned-toggle";
 import { useMetadataStore } from "@/store/metadata-store";
 import { FreeFormToggle } from "@/components/ui/sidebar/freeform-toggle";
+import { FaLeaf } from "react-icons/fa";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -54,9 +55,16 @@ export default function Sidebar({
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
 
-          <div className="px-8 flex flex-col gap-6">
-            {process.env.NODE_ENV === "development" && <FreeFormToggle />}
-            <PinnedModeToggle />
+          <div className="px-8 flex flex-col gap-1">
+            <h3 className="text-sm mb-1">Toggles:</h3>
+            <FreeFormToggle />
+            {/* <PinnedModeToggle /> */}
+            <PanelToggleButton
+              mode="explore"
+              icon={<FaLeaf />}
+              label="Greenhouse"
+              title="Toggle Explore View"
+            />
           </div>
         </div>
       </div>

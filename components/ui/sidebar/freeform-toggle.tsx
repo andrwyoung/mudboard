@@ -1,6 +1,6 @@
 import { useFreeformStore } from "@/store/freeform-store";
 import { useUIStore } from "@/store/ui-store";
-import { FaTh } from "react-icons/fa";
+import { FaVectorSquare } from "react-icons/fa6";
 
 export function FreeFormToggle() {
   const toggleFreeformMode = useUIStore((s) => s.toggleFreeformMode);
@@ -12,8 +12,13 @@ export function FreeFormToggle() {
   return (
     <button
       type="button"
-      className={`flex items-center gap-2 cursor-pointer group transition-all duration-300 
-        ${freeformMode ? "text-accent" : "text-white hover:text-accent"}
+      className={`flex items-center gap-2 cursor-pointer group px-2 rounded-sm 
+         py-0.5
+        ${
+          freeformMode
+            ? "bg-accent text-primary"
+            : "text-white hover:text-accent"
+        }
         `}
       onClick={() => {
         if (editMode) {
@@ -21,9 +26,9 @@ export function FreeFormToggle() {
         }
         toggleFreeformMode();
       }}
-      title="Toggle Split Screen"
+      title="Toggle Freeform Mode"
     >
-      <FaTh className="" />
+      <FaVectorSquare className="" />
       <h3 className={`group-hover:underline `}>Canvas Mode</h3>
     </button>
   );

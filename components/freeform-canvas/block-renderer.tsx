@@ -2,6 +2,8 @@ import { CameraType, useFreeformStore } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { Block } from "@/types/block-types";
 import { BlockChooser } from "../blocks/memoized-block";
+import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
+import { AllBorderHandles } from "./resize/all-borders-handler";
 
 const draggingRefs: Record<string, boolean> = {};
 const lastMouse: Record<string, { x: number; y: number }> = {};
@@ -38,6 +40,10 @@ export function BlockRenderer({
   const screenY = worldY * camera.scale + camera.y;
   const screenScale = worldScale * camera.scale;
 
+  const scaledBlockWidth =
+    (block.width ?? COMPRESSED_IMAGE_WIDTH) * screenScale;
+  const scaledBlockHeight = block.height * screenScale;
+
   function handleMouseDown(blockId: string, camera: CameraType) {
     draggingRefs[blockId] = true;
 
@@ -68,40 +74,46 @@ export function BlockRenderer({
   }
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        left: screenX,
-        top: screenY,
-        transform: `scale(${screenScale})`,
-        transformOrigin: "top left",
-        width: block.width, // or block.width if you have one
-        height: block.height, // or block.height
-      }}
-      onClick={() => {
-        if (editMode && !isSelected) selectOnlyThisBlock("main", block);
-      }}
-      onMouseDown={(e) => {
-        if (!editMode || (editMode && spacebarDown)) return;
-        e.stopPropagation();
-        selectOnlyThisBlock("main", block);
-        lastMouse[block.block_id] = { x: e.clientX, y: e.clientY };
-        handleMouseDown(block.block_id, camera);
-      }}
-      className={`absolute`}
-      data-id={`main::block-freeform`}
-    >
-      {editMode && (
-        <div
-          className={`absolute inset-0 rounded-xl pointer-events-none ${
-            isSelected ? "border-2 border-accent" : "border-transparent"
-          }`}
-          // this now *scales naturally* with the block
+    <div>
+      {editMode && isSelected && (
+        <AllBorderHandles
+          blockScreenRect={{
+            x: screenX,
+            y: screenY,
+            width: scaledBlockWidth,
+            height: scaledBlockHeight,
+          }}
         />
       )}
 
-      {/* Actual block content */}
-      <BlockChooser canEdit={true} block={block} numCols={4} />
+      <div
+        style={{
+          position: "absolute",
+          left: screenX,
+          top: screenY,
+          transform: `scale(${screenScale})`,
+          transformOrigin: "top left",
+          width: block.width, // or block.width if you have one
+          height: block.height, // or block.height
+        }}
+        onMouseDown={(e) => {
+          if (e.button !== 0) return; // only respond to left-click
+          if (!editMode || (editMode && spacebarDown)) return;
+
+          e.stopPropagation();
+
+          if (!isSelected) {
+            selectOnlyThisBlock("main", block);
+          }
+
+          lastMouse[block.block_id] = { x: e.clientX, y: e.clientY };
+          handleMouseDown(block.block_id, camera);
+        }}
+        data-id={`main::block-freeform`}
+        className={`absolute z-0`}
+      >
+        <BlockChooser canEdit={true} block={block} numCols={4} />
+      </div>
     </div>
   );
 }

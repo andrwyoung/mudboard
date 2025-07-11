@@ -221,7 +221,7 @@ function Canvas({
       >
         <FaQuestion />
       </button>
-      <HelpModal open={helpOpen} setOpen={setHelpOpen} />
+      <HelpModal open={helpOpen} setOpen={setHelpOpen} pageNum={1} />
     </div>
   );
 }

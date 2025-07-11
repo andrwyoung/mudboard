@@ -4,11 +4,13 @@ import { useFreeformStore } from "@/store/freeform-store";
 import { useEffect, useState } from "react";
 import { Block } from "@/types/block-types";
 import { canvasRef } from "@/store/ui-store";
-import FreeformEditToggle from "@/components/freeform-canvas/edit-toggle";
 import { useCanvasPointerControls } from "@/hooks/freeform/use-canvas-pointer-controls";
 import { useCanvasZoom } from "@/hooks/freeform/use-freeform-zoom";
 import { BlockRenderer } from "@/components/freeform-canvas/block-renderer";
 import { Section } from "@/types/board-types";
+import { FreeformEditToggleSlider } from "@/components/freeform-canvas/edit-toggle";
+import { FaQuestion } from "react-icons/fa6";
+import HelpModal from "@/components/modals/help-modal";
 
 export default function FreeformCanvas({
   blocks,
@@ -18,6 +20,7 @@ export default function FreeformCanvas({
   section: Section;
 }) {
   const sectionId = section.section_id;
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const editMode = useFreeformStore((s) => s.editMode);
   const [spaceHeld, setSpaceHeld] = useState(false);
@@ -49,6 +52,19 @@ export default function FreeformCanvas({
   }, []);
 
   useEffect(() => {
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.button === 1) {
+        e.preventDefault(); // blocks autoscroll
+        const store = useFreeformStore.getState();
+        store.setEditMode(!store.editMode);
+      }
+    };
+
+    window.addEventListener("mousedown", handleMouseDown);
+    return () => window.removeEventListener("mousedown", handleMouseDown);
+  }, []);
+
+  useEffect(() => {
     if (camera) return;
 
     const el = canvasRef.current;
@@ -75,32 +91,48 @@ export default function FreeformCanvas({
   const { onWheel } = useCanvasZoom(sectionId);
 
   return (
-    <div
-      onMouseDown={onMouseDown}
-      onWheel={onWheel}
-      className={`w-full h-full relative overflow-hidden ${
-        cursorMovementsIsActive
-          ? isDragging
-            ? "cursor-grabbing"
-            : "cursor-grab"
-          : "cursor-default"
-      }`}
-      style={{ backgroundColor: "#505762" }}
-    >
-      <div className="absolute top-4 left-4 z-100">
-        <FreeformEditToggle />
+    <div className="w-full h-full overflow-hidden relative ">
+      <div className="absolute top-4 right-4 z-100">
+        <FreeformEditToggleSlider />
       </div>
 
-      {camera &&
-        blocks.map((block) => (
-          <BlockRenderer
-            key={block.block_id}
-            block={block}
-            sectionId={sectionId}
-            editMode={editMode}
-            spacebarDown={spaceHeld}
-          />
-        ))}
+      <div
+        onMouseDown={onMouseDown}
+        onWheel={onWheel}
+        className={`w-full h-full ${
+          cursorMovementsIsActive
+            ? isDragging
+              ? "cursor-grabbing"
+              : "cursor-grab"
+            : "cursor-default"
+        }`}
+        style={{
+          backgroundColor: editMode ? "#838383" : "#505050",
+        }}
+      >
+        {camera &&
+          blocks.map((block) => (
+            <BlockRenderer
+              key={block.block_id}
+              block={block}
+              sectionId={sectionId}
+              editMode={editMode}
+              spacebarDown={spaceHeld}
+            />
+          ))}
+      </div>
+
+      <button
+        onClick={() => setHelpOpen(true)}
+        type="button"
+        title="Help / Support"
+        className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
+               border-primary text-primary-darker rounded-full hover:border-accent
+              shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
+      >
+        <FaQuestion />
+      </button>
+      <HelpModal open={helpOpen} setOpen={setHelpOpen} pageNum={2} />
     </div>
   );
 }

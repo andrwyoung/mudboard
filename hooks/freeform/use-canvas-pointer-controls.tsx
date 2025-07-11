@@ -14,7 +14,7 @@ export function useCanvasPointerControls({
   const lastMouse = useRef({ x: 0, y: 0 });
 
   function onMouseDown(e: React.MouseEvent) {
-    if (!isActive) return;
+    if (!isActive || e.button !== 0) return;
 
     isDraggingRef.current = true;
     setIsDragging(true);

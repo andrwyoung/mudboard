@@ -1,5 +1,6 @@
 import { syncFreeformToSupabase } from "@/lib/syncing/sync-freeform";
 import { scheduleFreeformSync } from "@/lib/syncing/sync-schedulers";
+import { toast } from "sonner";
 import { create } from "zustand";
 
 export type CameraType = {
@@ -79,8 +80,15 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
     }),
 
   editMode: false,
-  setEditMode: (edit: boolean) => set({ editMode: edit }),
+  setEditMode: (edit: boolean) => {
+    // if (edit) {
+    //   toast("Arrange Mode");
+    // } else {
+    //   toast("View Mode");
+    // }
 
+    set({ editMode: edit });
+  },
   positionMap: {},
   setPositionForBlock: (sectionId, blockId, posOrFn) => {
     set((state) => {
