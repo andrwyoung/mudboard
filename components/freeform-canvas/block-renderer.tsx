@@ -200,7 +200,7 @@ export function BlockRenderer({
                 fireConfetti();
               }}
             >
-              Confetti
+              Celebration?
             </ContextMenuItem>
           </>
         )}
