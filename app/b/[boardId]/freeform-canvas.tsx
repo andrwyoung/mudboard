@@ -93,11 +93,11 @@ export default function FreeformCanvas({
 
   return (
     <div className="w-full h-full overflow-hidden relative ">
-      <div className="absolute top-4 right-4 z-100">
+      <div className="absolute top-4 right-4 z-10">
         <FreeformEditToggleSlider />
       </div>
 
-      <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-100">
+      <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-10">
         <h1 className="text-sm text-white font-header translate-y-[1px] font-semibold">
           Canvas Mode <span className="text-xs">(Under Construction)</span>
         </h1>
@@ -106,7 +106,7 @@ export default function FreeformCanvas({
       <div
         onMouseDown={onMouseDown}
         onWheel={onWheel}
-        className={`w-full h-full ${
+        className={`w-full h-full z-0 ${
           isDragging
             ? "cursor-grabbing"
             : cursorMovementsIsActive

@@ -43,13 +43,14 @@ const welcomePages: Record<
           It makes it <strong>easier to find</strong> your favorite refs.
         </p>
 
-        <p className="text-sm text-primary mb-1">
+        <p className="text-sm text-primary mb-10">
           Or reuse something you loved <strong>from another project</strong>.
         </p>
-        <p className="text-sm text-primary mb-10">Take a look around!</p>
+        {/* <p className="text-sm text-primary ">Take a look around!</p> */}
         <p className="text-sm text-primary mb-2 text-center">
-          When you&apos;re ready, finish the tutorial at a
+          Click
           <BeanIcon className="inline -translate-y-[1px] ml-1.5 mr-0.5 size-4" />{" "}
+          to create a Mudkit
         </p>
       </div>
     ),

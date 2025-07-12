@@ -1,6 +1,6 @@
 // DATABASE only
 
-// take my list of blocks. clone it. add cloned blocks to section I want
+// this is used when cloning blocks from the greenohuse
 
 import { supabase } from "@/lib/supabase/supabase-client";
 import { TablesInsert } from "@/types/supabase";

@@ -1,7 +1,6 @@
 // DATABASE only
 
-// take a section. copy all blocks inside that section. put all those blocks into new section.
-// repeat
+// this is used when cloning BOARDS
 
 import { supabase } from "@/lib/supabase/supabase-client";
 import { TablesInsert } from "@/types/supabase";
@@ -45,6 +44,12 @@ export async function cloneBlocksFromSections(
     crop: block.crop,
 
     cloned_from: block.block_id,
+
+    // ONLY HERE. when we clone for demo
+    canvas_x: block.canvas_x,
+    canvas_y: block.canvas_y,
+    canvas_scale: block.canvas_scale,
+    canvas_z: block.canvas_z,
 
     // REMEMBER: update clone-blocks.tsx too
   }));
