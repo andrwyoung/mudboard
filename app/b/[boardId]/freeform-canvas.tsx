@@ -3,7 +3,7 @@
 import { useFreeformStore } from "@/store/freeform-store";
 import { useEffect, useState } from "react";
 import { Block } from "@/types/block-types";
-import { canvasRef } from "@/store/ui-store";
+import { mainCanvasRef } from "@/store/ui-store";
 import { useCanvasPointerControls } from "@/hooks/freeform/use-canvas-pointer-controls";
 import { useCanvasZoom } from "@/hooks/freeform/use-freeform-zoom";
 import { BlockRenderer } from "@/components/freeform-canvas/block-renderer";
@@ -29,6 +29,8 @@ export default function FreeformCanvas({
 
   const camera = useFreeformStore((s) => s.cameraMap[section.section_id]);
 
+  const { onWheel, zoomCameraCentered } = useCanvasZoom(sectionId);
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.code === "Space") setSpaceHeld(true);
@@ -36,6 +38,19 @@ export default function FreeformCanvas({
       if (e.key === "e" || e.key === "E") {
         const store = useFreeformStore.getState();
         store.setEditMode(!store.editMode);
+        return;
+      }
+
+      // // ZOOM IN/OUT
+      if (e.key === "=" || e.key === "+") {
+        zoomCameraCentered("in");
+        return;
+      }
+
+      if (e.key === "-" || e.key === "_") {
+        zoomCameraCentered("out");
+        return;
+        // }
       }
     }
 
@@ -49,12 +64,12 @@ export default function FreeformCanvas({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, []);
+  }, [zoomCameraCentered]);
 
   useEffect(() => {
     if (camera) return;
 
-    const el = canvasRef.current;
+    const el = mainCanvasRef.current;
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
@@ -76,12 +91,16 @@ export default function FreeformCanvas({
     setIsDragging,
   });
 
-  const { onWheel } = useCanvasZoom(sectionId);
-
   return (
     <div className="w-full h-full overflow-hidden relative ">
       <div className="absolute top-4 right-4 z-100">
         <FreeformEditToggleSlider />
+      </div>
+
+      <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-100">
+        <h1 className="text-sm text-white font-header translate-y-[1px] font-semibold">
+          Canvas Mode <span className="text-xs">(Under Construction)</span>
+        </h1>
       </div>
 
       <div

@@ -1,5 +1,11 @@
 import { useFreeformStore } from "@/store/freeform-store";
-import { canvasRef } from "@/store/ui-store";
+import { mainCanvasRef } from "@/store/ui-store";
+import {
+  MAX_ZOOM,
+  MIN_ZOOM,
+  SCROLL_ZOOM_FACTOR,
+  ZOOM_FACTOR,
+} from "@/types/constants";
 
 export function useCanvasZoom(sectionId: string) {
   function onWheel(e: React.WheelEvent) {
@@ -7,7 +13,7 @@ export function useCanvasZoom(sectionId: string) {
     const camera = useFreeformStore.getState().getCamera(sectionId);
     const setCameraForSection = useFreeformStore.getState().setCameraForSection;
 
-    const rect = canvasRef.current?.getBoundingClientRect();
+    const rect = mainCanvasRef.current?.getBoundingClientRect();
     if (!rect) return;
 
     const mouseX = e.clientX - rect.left;
@@ -16,8 +22,12 @@ export function useCanvasZoom(sectionId: string) {
     const worldX = (mouseX - camera.x) / camera.scale;
     const worldY = (mouseY - camera.y) / camera.scale;
 
-    const zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
-    const newScale = Math.max(0.01, Math.min(6, camera.scale * zoomFactor));
+    const zoomFactor =
+      e.deltaY < 0 ? SCROLL_ZOOM_FACTOR : 1 / SCROLL_ZOOM_FACTOR;
+    const newScale = Math.max(
+      MIN_ZOOM,
+      Math.min(MAX_ZOOM, camera.scale * zoomFactor)
+    );
 
     const newCameraX = mouseX - worldX * newScale;
     const newCameraY = mouseY - worldY * newScale;
@@ -29,5 +39,31 @@ export function useCanvasZoom(sectionId: string) {
     });
   }
 
-  return { onWheel };
+  function zoomCameraCentered(direction: "in" | "out") {
+    const camera = useFreeformStore.getState().getCamera(sectionId);
+    const setCameraForSection = useFreeformStore.getState().setCameraForSection;
+
+    const rect = mainCanvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const { width, height } = rect;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    const worldX = (centerX - camera.x) / camera.scale;
+    const worldY = (centerY - camera.y) / camera.scale;
+
+    const factor = direction === "in" ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
+    const newScale = Math.max(
+      MIN_ZOOM,
+      Math.min(MAX_ZOOM, camera.scale * factor)
+    );
+
+    const newX = centerX - worldX * newScale;
+    const newY = centerY - worldY * newScale;
+
+    setCameraForSection(sectionId, { x: newX, y: newY, scale: newScale });
+  }
+
+  return { onWheel, zoomCameraCentered };
 }

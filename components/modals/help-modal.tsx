@@ -110,8 +110,8 @@ export function PageTwo() {
         Keyboard Shortcuts
       </h1>
       <div className="flex flex-col gap-2">
-        <Shortcut label="Toggle Mode" keys={["E", "Middle Mouse"]} />
-        <Shortcut label="Zoom In/Out" keys={["Pinch/Scroll"]} />
+        <Shortcut label="Toggle Mode" keys={["E", "Middle Mouse Click"]} />
+        <Shortcut label="Zoom In / Out" keys={["+", "-", "Scroll Wheel"]} />
 
         <h3 className="mt-2 mb-2 font-bold">Arrange Mode</h3>
         <Shortcut label="Pan" keys={["Space + Drag", "Middle Mouse Drag"]} />

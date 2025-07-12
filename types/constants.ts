@@ -58,6 +58,11 @@ export const NUM_BLOCKS_TO_GRAB = 30;
 export const BORDER_HITBOX_SIZE = 16;
 export const BORDER_SIZE = 3;
 
+export const MAX_ZOOM = 6;
+export const MIN_ZOOM = 0.01;
+export const ZOOM_FACTOR = 1.5;
+export const SCROLL_ZOOM_FACTOR = 1.1;
+
 export const MIN_SCALE = 0.1;
 export const MAX_SCALE = 10;
 export const MIN_PIXEL_SIZE = 40;

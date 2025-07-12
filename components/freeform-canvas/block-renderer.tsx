@@ -1,6 +1,6 @@
 import { CameraType, useFreeformStore } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { Block } from "@/types/block-types";
+import { Block, MudboardImage } from "@/types/block-types";
 import { BlockChooser } from "../blocks/memoized-block";
 import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 import { SideBorder } from "./resize/side-border";
@@ -10,6 +10,16 @@ import {
   BlockScreenRect,
 } from "@/types/freeform-types";
 import { CornerHandles } from "./resize/corner-resize";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "../ui/context-menu";
+import { getImageUrl } from "@/utils/get-image-url";
+import { copyImageToClipboard } from "@/lib/local-helpers/copy-image-to-clipboard";
+import { usePanelStore } from "@/store/panel-store";
+import { fireConfetti } from "@/utils/fire-confetti";
 
 const draggingRefs: Record<string, boolean> = {};
 const lastMouse: Record<string, { x: number; y: number }> = {};
@@ -34,6 +44,10 @@ export function BlockRenderer({
   const selectOnlyThisBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const isSelected = !!selectedBlocks[block.block_id];
+
+  const openPinnedPanelWithBlock = usePanelStore(
+    (s) => s.openPinnedPanelWithBlock
+  );
 
   const worldX = blockPos.x ?? 0;
   const worldY = blockPos.y ?? 0;
@@ -84,64 +98,113 @@ export function BlockRenderer({
   }
 
   return (
-    <div>
-      {editMode && (
-        <>
-          {ALL_SIDES.map((side) => (
-            <SideBorder
-              key={side}
-              side={side}
-              block={block}
-              blockScreenRect={blockScreenRect}
-              blockPosition={blockPos}
-              camera={camera}
-              isSelected={isSelected}
-              disableResizing={disableResizing}
-            />
-          ))}
-          {ALL_CORNERS.map((corner) => (
-            <CornerHandles
-              key={corner}
-              corner={corner}
-              block={block}
-              blockScreenRect={blockScreenRect}
-              blockPosition={blockPos}
-              camera={camera}
-              isSelected={isSelected}
-              disableResizing={disableResizing}
-            />
-          ))}
-        </>
-      )}
-
-      <div
-        style={{
-          position: "absolute",
-          left: screenX,
-          top: screenY,
-          transform: `scale(${screenScale})`,
-          transformOrigin: "top left",
-          width: block.width, // or block.width if you have one
-          height: block.height, // or block.height
-        }}
-        onMouseDown={(e) => {
-          if (e.button !== 0) return; // only respond to left-click
-          if (!editMode || (editMode && spacebarDown)) return;
-
-          e.stopPropagation();
-
+    <ContextMenu>
+      <ContextMenuTrigger
+        asChild
+        onContextMenu={() => {
           if (!isSelected) {
             selectOnlyThisBlock("main", block);
           }
-
-          lastMouse[block.block_id] = { x: e.clientX, y: e.clientY };
-          handleMouseDown(block.block_id, camera);
         }}
-        data-id={`main::block-freeform`}
-        className={`absolute z-0`}
       >
-        <BlockChooser canEdit={true} block={block} numCols={4} />
-      </div>
-    </div>
+        <div>
+          {editMode && (
+            <>
+              {ALL_SIDES.map((side) => (
+                <SideBorder
+                  key={side}
+                  side={side}
+                  block={block}
+                  blockScreenRect={blockScreenRect}
+                  blockPosition={blockPos}
+                  camera={camera}
+                  isSelected={isSelected}
+                  disableResizing={disableResizing}
+                />
+              ))}
+              {ALL_CORNERS.map((corner) => (
+                <CornerHandles
+                  key={corner}
+                  corner={corner}
+                  block={block}
+                  blockScreenRect={blockScreenRect}
+                  blockPosition={blockPos}
+                  camera={camera}
+                  isSelected={isSelected}
+                  disableResizing={disableResizing}
+                />
+              ))}
+            </>
+          )}
+
+          <div
+            style={{
+              position: "absolute",
+              left: screenX,
+              top: screenY,
+              transform: `scale(${screenScale})`,
+              transformOrigin: "top left",
+              width: block.width, // or block.width if you have one
+              height: block.height, // or block.height
+            }}
+            onMouseDown={(e) => {
+              if (e.button !== 0) return; // only respond to left-click
+              if (!editMode || (editMode && spacebarDown)) return;
+
+              e.stopPropagation();
+
+              if (!isSelected) {
+                selectOnlyThisBlock("main", block);
+              }
+
+              lastMouse[block.block_id] = { x: e.clientX, y: e.clientY };
+              handleMouseDown(block.block_id, camera);
+            }}
+            data-id={`main::block-freeform`}
+            className={`absolute z-0`}
+          >
+            <BlockChooser canEdit={true} block={block} numCols={4} />
+          </div>
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        {block.block_type === "image" && (
+          <>
+            <ContextMenuItem
+              onClick={async () => {
+                if (block.data) {
+                  const image = block.data as MudboardImage;
+                  const url = getImageUrl(
+                    image.image_id,
+                    image.file_ext,
+                    "full"
+                  );
+                  await copyImageToClipboard(url);
+                }
+              }}
+            >
+              Copy Image
+            </ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                // if (!pinnedStoreOpen) {
+                //   setSidebarCollapsed(true);
+                // }
+                openPinnedPanelWithBlock(block);
+              }}
+            >
+              Spotlight
+            </ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                fireConfetti();
+              }}
+            >
+              Confetti
+            </ContextMenuItem>
+          </>
+        )}
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }

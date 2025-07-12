@@ -168,58 +168,64 @@ function BlockComponent({
             >
               Spotlight
             </ContextMenuItem>
-            {selectedBlocksLength === 1 ? (
-              <ContextMenuItem
-                onClick={() => {
-                  if (block.data) {
-                    const image = block.data as MudboardImage;
 
-                    const url = getImageUrl(
-                      image.image_id,
-                      image.file_ext,
-                      "full"
-                    );
-                    const filename = image.original_name ?? "image";
+            {canEdit && (
+              <ContextMenuSub>
+                <ContextMenuSubTrigger>Add Below</ContextMenuSubTrigger>
+                <ContextMenuSubContent>
+                  <ContextMenuItem onClick={addImage}>Image</ContextMenuItem>
+                  <ContextMenuItem onClick={addText}>Text</ContextMenuItem>
+                </ContextMenuSubContent>
+              </ContextMenuSub>
+            )}
 
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.download = filename;
-                    link.target = "_blank"; // optional: in case browser blocks download
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  }
-                }}
-              >
-                Download Image
-              </ContextMenuItem>
-            ) : (
-              <>
-                {/* <ContextMenuItem onClick={() => console.log("hey")}>
+            {
+              selectedBlocksLength > 1 && (
+                <>
+                  {/* <ContextMenuItem onClick={() => console.log("hey")}>
                 Group Selected
               </ContextMenuItem> */}
-                <ContextMenuItem
-                  onClick={() => {
-                    const selected = Object.values(selectedBlocks);
-                    downloadImagesAsZip(selected);
-                  }}
-                >
-                  Download Selected
-                </ContextMenuItem>
-              </>
-            )}
+                  <ContextMenuSeparator />
+                  <ContextMenuItem
+                    onClick={() => {
+                      const selected = Object.values(selectedBlocks);
+                      downloadImagesAsZip(selected);
+                    }}
+                  >
+                    Download Selected
+                  </ContextMenuItem>
+                </>
+              )
+              // : (
+              //   <ContextMenuItem
+              //     onClick={() => {
+              //       if (block.data) {
+              //         const image = block.data as MudboardImage;
+
+              //         const url = getImageUrl(
+              //           image.image_id,
+              //           image.file_ext,
+              //           "full"
+              //         );
+              //         const filename = image.original_name ?? "image";
+
+              //         const link = document.createElement("a");
+              //         link.href = url;
+              //         link.download = filename;
+              //         link.target = "_blank"; // optional: in case browser blocks download
+              //         document.body.appendChild(link);
+              //         link.click();
+              //         document.body.removeChild(link);
+              //       }
+              //     }}
+              //   >
+              //     Download Image
+              //   </ContextMenuItem>
+              // )
+            }
           </>
         )}
 
-        {canEdit && (
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>Add Below</ContextMenuSubTrigger>
-            <ContextMenuSubContent>
-              <ContextMenuItem onClick={addImage}>Image</ContextMenuItem>
-              <ContextMenuItem onClick={addText}>Text</ContextMenuItem>
-            </ContextMenuSubContent>
-          </ContextMenuSub>
-        )}
         {/* 
         <ContextMenuItem onClick={() => deselectBlocks()}>
           Deselect
@@ -227,7 +233,7 @@ function BlockComponent({
 
         {canEdit && (
           <>
-            <ContextMenuSeparator />
+            {selectedBlocksLength === 1 && <ContextMenuSeparator />}
             <ContextMenuItem
               onClick={() => {
                 // default to deleting the current block

@@ -61,7 +61,7 @@ export const useUIStore = create<UIStore>((set, get) => ({
     })),
 }));
 
-export const canvasRef = createRef<HTMLDivElement>();
+export const mainCanvasRef = createRef<HTMLDivElement>();
 
 type MeasureStore = {
   sidebarWidth: number;

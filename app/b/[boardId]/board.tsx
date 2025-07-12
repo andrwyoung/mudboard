@@ -16,7 +16,7 @@ import Sidebar from "./sidebar";
 import { Block } from "@/types/block-types";
 import { useImageImport } from "@/hooks/use-import-images";
 import { useLayoutStore } from "@/store/layout-store";
-import { canvasRef, useMeasureStore, useUIStore } from "@/store/ui-store";
+import { mainCanvasRef, useMeasureStore, useUIStore } from "@/store/ui-store";
 import {
   DndContext,
   MouseSensor,
@@ -282,7 +282,7 @@ export default function Board({ boardId }: { boardId: string }) {
                 : "duration-500 opacity-100"
             }`}
           >
-            <div ref={canvasRef} className="flex-1">
+            <div ref={mainCanvasRef} className="flex-1">
               {freeformMode && selectedSection && boardInit ? (
                 <FreeformCanvas
                   blocks={sectionColumns[

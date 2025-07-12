@@ -24,7 +24,7 @@ export default function PinnedPanel() {
     <div className="flex flex-col h-full w-full bg-overlay-background text-white overflow-auto relative">
       <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-100">
         <h1 className="text-sm text-white font-header translate-y-[1px]">
-          Focus View
+          Spotlight View
         </h1>
         <InfoTooltip
           text="Click to drag. scroll to zoom. Edits here don’t change the gallery. More tools coming soon."
