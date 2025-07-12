@@ -1,4 +1,8 @@
-import { BlockScreenRect, CornerType } from "@/types/freeform-types";
+import {
+  BlockScreenRect,
+  CornerType,
+  getCursorForCorner,
+} from "@/types/freeform-types";
 import { CameraType, FreeformPosition } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
 import { useCornerResizeHandler } from "@/hooks/freeform/use-corner-resize-handler";
@@ -10,6 +14,7 @@ export function CornerHandles({
   blockPosition,
   camera,
   isSelected,
+  disableResizing,
 }: {
   corner: CornerType;
   block: Block;
@@ -17,6 +22,7 @@ export function CornerHandles({
   blockPosition: FreeformPosition;
   camera: CameraType;
   isSelected: boolean;
+  disableResizing: boolean;
 }) {
   const INDICATOR_SIZE = 16;
   const HITBOX_WIDTH = 20;
@@ -45,32 +51,27 @@ export function CornerHandles({
       top: number;
       left: number;
       transform: string;
-      cursor: string;
     }
   > = {
     "top-left": {
       top: y,
       left: x,
       transform: "translate(-50%, -50%) rotate(135deg)",
-      cursor: "nwse-resize",
     },
     "top-right": {
       top: y,
       left: x + width,
       transform: "translate(-50%, -50%) rotate(45deg)",
-      cursor: "nesw-resize",
     },
     "bottom-left": {
       top: y + height,
       left: x,
       transform: "translate(-50%, -50%) rotate(-135deg)",
-      cursor: "nesw-resize",
     },
     "bottom-right": {
       top: y + height,
       left: x + width,
       transform: "translate(-50%, -50%) rotate(-45deg)",
-      cursor: "nwse-resize",
     },
   };
 
@@ -86,12 +87,13 @@ export function CornerHandles({
       <div
         style={{
           ...hitbox_positions[corner],
+          cursor: !disableResizing ? getCursorForCorner(corner) : undefined,
           width: HITBOX_WIDTH,
           height: HITBOX_HEIGHT,
         }}
         data-id={`resize-${corner}`}
         className="absolute z-3"
-        onMouseDown={onMouseDown}
+        onMouseDown={!disableResizing ? onMouseDown : undefined}
       />
       {isSelected && (
         <div

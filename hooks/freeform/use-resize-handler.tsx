@@ -30,6 +30,7 @@ export function useResizeHandler({
   const setPosition = useFreeformStore((s) => s.setPositionForBlock);
 
   const onMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
     e.stopPropagation();
     e.preventDefault();
 

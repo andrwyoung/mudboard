@@ -52,19 +52,6 @@ export default function FreeformCanvas({
   }, []);
 
   useEffect(() => {
-    const handleMouseDown = (e: MouseEvent) => {
-      if (e.button === 1) {
-        e.preventDefault(); // blocks autoscroll
-        const store = useFreeformStore.getState();
-        store.setEditMode(!store.editMode);
-      }
-    };
-
-    window.addEventListener("mousedown", handleMouseDown);
-    return () => window.removeEventListener("mousedown", handleMouseDown);
-  }, []);
-
-  useEffect(() => {
     if (camera) return;
 
     const el = canvasRef.current;
@@ -84,7 +71,8 @@ export default function FreeformCanvas({
   // hooks
   const { onMouseDown } = useCanvasPointerControls({
     sectionId,
-    isActive: cursorMovementsIsActive,
+    editMode,
+    spaceHeld,
     setIsDragging,
   });
 
@@ -100,10 +88,10 @@ export default function FreeformCanvas({
         onMouseDown={onMouseDown}
         onWheel={onWheel}
         className={`w-full h-full ${
-          cursorMovementsIsActive
-            ? isDragging
-              ? "cursor-grabbing"
-              : "cursor-grab"
+          isDragging
+            ? "cursor-grabbing"
+            : cursorMovementsIsActive
+            ? "cursor-grab"
             : "cursor-default"
         }`}
         style={{
@@ -118,6 +106,7 @@ export default function FreeformCanvas({
               sectionId={sectionId}
               editMode={editMode}
               spacebarDown={spaceHeld}
+              disableResizing={isDragging || spaceHeld}
             />
           ))}
       </div>

@@ -114,7 +114,7 @@ export function PageTwo() {
         <Shortcut label="Zoom In/Out" keys={["Pinch/Scroll"]} />
 
         <h3 className="mt-2 mb-2 font-bold">Arrange Mode</h3>
-        <Shortcut label="Pan" keys={["Space + Drag"]} />
+        <Shortcut label="Pan" keys={["Space + Drag", "Middle Mouse Drag"]} />
       </div>
     </div>
   );

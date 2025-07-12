@@ -2,7 +2,7 @@ import { useResizeHandler } from "@/hooks/freeform/use-resize-handler";
 import { CameraType, FreeformPosition } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
 import { BORDER_HITBOX_SIZE, BORDER_SIZE } from "@/types/constants";
-import { BlockScreenRect } from "@/types/freeform-types";
+import { BlockScreenRect, SideType } from "@/types/freeform-types";
 
 export function SideBorder({
   side,
@@ -11,19 +11,23 @@ export function SideBorder({
   blockPosition,
   camera,
   isSelected,
+  disableResizing: isDragging,
 }: {
-  side: "top" | "right" | "bottom" | "left";
+  side: SideType;
   block: Block;
   blockScreenRect: BlockScreenRect;
   blockPosition: FreeformPosition;
   camera: CameraType;
   isSelected: boolean;
+  disableResizing: boolean;
 }) {
   const { x, y, width, height } = blockScreenRect;
 
-  const hitboxStyle: React.CSSProperties = {
-    cursor: side === "left" || side === "right" ? "ew-resize" : "ns-resize",
-  };
+  const hitboxStyle: React.CSSProperties = !isDragging
+    ? {
+        cursor: side === "left" || side === "right" ? "ew-resize" : "ns-resize",
+      }
+    : {};
 
   const visualStyle: React.CSSProperties = {};
   switch (side) {
@@ -90,7 +94,7 @@ export function SideBorder({
   return (
     <div
       style={hitboxStyle}
-      onMouseDown={onMouseDown}
+      onMouseDown={!isDragging ? onMouseDown : undefined}
       className="absolute z-1 
         flex justify-center items-center "
       data-id={`resize-${side}`}

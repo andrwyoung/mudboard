@@ -19,11 +19,13 @@ export function BlockRenderer({
   sectionId,
   editMode,
   spacebarDown,
+  disableResizing,
 }: {
   block: Block;
   sectionId: string;
   editMode: boolean;
   spacebarDown: boolean;
+  disableResizing: boolean;
 }) {
   const { getCamera, getBlockPosition } = useFreeformStore();
   const camera = getCamera(sectionId);
@@ -94,6 +96,7 @@ export function BlockRenderer({
               blockPosition={blockPos}
               camera={camera}
               isSelected={isSelected}
+              disableResizing={disableResizing}
             />
           ))}
           {ALL_CORNERS.map((corner) => (
@@ -105,6 +108,7 @@ export function BlockRenderer({
               blockPosition={blockPos}
               camera={camera}
               isSelected={isSelected}
+              disableResizing={disableResizing}
             />
           ))}
         </>

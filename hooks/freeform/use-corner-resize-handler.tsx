@@ -5,7 +5,7 @@ import {
 } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
 import { MAX_SCALE, MIN_PIXEL_SIZE, MIN_SCALE } from "@/types/constants";
-import { BlockScreenRect, CornerType } from "@/types/freeform-types";
+import { CornerType } from "@/types/freeform-types";
 import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 
 export function useCornerResizeHandler({
@@ -22,6 +22,7 @@ export function useCornerResizeHandler({
   const setPosition = useFreeformStore((s) => s.setPositionForBlock);
 
   const onMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
 
