@@ -506,6 +506,9 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          freeform_arrange_color: string | null
+          freeform_border_off: boolean | null
+          freeform_view_color: string | null
           has_fired_confetti: boolean | null
           role: Database["public"]["Enums"]["admin_level"] | null
           tier: Database["public"]["Enums"]["tier_level"]
@@ -515,6 +518,9 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
+          freeform_arrange_color?: string | null
+          freeform_border_off?: boolean | null
+          freeform_view_color?: string | null
           has_fired_confetti?: boolean | null
           role?: Database["public"]["Enums"]["admin_level"] | null
           tier?: Database["public"]["Enums"]["tier_level"]
@@ -524,6 +530,9 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string
+          freeform_arrange_color?: string | null
+          freeform_border_off?: boolean | null
+          freeform_view_color?: string | null
           has_fired_confetti?: boolean | null
           role?: Database["public"]["Enums"]["admin_level"] | null
           tier?: Database["public"]["Enums"]["tier_level"]

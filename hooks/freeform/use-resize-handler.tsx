@@ -3,13 +3,10 @@ import {
   FreeformPosition,
   useFreeformStore,
 } from "@/store/freeform-store";
+import { useSelectionStore } from "@/store/selection-store";
 import { Block } from "@/types/block-types";
 import { MAX_SCALE, MIN_PIXEL_SIZE, MIN_SCALE } from "@/types/constants";
-import {
-  BlockScreenRect,
-  getCursorForSide,
-  SideType,
-} from "@/types/freeform-types";
+import { getCursorForSide, SideType } from "@/types/freeform-types";
 import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 
 function getSizeDelta(newScale: number, startScale: number, dimension: number) {
@@ -28,11 +25,14 @@ export function useResizeHandler({
   camera: CameraType;
 }) {
   const setPosition = useFreeformStore((s) => s.setPositionForBlock);
+  const selectBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
 
   const onMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return;
     e.stopPropagation();
     e.preventDefault();
+
+    selectBlock("main", block);
 
     const startX = e.clientX;
     const startY = e.clientY;

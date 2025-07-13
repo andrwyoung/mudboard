@@ -1,0 +1,138 @@
+import {
+  getLuminanceFromHSV,
+  hexToHSV,
+  hsvToHex,
+} from "@/lib/color-picker/color-converters";
+import React, { useState } from "react";
+
+const COLOR_PICKER_SIZE = 144;
+
+export default function ColorPickerWheel({
+  initialColor,
+  onChange,
+}: {
+  initialColor: string;
+  onChange: (color: string) => void;
+}) {
+  const [hsv, setHSV] = useState(() => hexToHSV(initialColor));
+  const isColorLight = getLuminanceFromHSV(hsv) > 0.5;
+
+  const handleSVMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    const update = (clientX: number, clientY: number) => {
+      const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+
+      const newHSV = { ...hsv, s: x * 100, v: (1 - y) * 100 };
+      setHSV(newHSV);
+      onChange(hsvToHex(newHSV));
+    };
+
+    update(e.clientX, e.clientY);
+
+    let frame: number | null = null;
+    const move = (moveEvent: MouseEvent) => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() =>
+        update(moveEvent.clientX, moveEvent.clientY)
+      );
+    };
+
+    const up = () => {
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseup", up);
+    };
+
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
+  };
+
+  const handleHueMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    const updateHue = (clientX: number) => {
+      const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const newHSV = { ...hsv, h: x * 360 };
+      setHSV(newHSV);
+      onChange(hsvToHex(newHSV));
+    };
+
+    updateHue(e.clientX);
+
+    let frame: number | null = null;
+    const move = (moveEvent: MouseEvent) => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => updateHue(moveEvent.clientX));
+    };
+
+    const up = () => {
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseup", up);
+    };
+
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
+  };
+
+  return (
+    <div className="flex flex-col items-center">
+      <div
+        className="relative rounded-t-sm overflow-hidden shadow-lg cursor-pointer "
+        style={{ width: COLOR_PICKER_SIZE, height: COLOR_PICKER_SIZE }}
+        onMouseDown={handleSVMouseDown}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `hsl(${hsv.h}, 100%, 50%)`,
+            maskImage: `linear-gradient(to right, black, white)`,
+            WebkitMaskImage: `linear-gradient(to right, black, white)`,
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, black, transparent), linear-gradient(to left, transparent, white)",
+          }}
+        />
+        <div
+          className={`absolute w-3 h-3 rounded-full border-2 shadow-lg ${
+            isColorLight ? "border-stone-800" : "border-white"
+          }`}
+          style={{
+            left: `${hsv.s}%`,
+            top: `${100 - hsv.v}%`,
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      </div>
+
+      <div
+        className="relative h-4 rounded-b-sm overflow-hidden shadow-inner cursor-pointer"
+        style={{ width: COLOR_PICKER_SIZE }}
+        onMouseDown={handleHueMouseDown}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)",
+          }}
+        />
+        <div
+          className={`absolute top-1/2 w-[3px] h-4 
+            ${hsv.h >= 20 && hsv.h <= 140 ? "bg-slate-500" : "bg-white"}`}
+          style={{
+            left: `${(hsv.h / 360) * 100}%`,
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      </div>
+    </div>
+  );
+}

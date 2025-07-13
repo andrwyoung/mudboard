@@ -1,7 +1,12 @@
 import { useResizeHandler } from "@/hooks/freeform/use-resize-handler";
 import { CameraType, FreeformPosition } from "@/store/freeform-store";
+import { useUserPreferenceStore } from "@/store/use-preferences-store";
 import { Block } from "@/types/block-types";
-import { BORDER_HITBOX_SIZE, BORDER_SIZE } from "@/types/constants";
+import {
+  BORDER_HITBOX_SIZE,
+  BORDER_SIZE,
+  HANDLE_Z_OFFSET,
+} from "@/types/constants";
 import { BlockScreenRect, SideType } from "@/types/freeform-types";
 
 export function SideBorder({
@@ -10,22 +15,23 @@ export function SideBorder({
   blockScreenRect,
   blockPosition,
   camera,
-  isSelected,
-  disableResizing: isDragging,
+  isOnlySelected,
+  disableResizing,
 }: {
   side: SideType;
   block: Block;
   blockScreenRect: BlockScreenRect;
   blockPosition: FreeformPosition;
   camera: CameraType;
-  isSelected: boolean;
+  isOnlySelected: boolean;
   disableResizing: boolean;
 }) {
   const { x, y, width, height } = blockScreenRect;
 
-  const hitboxStyle: React.CSSProperties = !isDragging
+  const hitboxStyle: React.CSSProperties = !disableResizing
     ? {
         cursor: side === "left" || side === "right" ? "ew-resize" : "ns-resize",
+        zIndex: blockPosition.z + HANDLE_Z_OFFSET,
       }
     : {};
 
@@ -91,15 +97,17 @@ export function SideBorder({
     camera,
   });
 
+  const minimalBorders = useUserPreferenceStore((s) => s.minimalBorders);
+
   return (
     <div
       style={hitboxStyle}
-      onMouseDown={!isDragging ? onMouseDown : undefined}
+      onMouseDown={!disableResizing ? onMouseDown : undefined}
       className="absolute z-1 
         flex justify-center items-center "
       data-id={`resize-${side}`}
     >
-      {isSelected && (
+      {isOnlySelected && !minimalBorders && (
         <div
           style={visualStyle}
           className="bg-accent z-2 pointer-events-none"

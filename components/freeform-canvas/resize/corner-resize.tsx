@@ -6,6 +6,8 @@ import {
 import { CameraType, FreeformPosition } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
 import { useCornerResizeHandler } from "@/hooks/freeform/use-corner-resize-handler";
+import { useUserPreferenceStore } from "@/store/use-preferences-store";
+import { HANDLE_Z_OFFSET } from "@/types/constants";
 
 export function CornerHandles({
   corner,
@@ -13,7 +15,7 @@ export function CornerHandles({
   blockScreenRect,
   blockPosition,
   camera,
-  isSelected,
+  isOnlySelected,
   disableResizing,
 }: {
   corner: CornerType;
@@ -21,7 +23,7 @@ export function CornerHandles({
   blockScreenRect: BlockScreenRect;
   blockPosition: FreeformPosition;
   camera: CameraType;
-  isSelected: boolean;
+  isOnlySelected: boolean;
   disableResizing: boolean;
 }) {
   const INDICATOR_SIZE = 16;
@@ -82,6 +84,8 @@ export function CornerHandles({
     camera,
   });
 
+  const minimalBorders = useUserPreferenceStore((s) => s.minimalBorders);
+
   return (
     <>
       <div
@@ -90,17 +94,19 @@ export function CornerHandles({
           cursor: !disableResizing ? getCursorForCorner(corner) : undefined,
           width: HITBOX_WIDTH,
           height: HITBOX_HEIGHT,
+          zIndex: blockPosition.z + HANDLE_Z_OFFSET,
         }}
         data-id={`resize-${corner}`}
         className="absolute z-3"
         onMouseDown={!disableResizing ? onMouseDown : undefined}
       />
-      {isSelected && (
+      {isOnlySelected && !minimalBorders && (
         <div
           style={{
             ...positions[corner],
             width: INDICATOR_SIZE,
             height: INDICATOR_SIZE,
+            zIndex: blockPosition.z + HANDLE_Z_OFFSET,
           }}
           data-id={`resize-${corner}`}
           className="absolute bg-white border-3 

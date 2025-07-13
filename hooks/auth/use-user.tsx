@@ -2,16 +2,21 @@
 // and then initiates the user in our database if it's the first
 // time logging in
 
-import { useMetadataStore } from "@/store/metadata-store";
+import { useMetadataStore, UserProfile } from "@/store/metadata-store";
 import { TablesInsert } from "@/types/supabase";
 import { supabase } from "@/lib/supabase/supabase-client";
 import { User } from "@supabase/supabase-js";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useUserPreferenceStore } from "@/store/use-preferences-store";
 
 export function useUser() {
   const setUser = useMetadataStore((s) => s.setUser);
   const setProfile = useMetadataStore((s) => s.setProfile);
+  const setUserPreferences = useUserPreferenceStore(
+    (s) => s.bulkSetPreferences
+  );
+  const clearUserPreference = useUserPreferenceStore((s) => s.logout);
 
   const onLogin = async (user: User) => {
     // Check if profile exists
@@ -52,10 +57,14 @@ export function useUser() {
       // if things go smoothly, then we run the welcome message
       if (newProfile) {
         setProfile(newProfile);
+        // setUserPreferences(null); // just to be safe
       }
     } else {
+      const existingProfile = existing as UserProfile;
+
       // this runs if an existing user is logging back in
-      setProfile(existing);
+      setProfile(existingProfile);
+      setUserPreferences(existingProfile);
     }
   };
 
@@ -77,6 +86,7 @@ export function useUser() {
           if (event === "INITIAL_SESSION") toast("Logged in!");
         } else {
           setProfile(null);
+          clearUserPreference();
 
           // should only happen on log out
           if (event === "SIGNED_OUT") toast.success("Logged out successfully.");
@@ -87,5 +97,5 @@ export function useUser() {
     checkCurrentUser();
 
     return () => listener.subscription.unsubscribe();
-  }, [setUser, setProfile]);
+  }, [setUser, setProfile, setUserPreferences]);
 }

@@ -1,5 +1,6 @@
 import { syncFreeformToSupabase } from "@/lib/syncing/sync-freeform";
 import { scheduleFreeformSync } from "@/lib/syncing/sync-schedulers";
+import { Z_INDEX_INCREMENT } from "@/types/constants";
 import { toast } from "sonner";
 import { create } from "zustand";
 
@@ -18,6 +19,13 @@ export type FreeformPosition = {
   scale: number;
 };
 
+export type RectangleBox = {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+};
+
 type FreeformStore = {
   cameraMap: CameraStore;
   getCamera: (sectionId: string) => CameraType;
@@ -28,6 +36,12 @@ type FreeformStore = {
 
   editMode: boolean;
   setEditMode: (edit: boolean) => void;
+
+  topZIndexMap: Record<string, number>;
+  getAndIncrementZIndex: (sectionId: string) => number;
+  layoutBoundsMap: Record<string, RectangleBox>;
+  setLayoutBoundsForSection: (sectionId: string, bounds: RectangleBox) => void;
+  getLayoutBoundsForSection: (sectionId: string) => RectangleBox | undefined;
 
   positionMap: Record<string, Record<string, FreeformPosition>>; // sectionId -> blockId -> freeform position
   getBlockPosition: (sectionId: string, blockId: string) => FreeformPosition;
@@ -82,14 +96,32 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
 
   editMode: false,
   setEditMode: (edit: boolean) => {
-    // if (edit) {
-    //   toast("Arrange Mode");
-    // } else {
-    //   toast("View Mode");
-    // }
-
     set({ editMode: edit });
   },
+
+  topZIndexMap: {},
+  getAndIncrementZIndex: (sectionId) => {
+    const map = get().topZIndexMap;
+    const current = map[sectionId] ?? 0;
+    const next = current + Z_INDEX_INCREMENT;
+    set({
+      topZIndexMap: {
+        ...map,
+        [sectionId]: next,
+      },
+    });
+    return next;
+  },
+  layoutBoundsMap: {},
+  setLayoutBoundsForSection: (sectionId, bounds) =>
+    set((state) => ({
+      layoutBoundsMap: {
+        ...state.layoutBoundsMap,
+        [sectionId]: bounds,
+      },
+    })),
+  getLayoutBoundsForSection: (sectionId) => get().layoutBoundsMap[sectionId],
+
   positionMap: {},
   getBlockPosition: (sectionId: string, blockId: string) => {
     return (

@@ -107,7 +107,7 @@ export function BlockRenderer({
           }
         }}
       >
-        <div>
+        <div style={{}}>
           {editMode && (
             <>
               {ALL_SIDES.map((side) => (
@@ -118,7 +118,7 @@ export function BlockRenderer({
                   blockScreenRect={blockScreenRect}
                   blockPosition={blockPos}
                   camera={camera}
-                  isSelected={isSelected}
+                  isOnlySelected={isSelected}
                   disableResizing={disableResizing}
                 />
               ))}
@@ -130,7 +130,7 @@ export function BlockRenderer({
                   blockScreenRect={blockScreenRect}
                   blockPosition={blockPos}
                   camera={camera}
-                  isSelected={isSelected}
+                  isOnlySelected={isSelected}
                   disableResizing={disableResizing}
                 />
               ))}
@@ -146,8 +146,11 @@ export function BlockRenderer({
               transformOrigin: "top left",
               width: block.width, // or block.width if you have one
               height: block.height, // or block.height
+              zIndex: blockPos.z,
             }}
             onMouseDown={(e) => {
+              console.log("blockPos: ", blockPos);
+
               if (e.button !== 0) return; // only respond to left-click
               if (!editMode || (editMode && spacebarDown)) return;
 
@@ -155,6 +158,15 @@ export function BlockRenderer({
 
               if (!isSelected) {
                 selectOnlyThisBlock("main", block);
+
+                // bring it to the front
+                useFreeformStore
+                  .getState()
+                  .setPositionForBlock(sectionId, block.block_id, () => ({
+                    z: useFreeformStore
+                      .getState()
+                      .getAndIncrementZIndex(sectionId),
+                  }));
               }
 
               lastMouse[block.block_id] = { x: e.clientX, y: e.clientY };

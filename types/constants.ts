@@ -66,3 +66,9 @@ export const SCROLL_ZOOM_FACTOR = 1.1;
 export const MIN_SCALE = 0.1;
 export const MAX_SCALE = 10;
 export const MIN_PIXEL_SIZE = 40;
+
+export const DEFAULT_VIEW_BG_COLOR = "#505050";
+export const DEFAULT_ARRANGE_BG_COLOR = "#838383";
+
+export const Z_INDEX_INCREMENT = 10; // we want reserve some space for borders
+export const HANDLE_Z_OFFSET = 1; // note. has to be less than Z_INDEX_INCREMENT

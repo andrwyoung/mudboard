@@ -3,6 +3,7 @@ import {
   FreeformPosition,
   useFreeformStore,
 } from "@/store/freeform-store";
+import { useSelectionStore } from "@/store/selection-store";
 import { Block } from "@/types/block-types";
 import { MAX_SCALE, MIN_PIXEL_SIZE, MIN_SCALE } from "@/types/constants";
 import { CornerType } from "@/types/freeform-types";
@@ -20,11 +21,14 @@ export function useCornerResizeHandler({
   camera: CameraType;
 }) {
   const setPosition = useFreeformStore((s) => s.setPositionForBlock);
+  const selectBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
 
   const onMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
+
+    selectBlock("main", block);
 
     const startX = e.clientX;
     const startY = e.clientY;

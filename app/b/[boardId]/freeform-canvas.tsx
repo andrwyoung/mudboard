@@ -11,6 +11,12 @@ import { Section } from "@/types/board-types";
 import { FreeformEditToggleSlider } from "@/components/freeform-canvas/edit-toggle";
 import { FaQuestion } from "react-icons/fa6";
 import HelpModal from "@/components/modals/help-modal";
+import FreeformPreferenceModal from "@/components/modals/freeform-preference-modal";
+import {
+  DEFAULT_ARRANGE_BG_COLOR,
+  DEFAULT_VIEW_BG_COLOR,
+} from "@/types/constants";
+import { useUserPreferenceStore } from "@/store/use-preferences-store";
 
 export default function FreeformCanvas({
   blocks,
@@ -28,6 +34,10 @@ export default function FreeformCanvas({
   const cursorMovementsIsActive = !editMode || (editMode && spaceHeld);
 
   const camera = useFreeformStore((s) => s.cameraMap[section.section_id]);
+
+  // preferences
+  const viewBgColor = useUserPreferenceStore((s) => s.viewBgColor);
+  const arrangeBgColor = useUserPreferenceStore((s) => s.arrangeBgColor);
 
   const { onWheel, zoomCameraCentered } = useCanvasZoom(sectionId);
 
@@ -99,14 +109,15 @@ export default function FreeformCanvas({
 
       <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-10">
         <h1 className="text-sm text-white font-header translate-y-[1px] font-semibold">
-          Canvas Mode <span className="text-xs">(Under Construction)</span>
+          Canvas Mode
         </h1>
+        <FreeformPreferenceModal />
       </div>
 
       <div
         onMouseDown={onMouseDown}
         onWheel={onWheel}
-        className={`w-full h-full z-0 ${
+        className={`w-full h-full z-0 relative ${
           isDragging
             ? "cursor-grabbing"
             : cursorMovementsIsActive
@@ -114,7 +125,9 @@ export default function FreeformCanvas({
             : "cursor-default"
         }`}
         style={{
-          backgroundColor: editMode ? "#838383" : "#505050",
+          backgroundColor: editMode
+            ? arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR
+            : viewBgColor ?? DEFAULT_VIEW_BG_COLOR,
         }}
       >
         {camera &&

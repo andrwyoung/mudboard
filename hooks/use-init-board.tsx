@@ -17,7 +17,12 @@ import { VisualOverride } from "@/types/block-types";
 import { MOBILE_BREAKPOINT, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { useUIStore } from "@/store/ui-store";
 import { useDemoStore } from "@/store/demo-store";
-import { FreeformPosition, useFreeformStore } from "@/store/freeform-store";
+import {
+  FreeformPosition,
+  RectangleBox,
+  useFreeformStore,
+} from "@/store/freeform-store";
+import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 
 export function useInitBoard(
   boardId: string,
@@ -116,8 +121,18 @@ export function useInitBoard(
           Record<string, FreeformPosition>
         > = {};
 
+        const topZIndexMap: Record<string, number> = {};
+        const layoutBoundsMap: Record<string, RectangleBox> = {};
+
         for (const [sectionId, blocks] of Object.entries(blocksBySection)) {
           positionMap[sectionId] = {};
+
+          // measuring init indexes and stuff
+          let highestZIndex = 0;
+          let minX = 0;
+          let minY = 0;
+          let maxX = 0;
+          let maxY = 0;
 
           for (const block of blocks) {
             const overrides: Partial<VisualOverride> = {};
@@ -129,15 +144,42 @@ export function useInitBoard(
               setVisualOverride(block.block_id, overrides);
             }
 
+            // freeform canvas init
             positionMap[sectionId][block.block_id] = {
               x: block.canvas_x ?? null,
               y: block.canvas_y ?? null,
               z: block.canvas_z ?? 0,
               scale: block.canvas_scale ?? 1,
             };
+
+            // grab the highest numbers and stuff
+            highestZIndex = Math.max(highestZIndex, block.canvas_z ?? 0);
+
+            if (block.canvas_x != null && block.canvas_y != null) {
+              // ignore nulls
+
+              minX = Math.min(minX, block.canvas_x);
+              minY = Math.min(minY, block.canvas_y);
+              const width = block.width ?? COMPRESSED_IMAGE_WIDTH;
+              maxX = Math.max(maxX, block.canvas_x + width);
+              const height = block.height;
+              maxY = Math.max(maxY, block.canvas_y + height);
+            }
           }
+
+          topZIndexMap[sectionId] = highestZIndex;
+          layoutBoundsMap[sectionId] = {
+            minX,
+            minY,
+            maxX,
+            maxY,
+          };
         }
         useFreeformStore.getState().bulkSetPositions(positionMap);
+        useFreeformStore.setState({
+          topZIndexMap,
+          layoutBoundsMap,
+        });
 
         // STEP 4: generate the columns
         const isMobile = window.innerWidth < MOBILE_BREAKPOINT;

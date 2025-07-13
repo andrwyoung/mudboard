@@ -63,7 +63,7 @@ const shareOptions: ShareOption[] = [
   },
 ];
 
-export default function SectionShareDialog({
+export default function SectionShareModal({
   section,
   canEdit,
 }: {
