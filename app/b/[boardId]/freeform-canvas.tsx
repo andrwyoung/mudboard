@@ -132,7 +132,7 @@ export default function FreeformCanvas({
 
       <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-10">
         <h1 className="text-sm text-white font-header translate-y-[1px] font-semibold">
-          Canvas Mode
+          Freeform Mode
         </h1>
         <FreeformPreferenceModal />
       </div>

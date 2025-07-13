@@ -9,11 +9,11 @@ export function FreeFormToggle() {
     <button
       type="button"
       className={`flex items-center gap-2 cursor-pointer group px-2 rounded-sm 
-         py-0.5
+         py-0.5 hover:outline hover:outline-accent 
         ${
           freeformMode
-            ? "bg-accent text-primary"
-            : "text-white hover:text-accent"
+            ? "bg-accent text-primary hover:bg-accent/70"
+            : "text-white hover:bg-accent/40"
         }
         `}
       onClick={() => {
@@ -22,7 +22,7 @@ export function FreeFormToggle() {
       title="Toggle Freeform Mode"
     >
       <FaVectorSquare className="" />
-      <h3 className={`group-hover:underline `}>Canvas Mode</h3>
+      <h3 className={``}>Freeform</h3>
     </button>
   );
 }

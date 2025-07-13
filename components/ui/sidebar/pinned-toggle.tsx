@@ -23,8 +23,10 @@ export function PanelToggleButton({
     <button
       type="button"
       className={`flex items-center gap-2 cursor-pointer group px-2 rounded-sm
-        py-0.5 ${
-          isActive ? "bg-accent text-primary" : "text-white hover:text-accent"
+        py-0.5 hover:outline hover:outline-accent ${
+          isActive
+            ? "bg-accent text-primary hover:bg-accent/70"
+            : "text-white hover:bg-accent/40"
         }`}
       onClick={() => {
         const nextMode = isActive ? "none" : mode;
@@ -39,7 +41,7 @@ export function PanelToggleButton({
       title={title}
     >
       {icon}
-      <span className="group-hover:underline font-header">{label}</span>
+      <span className="font-header">{label}</span>
     </button>
   );
 }

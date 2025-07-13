@@ -35,16 +35,18 @@ export default function SearchMode({
       <div>
         <h1 className="text-2xl mt-2 font-semibold">Greenhouse</h1>
       </div>
-      <div className="flex flex-row justify-between items-start mb-8">
-        <p className="text-sm font-semibold">
-          Reuse your own Mudkits or explore community made ones.
+      <div className="flex flex-row justify-between items-start mb-8 gap-8">
+        <p className="text-sm font-medium">
+          The Greenhouse is a collection of reference galleries (called Mudkits)
+          made by artists like you — like a community reference library! Drag
+          what inspires you straight into your board.
         </p>
         <RefreshButton />
       </div>
 
       <div className="mb-8">
         <h3 className="text-white text-md font-bold mb-2 flex items-center gap-2">
-          My Mudkits <FaLeaf />
+          Private Mudkits <FaLeaf />
         </h3>
 
         {userMudkits.length > 0 || tempMudkits.length > 0 ? (

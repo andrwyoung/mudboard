@@ -56,7 +56,7 @@ export default function Sidebar({
           </div>
 
           <div className="px-8 flex flex-col gap-1">
-            <h3 className="text-sm mb-1">Toggles:</h3>
+            <h3 className="text-sm ">Workspaces:</h3>
             <FreeFormToggle />
             {/* <PinnedModeToggle /> */}
             <PanelToggleButton

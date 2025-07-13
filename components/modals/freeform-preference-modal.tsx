@@ -175,22 +175,7 @@ export default function FreeformPreferenceModal() {
               </div>
 
               <ColorSettingRow
-                label="View Mode Color"
-                color={viewBgColor}
-                defaultColor={DEFAULT_VIEW_BG_COLOR}
-                onChange={(color) => {
-                  setViewBgColor(color);
-                  queueDbUpdate();
-                }}
-                isEditMode={false}
-                pickerKey="view"
-                visiblePicker={visiblePicker}
-                setVisiblePicker={setVisiblePicker}
-                setEditMode={setEditMode}
-              />
-
-              <ColorSettingRow
-                label="Arrange Mode Color"
+                label="Arrange Mode Background"
                 color={arrangeBgColor}
                 defaultColor={DEFAULT_ARRANGE_BG_COLOR}
                 onChange={(color) => {
@@ -199,6 +184,21 @@ export default function FreeformPreferenceModal() {
                 }}
                 isEditMode={true}
                 pickerKey="arrange"
+                visiblePicker={visiblePicker}
+                setVisiblePicker={setVisiblePicker}
+                setEditMode={setEditMode}
+              />
+
+              <ColorSettingRow
+                label="View Mode Background"
+                color={viewBgColor}
+                defaultColor={DEFAULT_VIEW_BG_COLOR}
+                onChange={(color) => {
+                  setViewBgColor(color);
+                  queueDbUpdate();
+                }}
+                isEditMode={false}
+                pickerKey="view"
                 visiblePicker={visiblePicker}
                 setVisiblePicker={setVisiblePicker}
                 setEditMode={setEditMode}

@@ -175,7 +175,8 @@ export default function SectionShareModal({
         <button
           onClick={() => setOpen(true)}
           type="button"
-          title={section.is_public ? "Open Sharing Options" : "Plant a Mudkit"}
+          // title={section.is_public ? "Open Sharing Options" : "Plant a Mudkit"}
+          title={"Open Sharing Options"}
           aria-label={"Open Sharing Options"}
           className="hover:text-accent cursor-pointer transition-all duration-200 "
         >
@@ -247,12 +248,13 @@ export default function SectionShareModal({
                 </div>
               ) : (
                 <div className="text-sm mt-8 mb-8 text-center italic">
-                  <p className="">
+                  <p className="mb-1">
                     This is a <strong>temporary</strong> Mudkit.
                   </p>
                   <p>
-                    Make an account and <strong>save board</strong> to share and
-                    reuse.
+                    Make an account to come back to it again,
+                    <br />
+                    or to share with the community.
                   </p>
                 </div>
               )}
@@ -261,21 +263,46 @@ export default function SectionShareModal({
             <div className="text-sm text-primary leading-relaxed mt-3 space-y-4">
               <div>
                 <p className="text-sm text-primary mt-1 mb-12">
-                  Mudkits are{" "}
-                  <strong>reusable, shareable reference kits</strong>. Share it
-                  with others — or just reuse it in your own boards.
+                  Mudkits are <strong>reusable</strong> reference kits. They
+                  help you return to what inspired you; just for yourself or for
+                  others.
                 </p>
+
+                {/* <p className="text-sm text-primary mt-1 mb-8">
+                  Mudkits are <strong>reusable reference kits</strong>. So that
+                  you can actually use your reference library.
+                  <br /> They are private by default, but you can share them
+                  with others, or just reuse them yourself.
+                </p> */}
               </div>
+
+              {/* <AccordianWrapper title="What happens when you publish?">
+                <ul className="list-disc list-inside text-xs text-primary space-y-1">
+                  <li>
+                    Only you can see it in your Greenhouse, unless you share it
+                    with the community.
+                  </li>
+                  <li>Your kit gets a sharable link</li>
+                  <li>
+                    If you share, only can edit the original section, but others
+                    can clone the images.
+                  </li>
+
+                  <li>You can unpublish or make it private anytime</li>
+                </ul>
+              </AccordianWrapper> */}
 
               <AccordianWrapper title="What happens when you publish?">
                 <ul className="list-disc list-inside text-xs text-primary space-y-1">
-                  <li>Your kit gets its own public link</li>
+                  <li>You&apos;ll see it in your private Greenhouse</li>
+                  <li>You get a sharable, view-only link</li>
                   <li>
-                    If shared to community, others can use it in their
-                    Greenhouse.
+                    If you share to the community, it will appear
+                    everyone&apos;s Greenhouse. Others can clone images, but
+                    can&apos;t edit your original
                   </li>
-                  <li>Only you can edit the original section</li>
-                  <li>You can unpublish or make it private anytime</li>
+
+                  <li>You can unpublish at any time</li>
                 </ul>
               </AccordianWrapper>
             </div>

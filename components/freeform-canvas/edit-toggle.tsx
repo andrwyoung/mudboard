@@ -36,19 +36,6 @@ export function FreeformEditToggleSlider() {
     >
       <button
         type="button"
-        aria-pressed={!editMode}
-        aria-label="Switch to view mode"
-        title="View mode (for browsing)"
-        onClick={() => {
-          if (editMode) setEditMode(false);
-        }}
-        className={`${sliderClass} ${!editMode ? "bg-accent" : ""}`}
-      >
-        View
-      </button>
-
-      <button
-        type="button"
         aria-pressed={editMode}
         aria-label="Switch to arrange mode"
         title="Arrange mode (for editing)"
@@ -58,6 +45,19 @@ export function FreeformEditToggleSlider() {
         className={`${sliderClass} ${editMode ? "bg-accent" : ""}`}
       >
         Arrange
+      </button>
+
+      <button
+        type="button"
+        aria-pressed={!editMode}
+        aria-label="Switch to view mode"
+        title="View mode (for browsing)"
+        onClick={() => {
+          if (editMode) setEditMode(false);
+        }}
+        className={`${sliderClass} ${!editMode ? "bg-accent" : ""}`}
+      >
+        View
       </button>
     </div>
   );
