@@ -9,7 +9,7 @@ import { useCanvasZoom } from "@/hooks/freeform/use-freeform-zoom";
 import { BlockRenderer } from "@/components/freeform-canvas/block-renderer";
 import { Section } from "@/types/board-types";
 import { FreeformEditToggleSlider } from "@/components/freeform-canvas/edit-toggle";
-import { FaQuestion } from "react-icons/fa6";
+import { FaExpand, FaQuestion } from "react-icons/fa6";
 import HelpModal from "@/components/modals/help-modal";
 import FreeformPreferenceModal from "@/components/modals/freeform-preference-modal";
 import {
@@ -17,6 +17,8 @@ import {
   DEFAULT_VIEW_BG_COLOR,
 } from "@/types/constants";
 import { useUserPreferenceStore } from "@/store/use-preferences-store";
+import { getFitToScreenCamera } from "@/lib/freeform/get-default-camera";
+import { FitCameraToScreen } from "@/lib/freeform/fit-camera-to-screen";
 
 export default function FreeformCanvas({
   blocks,
@@ -62,6 +64,10 @@ export default function FreeformCanvas({
         return;
         // }
       }
+
+      if (e.key === "0") {
+        FitCameraToScreen(sectionId);
+      }
     }
 
     function handleKeyUp(e: KeyboardEvent) {
@@ -74,7 +80,7 @@ export default function FreeformCanvas({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [zoomCameraCentered]);
+  }, [zoomCameraCentered, sectionId]);
 
   useEffect(() => {
     if (camera) return;
@@ -83,14 +89,23 @@ export default function FreeformCanvas({
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
 
-    useFreeformStore.getState().setCameraForSection(sectionId, {
-      x: centerX,
-      y: centerY,
-      scale: 1,
-    });
+    const bounds = useFreeformStore
+      .getState()
+      .getLayoutBoundsForSection(sectionId);
+
+    // if no bounds exist, then just center on canvas
+    if (!bounds) {
+      useFreeformStore.getState().setCameraForSection(sectionId, {
+        x: rect.width / 2,
+        y: rect.height / 2,
+        scale: 1,
+      });
+    } else {
+      // else we just try to fit the view to zoom
+      const defaultCam = getFitToScreenCamera(bounds, rect.width, rect.height);
+      useFreeformStore.getState().setCameraForSection(sectionId, defaultCam);
+    }
   }, [camera, sectionId]);
 
   // hooks
@@ -116,6 +131,7 @@ export default function FreeformCanvas({
 
       <div
         onMouseDown={onMouseDown}
+        data-id="freeform-canvas"
         onWheel={onWheel}
         className={`w-full h-full z-0 relative ${
           isDragging
@@ -142,6 +158,15 @@ export default function FreeformCanvas({
             />
           ))}
       </div>
+
+      <button
+        onClick={() => FitCameraToScreen(sectionId)}
+        title="Fit to screen"
+        className="absolute bottom-4 left-4 z-50 p-1
+           text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
+      >
+        <FaExpand />
+      </button>
 
       <button
         onClick={() => setHelpOpen(true)}

@@ -1,8 +1,10 @@
 import { syncFreeformToSupabase } from "@/lib/syncing/sync-freeform";
 import { scheduleFreeformSync } from "@/lib/syncing/sync-schedulers";
 import { Z_INDEX_INCREMENT } from "@/types/constants";
+import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 import { toast } from "sonner";
 import { create } from "zustand";
+import { useLayoutStore } from "./layout-store";
 
 export type CameraType = {
   x: number; // pan offset x
@@ -19,7 +21,7 @@ export type FreeformPosition = {
   scale: number;
 };
 
-export type RectangleBox = {
+export type BoundingBox = {
   minX: number;
   minY: number;
   maxX: number;
@@ -39,9 +41,9 @@ type FreeformStore = {
 
   topZIndexMap: Record<string, number>;
   getAndIncrementZIndex: (sectionId: string) => number;
-  layoutBoundsMap: Record<string, RectangleBox>;
-  setLayoutBoundsForSection: (sectionId: string, bounds: RectangleBox) => void;
-  getLayoutBoundsForSection: (sectionId: string) => RectangleBox | undefined;
+  layoutBoundsMap: Record<string, BoundingBox>;
+  setLayoutBoundsForSection: (sectionId: string, bounds: BoundingBox) => void;
+  getLayoutBoundsForSection: (sectionId: string) => BoundingBox | undefined;
 
   positionMap: Record<string, Record<string, FreeformPosition>>; // sectionId -> blockId -> freeform position
   getBlockPosition: (sectionId: string, blockId: string) => FreeformPosition;

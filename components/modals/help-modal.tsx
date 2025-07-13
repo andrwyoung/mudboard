@@ -16,8 +16,13 @@ export default function HelpModal({
 }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="rounded-md bg-background p-6 shadow-lg max-w-md w-full">
-        <DialogTitle className="text-2xl text-primary">Need Help?</DialogTitle>
+      <DialogContent
+        className="rounded-md bg-background p-6 shadow-lg max-w-md w-full
+      no-drag"
+      >
+        <DialogTitle className="text-2xl text-primary">
+          {pageNum === 1 ? "FAQ" : "Keyboard Shortcuts"}
+        </DialogTitle>
 
         <div className="space-y-3 text-sm text-primary ">
           {pageNum === 1 && <PageOne />}
@@ -105,15 +110,20 @@ function Shortcut({ label, keys }: { label: string; keys: string[] }) {
 
 export function PageTwo() {
   return (
-    <div className="mt-4 mb-8">
-      <h1 className="text-lg font-header mb-4 font-semibold">
+    <div className="mt-2 mb-8">
+      {/* <h1 className="text-lg font-header mb-4 font-semibold">
         Keyboard Shortcuts
-      </h1>
+      </h1> */}
+      <p className="mb-6 text-sm">
+        This canvas has 2 modes: <strong>View Mode</strong> for exploring.{" "}
+        <strong>Arrange Mode </strong>for moving and resizing.
+      </p>
       <div className="flex flex-col gap-2">
         <Shortcut label="Toggle Modes" keys={["E", "Middle Mouse Click"]} />
         <Shortcut label="Zoom In / Out" keys={["+", "-", "Scroll Wheel"]} />
+        <Shortcut label="Fit to Screen" keys={["0"]} />
 
-        <h3 className="mt-2 mb-2 font-bold">Arrange Mode</h3>
+        <h3 className="mt-4 mb-1 font-semibold text-lg">Arrange Mode Only</h3>
         <Shortcut label="Pan" keys={["Space + Drag", "Middle Mouse Drag"]} />
       </div>
     </div>

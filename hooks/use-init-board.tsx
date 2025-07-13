@@ -14,12 +14,17 @@ import { generateInitColumnsFromBlocks } from "@/lib/columns/generate-init-colum
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { VisualOverride } from "@/types/block-types";
-import { MOBILE_BREAKPOINT, MOBILE_COLUMN_NUMBER } from "@/types/constants";
+import {
+  MAX_Z_THRESHOLD,
+  MOBILE_BREAKPOINT,
+  MOBILE_COLUMN_NUMBER,
+  Z_INDEX_INCREMENT,
+} from "@/types/constants";
 import { useUIStore } from "@/store/ui-store";
 import { useDemoStore } from "@/store/demo-store";
 import {
   FreeformPosition,
-  RectangleBox,
+  BoundingBox,
   useFreeformStore,
 } from "@/store/freeform-store";
 import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
@@ -112,7 +117,7 @@ export function useInitBoard(
         const sections = boardSections.map((bs) => bs.section);
 
         const sectionIds = sections.map((s) => s.section_id);
-        const blocksBySection = await fetchSupabaseBlocks(sectionIds);
+        let blocksBySection = await fetchSupabaseBlocks(sectionIds);
 
         // populate the gallery overrides AND freeform gallery positions
         const setVisualOverride = useLayoutStore.getState().setVisualOverride;
@@ -122,17 +127,19 @@ export function useInitBoard(
         > = {};
 
         const topZIndexMap: Record<string, number> = {};
-        const layoutBoundsMap: Record<string, RectangleBox> = {};
+        const layoutBoundsMap: Record<string, BoundingBox> = {};
 
         for (const [sectionId, blocks] of Object.entries(blocksBySection)) {
+          if (blocks.length === 0) continue;
+
           positionMap[sectionId] = {};
 
           // measuring init indexes and stuff
           let highestZIndex = 0;
-          let minX = 0;
-          let minY = 0;
-          let maxX = 0;
-          let maxY = 0;
+          let minX = Infinity;
+          let minY = Infinity;
+          let maxX = -Infinity;
+          let maxY = -Infinity;
 
           for (const block of blocks) {
             const overrides: Partial<VisualOverride> = {};
@@ -152,19 +159,38 @@ export function useInitBoard(
               scale: block.canvas_scale ?? 1,
             };
 
-            // grab the highest numbers and stuff
+            // grab the current highest z index
             highestZIndex = Math.max(highestZIndex, block.canvas_z ?? 0);
 
-            if (block.canvas_x != null && block.canvas_y != null) {
-              // ignore nulls
+            // grab the "bounding box" of all the blocks. so we can create a good init camera view
+            minX = Math.min(minX, block.canvas_x ?? 0);
+            minY = Math.min(minY, block.canvas_y ?? 0);
 
-              minX = Math.min(minX, block.canvas_x);
-              minY = Math.min(minY, block.canvas_y);
-              const width = block.width ?? COMPRESSED_IMAGE_WIDTH;
-              maxX = Math.max(maxX, block.canvas_x + width);
-              const height = block.height;
-              maxY = Math.max(maxY, block.canvas_y + height);
-            }
+            const scale = block.canvas_scale ?? 1;
+            const width = (block.width ?? COMPRESSED_IMAGE_WIDTH) * scale;
+            const height = (block.height ?? 0) * scale;
+            const x = block.canvas_x ?? 0;
+            const y = block.canvas_y ?? 0;
+
+            maxX = Math.max(maxX, x + width);
+            maxY = Math.max(maxY, y + height);
+          }
+
+          // If z-index values have grown too large, reindex them to prevent overflow
+          if (highestZIndex > MAX_Z_THRESHOLD) {
+            console.log("Z index too high. reindexing");
+
+            // 1. Get positions and sort by z-index
+            const positions = Object.entries(positionMap[sectionId]);
+            const sorted = positions.sort(
+              ([, a], [, b]) => (a.z ?? 0) - (b.z ?? 0)
+            );
+
+            // 2. Reassign z-indices in the position map
+            sorted.forEach(([blockId], idx) => {
+              positionMap[sectionId][blockId].z = idx * Z_INDEX_INCREMENT;
+            });
+            highestZIndex = (sorted.length - 1) * Z_INDEX_INCREMENT;
           }
 
           topZIndexMap[sectionId] = highestZIndex;
