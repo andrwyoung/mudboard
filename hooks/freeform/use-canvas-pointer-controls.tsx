@@ -15,8 +15,6 @@ export function useCanvasPointerControls({
   const isDraggingRef = useRef(false);
   const lastMouse = useRef({ x: 0, y: 0 });
 
-  let timeoutId: number | null = null;
-
   function onMouseDown(e: React.MouseEvent) {
     const isMiddleMouse = e.button === 1;
     const isLeftMouse = e.button === 0;

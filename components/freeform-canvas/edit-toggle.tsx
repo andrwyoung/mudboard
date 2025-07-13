@@ -29,8 +29,16 @@ export function FreeformEditToggleSlider() {
   const setEditMode = useFreeformStore((s) => s.setEditMode);
 
   return (
-    <div className="flex flex-col items-center gap-1 p-1 bg-white rounded-sm">
+    <div
+      className="flex flex-col items-center gap-1 p-1 bg-white rounded-sm"
+      role="group"
+      aria-label="Toggle between view and arrange mode"
+    >
       <button
+        type="button"
+        aria-pressed={!editMode}
+        aria-label="Switch to view mode"
+        title="View mode (for browsing)"
         onClick={() => {
           if (editMode) setEditMode(false);
         }}
@@ -39,14 +47,18 @@ export function FreeformEditToggleSlider() {
         View
       </button>
 
-      <span
+      <button
+        type="button"
+        aria-pressed={editMode}
+        aria-label="Switch to arrange mode"
+        title="Arrange mode (for editing)"
         onClick={() => {
           if (!editMode) setEditMode(true);
         }}
         className={`${sliderClass} ${editMode ? "bg-accent" : ""}`}
       >
         Arrange
-      </span>
+      </button>
     </div>
   );
 }
