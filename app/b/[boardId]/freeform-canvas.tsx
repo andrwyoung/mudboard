@@ -19,6 +19,13 @@ import {
 import { useUserPreferenceStore } from "@/store/use-preferences-store";
 import { getFitToScreenCamera } from "@/lib/freeform/get-default-camera";
 import { FitCameraToScreen } from "@/lib/freeform/fit-camera-to-screen";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 export default function FreeformCanvas({
   blocks,
@@ -31,6 +38,7 @@ export default function FreeformCanvas({
   const [helpOpen, setHelpOpen] = useState(false);
 
   const editMode = useFreeformStore((s) => s.editMode);
+  const setEditMode = useFreeformStore((s) => s.setEditMode);
   const [spaceHeld, setSpaceHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const cursorMovementsIsActive = !editMode || (editMode && spaceHeld);
@@ -129,35 +137,50 @@ export default function FreeformCanvas({
         <FreeformPreferenceModal />
       </div>
 
-      <div
-        onMouseDown={onMouseDown}
-        data-id="freeform-canvas"
-        onWheel={onWheel}
-        className={`w-full h-full z-0 relative ${
-          isDragging
-            ? "cursor-grabbing"
-            : cursorMovementsIsActive
-            ? "cursor-grab"
-            : "cursor-default"
-        }`}
-        style={{
-          backgroundColor: editMode
-            ? arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR
-            : viewBgColor ?? DEFAULT_VIEW_BG_COLOR,
-        }}
-      >
-        {camera &&
-          blocks.map((block) => (
-            <BlockRenderer
-              key={block.block_id}
-              block={block}
-              sectionId={sectionId}
-              editMode={editMode}
-              spacebarDown={spaceHeld}
-              disableResizing={isDragging || spaceHeld}
-            />
-          ))}
-      </div>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <div
+            onMouseDown={onMouseDown}
+            data-id="freeform-canvas"
+            onWheel={onWheel}
+            className={`w-full h-full z-0 relative ${
+              isDragging
+                ? "cursor-grabbing"
+                : cursorMovementsIsActive
+                ? "cursor-grab"
+                : "cursor-default"
+            }`}
+            style={{
+              backgroundColor: editMode
+                ? arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR
+                : viewBgColor ?? DEFAULT_VIEW_BG_COLOR,
+            }}
+          >
+            {camera &&
+              blocks.map((block) => (
+                <BlockRenderer
+                  key={block.block_id}
+                  block={block}
+                  sectionId={sectionId}
+                  editMode={editMode}
+                  setEditMode={setEditMode}
+                  spacebarDown={spaceHeld}
+                  disableResizing={isDragging || spaceHeld}
+                />
+              ))}
+          </div>
+        </ContextMenuTrigger>
+
+        <ContextMenuContent>
+          <ContextMenuItem onClick={() => FitCameraToScreen(sectionId)}>
+            Fit to screen
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem onClick={() => setEditMode(!editMode)}>
+            Change Mode
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
 
       <button
         onClick={() => FitCameraToScreen(sectionId)}

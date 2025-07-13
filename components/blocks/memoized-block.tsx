@@ -166,7 +166,7 @@ function BlockComponent({
                 openPinnedPanelWithBlock(block);
               }}
             >
-              Spotlight
+              Spotlight Image
             </ContextMenuItem>
 
             {canEdit && (

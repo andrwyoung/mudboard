@@ -14,6 +14,7 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "../ui/context-menu";
 import { getImageUrl } from "@/utils/get-image-url";
@@ -28,12 +29,14 @@ export function BlockRenderer({
   block,
   sectionId,
   editMode,
+  setEditMode,
   spacebarDown,
   disableResizing,
 }: {
   block: Block;
   sectionId: string;
   editMode: boolean;
+  setEditMode: (mode: boolean) => void;
   spacebarDown: boolean;
   disableResizing: boolean;
 }) {
@@ -205,17 +208,22 @@ export function BlockRenderer({
                 openPinnedPanelWithBlock(block);
               }}
             >
-              Spotlight
-            </ContextMenuItem>
-            <ContextMenuItem
-              onClick={() => {
-                fireConfetti();
-              }}
-            >
-              Celebration?
+              Spotlight Image
             </ContextMenuItem>
           </>
         )}
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onClick={() => {
+            fireConfetti();
+          }}
+        >
+          Celebrate?
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={() => setEditMode(!editMode)}>
+          Change Mode
+        </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );
