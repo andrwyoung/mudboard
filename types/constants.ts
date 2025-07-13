@@ -55,6 +55,8 @@ export const NUM_SECTION_TO_CHECK = 3;
 export const NUM_BLOCKS_TO_GRAB = 30;
 
 // freeform constants
+export const FREEFORM_EDIT_MODE_DEFAULT = true;
+
 export const BORDER_HITBOX_SIZE = 16;
 export const BORDER_SIZE = 3;
 

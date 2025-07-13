@@ -1,13 +1,9 @@
-import { useFreeformStore } from "@/store/freeform-store";
 import { useUIStore } from "@/store/ui-store";
 import { FaVectorSquare } from "react-icons/fa6";
 
 export function FreeFormToggle() {
   const toggleFreeformMode = useUIStore((s) => s.toggleFreeformMode);
   const freeformMode = useUIStore((s) => s.freeformMode);
-
-  const editMode = useFreeformStore((s) => s.editMode);
-  const setEditMode = useFreeformStore((s) => s.setEditMode);
 
   return (
     <button
@@ -21,9 +17,6 @@ export function FreeFormToggle() {
         }
         `}
       onClick={() => {
-        if (editMode) {
-          setEditMode(false);
-        }
         toggleFreeformMode();
       }}
       title="Toggle Freeform Mode"

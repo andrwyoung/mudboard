@@ -1,6 +1,9 @@
 import { syncFreeformToSupabase } from "@/lib/syncing/sync-freeform";
 import { scheduleFreeformSync } from "@/lib/syncing/sync-schedulers";
-import { Z_INDEX_INCREMENT } from "@/types/constants";
+import {
+  FREEFORM_EDIT_MODE_DEFAULT,
+  Z_INDEX_INCREMENT,
+} from "@/types/constants";
 import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 import { toast } from "sonner";
 import { create } from "zustand";
@@ -96,7 +99,7 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
       };
     }),
 
-  editMode: false,
+  editMode: FREEFORM_EDIT_MODE_DEFAULT,
   setEditMode: (edit: boolean) => {
     set({ editMode: edit });
   },
@@ -223,6 +226,6 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
     set(() => ({
       cameraMap: {},
       positionMap: {},
-      editMode: false,
+      editMode: FREEFORM_EDIT_MODE_DEFAULT,
     })),
 }));
