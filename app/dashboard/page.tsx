@@ -35,7 +35,7 @@ import { softDeleteBoard } from "@/lib/db-actions/soft-delete-board";
 import { BoardWithStats } from "@/types/stat-types";
 import { fetchUserBoardsWithStats } from "@/lib/db-actions/explore/fetch-user-board-with-stats";
 import { currentLocalUserHasLicense } from "@/lib/tiers/user-has-license";
-import { FaSeedling } from "react-icons/fa6";
+import { FaPlus, FaSeedling } from "react-icons/fa6";
 
 type DashboardMode = "board" | "sections";
 
@@ -45,6 +45,8 @@ export default function DashboardPage() {
   const user = useMetadataStore((s) => s.user);
   const [boardToDelete, setBoardToDelete] = useState<Board | null>(null);
   const [dashboardMode, setDashboardMode] = useState<DashboardMode>("board");
+
+  const [loading, setLoading] = useState(true);
 
   const hasLicense = currentLocalUserHasLicense();
   const canCreateBoards =
@@ -61,35 +63,11 @@ export default function DashboardPage() {
 
       const boards = await fetchUserBoardsWithStats(user.id);
       setUserBoards(boards);
+      setLoading(false);
     }
 
     initBoards();
   }, [user]);
-
-  // update board title
-  // async function updateBoardTitle(boardId: string, newTitle: string | null) {
-  //   // Optimistically update local state
-  //   setUserBoards((prevBoards) =>
-  //     prevBoards.map((board) =>
-  //       board.board_id === boardId ? { ...board, title: newTitle } : board
-  //     )
-  //   );
-
-  //   const { error } = await supabase
-  //     .from("boards")
-  //     .update({ title: newTitle })
-  //     .eq("board_id", boardId);
-
-  //   if (error) {
-  //     toast.error("Failed to update board title.");
-  //     // Revert local update if needed
-  //     setUserBoards((prevBoards) =>
-  //       prevBoards.map((board) =>
-  //         board.board_id === boardId ? { ...board, title: board.title } : board
-  //       )
-  //     );
-  //   }
-  // }
 
   async function handleDeleteBoard(boardId: string) {
     if (!user) return; // yes. you need to be logged in to delete a board
@@ -123,13 +101,18 @@ export default function DashboardPage() {
             <div>
               <div className="lg:hidden flex flex-col text-white">
                 <h1 className="text-3xl font-bold">Dashboard</h1>
-                <p>{hasLicense ? "Free" : "Oh my"}</p>
+                <p className="text-sm opacity-80 mt-1">
+                  {hasLicense ? "Free Mode" : "License Active"}
+                </p>
               </div>
 
               <div className="hidden lg:flex flex-col gap-2 my-12 items-center  text-white">
                 <h1 className="font-semibold">Select View:</h1>
                 <div className="flex flex-col gap-2 font-header text-sm">
                   <Button
+                    role="tab"
+                    aria-selected={dashboardMode === "board"}
+                    aria-controls="dashboard-board-view"
                     variant={
                       dashboardMode === "board"
                         ? "dashboard_sidebar_selected"
@@ -140,6 +123,9 @@ export default function DashboardPage() {
                     Boards
                   </Button>
                   <Button
+                    role="tab"
+                    aria-selected={dashboardMode === "sections"}
+                    aria-controls="dashboard-sections-view"
                     variant={
                       dashboardMode === "sections"
                         ? "dashboard_sidebar_selected"
@@ -215,10 +201,17 @@ export default function DashboardPage() {
           </div> */}
         </div>
 
-        {userBoards.length > 0 ? (
+        {!loading && userBoards.length > 0 ? (
           <div className="flex flex-col gap-8">
             <div className="hidden lg:flex justify-between items-center text-white">
-              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <div className="flex flex-col gap-2">
+                <h1 className="text-3xl font-bold">Dashboard</h1>
+                {SHOW_GLOBAL_ANNOUNCEMENT && (
+                  <div className="text-sm text-white mb-4 max-w-sm">
+                    {GlobalAnnouncement}
+                  </div>
+                )}
+              </div>
               <div className=" flex flex-col items-end">
                 <p className="text-sm opacity-80">
                   {hasLicense
@@ -252,15 +245,32 @@ export default function DashboardPage() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col w-full gap-4">
-            <div className="w-full self-center text-white">
-              No Boards to show
+          <div className="flex flex-col min-h-48 w-full gap-4">
+            <div className="flex-1 flex flex-col items-center p-12 gap-4 text-white">
+              {!loading && userBoards.length === 0 ? (
+                <div className="flex flex-col items-center gap-2">
+                  <h2 className="text-xl">No Boards to show</h2>
+                  <Link
+                    href={NEW_BOARD_LINK}
+                    title="Create New Board"
+                    role="button"
+                    aria-label="Create a new board"
+                    className="flex flex-row text-sm items-center gap-1 cursor-pointer  hover:text-accent border-2 
+                    border-white px-3 py-1 rounded-lg hover:border-accent hover:bg-accent/20 transition-all duration-150"
+                  >
+                    <FaPlus aria-hidden="true" focusable="false" />
+                    <span className="font-header">Create New Board!</span>
+                  </Link>
+                </div>
+              ) : (
+                <h2 className="text-lg">Loading Boards...</h2>
+              )}
+              {SHOW_GLOBAL_ANNOUNCEMENT && (
+                <div className="text-sm text-white mb-4 max-w-sm">
+                  {GlobalAnnouncement}
+                </div>
+              )}
             </div>
-            {SHOW_GLOBAL_ANNOUNCEMENT && (
-              <div className="text-sm text-white mb-4 max-w-sm">
-                {GlobalAnnouncement}
-              </div>
-            )}
           </div>
         )}
       </div>
