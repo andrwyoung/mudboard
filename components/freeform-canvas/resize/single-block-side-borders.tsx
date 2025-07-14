@@ -38,7 +38,7 @@ export default function SingleBlockSideBorder({
       blockScreenRect={blockScreenRect}
       isSelected={isSelected}
       zIndex={blockPosition.z + HANDLE_Z_OFFSET}
-      multipleSelected={multipleSelected}
+      softHighlight={multipleSelected}
       disableResizing={disableResizing}
       onMouseDown={onMouseDown}
     />

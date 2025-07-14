@@ -1,16 +1,23 @@
-import { useFreeformStore } from "@/store/freeform-store";
+import { FreeformPosition, useFreeformStore } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
-import { SideBorder } from "./resize/side-border";
 import { ALL_CORNERS, ALL_SIDES } from "@/types/freeform-types";
-import { CornerHandles } from "./resize/corner-handles";
 import { useMemo } from "react";
+import { Z_INDEX_INCREMENT } from "@/types/constants";
+import MultiBlockSideBorder from "./resize/multi-side-border";
+import { Block } from "@/types/block-types";
+import MultiBlockCornerResize from "./resize/multi-corner-handles";
 
 export default function MultiSelectBorder({
   sectionId,
+  isPanning,
 }: {
   sectionId: string;
+  isPanning: boolean;
 }) {
+  const topZIndex =
+    useFreeformStore((s) => s.topZIndexMap[sectionId]) + Z_INDEX_INCREMENT;
+
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const positionMap = useFreeformStore((s) => s.positionMap?.[sectionId]);
   const camera = useFreeformStore((s) => s.getCamera)(sectionId);
@@ -26,6 +33,19 @@ export default function MultiSelectBorder({
   const filteredBlocks = Object.values(selectedBlocks).filter(
     (block) => block.section_id === sectionId
   );
+
+  const blocksWithPositions = useMemo(() => {
+    return filteredBlocks
+      .map((block) => {
+        const blockPos = positions[block.block_id];
+        if (!blockPos) return null;
+        return { block, blockPos };
+      })
+      .filter(
+        (item): item is { block: Block; blockPos: FreeformPosition } =>
+          item !== null
+      );
+  }, [filteredBlocks, positions]);
 
   const multipleSelected = filteredBlocks.length > 1;
 
@@ -70,28 +90,27 @@ export default function MultiSelectBorder({
     <>
       {/* Side Borders */}
       {ALL_SIDES.map((side) => (
-        <SideBorder
+        <MultiBlockSideBorder
           key={side}
           side={side}
+          blocksWithPositions={blocksWithPositions}
           blockScreenRect={blockScreenRect}
-          isSelected={true}
-          zIndex={10000}
-          multipleSelected={false}
-          disableResizing={false}
-          onMouseDown={() => {}}
+          disableResizing={isPanning}
+          camera={camera}
+          zIndex={topZIndex}
         />
       ))}
 
       {/* Corner Resizers */}
       {ALL_CORNERS.map((corner) => (
-        <CornerHandles
+        <MultiBlockCornerResize
           key={corner}
           corner={corner}
+          blocksWithPositions={blocksWithPositions}
           blockScreenRect={blockScreenRect}
-          zIndex={10001}
-          disableResizing={false}
-          onMouseDown={() => {}}
-          isOnlySelected={true}
+          disableResizing={isPanning}
+          camera={camera}
+          zIndex={topZIndex}
         />
       ))}
     </>

@@ -66,7 +66,7 @@ export const ZOOM_FACTOR = 1.5;
 export const SCROLL_ZOOM_FACTOR = 1.1;
 
 export const MIN_SCALE = 0.1;
-export const MAX_SCALE = 10;
+export const MAX_SCALE = 100;
 export const MIN_PIXEL_SIZE = 40;
 
 export const DEFAULT_VIEW_BG_COLOR = "#505050";

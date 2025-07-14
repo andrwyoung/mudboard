@@ -7,7 +7,7 @@ export function SideBorder({
   blockScreenRect,
   isSelected,
   zIndex,
-  multipleSelected,
+  softHighlight,
   disableResizing,
   onMouseDown,
 }: {
@@ -15,7 +15,7 @@ export function SideBorder({
   blockScreenRect: BlockScreenRect;
   isSelected: boolean;
   zIndex: number;
-  multipleSelected: boolean;
+  softHighlight: boolean;
   disableResizing: boolean;
   onMouseDown: (e: React.MouseEvent) => void;
 }) {
@@ -102,7 +102,7 @@ export function SideBorder({
         <div
           style={visualStyle}
           className={`bg-accent z-2 pointer-events-none ${
-            multipleSelected ? "opacity-60" : ""
+            softHighlight ? "opacity-60" : ""
           }`}
         />
       )}

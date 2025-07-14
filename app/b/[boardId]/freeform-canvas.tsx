@@ -184,7 +184,12 @@ export default function FreeformCanvas({
           >
             {camera && (
               <>
-                {editMode && <MultiSelectBorder sectionId={sectionId} />}
+                {editMode && (
+                  <MultiSelectBorder
+                    sectionId={sectionId}
+                    isPanning={spaceHeld}
+                  />
+                )}
 
                 {blocks.map((block) => (
                   <BlockRenderer

@@ -1,41 +1,37 @@
-import { useCornerResizeHandler } from "@/hooks/freeform/use-corner-resize-handler";
 import { FreeformPosition, CameraType } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
 import { BlockScreenRect, CornerType } from "@/types/freeform-types";
 import { CornerHandles } from "./corner-handles";
-import { HANDLE_Z_OFFSET } from "@/types/constants";
+import { useMultiCornerResizeHandler } from "@/hooks/freeform/use-multi-corner-resize-handler";
 
-export default function SingleBlockCornerResize({
+export default function MultiBlockCornerResize({
   corner,
-  block,
+  blocksWithPositions,
   blockScreenRect,
-  blockPosition,
   camera,
-  isOnlySelected,
   disableResizing,
+  zIndex,
 }: {
   corner: CornerType;
-  block: Block;
+  blocksWithPositions: { block: Block; blockPos: FreeformPosition }[];
   blockScreenRect: BlockScreenRect;
-  blockPosition: FreeformPosition;
   camera: CameraType;
-  isOnlySelected: boolean;
   disableResizing: boolean;
+  zIndex: number;
 }) {
-  const onMouseDown = useCornerResizeHandler({
-    block,
+  const onMouseDown = useMultiCornerResizeHandler({
+    blocksWithPositions,
     corner,
-    blockPosition,
     camera,
   });
 
   return (
     <CornerHandles
       corner={corner}
-      zIndex={blockPosition.z + HANDLE_Z_OFFSET}
       blockScreenRect={blockScreenRect}
-      showHandle={isOnlySelected}
+      zIndex={zIndex}
       disableResizing={disableResizing}
+      showHandle={true}
       onMouseDown={onMouseDown}
     />
   );

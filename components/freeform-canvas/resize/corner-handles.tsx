@@ -9,14 +9,14 @@ export function CornerHandles({
   corner,
   blockScreenRect,
   zIndex,
-  isOnlySelected,
+  showHandle,
   disableResizing,
   onMouseDown,
 }: {
   corner: CornerType;
   blockScreenRect: BlockScreenRect;
   zIndex: number;
-  isOnlySelected: boolean;
+  showHandle: boolean;
   disableResizing: boolean;
   onMouseDown: (e: React.MouseEvent) => void;
 }) {
@@ -87,7 +87,7 @@ export function CornerHandles({
         className="absolute z-3"
         onMouseDown={!disableResizing ? onMouseDown : undefined}
       />
-      {isOnlySelected && !minimalBorders && (
+      {showHandle && !minimalBorders && (
         <div
           style={{
             ...positions[corner],
