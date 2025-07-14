@@ -137,6 +137,17 @@ export default function FreeformCanvas({
         <FreeformPreferenceModal />
       </div>
 
+      {blocks.length === 0 && (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center pointer-events-none z-20">
+          <h1 className="text-xl font-semibold mb-1">
+            No Images in this Section
+          </h1>
+          <p className="text-sm opacity-75">
+            Add images in grid mode or switch to another section
+          </p>
+        </div>
+      )}
+
       <ContextMenu>
         <ContextMenuTrigger asChild>
           <div

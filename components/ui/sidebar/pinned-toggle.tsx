@@ -1,3 +1,5 @@
+// DEPRECATED for workspace-toggle.tsx
+
 import { useDemoStore } from "@/store/demo-store";
 import { PanelMode, usePanelStore } from "@/store/panel-store";
 import { FaImage } from "react-icons/fa";

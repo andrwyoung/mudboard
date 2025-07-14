@@ -76,6 +76,9 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // sections
   const boardSections = useMetadataStore((s) => s.boardSections);
+  const regenerateBoardSectionMap = useMetadataStore(
+    (s) => s.regenerateBoardSectionMap
+  );
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // when blurring images
@@ -124,6 +127,10 @@ export default function Board({ boardId }: { boardId: string }) {
     () => regenerateOrdering(),
     [sectionColumns, regenerateOrdering, spacingSize, sidebarWidth, windowWidth]
   );
+
+  useEffect(() => {
+    regenerateBoardSectionMap();
+  }, [boardSections, regenerateBoardSectionMap]);
 
   // SECTION: blur image when resizing window
   //

@@ -1,3 +1,5 @@
+// DEPRECATED for workspace-toggle.tsx
+
 import { useUIStore } from "@/store/ui-store";
 import { FaVectorSquare } from "react-icons/fa6";
 

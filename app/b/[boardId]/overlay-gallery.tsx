@@ -240,11 +240,12 @@ export default function OverlayGallery({
         resetZoom();
       } else if (e.key === "Escape") {
         closeOverlayGallery();
-      } else if (e.key === "ArrowRight") {
-        goToNextBlock();
-      } else if (e.key === "ArrowLeft") {
-        goToPrevBlock();
       }
+      // else if (e.key === "ArrowRight") {
+      //   goToNextBlock();
+      // } else if (e.key === "ArrowLeft") {
+      //   goToPrevBlock();
+      // }
     }
 
     window.addEventListener("keydown", handleKeyDown);
@@ -457,36 +458,40 @@ export default function OverlayGallery({
         />
       </div>
 
-      <div
-        className={`absolute left-4 top-1/2 -translate-y-1/2 z-60 bg-stone-800/80 backdrop-blur-sm rounded-lg p-2 
+      {false && (
+        <>
+          <div
+            className={`absolute left-4 top-1/2 -translate-y-1/2 z-60 bg-stone-800/80 backdrop-blur-sm rounded-lg p-2 
           ${
             getPrevImage(selectedBlock.block_id)
               ? "bg-stone-800/80 hover:bg-stone-700/80 cursor-pointer"
               : "bg-stone-800/20 text-white/20"
           } 
           ${overlayUIClass}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          goToPrevBlock();
-        }}
-      >
-        <FaChevronLeft className="size-6" />
-      </div>
-      <div
-        className={`absolute right-4 top-1/2 -translate-y-1/2 z-60 backdrop-blur-sm rounded-lg p-2 
+            onClick={(e) => {
+              e.stopPropagation();
+              goToPrevBlock();
+            }}
+          >
+            <FaChevronLeft className="size-6" />
+          </div>
+          <div
+            className={`absolute right-4 top-1/2 -translate-y-1/2 z-60 backdrop-blur-sm rounded-lg p-2 
           ${
             getNextImage(selectedBlock.block_id)
               ? "bg-stone-800/80 hover:bg-stone-700/80 cursor-pointer"
               : "bg-stone-800/20 text-white/20"
           } 
           ${overlayUIClass}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          goToNextBlock();
-        }}
-      >
-        <FaChevronLeft className="size-6 rotate-180" />
-      </div>
+            onClick={(e) => {
+              e.stopPropagation();
+              goToNextBlock();
+            }}
+          >
+            <FaChevronLeft className="size-6 rotate-180" />
+          </div>
+        </>
+      )}
 
       {/* <div
         className="absolute bg-stone-300 inset-0 z-20 w-full h-full opacity-80 flex flex-col items-center justify-center"

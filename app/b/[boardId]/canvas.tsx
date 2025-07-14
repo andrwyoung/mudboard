@@ -68,6 +68,19 @@ function Canvas({
       .sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
   }, [boardSections]);
 
+  // scroll to selected section on init
+  // this is when we jump back and forth from freeform <-> grid
+  useEffect(() => {
+    const selectedSection = useSelectionStore.getState().selectedSection;
+    if (!selectedSection) return;
+
+    const sectionId = selectedSection.section.section_id;
+    const el = sectionRefs.current[sectionId];
+    if (el) {
+      el.scrollIntoView({ behavior: "auto", block: "start" });
+    }
+  }, [sectionRefs]);
+
   // when we scroll past a section. highlight it
   useEffect(() => {
     const el = scrollRef.current;
@@ -76,8 +89,10 @@ function Canvas({
     const onScroll = () => {
       setScroll(el.scrollTop);
 
-      // detecting which section we're in
       const scrollTop = el.scrollTop;
+      const scrollHeight = el.scrollHeight;
+      const clientHeight = el.clientHeight;
+
       const sectionEntries = Object.entries(sectionRefs.current);
 
       // Sort sections by vertical position
@@ -85,6 +100,16 @@ function Canvas({
         .filter(([, ref]) => ref)
         .sort(([, a], [, b]) => (a?.offsetTop ?? 0) - (b?.offsetTop ?? 0));
 
+      // Check if we're at the bottom (within a small buffer for safety)
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 4;
+      // if so, just select that
+      if (atBottom && sorted.length > 0) {
+        const [lastId] = sorted[sorted.length - 1];
+        setSelectedSection(boardSectionMap[lastId]);
+        return;
+      }
+
+      // else we continue with the "select section as we scroll past it logic"
       for (const [sectionId, ref] of sorted) {
         if (!ref) continue;
         const top = ref.offsetTop;

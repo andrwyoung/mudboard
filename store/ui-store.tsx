@@ -26,6 +26,7 @@ type UIStore = {
   toggleMobileColumns: () => void;
 
   freeformMode: boolean;
+  setFreeformMode: (mode: boolean) => void;
   toggleFreeformMode: () => void;
 };
 
@@ -55,6 +56,7 @@ export const useUIStore = create<UIStore>((set, get) => ({
   },
 
   freeformMode: false,
+  setFreeformMode: (mode: boolean) => set({ freeformMode: mode }),
   toggleFreeformMode: () =>
     set((state) => ({
       freeformMode: !state.freeformMode,
