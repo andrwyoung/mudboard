@@ -7,7 +7,6 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { FaSliders } from "react-icons/fa6";
-import { CheckField } from "../ui/check-field";
 import ColorPickerWheel from "./color-picker/color-picker";
 import { useUserPreferenceStore } from "@/store/use-preferences-store";
 import {
@@ -95,7 +94,6 @@ function ColorSettingRow({
 
 export default function FreeformPreferenceModal() {
   const showBorder = useUserPreferenceStore((s) => s.minimalBorders);
-  const setShowBorder = useUserPreferenceStore((s) => s.setMinimalBorders);
   const viewBgColor = useUserPreferenceStore((s) => s.viewBgColor);
   const setViewBgColor = useUserPreferenceStore((s) => s.setViewBgColor);
   const arrangeBgColor = useUserPreferenceStore((s) => s.arrangeBgColor);
@@ -159,8 +157,8 @@ export default function FreeformPreferenceModal() {
           </DialogHeader>
 
           <div className="grid grid-cols-2">
-            <div className="space-y-4 mt-4 mb-6">
-              <div className="flex flex-col mb-6">
+            <div className="space-y-4 mt-4 mb-12">
+              {/* <div className="flex flex-col mb-6">
                 <CheckField
                   text="Minimal Border"
                   isChecked={showBorder ?? false}
@@ -172,7 +170,7 @@ export default function FreeformPreferenceModal() {
                 <p className="ml-2 text-xs">
                   Hide resize border when moving or resizing a single image
                 </p>
-              </div>
+              </div> */}
 
               <ColorSettingRow
                 label="Arrange Mode Background"

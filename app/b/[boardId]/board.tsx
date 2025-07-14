@@ -43,8 +43,6 @@ import { usePanelStore } from "@/store/panel-store";
 import { useMobileColumnResizeEffect } from "@/hooks/gallery/use-resize-listener";
 import { useInitExplore } from "@/hooks/use-init-explore";
 import ExplorePanel from "@/components/explore-panel/explore-panel";
-import { MarqueBox } from "@/components/board/marque";
-import { useMarque } from "@/hooks/gallery/use-marque";
 import { useDragStore } from "@/store/drag-store";
 import DragOverlayBlock from "@/components/drag/drag-overlay";
 import FreeformCanvas from "./freeform-canvas";
@@ -104,14 +102,6 @@ export default function Board({ boardId }: { boardId: string }) {
   // for dragging and stuff
   const initialPointerYRef = useRef<number | null>(null);
 
-  // marque
-  const [marqueRect, setMarqueRect] = useState<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  } | null>(null);
-
   // ordering
   const positionedBlockMap = useLayoutStore((s) => s.positionedBlockMap);
   const regenerateOrdering = useLayoutStore(
@@ -170,7 +160,6 @@ export default function Board({ boardId }: { boardId: string }) {
   //
   // keyboard listeners
   useGlobalListeners();
-  useMarque({ setMarqueRect });
 
   // handling importing images
   const onlyOneSectionMode = boardSections.length === 1;
@@ -240,8 +229,6 @@ export default function Board({ boardId }: { boardId: string }) {
           </div>
         </div>
       )}
-
-      {marqueRect && <MarqueBox marqueRect={marqueRect} />}
 
       <DndContext
         collisionDetection={pointerWithin}

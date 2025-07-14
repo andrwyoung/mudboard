@@ -26,6 +26,9 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { useMarque } from "@/hooks/gallery/use-marque";
+import { MarqueBox } from "@/components/board/marque";
+import MultiSelectBorder from "@/components/freeform-canvas/multi-select-border";
 
 export default function FreeformCanvas({
   blocks,
@@ -44,6 +47,13 @@ export default function FreeformCanvas({
   const cursorMovementsIsActive = !editMode || (editMode && spaceHeld);
 
   const camera = useFreeformStore((s) => s.cameraMap[section.section_id]);
+
+  const [marqueRect, setMarqueRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   // preferences
   const viewBgColor = useUserPreferenceStore((s) => s.viewBgColor);
@@ -124,8 +134,13 @@ export default function FreeformCanvas({
     setIsDragging,
   });
 
+  useMarque({ setMarqueRect, disable: cursorMovementsIsActive });
+
   return (
     <div className="w-full h-full overflow-hidden relative ">
+      {editMode && !spaceHeld && marqueRect && (
+        <MarqueBox marqueRect={marqueRect} />
+      )}
       <div className="absolute top-4 right-4 z-10">
         <FreeformEditToggleSlider />
       </div>
@@ -167,18 +182,25 @@ export default function FreeformCanvas({
                 : viewBgColor ?? DEFAULT_VIEW_BG_COLOR,
             }}
           >
-            {camera &&
-              blocks.map((block) => (
-                <BlockRenderer
-                  key={block.block_id}
-                  block={block}
-                  sectionId={sectionId}
-                  editMode={editMode}
-                  setEditMode={setEditMode}
-                  spacebarDown={spaceHeld}
-                  disableResizing={isDragging || spaceHeld}
-                />
-              ))}
+            {camera && (
+              <>
+                {editMode && <MultiSelectBorder sectionId={sectionId} />}
+
+                {blocks.map((block) => (
+                  <BlockRenderer
+                    key={block.block_id}
+                    block={block}
+                    sectionId={sectionId}
+                    editMode={editMode}
+                    setEditMode={setEditMode}
+                    spacebarDown={spaceHeld}
+                    disableResizing={
+                      isDragging || spaceHeld || marqueRect !== null
+                    }
+                  />
+                ))}
+              </>
+            )}
           </div>
         </ContextMenuTrigger>
 

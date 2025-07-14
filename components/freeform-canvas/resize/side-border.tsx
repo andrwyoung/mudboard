@@ -1,39 +1,37 @@
-import { useResizeHandler } from "@/hooks/freeform/use-resize-handler";
-import { CameraType, FreeformPosition } from "@/store/freeform-store";
 import { useUserPreferenceStore } from "@/store/use-preferences-store";
-import { Block } from "@/types/block-types";
-import {
-  BORDER_HITBOX_SIZE,
-  BORDER_SIZE,
-  HANDLE_Z_OFFSET,
-} from "@/types/constants";
+import { BORDER_HITBOX_SIZE, BORDER_SIZE } from "@/types/constants";
 import { BlockScreenRect, SideType } from "@/types/freeform-types";
 
 export function SideBorder({
   side,
-  block,
   blockScreenRect,
-  blockPosition,
-  camera,
-  isOnlySelected,
+  isSelected,
+  zIndex,
+  multipleSelected,
   disableResizing,
+  onMouseDown,
 }: {
   side: SideType;
-  block: Block;
   blockScreenRect: BlockScreenRect;
-  blockPosition: FreeformPosition;
-  camera: CameraType;
-  isOnlySelected: boolean;
+  isSelected: boolean;
+  zIndex: number;
+  multipleSelected: boolean;
   disableResizing: boolean;
+  onMouseDown: (e: React.MouseEvent) => void;
 }) {
   const { x, y, width, height } = blockScreenRect;
+  const BREATHER_MARGIN = BORDER_SIZE;
 
-  const hitboxStyle: React.CSSProperties = !disableResizing
-    ? {
-        cursor: side === "left" || side === "right" ? "ew-resize" : "ns-resize",
-        zIndex: blockPosition.z + HANDLE_Z_OFFSET,
-      }
-    : {};
+  const hitboxStyle: React.CSSProperties = {
+    // zIndex: blockPosition.z + HANDLE_Z_OFFSET,
+    zIndex,
+    ...(disableResizing
+      ? {}
+      : {
+          cursor:
+            side === "left" || side === "right" ? "ew-resize" : "ns-resize",
+        }),
+  };
 
   const visualStyle: React.CSSProperties = {};
   switch (side) {
@@ -46,7 +44,7 @@ export function SideBorder({
       });
       Object.assign(visualStyle, {
         width: BORDER_SIZE,
-        height,
+        height: height + BREATHER_MARGIN,
       });
       break;
 
@@ -59,7 +57,7 @@ export function SideBorder({
       });
       Object.assign(visualStyle, {
         width: BORDER_SIZE,
-        height,
+        height: height + BREATHER_MARGIN,
       });
       break;
 
@@ -71,7 +69,7 @@ export function SideBorder({
         height: BORDER_HITBOX_SIZE,
       });
       Object.assign(visualStyle, {
-        width,
+        width: width + BREATHER_MARGIN,
         height: BORDER_SIZE,
       });
       break;
@@ -84,18 +82,11 @@ export function SideBorder({
         height: BORDER_HITBOX_SIZE,
       });
       Object.assign(visualStyle, {
-        width,
+        width: width + BREATHER_MARGIN,
         height: BORDER_SIZE,
       });
       break;
   }
-
-  const onMouseDown = useResizeHandler({
-    block,
-    side,
-    blockPosition,
-    camera,
-  });
 
   const minimalBorders = useUserPreferenceStore((s) => s.minimalBorders);
 
@@ -107,10 +98,12 @@ export function SideBorder({
         flex justify-center items-center "
       data-id={`resize-${side}`}
     >
-      {isOnlySelected && !minimalBorders && (
+      {isSelected && !minimalBorders && (
         <div
           style={visualStyle}
-          className="bg-accent z-2 pointer-events-none"
+          className={`bg-accent z-2 pointer-events-none ${
+            multipleSelected ? "opacity-60" : ""
+          }`}
         />
       )}
     </div>

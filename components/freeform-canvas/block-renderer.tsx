@@ -3,13 +3,11 @@ import { useSelectionStore } from "@/store/selection-store";
 import { Block, MudboardImage } from "@/types/block-types";
 import { BlockChooser } from "../blocks/memoized-block";
 import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
-import { SideBorder } from "./resize/side-border";
 import {
   ALL_CORNERS,
   ALL_SIDES,
   BlockScreenRect,
 } from "@/types/freeform-types";
-import { CornerHandles } from "./resize/corner-resize";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -21,6 +19,8 @@ import { getImageUrl } from "@/utils/get-image-url";
 import { copyImageToClipboard } from "@/lib/local-helpers/copy-image-to-clipboard";
 import { usePanelStore } from "@/store/panel-store";
 import { fireConfetti } from "@/utils/fire-confetti";
+import SingleBlockSideBorder from "./resize/single-block-side-borders";
+import SingleBlockCornerResize from "./resize/single-block-corner-handles";
 
 const draggingRefs: Record<string, boolean> = {};
 const lastMouse: Record<string, { x: number; y: number }> = {};
@@ -47,6 +47,8 @@ export function BlockRenderer({
   const selectOnlyThisBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const isSelected = !!selectedBlocks[block.block_id];
+  const multipleSelected = Object.keys(selectedBlocks).length > 1;
+  const isOnlySelected = isSelected && Object.keys(selectedBlocks).length === 1;
 
   const openPinnedPanelWithBlock = usePanelStore(
     (s) => s.openPinnedPanelWithBlock
@@ -82,12 +84,15 @@ export function BlockRenderer({
 
       lastMouse[blockId] = { x: e.clientX, y: e.clientY };
 
-      useFreeformStore
-        .getState()
-        .setPositionForBlock(sectionId, blockId, (prev) => ({
-          x: (prev?.x ?? 0) + dx / camera.scale,
-          y: (prev?.y ?? 0) + dy / camera.scale,
-        }));
+      const selected = useSelectionStore.getState().selectedBlocks;
+      for (const id in selected) {
+        useFreeformStore
+          .getState()
+          .setPositionForBlock(sectionId, id, (prev) => ({
+            x: (prev?.x ?? 0) + dx / camera.scale,
+            y: (prev?.y ?? 0) + dy / camera.scale,
+          }));
+      }
     }
 
     function onMouseUp() {
@@ -114,27 +119,28 @@ export function BlockRenderer({
           {editMode && (
             <>
               {ALL_SIDES.map((side) => (
-                <SideBorder
+                <SingleBlockSideBorder
                   key={side}
                   side={side}
                   block={block}
                   blockScreenRect={blockScreenRect}
                   blockPosition={blockPos}
                   camera={camera}
-                  isOnlySelected={isSelected}
-                  disableResizing={disableResizing}
+                  isSelected={isSelected}
+                  multipleSelected={multipleSelected}
+                  disableResizing={disableResizing || multipleSelected}
                 />
               ))}
               {ALL_CORNERS.map((corner) => (
-                <CornerHandles
+                <SingleBlockCornerResize
                   key={corner}
                   corner={corner}
                   block={block}
                   blockScreenRect={blockScreenRect}
                   blockPosition={blockPos}
                   camera={camera}
-                  isOnlySelected={isSelected}
-                  disableResizing={disableResizing}
+                  isOnlySelected={isOnlySelected}
+                  disableResizing={disableResizing || multipleSelected}
                 />
               ))}
             </>
@@ -159,23 +165,34 @@ export function BlockRenderer({
 
               e.stopPropagation();
 
-              if (!isSelected) {
-                selectOnlyThisBlock("main", block);
+              const isCtrlClick = e.ctrlKey || e.metaKey; // Ctrl on Windows/Linux, Cmd on macOS
+              const store = useSelectionStore.getState();
 
-                // bring it to the front
-                useFreeformStore
-                  .getState()
-                  .setPositionForBlock(sectionId, block.block_id, () => ({
-                    z: useFreeformStore
-                      .getState()
-                      .getAndIncrementZIndex(sectionId),
-                  }));
+              if (isCtrlClick) {
+                const alreadySelected = !!store.selectedBlocks[block.block_id];
+                if (alreadySelected) {
+                  store.removeBlockFromSelection(block);
+                } else {
+                  store.addBlocksToSelection("main", [block]);
+                }
+              } else {
+                if (!isSelected) {
+                  store.selectOnlyThisBlock("main", block);
+
+                  useFreeformStore
+                    .getState()
+                    .setPositionForBlock(sectionId, block.block_id, () => ({
+                      z: useFreeformStore
+                        .getState()
+                        .getAndIncrementZIndex(sectionId),
+                    }));
+                }
               }
 
               lastMouse[block.block_id] = { x: e.clientX, y: e.clientY };
               handleMouseDown(block.block_id, camera);
             }}
-            data-id={`main::block-freeform`}
+            data-id={`main::block-${block.block_id}`}
             className={`absolute z-0`}
           >
             <BlockChooser canEdit={true} block={block} numCols={4} />

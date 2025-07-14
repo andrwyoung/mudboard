@@ -21,6 +21,8 @@ import { canEditSection } from "@/lib/auth/can-edit-section";
 import { useMetadataStore } from "@/store/metadata-store";
 import React from "react";
 import { useDragStore } from "@/store/drag-store";
+import { MarqueBox } from "@/components/board/marque";
+import { useMarque } from "@/hooks/gallery/use-marque";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -41,6 +43,16 @@ function Canvas({
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const [helpOpen, setHelpOpen] = useState(false);
+
+  // marque
+  const [marqueRect, setMarqueRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
+
+  useMarque({ setMarqueRect });
 
   const mirrorKey = isMirror ? "mirror" : "main";
   const { isOpen: overlayGalleryIsOpen, overlayBlock: overlayGalleryBlock } =
@@ -128,126 +140,129 @@ function Canvas({
   }, [setScroll, boardSectionMap, sectionRefs, setSelectedSection, isMirror]);
 
   return (
-    <div
-      className={`relative h-full w-full ${
-        isMirror ? "bg-stone-300 text-white" : "bg-background"
-      }`}
-      data-id="canvas"
-    >
-      <AnimatePresence>
-        {overlayGalleryIsOpen && overlayGalleryBlock && (
-          <motion.div
-            key="overlay-gallery"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute inset-0 z-60"
-          >
-            <OverlayGallery
-              selectedBlock={overlayGalleryBlock}
-              isMirror={isMirror}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+    <>
+      {marqueRect && <MarqueBox marqueRect={marqueRect} />}
       <div
-        key="test-key"
-        className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
-        tabIndex={-1}
-        ref={scrollRef}
-        style={{
-          direction: isMirror ? "ltr" : "rtl",
-          paddingLeft: gallerySpacingSize,
-          paddingRight: gallerySpacingSize,
-          paddingTop: gallerySpacingSize * 2,
-          paddingBottom: gallerySpacingSize,
-        }}
+        className={`relative h-full w-full ${
+          isMirror ? "bg-stone-300 text-white" : "bg-background"
+        }`}
+        data-id="canvas"
       >
-        <div style={{ direction: "ltr" }} className="flex flex-col gap-2 ">
-          <MirrorContext.Provider value={isMirror}>
-            {sortedBoardSections.map((boardSection) => {
-              console.log("regenerating board sections");
-              const section = boardSection.section;
-              const sectionId = section.section_id;
-              const columns = sectionColumns[sectionId];
-              const isLinked = isLinkedSection(boardSection);
+        <AnimatePresence>
+          {overlayGalleryIsOpen && overlayGalleryBlock && (
+            <motion.div
+              key="overlay-gallery"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 z-60"
+            >
+              <OverlayGallery
+                selectedBlock={overlayGalleryBlock}
+                isMirror={isMirror}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              const canBoardEdit = canEditBoard();
-              const canSectionEdit = canEditSection(section);
-              const canEdit = canBoardEdit && canSectionEdit;
+        <div
+          key="test-key"
+          className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
+          tabIndex={-1}
+          ref={scrollRef}
+          style={{
+            direction: isMirror ? "ltr" : "rtl",
+            paddingLeft: gallerySpacingSize,
+            paddingRight: gallerySpacingSize,
+            paddingTop: gallerySpacingSize * 2,
+            paddingBottom: gallerySpacingSize,
+          }}
+        >
+          <div style={{ direction: "ltr" }} className="flex flex-col gap-2 ">
+            <MirrorContext.Provider value={isMirror}>
+              {sortedBoardSections.map((boardSection) => {
+                console.log("regenerating board sections");
+                const section = boardSection.section;
+                const sectionId = section.section_id;
+                const columns = sectionColumns[sectionId];
+                const isLinked = isLinkedSection(boardSection);
 
-              return (
-                <div
-                  key={sectionId}
-                  ref={assignSectionRef(sectionId)}
-                  className={`relative  ${
-                    canBoardEdit && !canSectionEdit
-                      ? "bg-primary/15 rounded-lg"
-                      : ""
-                  } `}
-                  onDragOver={() => {
-                    if (isDraggingExtFile) {
-                      const next = {
-                        section,
-                        mirror: mirrorKey as CanvasScope,
-                      };
+                const canBoardEdit = canEditBoard();
+                const canSectionEdit = canEditSection(section);
+                const canEdit = canBoardEdit && canSectionEdit;
 
-                      // Prevent setting the same object repeatedly
-                      const current = extFileOverSection;
-                      const isSame =
-                        current?.section.section_id ===
-                          next.section.section_id &&
-                        current?.mirror === next.mirror;
+                return (
+                  <div
+                    key={sectionId}
+                    ref={assignSectionRef(sectionId)}
+                    className={`relative  ${
+                      canBoardEdit && !canSectionEdit
+                        ? "bg-primary/15 rounded-lg"
+                        : ""
+                    } `}
+                    onDragOver={() => {
+                      if (isDraggingExtFile) {
+                        const next = {
+                          section,
+                          mirror: mirrorKey as CanvasScope,
+                        };
 
-                      if (!isSame) {
-                        setExtFileOverSection(next);
+                        // Prevent setting the same object repeatedly
+                        const current = extFileOverSection;
+                        const isSame =
+                          current?.section.section_id ===
+                            next.section.section_id &&
+                          current?.mirror === next.mirror;
+
+                        if (!isSame) {
+                          setExtFileOverSection(next);
+                        }
                       }
-                    }
-                  }}
-                >
-                  {canBoardEdit && (
-                    <DroppableGallerySection
-                      canEdit={canEdit}
-                      sectionId={section.section_id}
-                      isLinked={isLinked}
-                      isMirror={isMirror}
-                      isExternalDrag={
-                        isDraggingExtFile &&
-                        extFileOverSection?.section.section_id ===
-                          section.section_id &&
-                        extFileOverSection.mirror === mirrorKey
-                      }
-                    />
-                  )}
-                  <SectionHeader section={section} canEdit={canEdit} />
-                  {columns && (
-                    <SectionGallery
-                      isMirror={isMirror}
-                      section={section}
-                      columns={columns}
-                      canEdit={canEdit}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </MirrorContext.Provider>
+                    }}
+                  >
+                    {canBoardEdit && (
+                      <DroppableGallerySection
+                        canEdit={canEdit}
+                        sectionId={section.section_id}
+                        isLinked={isLinked}
+                        isMirror={isMirror}
+                        isExternalDrag={
+                          isDraggingExtFile &&
+                          extFileOverSection?.section.section_id ===
+                            section.section_id &&
+                          extFileOverSection.mirror === mirrorKey
+                        }
+                      />
+                    )}
+                    <SectionHeader section={section} canEdit={canEdit} />
+                    {columns && (
+                      <SectionGallery
+                        isMirror={isMirror}
+                        section={section}
+                        columns={columns}
+                        canEdit={canEdit}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </MirrorContext.Provider>
+          </div>
         </div>
-      </div>
-      <button
-        onClick={() => setHelpOpen(true)}
-        type="button"
-        title="Help / Support"
-        className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
+        <button
+          onClick={() => setHelpOpen(true)}
+          type="button"
+          title="Help / Support"
+          className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
                border-primary text-primary-darker rounded-full hover:border-accent
               shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
-      >
-        <FaQuestion />
-      </button>
-      <HelpModal open={helpOpen} setOpen={setHelpOpen} pageNum={1} />
-    </div>
+        >
+          <FaQuestion />
+        </button>
+        <HelpModal open={helpOpen} setOpen={setHelpOpen} pageNum={1} />
+      </div>
+    </>
   );
 }
 

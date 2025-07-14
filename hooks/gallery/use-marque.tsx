@@ -5,6 +5,7 @@ import { useLayoutStore } from "@/store/layout-store";
 
 export function useMarque({
   setMarqueRect,
+  disable = false,
 }: {
   setMarqueRect: Dispatch<
     SetStateAction<{
@@ -14,6 +15,7 @@ export function useMarque({
       height: number;
     } | null>
   >;
+  disable?: boolean;
 }) {
   const blockRectsRef = useRef<Map<string, DOMRect>>(new Map());
   const deselectBlocks = useSelectionStore((s) => s.deselectBlocks);
@@ -25,7 +27,7 @@ export function useMarque({
     let isDragging = false;
 
     function handleMouseDown(e: MouseEvent) {
-      if (e.button !== 0) return; // only do left click
+      if (e.button !== 0 || disable) return; // only do left click
 
       const target = e.target as HTMLElement;
 
@@ -40,11 +42,12 @@ export function useMarque({
         return;
       deselectBlocks();
 
-      if (
-        !clickedId ||
-        (clickedId !== "canvas" && !clickedId.includes("::col-"))
-      )
-        return;
+      const isValidClickTarget =
+        clickedId === "freeform-canvas" ||
+        clickedId === "canvas" ||
+        clickedId?.includes("::col-");
+
+      if (!clickedId || !isValidClickTarget) return;
 
       startX = e.clientX;
       startY = e.clientY;
@@ -63,7 +66,7 @@ export function useMarque({
     }
 
     function handleMouseMove(e: MouseEvent) {
-      if (!isDragging) return;
+      if (!isDragging || disable) return;
 
       const x = Math.min(e.clientX, startX);
       const y = Math.min(e.clientY, startY);
@@ -119,5 +122,5 @@ export function useMarque({
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [deselectBlocks]);
+  }, [deselectBlocks, disable]);
 }
