@@ -18,16 +18,9 @@ export async function saveSectionColumnNum(
   }
 
   // STEP 1: update number of columns locally
-  useMetadataStore.setState((s) => ({
-    boardSections: s.boardSections.map((bs) =>
-      bs.section.section_id === sectionId
-        ? {
-            ...bs,
-            section: { ...bs.section, saved_column_num: newColumnNum },
-          }
-        : bs
-    ),
-  }));
+  useMetadataStore.getState().updateBoardSection(sectionId, {
+    saved_column_num: newColumnNum,
+  });
 
   // sync order remotely
   // STEP 2: sync the layout locally and remotely so we have a good

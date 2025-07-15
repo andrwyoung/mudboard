@@ -23,7 +23,7 @@ type UIStore = {
   setPrettyMode: (d: boolean) => void;
 
   forceMobileColumns: boolean;
-  toggleMobileColumns: () => void;
+  setMobileColumns: (m: boolean) => void;
 
   freeformMode: boolean;
   setFreeformMode: (mode: boolean) => void;
@@ -50,10 +50,7 @@ export const useUIStore = create<UIStore>((set, get) => ({
   setPrettyMode: (d) => set({ prettyMode: d }),
 
   forceMobileColumns: false,
-  toggleMobileColumns: () => {
-    const current = get().forceMobileColumns;
-    set({ forceMobileColumns: !current });
-  },
+  setMobileColumns: (m: boolean) => set({ forceMobileColumns: m }),
 
   freeformMode: false,
   setFreeformMode: (mode: boolean) => set({ freeformMode: mode }),

@@ -20,5 +20,5 @@ export async function fireUserConfetti() {
 
   useMetadataStore.setState({
     profile: { ...profile, has_fired_confetti: true },
-  });
+  }); // this is fine use of setState
 }

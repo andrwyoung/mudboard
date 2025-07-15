@@ -5,6 +5,7 @@ import { Board, BoardSection } from "@/types/board-types";
 import { create } from "zustand";
 import { User } from "@supabase/supabase-js";
 import { Tables } from "@/types/supabase";
+import { SetStateAction } from "react";
 
 export type UserProfile = Tables<"users">;
 
@@ -18,7 +19,12 @@ type MetadataStore = {
   setProfile: (profile: UserProfile | null) => void;
 
   boardSections: BoardSection[];
-  setBoardSections: (bs: BoardSection[]) => void;
+  setBoardSections: (bs: SetStateAction<BoardSection[]>) => void;
+  updateBoardSection: (
+    sectionId: string,
+    updates: Partial<BoardSection["section"]>
+  ) => void;
+
   boardSectionMap: Record<string, BoardSection>; // section_id -> boardSection
   regenerateBoardSectionMap: () => void;
 
@@ -35,10 +41,36 @@ export const useMetadataStore = create<MetadataStore>((set, get) => ({
   setProfile: (profile) => set({ profile }),
 
   boardSections: [] as BoardSection[],
-  setBoardSections: (boardSections: BoardSection[]) => {
-    set({ boardSections });
-    get().regenerateBoardSectionMap(); // regenerate immediately after updating
+  setBoardSections: (action) => {
+    set((state) => {
+      const boardSections =
+        typeof action === "function" ? action(state.boardSections) : action;
+      return { boardSections };
+    });
+    get().regenerateBoardSectionMap();
   },
+  updateBoardSection: (
+    sectionId: string,
+    updates: Partial<BoardSection["section"]>
+  ) => {
+    const { boardSections } = get();
+
+    const newBoardSections = boardSections.map((bs) =>
+      bs.section.section_id === sectionId
+        ? {
+            ...bs,
+            section: {
+              ...bs.section,
+              ...updates,
+            },
+          }
+        : bs
+    );
+
+    set({ boardSections: newBoardSections });
+    get().regenerateBoardSectionMap();
+  },
+
   boardSectionMap: {},
   regenerateBoardSectionMap: () => {
     const boardSections = get().boardSections;

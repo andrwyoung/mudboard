@@ -205,12 +205,12 @@ export function useInitBoard(
         useFreeformStore.setState({
           topZIndexMap,
           layoutBoundsMap,
-        });
+        }); // acceptable use of setState
 
         // STEP 4: generate the columns
         const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
         if (isMobile) {
-          useUIStore.setState({ forceMobileColumns: true });
+          useUIStore.getState().setMobileColumns(true);
         }
 
         const initColumns: SectionColumns = {};

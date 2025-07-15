@@ -35,7 +35,6 @@ export function getColumnWidth(
   const scrollbarWidth = getScrollbarWidth();
   //   const scrollbarWidth = 0;
   const gutterPadding = spacingBetweenCols * numCols;
-  // const galleryPadding = useUIStore.getState().gallerySpacingSize * 2;
 
   const mirrorMode = useUIStore.getState().mirrorMode;
   const mirrorMult = mirrorMode ? 2 : 1;

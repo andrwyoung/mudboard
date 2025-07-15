@@ -123,19 +123,8 @@ export default function SectionShareModal({
       }
     }
 
-    useMetadataStore.setState((s) => ({
-      boardSections: s.boardSections.map((bs) =>
-        bs.section.section_id === section.section_id
-          ? {
-              ...bs,
-              section: {
-                ...bs.section,
-                ...updates, // includes field and possibly first_published_at
-              },
-            }
-          : bs
-      ),
-    }));
+    // mark as correct
+    useMetadataStore.getState().updateBoardSection(section.section_id, updates);
 
     toast.success(value ? toastText.on : toastText.off);
     if (isFirstMarketplacePublish) {

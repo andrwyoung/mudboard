@@ -14,16 +14,9 @@ export async function updateSectionTitle(
   }
 
   // update locally
-  useMetadataStore.setState((s) => ({
-    boardSections: s.boardSections.map((bs) =>
-      bs.section.section_id === sectionId
-        ? {
-            ...bs,
-            section: { ...bs.section, title: newTitle },
-          }
-        : bs
-    ),
-  }));
+  useMetadataStore
+    .getState()
+    .updateBoardSection(sectionId, { title: newTitle });
 
   // update remotely
   await supabase

@@ -12,5 +12,5 @@ export function initializeSectionColumns(section: Section) {
         () => []
       ),
     },
-  }));
+  })); // acceptable use of setState
 }

@@ -17,9 +17,7 @@ export async function reindexSections(): Promise<void> {
       order_index: index,
     }));
 
-  useMetadataStore.setState(() => ({
-    boardSections: reorderedSections,
-  }));
+  useMetadataStore.getState().setBoardSections(reorderedSections);
 
   // sync with database only if has access
   const canWrite = canEditBoard();

@@ -30,9 +30,9 @@ export async function addNewSection({
   });
 
   // update locally
-  useMetadataStore.setState((bs) => ({
-    boardSections: [...bs.boardSections, newBoardSection],
-  }));
+  useMetadataStore
+    .getState()
+    .setBoardSections((prev) => [...prev, newBoardSection]);
 
   // create a new array of columns to use
   initializeSectionColumns(newBoardSection.section);

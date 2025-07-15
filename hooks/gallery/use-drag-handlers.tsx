@@ -250,7 +250,7 @@ export function useGalleryHandlers({
         over?.id === "pinned-panel-dropzone" &&
         activeBlocksWithPos[0].block.block_type === "image"
       ) {
-        usePanelStore.setState({ pinnedBlock: activeBlocksWithPos[0].block });
+        usePanelStore.getState().setPinnedBlock(activeBlocksWithPos[0].block);
       }
 
       const unscopedDropId = String(dropIndicatorId).split("::")[1] ?? "";

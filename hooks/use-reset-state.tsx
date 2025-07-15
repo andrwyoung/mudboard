@@ -16,6 +16,6 @@ export function useResetState() {
     useExploreStore.getState().reset();
     useFreeformStore.getState().reset();
 
-    useUIStore.setState({ freeformMode: false });
+    useUIStore.getState().setFreeformMode(false);
   };
 }

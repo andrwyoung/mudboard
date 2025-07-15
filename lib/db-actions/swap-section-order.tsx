@@ -36,19 +36,15 @@ export async function swapSectionOrder(a: BoardSection, b: BoardSection) {
   }
 
   // Update locally
-  useMetadataStore.setState((s) => {
-    const newBoardSections = [...s.boardSections].map((bs) => {
+  useMetadataStore.getState().setBoardSections((prev) =>
+    prev.map((bs) => {
       if (bs.section.section_id === a.section.section_id)
         return { ...bs, order_index: b.order_index };
       if (bs.section.section_id === b.section.section_id)
         return { ...bs, order_index: a.order_index };
       return bs;
-    });
-
-    return {
-      boardSections: newBoardSections,
-    };
-  });
+    })
+  );
 
   return true;
 }

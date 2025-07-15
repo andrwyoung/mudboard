@@ -69,7 +69,7 @@ export default function MudkitPage({ sectionId }: Props) {
 
       const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
       if (isMobile) {
-        useUIStore.setState({ forceMobileColumns: true });
+        useUIStore.getState().setMobileColumns(true);
       }
 
       setSection(sectionData);

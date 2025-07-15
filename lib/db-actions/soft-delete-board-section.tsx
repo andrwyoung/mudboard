@@ -54,11 +54,11 @@ export async function softDeleteBoardSection(
   );
 
   // if successfully then delete both section and blocks locally too
-  useMetadataStore.setState((s) => ({
-    boardSections: s.boardSections.filter(
-      (bs) => bs.board_section_id !== boardSection.board_section_id
-    ),
-  }));
+  useMetadataStore
+    .getState()
+    .setBoardSections((prev) =>
+      prev.filter((bs) => bs.board_section_id !== boardSection.board_section_id)
+    );
 
   useLayoutStore.setState((s) => {
     const updated = { ...s.sectionColumns };
@@ -89,9 +89,7 @@ export async function softDeleteBoardSection(
       claimedBy: user?.id ?? null,
     });
 
-    useMetadataStore.setState(() => ({
-      boardSections: [fallback],
-    }));
+    useMetadataStore.getState().setBoardSections([fallback]);
 
     useLayoutStore.setState(() => ({
       sectionColumns: {

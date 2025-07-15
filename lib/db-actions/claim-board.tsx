@@ -81,16 +81,12 @@ export async function claimBoard() {
     access_level: "private" as Enums<"access_type">,
   };
 
-  useMetadataStore.setState((state) => ({
-    board: updatedBoard,
-    boardSections: state.boardSections.map((bs) => ({
-      ...bs,
-      section: {
-        ...bs.section,
-        user_id: user.id,
-      },
-    })),
-  }));
+  useMetadataStore.getState().setBoard(updatedBoard);
+  for (const bs of boardSections) {
+    useMetadataStore.getState().updateBoardSection(bs.section.section_id, {
+      owned_by: user.id,
+    });
+  }
 
   // clear temp mudkits
   useExploreStore.getState().setTempMudkits([]);

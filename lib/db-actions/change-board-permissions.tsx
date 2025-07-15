@@ -38,9 +38,7 @@ export async function changeBoardPermissions(
   }
 
   // update local store
-  useMetadataStore.setState({
-    board: { ...board, access_level },
-  });
+  useMetadataStore.getState().setBoard({ ...board, access_level });
 
   toast.success("Board permissions updated!");
 }
