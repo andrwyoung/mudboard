@@ -15,43 +15,11 @@ import { Section } from "@/types/board-types";
 import { createTextBlock } from "@/lib/db-actions/sync-text/create-text-block";
 import { useDragStore } from "@/store/drag-store";
 
-// virtualization
-function getBlockLayout(
-  column: Block[],
-  spacing: number,
-  columnWidth: number,
-  gallerySpacingSize: number
-) {
-  let top = 0;
-  const items = column.map((block) => {
-    let height = block.height;
-
-    if (block.block_type === "image" && block.width) {
-      const width = columnWidth;
-      const aspectRatio = block.height / block.width;
-      height = Math.round(width * aspectRatio);
-    }
-
-    const item = { block, top, height };
-
-    // only add spacing below, not before first
-    top += spacing;
-    top += height;
-
-    return item;
-  });
-
-  // pad the bottom
-  const totalHeight = top + gallerySpacingSize;
-  return { items, totalHeight };
-}
-
 type Props = {
   canEdit: boolean;
   section: Section;
   wholeGalleryEmpty: boolean;
   column: Block[];
-  columnWidth: number;
   columnIndex: number;
   selectedBlocks: Record<string, Block>;
   handleItemClick: (block: Block, e: React.MouseEvent) => void;
@@ -64,7 +32,6 @@ function ColumnComponent({
   section,
   wholeGalleryEmpty,
   column,
-  columnWidth,
   columnIndex,
   selectedBlocks,
   handleItemClick,
@@ -72,9 +39,6 @@ function ColumnComponent({
   visualNumCols,
 }: Props) {
   const sectionId = section.section_id;
-
-  const spacingSize = useUIStore((s) => s.spacingSize);
-  const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
 
   const draggedBlocks = useDragStore((s) => s.draggedBlocks);
@@ -86,13 +50,6 @@ function ColumnComponent({
     draggedBlocks.length <= MAX_DRAGGED_ITEMS;
   const isMirror = useIsMirror();
   const scope = useGetScope();
-
-  const { items } = getBlockLayout(
-    column,
-    spacingSize,
-    columnWidth,
-    gallerySpacingSize
-  );
 
   return (
     // <div style={{ height: totalHeight, position: "relative" }}>
@@ -135,7 +92,7 @@ function ColumnComponent({
         )} */}
 
         {/* {visibleItems.map(({ block, top, height }) => { */}
-        {items.map(({ block }, index) => {
+        {column.map((block, index) => {
           return (
             <div
               key={`${block.block_id}`}

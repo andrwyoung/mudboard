@@ -5,9 +5,9 @@
 
 "use client";
 import { DroppableColumn } from "@/components/drag/droppable-column";
-import { useMeasureStore, useUIStore } from "@/store/ui-store";
+import { useUIStore } from "@/store/ui-store";
 import { Block } from "@/types/block-types";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { MemoizedDroppableColumn } from "./columns";
 import { MirrorContext } from "./board";
 import Image from "next/image";
@@ -33,8 +33,6 @@ function SectionGallery({
   const scope = isMirror ? "mirror" : "main";
 
   const spacingSize = useUIStore((s) => s.spacingSize);
-  const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
-  const sidebarWidth = useMeasureStore((s) => s.sidebarWidth);
   const forceMobileColumns = useUIStore((s) => s.forceMobileColumns);
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
@@ -66,28 +64,6 @@ function SectionGallery({
 
   const isEmpty = columns.every((col) => col.length === 0);
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
-
-  // column width
-  const columnWidth = useMemo(() => {
-    if (typeof window === "undefined") return 0;
-
-    const totalGapSpacing = spacingSize * (visualNumCols - 1);
-    const totalSidePadding = gallerySpacingSize * 2;
-
-    const availableWidth =
-      window.innerWidth - totalGapSpacing - totalSidePadding - sidebarWidth;
-    const width = availableWidth / visualNumCols;
-
-    console.log(
-      "column width is around: ",
-      width,
-      "window size: ",
-      window.innerWidth,
-      "sidebar size: ",
-      sidebarWidth
-    );
-    return width;
-  }, [spacingSize, gallerySpacingSize, visualNumCols, sidebarWidth]);
 
   // when clicking on an image
   const handleItemClick = useCallback(
@@ -204,7 +180,6 @@ function SectionGallery({
               section={section}
               wholeGalleryEmpty={isEmpty}
               column={column}
-              columnWidth={columnWidth}
               columnIndex={columnIndex}
               selectedBlocks={selectedBlocks}
               handleItemClick={handleItemClick}

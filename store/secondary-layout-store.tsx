@@ -7,6 +7,7 @@ import { useMeasureStore, useUIStore } from "./ui-store";
 import { generateColumnsFromBlockLayout } from "@/lib/columns/generate-columns";
 import { generatePositionedBlocks } from "./layout-core/positioning/generate-block-positions";
 import { SectionWithStats } from "@/types/stat-types";
+import { getColumnWidth } from "./layout-core/positioning/get-column-width";
 
 type SecondaryLayoutStore = {
   selectedSection: SectionWithStats | null;
@@ -62,18 +63,21 @@ export const useSecondaryLayoutStore = create<SecondaryLayoutStore>(
     positionedBlockMap: new Map(),
     masterBlockOrder: [],
     regenerateOrder: () => {
-      console.log("regenerating layout");
+      console.log("regenerating secondary layout");
 
-      const { sidebarWidth, windowWidth } = useMeasureStore.getState();
       const spacingSize = useUIStore.getState().spacingSize;
-
       const sectionId = get().selectedSection?.section_id ?? "__FAKE_ID__";
+
+      const columnWidth = getColumnWidth(
+        useMeasureStore.getState().canvasWidth,
+        spacingSize,
+        get().visualColumnNum,
+        useUIStore.getState().gallerySpacingSize
+      );
 
       const { orderedBlocks, positionedBlockMap } = generatePositionedBlocks(
         { [sectionId]: get().columns },
-        [sectionId],
-        sidebarWidth,
-        windowWidth,
+        [{ sectionId, columnWidth }],
         spacingSize
       );
 
