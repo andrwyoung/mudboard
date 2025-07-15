@@ -6,7 +6,6 @@ import { metadata as layoutMetadata } from "@/app/layout";
 import { getThumbnailUrl } from "@/utils/get-thumbnail-url";
 import { THUMBNAIL_ASPECT_MAP } from "@/types/upload-settings";
 import { checkIfSectionExists } from "@/lib/db-actions/check-section-exist";
-import MudkitPage from "./mudkit-page";
 
 export async function generateMetadata({
   params,
@@ -55,5 +54,10 @@ export default async function MudkitViewPage({
   const section = await checkIfSectionExists(sectionId);
   if (!section || !section.is_public) return notFound();
 
-  return <MudkitPage key={sectionId} sectionId={sectionId} />;
+  return (
+    <h1 className="w-screen h-screen text-primary flex items-center justify-center">
+      Page Under Construction. Sorry!
+    </h1>
+  );
+  // return <MudkitPage key={sectionId} sectionId={sectionId} />;
 }

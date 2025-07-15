@@ -9,7 +9,6 @@ import { fetchSupabaseBlocks } from "@/lib/db-actions/fetch-db-blocks";
 import OverlayGallery from "@/app/b/[boardId]/overlay-gallery";
 import { useOverlayStore } from "@/store/overlay-store";
 import { useResetState } from "@/hooks/use-reset-state";
-import { useLayoutStore } from "@/store/layout-store";
 import {
   MOBILE_BREAKPOINT,
   MOBILE_COLUMN_NUMBER,
@@ -20,6 +19,7 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { useGlobalListeners } from "@/hooks/gallery/use-global-listeners";
 import { useMeasureStore, useUIStore } from "@/store/ui-store";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
+import { toast } from "sonner";
 
 interface Props {
   sectionId: string;
@@ -30,16 +30,19 @@ export default function MudkitPage({ sectionId }: Props) {
   const [loading, setLoading] = useState(true);
   const setBoardSections = useMetadataStore((s) => s.setBoardSections);
 
-  const sectionColumns = useLayoutStore((s) => s.sectionColumns);
-  const setSectionColumns = useLayoutStore((s) => s.setSectionColumns);
+  const sectionColumns = useSecondaryLayoutStore((s) => s.columns);
+  const setSectionColumns = useSecondaryLayoutStore((s) => s.setColumns);
   const { overlayBlock } = useOverlayStore("main");
 
   const resetState = useResetState();
   useEffect(() => {
     resetState();
 
+    toast.success("hey");
+
     const fetchSectionData = async () => {
       setLoading(true);
+      toast.success("hey");
       const { data: sectionData, error: sectionError } = await supabase
         .from("sections")
         .select("*")
@@ -77,15 +80,13 @@ export default function MudkitPage({ sectionId }: Props) {
         blocks,
         isMobile ? MOBILE_COLUMN_NUMBER : section.saved_column_num
       );
-      setSectionColumns({
-        [section.section_id]: generated,
-      });
+      setSectionColumns(generated);
       useMeasureStore.getState().setWindowWidth(window.innerWidth); // needed for regenerating order
       useSecondaryLayoutStore.getState().regenerateOrder();
 
       console.log(
         "master block order: ",
-        useLayoutStore.getState().masterBlockOrder
+        useSecondaryLayoutStore.getState().masterBlockOrder
       );
 
       setLoading(false);
@@ -98,11 +99,9 @@ export default function MudkitPage({ sectionId }: Props) {
   useMobileColumnResizeEffect(section?.section_id ? [section.section_id] : []);
   useGlobalListeners();
 
-  if (loading) return null;
-
   return (
     <div className="flex flex-col sm:px-2 md:px-12 py-4 w-screen h-screen mx-auto relative">
-      {section && (
+      {!loading && section && (
         <>
           <div className="pt-2 pb-4 px-2 text-primary ">
             <h1 className="text-3xl font-bold">
@@ -127,7 +126,7 @@ export default function MudkitPage({ sectionId }: Props) {
               <SectionGallery
                 canEdit={false} // purely view only on this page
                 section={section}
-                columns={sectionColumns[section.section_id]}
+                columns={sectionColumns}
               />
             </div>
           )}
