@@ -1,3 +1,5 @@
+// deciding whether to collapse everything into 2 columns
+
 import { useEffect } from "react";
 import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";

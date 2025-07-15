@@ -6,14 +6,11 @@
 
 import { SectionColumns } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
-import { getColumnWidth } from "./get-column-width";
 import { CAPTION_HEIGHT } from "@/types/upload-settings";
 
 export function generatePositionedBlocks(
   sectionColumns: SectionColumns,
-  sortedSectionIds: string[],
-  sidebarWidth: number,
-  windowWidth: number,
+  sortedSectionIds: { sectionId: string; columnWidth: number }[],
   spacingSize: number
 ): {
   orderedBlocks: Record<string, PositionedBlock[]>;
@@ -24,17 +21,12 @@ export function generatePositionedBlocks(
 
   const orderedBlocks: Record<string, PositionedBlock[]> = {};
 
-  for (const sectionId of sortedSectionIds) {
+  for (const section of sortedSectionIds) {
+    const sectionId = section.sectionId;
+    const columnWidth = section.columnWidth;
+
     const columns = sectionColumns[sectionId];
     if (!columns) continue;
-
-    const numCols = columns.length;
-    const columnWidth = getColumnWidth(
-      sidebarWidth,
-      windowWidth,
-      spacingSize,
-      numCols
-    );
 
     for (let colIndex = 0; colIndex < columns.length; colIndex++) {
       const col = columns[colIndex];

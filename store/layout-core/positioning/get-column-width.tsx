@@ -23,28 +23,26 @@ export function getScrollbarWidth(): number {
 }
 
 export function getColumnWidth(
-  sidebarWidth: number,
-  windowWidth: number,
-  spacingSize: number,
-  numCols: number
+  canvasWidth: number,
+  spacingBetweenCols: number,
+  numCols: number,
+  galleryPadding: number
 ) {
   // the math:
-  // total_width - sidebar_width - (scrollbar + numcol * padding + gallery_padding * 2) * 2 if mirror
+  // canvas_width - (scrollbar + numcol * padding + gallery_padding * 2)
   // = amount of space left for columns / numcol = columnWidth
 
   const scrollbarWidth = getScrollbarWidth();
   //   const scrollbarWidth = 0;
-  const gutterPadding = spacingSize * numCols;
-  const galleryPadding = useUIStore.getState().gallerySpacingSize * 2;
+  const gutterPadding = spacingBetweenCols * numCols;
+  // const galleryPadding = useUIStore.getState().gallerySpacingSize * 2;
 
   const mirrorMode = useUIStore.getState().mirrorMode;
   const mirrorMult = mirrorMode ? 2 : 1;
 
   // ok.
   const availableSpace =
-    windowWidth -
-    sidebarWidth -
-    (scrollbarWidth + gutterPadding + galleryPadding) * mirrorMult;
+    canvasWidth - (scrollbarWidth + gutterPadding + galleryPadding * 2);
 
   const columnWidth = availableSpace / numCols / mirrorMult;
 

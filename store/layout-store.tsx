@@ -19,6 +19,7 @@ import { generatePositionedBlocks } from "@/store/layout-core/positioning/genera
 import { DEFAULT_COLUMNS, MOBILE_COLUMN_NUMBER } from "@/types/constants";
 import { generateColumnsFromBlockLayout } from "@/lib/columns/generate-columns";
 import { scheduleGridSync } from "@/lib/syncing/sync-schedulers";
+import { getColumnWidth } from "./layout-core/positioning/get-column-width";
 
 type LayoutStore = {
   // SECTION 1
@@ -48,7 +49,9 @@ type LayoutStore = {
   positionedBlockMap: Map<string, PositionedBlock>; // derived. position map blockId -> posBlock
   masterBlockOrder: Record<string, PositionedBlock[]>; // derived. sectionId -> posBlocks[]
   regenerateOrderingInternally: () => void;
-  regenerateOrder: (sortedSectionIds: string[]) => void;
+  regenerateOrder: (
+    sortedSectionIds: { sectionId: string; columnWidth: number }[]
+  ) => void;
 
   getBlockPosition: (blockId: string) => PositionedBlock | undefined;
 
@@ -172,26 +175,43 @@ export const useLayoutStore = create<LayoutStore>()(
     positionedBlockMap: new Map(),
     masterBlockOrder: {},
     regenerateOrderingInternally: () => {
-      const boardSections = useMetadataStore.getState().boardSections;
-      const sortedSectionIds = boardSections
-        .slice()
-        .sort((a, b) => a.order_index - b.order_index)
-        .map((bs) => bs.section.section_id);
+      const canvasWidth = useMeasureStore.getState().canvasWidth;
+      const spacingSize = useUIStore.getState().spacingSize;
+      const galleryPadding = useUIStore.getState().gallerySpacingSize;
 
-      get().regenerateOrder(sortedSectionIds);
+      const boardSections = useMetadataStore.getState().boardSections;
+
+      const sectionIdWithWidths = boardSections.map((bs) => {
+        const sectionId = bs.section.section_id;
+        const numCols = useLayoutStore
+          .getState()
+          .getVisualNumColsForSection(sectionId);
+
+        const columnWidth = getColumnWidth(
+          canvasWidth,
+          spacingSize,
+          numCols,
+          galleryPadding
+        );
+
+        return {
+          sectionId,
+          columnWidth,
+        };
+      });
+      get().regenerateOrder(sectionIdWithWidths);
     },
-    regenerateOrder: (sortedSectionIds: string[]) => {
+    regenerateOrder: (
+      sortedSectionIds: { sectionId: string; columnWidth: number }[]
+    ) => {
       console.log("regenerating layout");
 
       const { sectionColumns: columns } = get();
       const spacingSize = useUIStore.getState().spacingSize;
-      const { sidebarWidth, windowWidth } = useMeasureStore.getState();
 
       const { orderedBlocks, positionedBlockMap } = generatePositionedBlocks(
         columns,
         sortedSectionIds,
-        sidebarWidth,
-        windowWidth,
         spacingSize
       );
 

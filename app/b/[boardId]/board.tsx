@@ -68,6 +68,9 @@ export default function Board({ boardId }: { boardId: string }) {
   const mirrorMode = useUIStore((s) => s.mirrorMode);
   const spacingSize = useUIStore((s) => s.spacingSize);
 
+  const [sidebarWidth, setSidebarWidth] = useState(0);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+
   const panelMode = usePanelStore((s) => s.panelMode);
   const sidebarCollapsed = usePanelStore((s) => s.isCollapsed);
   const setSidebarCollapsed = usePanelStore((s) => s.setIsCollapsed);
@@ -90,9 +93,6 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // virtualization
   const windowWidth = useMeasureStore((s) => s.windowWidth);
-  const setSidebarWidth = useMeasureStore((s) => s.setSidebarWidth);
-  const sidebarWidth = useMeasureStore((s) => s.sidebarWidth);
-  const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const updateColumnsInASection = useLayoutStore(
@@ -115,7 +115,7 @@ export default function Board({ boardId }: { boardId: string }) {
   // KEY SECTION: regenerates the order whenever the screen size changes
   useEffect(
     () => regenerateOrdering(),
-    [sectionColumns, regenerateOrdering, spacingSize, sidebarWidth, windowWidth]
+    [sectionColumns, regenerateOrdering, spacingSize]
   );
 
   useEffect(() => {
@@ -135,24 +135,34 @@ export default function Board({ boardId }: { boardId: string }) {
   //
   //
 
-  // measure sidebar
+  // measure sidebar. solely to know the max width the Side Panel can have
   useEffect(() => {
-    if (!sidebarRef.current) return;
+    const el = sidebarRef.current;
+    if (!el) return;
 
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const width = entry.contentRect.width;
-        setSidebarWidth(width);
-        // console.log("sidebar remeasuring. width: ", width);
-      }
+    const observer = new ResizeObserver(([entry]) => {
+      setSidebarWidth(entry.contentRect.width);
     });
 
-    observer.observe(sidebarRef.current);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [setSidebarWidth]);
+  // regenerate ordering whenever the canvasRef size changes. for Virtualizatino
+  useEffect(() => {
+    if (!mainCanvasRef.current) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      regenerateOrdering();
+      useMeasureStore.setState({
+        canvasWidth: entry.contentRect.width,
+        canvasHeight: entry.contentRect.height,
+      });
+    });
+
+    observer.observe(mainCanvasRef.current);
+    return () => observer.disconnect();
+  }, [regenerateOrdering]);
 
   // SECTION: hooks
   //

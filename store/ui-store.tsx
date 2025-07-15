@@ -66,21 +66,23 @@ export const useUIStore = create<UIStore>((set, get) => ({
 export const mainCanvasRef = createRef<HTMLDivElement>();
 
 type MeasureStore = {
-  sidebarWidth: number;
-  setSidebarWidth: (width: number) => void;
   windowWidth: number;
   setWindowWidth: (width: number) => void;
 
   scroll: number;
   setScroll: (scroll: number) => void;
+
+  canvasWidth: number;
+  canvasHeight: number;
 };
 
 export const useMeasureStore = create<MeasureStore>((set) => ({
-  sidebarWidth: 0,
-  setSidebarWidth: (width: number) => set({ sidebarWidth: width }),
   windowWidth: 0,
   setWindowWidth: (width: number) => set({ windowWidth: width }),
 
   scroll: 0,
   setScroll: (scroll: number) => set({ scroll }),
+
+  canvasWidth: 0,
+  canvasHeight: 0,
 }));
