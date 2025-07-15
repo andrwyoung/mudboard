@@ -43,6 +43,5 @@ export const usePanelStore = create<PanelStore>((set) => ({
   isCollapsed: false,
   setIsCollapsed: (isOpen: boolean) => set({ isCollapsed: isOpen }),
 
-  reset: () =>
-    set({ panelMode: "none", pinnedBlock: null, isCollapsed: false }),
+  reset: () => set({ panelMode: "none", pinnedBlock: null }),
 }));

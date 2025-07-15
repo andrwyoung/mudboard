@@ -48,6 +48,13 @@ export const ROADMAP_LINK = "https://jondrew.notion.site/Mudboard-Roadmap-2162e8
 export const INTEREST_LINK = "https://forms.gle/QA96JUcRRP5YSqRT6"
 
 
+export const DRAG_THRESHOLD = 4; // the distance the mouse needs to move at which a click becomes a drag
+
+// sidebar
+export const DEFAULT_SIDEBAR_WIDTH = 220;
+export const MIN_SIDEBAR_WIDTH = 200;
+export const MAX_SIDEBAR_WIDTH = 250;
+export const COLLAPSED_SIDEBAR_WIDTH = 54;
 
 
 // thumbnail constants

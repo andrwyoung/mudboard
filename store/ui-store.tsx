@@ -2,7 +2,11 @@
 // very important because we need these numbers to measure the columns widths
 // for virtualization
 
-import { DEFAULT_GALLERY_SPACING, DEFAULT_SPACING } from "@/types/constants";
+import {
+  DEFAULT_GALLERY_SPACING,
+  DEFAULT_SIDEBAR_WIDTH,
+  DEFAULT_SPACING,
+} from "@/types/constants";
 import { createRef } from "react";
 import { create } from "zustand";
 
@@ -66,6 +70,9 @@ type MeasureStore = {
   windowWidth: number;
   setWindowWidth: (width: number) => void;
 
+  sidebarWidth: number;
+  setSidebarWidth: (width: number) => void;
+
   scroll: number;
   setScroll: (scroll: number) => void;
 
@@ -76,6 +83,9 @@ type MeasureStore = {
 export const useMeasureStore = create<MeasureStore>((set) => ({
   windowWidth: 0,
   setWindowWidth: (width: number) => set({ windowWidth: width }),
+
+  sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
+  setSidebarWidth: (width) => set({ sidebarWidth: width }),
 
   scroll: 0,
   setScroll: (scroll: number) => set({ scroll }),

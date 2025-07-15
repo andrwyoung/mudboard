@@ -13,17 +13,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
+} from "../../ui/alert-dialog";
 import { BoardSection } from "@/types/board-types";
 import { softDeleteBoardSection } from "@/lib/db-actions/soft-delete-board-section";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 
-import SectionRow from "./section-sections/section-row";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase/supabase-client";
-import AddSectionButton from "./section-sections/add-section-button";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import { canEditSection } from "@/lib/auth/can-edit-section";
+import SectionRow from "./section-sections/section-row";
+import AddSectionButton from "./section-sections/add-section-button";
 
 export default function SectionsSection({
   sectionRefs,

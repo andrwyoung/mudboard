@@ -3,13 +3,13 @@
 import { useMetadataStore } from "@/store/metadata-store";
 import { useThumbnailStore } from "@/store/thumbnail-store";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
 import Image from "next/image";
 import {
   THUMBNAIL_ASPECT_MAP,
   THUMBNAIL_COLUMNS,
 } from "@/types/upload-settings";
-import InfoTooltip from "../ui/info-tooltip";
+import InfoTooltip from "../../ui/info-tooltip";
 import { toast } from "sonner";
 import { FaCopy } from "react-icons/fa6";
 import { BOARD_BASE_URL } from "@/types/constants";

@@ -13,7 +13,7 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from "../../ui/context-menu";
+} from "../../../ui/context-menu";
 import { DroppableForImages } from "@/components/drag/droppable-section";
 import FillingDot from "@/components/ui/filling-dot";
 import { DEFAULT_SECTION_NAME } from "@/types/constants";

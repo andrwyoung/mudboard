@@ -12,7 +12,6 @@ import {
   useRef,
   useState,
 } from "react";
-import Sidebar from "./sidebar";
 import { Block } from "@/types/block-types";
 import { useImageImport } from "@/hooks/use-import-images";
 import { useLayoutStore } from "@/store/layout-store";
@@ -34,7 +33,6 @@ import { useInitBoard } from "@/hooks/use-init-board";
 import { useGlobalListeners } from "@/hooks/gallery/use-global-listeners";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
-import { CollapsedSidebar } from "@/components/sidebar/collapsed-sidebar";
 import WelcomeModal from "@/components/modals/welcome-modal";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
@@ -46,6 +44,8 @@ import ExplorePanel from "@/components/explore-panel/explore-panel";
 import { useDragStore } from "@/store/drag-store";
 import DragOverlayBlock from "@/components/drag/drag-overlay";
 import FreeformCanvas from "./freeform-canvas";
+import ResizableSidebar from "./sidebar";
+import { COLLAPSED_SIDEBAR_WIDTH } from "@/types/constants";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -68,12 +68,13 @@ export default function Board({ boardId }: { boardId: string }) {
   const mirrorMode = useUIStore((s) => s.mirrorMode);
   const spacingSize = useUIStore((s) => s.spacingSize);
 
-  const [sidebarWidth, setSidebarWidth] = useState(0);
-  const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const sidebarWidth = useMeasureStore((s) => s.sidebarWidth);
+  const sidebarCollapsed = usePanelStore((s) => s.isCollapsed);
+  const actualSidebarWidth = sidebarCollapsed
+    ? COLLAPSED_SIDEBAR_WIDTH
+    : sidebarWidth;
 
   const panelMode = usePanelStore((s) => s.panelMode);
-  const sidebarCollapsed = usePanelStore((s) => s.isCollapsed);
-  const setSidebarCollapsed = usePanelStore((s) => s.setIsCollapsed);
 
   // sections
   const boardSections = useMetadataStore((s) => s.boardSections);
@@ -127,19 +128,6 @@ export default function Board({ boardId }: { boardId: string }) {
   // SECTION: measurements and virtualization setup
   //
   //
-
-  // measure sidebar. solely to know the max width the Side Panel can have
-  useEffect(() => {
-    const el = sidebarRef.current;
-    if (!el) return;
-
-    const observer = new ResizeObserver(([entry]) => {
-      setSidebarWidth(entry.contentRect.width);
-    });
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   // regenerate ordering whenever the canvasRef size changes. for Virtualizatino
   useEffect(() => {
@@ -242,7 +230,7 @@ export default function Board({ boardId }: { boardId: string }) {
         autoScroll={!mirrorMode}
       >
         {/* Sidebar */}
-        <aside
+        {/* <aside
           className={`hidden lg:block 
             ${
               sidebarCollapsed
@@ -260,7 +248,9 @@ export default function Board({ boardId }: { boardId: string }) {
               onCollapse={() => setSidebarCollapsed(true)}
             />
           )}
-        </aside>
+        </aside> */}
+
+        <ResizableSidebar sectionRefs={sectionRefs} />
 
         {/* Gallery */}
         <main className="flex-1">
@@ -301,7 +291,10 @@ export default function Board({ boardId }: { boardId: string }) {
               {panelMode !== "none" && windowWidth != 0 && (
                 <ResizablePinnedPanel
                   initialWidth={windowWidth * 0.4}
-                  maxWidth={Math.max(400, windowWidth - sidebarWidth - 600)}
+                  maxWidth={Math.max(
+                    400,
+                    windowWidth - actualSidebarWidth - 600
+                  )}
                   dndId={
                     panelMode === "focus" ? "pinned-panel-dropzone" : undefined
                   }

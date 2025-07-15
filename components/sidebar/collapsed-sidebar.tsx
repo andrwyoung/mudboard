@@ -16,8 +16,8 @@ export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
   const setPanelMode = usePanelStore((s) => s.setPanelMode);
 
   return (
-    <div className="h-full flex flex-col items-center justify-start pt-2 gap-4">
-      <Link href="/" className="w-[48px] h-[48px]" title="Home">
+    <div className="h-full flex flex-col items-center justify-start pt-2">
+      <Link href="/" className="w-[32px] h-[32px] mb-16" title="Home">
         <Image
           src={"/logo.png"}
           alt={"Small Mudboard Logo"}
@@ -26,51 +26,43 @@ export function CollapsedSidebar({ onExpand }: { onExpand: () => void }) {
           draggable={false}
         />
       </Link>
-      <CollapseArrow left onClick={onExpand} />
-      {/* <button
-        type="button"
-        className="flex items-center gap-1 cursor-pointer group"
-        onClick={toggleMirrorMode}
-        title="Toggle Split Screen"
-      >
-        <MdViewColumn
-          className={`hover:text-accent hover:scale-110 transition-all duration-200 
-            size-6 ${mirrorMode ? "text-accent" : "text-white"}`}
-        />
-      </button> */}
 
-      {panelMode === "none" && (
-        <button
-          type="button"
-          className="cursor-pointer"
-          onClick={() => setPanelMode("focus")}
-          title="Toggle to Focus Mode"
-        >
-          <FaImage className={`size-5 ${iconClassname}`} />
-        </button>
-      )}
+      <div className="flex flex-col items-center gap-4">
+        <CollapseArrow left onClick={onExpand} />
 
-      {panelMode === "focus" && (
-        <button
-          type="button"
-          className="cursor-pointer"
-          onClick={() => setPanelMode("explore")}
-          title="Toggle to Explore Mode"
-        >
-          <FaLeaf className={`size-5 ${iconClassname}`} />
-        </button>
-      )}
+        {panelMode === "none" && (
+          <button
+            type="button"
+            className="cursor-pointer"
+            onClick={() => setPanelMode("focus")}
+            title="Toggle to Focus Mode"
+          >
+            <FaImage className={`size-5 ${iconClassname}`} />
+          </button>
+        )}
 
-      {panelMode === "explore" && (
-        <button
-          type="button"
-          className="cursor-pointer"
-          onClick={() => setPanelMode("none")}
-          title="Close Side Panel"
-        >
-          <FaWindowClose className={`size-5 ${iconClassname}`} />
-        </button>
-      )}
+        {panelMode === "focus" && (
+          <button
+            type="button"
+            className="cursor-pointer"
+            onClick={() => setPanelMode("explore")}
+            title="Toggle to Explore Mode"
+          >
+            <FaLeaf className={`size-5 ${iconClassname}`} />
+          </button>
+        )}
+
+        {panelMode === "explore" && (
+          <button
+            type="button"
+            className="cursor-pointer"
+            onClick={() => setPanelMode("none")}
+            title="Close Side Panel"
+          >
+            <FaWindowClose className={`size-5 ${iconClassname}`} />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
