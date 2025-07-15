@@ -7,13 +7,16 @@ import { Z_INDEX_INCREMENT } from "@/types/constants";
 import MultiBlockSideBorder from "./resize/multi-side-border";
 import { Block } from "@/types/block-types";
 import MultiBlockCornerResize from "./resize/multi-corner-handles";
+import { useMultiBlockDragHandler } from "@/lib/freeform/drag/selection-drag-handler";
 
 export default function MultiSelectBorder({
   sectionId,
   isPanning,
+  editMode,
 }: {
   sectionId: string;
   isPanning: boolean;
+  editMode: boolean;
 }) {
   const topZIndex =
     useFreeformStore((s) => s.topZIndexMap[sectionId]) + Z_INDEX_INCREMENT;
@@ -48,6 +51,14 @@ export default function MultiSelectBorder({
   }, [filteredBlocks, positions]);
 
   const multipleSelected = filteredBlocks.length > 1;
+
+  // hooks
+  const { handleMouseDown } = useMultiBlockDragHandler({
+    sectionId,
+    camera,
+    editMode,
+    spacebarDown: isPanning,
+  });
 
   if (!multipleSelected) return null;
 
@@ -88,6 +99,19 @@ export default function MultiSelectBorder({
 
   return (
     <>
+      <div
+        onMouseDown={handleMouseDown}
+        data-id="freeform-multi-select-box"
+        style={{
+          left: `${blockScreenRect.x}px`,
+          top: `${blockScreenRect.y}px`,
+          width: `${blockScreenRect.width}px`,
+          height: `${blockScreenRect.height}px`,
+          cursor: isPanning ? "grab" : "move",
+        }}
+        className="absolute -z-10"
+      />
+
       {/* Side Borders */}
       {ALL_SIDES.map((side) => (
         <MultiBlockSideBorder

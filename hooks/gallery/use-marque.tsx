@@ -34,8 +34,12 @@ export function useMarque({
       if (target.closest("textarea, input")) return;
 
       const clickedId = target.closest("[data-id]")?.getAttribute("data-id");
+
+      console.log("Clicked ID: ", clickedId);
+
       if (
         clickedId?.includes("::block-") ||
+        clickedId === "freeform-multi-select-box" ||
         clickedId === "context-menu" ||
         clickedId?.includes("resize-")
       )

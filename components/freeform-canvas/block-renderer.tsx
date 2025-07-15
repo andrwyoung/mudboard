@@ -1,4 +1,4 @@
-import { CameraType, useFreeformStore } from "@/store/freeform-store";
+import { useFreeformStore } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { Block, MudboardImage } from "@/types/block-types";
 import { BlockChooser } from "../blocks/memoized-block";
@@ -21,9 +21,7 @@ import { usePanelStore } from "@/store/panel-store";
 import { fireConfetti } from "@/utils/fire-confetti";
 import SingleBlockSideBorder from "./resize/single-block-side-borders";
 import SingleBlockCornerResize from "./resize/single-block-corner-handles";
-
-const draggingRefs: Record<string, boolean> = {};
-const lastMouse: Record<string, { x: number; y: number }> = {};
+import { useBlockDragHandler } from "@/lib/freeform/drag/block-drag-handler";
 
 export function BlockRenderer({
   block,
@@ -54,6 +52,7 @@ export function BlockRenderer({
     (s) => s.openPinnedPanelWithBlock
   );
 
+  // dragging behavior
   const worldX = blockPos.x ?? 0;
   const worldY = blockPos.y ?? 0;
   const worldScale = blockPos.scale ?? 1;
@@ -73,37 +72,14 @@ export function BlockRenderer({
     height: scaledBlockHeight,
   };
 
-  function handleMouseDown(blockId: string, camera: CameraType) {
-    draggingRefs[blockId] = true;
-
-    function onMouseMove(e: MouseEvent) {
-      if (!draggingRefs[blockId]) return;
-
-      const dx = e.clientX - lastMouse[blockId].x;
-      const dy = e.clientY - lastMouse[blockId].y;
-
-      lastMouse[blockId] = { x: e.clientX, y: e.clientY };
-
-      const selected = useSelectionStore.getState().selectedBlocks;
-      for (const id in selected) {
-        useFreeformStore
-          .getState()
-          .setPositionForBlock(sectionId, id, (prev) => ({
-            x: (prev?.x ?? 0) + dx / camera.scale,
-            y: (prev?.y ?? 0) + dy / camera.scale,
-          }));
-      }
-    }
-
-    function onMouseUp() {
-      draggingRefs[blockId] = false;
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    }
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-  }
+  const { handleMouseDown } = useBlockDragHandler({
+    selectedBlock: block,
+    sectionId,
+    camera,
+    isSelected,
+    editMode,
+    spacebarDown,
+  });
 
   return (
     <ContextMenu>
@@ -157,41 +133,7 @@ export function BlockRenderer({
               height: block.height, // or block.height
               zIndex: blockPos.z,
             }}
-            onMouseDown={(e) => {
-              console.log("blockPos: ", blockPos);
-
-              if (e.button !== 0) return; // only respond to left-click
-              if (!editMode || (editMode && spacebarDown)) return;
-
-              e.stopPropagation();
-
-              const isCtrlClick = e.ctrlKey || e.metaKey; // Ctrl on Windows/Linux, Cmd on macOS
-              const store = useSelectionStore.getState();
-
-              if (isCtrlClick) {
-                const alreadySelected = !!store.selectedBlocks[block.block_id];
-                if (alreadySelected) {
-                  store.removeBlockFromSelection(block);
-                } else {
-                  store.addBlocksToSelection("main", [block]);
-                }
-              } else {
-                if (!isSelected) {
-                  store.selectOnlyThisBlock("main", block);
-
-                  useFreeformStore
-                    .getState()
-                    .setPositionForBlock(sectionId, block.block_id, () => ({
-                      z: useFreeformStore
-                        .getState()
-                        .getAndIncrementZIndex(sectionId),
-                    }));
-                }
-              }
-
-              lastMouse[block.block_id] = { x: e.clientX, y: e.clientY };
-              handleMouseDown(block.block_id, camera);
-            }}
+            onMouseDown={handleMouseDown}
             data-id={`main::block-${block.block_id}`}
             className={`absolute z-0`}
           >

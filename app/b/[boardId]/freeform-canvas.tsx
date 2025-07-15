@@ -126,6 +126,37 @@ export default function FreeformCanvas({
     }
   }, [camera, sectionId]);
 
+  // if the size of the main canvas changes, then react to it
+  useEffect(() => {
+    const el = mainCanvasRef.current;
+    if (!el) return;
+
+    let prevRect = el.getBoundingClientRect();
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      const newRect = entry.contentRect;
+
+      const deltaX = (newRect.width - prevRect.width) / 2;
+      const deltaY = (newRect.height - prevRect.height) / 2;
+
+      const store = useFreeformStore.getState();
+      store.setCameraForSection(sectionId, (prevCam) => ({
+        ...prevCam,
+        x: prevCam.x + deltaX,
+        y: prevCam.y + deltaY,
+      }));
+
+      prevRect = newRect;
+    });
+
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [sectionId]);
+
   // hooks
   const { onMouseDown } = useCanvasPointerControls({
     sectionId,
@@ -188,6 +219,7 @@ export default function FreeformCanvas({
                   <MultiSelectBorder
                     sectionId={sectionId}
                     isPanning={spaceHeld}
+                    editMode={editMode}
                   />
                 )}
 
