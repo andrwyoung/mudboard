@@ -194,7 +194,9 @@ export default function SectionShareModal({
         <DialogContent className="text-primary select-none">
           <DialogHeader>
             <DialogTitle className="text-xl">
-              {section.is_public ? "Mudkit Settings" : "Publish as a Mudkit"}
+              {section.is_public
+                ? "Mudkit Settings"
+                : "Publish Section as a Mudkit"}
             </DialogTitle>
           </DialogHeader>
 
@@ -251,10 +253,11 @@ export default function SectionShareModal({
           ) : (
             <div className="text-sm text-primary leading-relaxed mt-3 space-y-4">
               <div>
-                <p className="text-sm text-primary mt-1 mb-12">
-                  Mudkits are <strong>reusable</strong> reference kits. They
-                  help you return to what inspired you; just for yourself or for
-                  others.
+                <p className="text-sm text-primary mt-1 mb-12 leading-relaxed">
+                  A Mudkit is a{" "}
+                  <strong>section that you can easily find</strong> and share —
+                  it&apos;s like turning this section into a reference pack you
+                  can come back to later.
                 </p>
 
                 {/* <p className="text-sm text-primary mt-1 mb-8">
@@ -283,7 +286,7 @@ export default function SectionShareModal({
 
               <AccordianWrapper title="What happens when you publish?">
                 <ul className="list-disc list-inside text-xs text-primary space-y-1">
-                  <li>You&apos;ll see it in your private Greenhouse</li>
+                  <li>This section will appear in your private Greenhouse</li>
                   <li>You get a sharable, view-only link</li>
                   <li>
                     If you share to the community, it will appear
