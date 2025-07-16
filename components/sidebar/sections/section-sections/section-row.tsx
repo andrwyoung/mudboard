@@ -25,18 +25,20 @@ import { useImagePicker } from "@/hooks/use-image-picker";
 import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-title";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import { canEditSection } from "@/lib/auth/can-edit-section";
-import { FaLock } from "react-icons/fa";
+import { FaCircle, FaLock } from "react-icons/fa";
 
 export default function SectionRow({
   thisBoardSection,
   sectionRefs,
   setBoardSectionToDelete,
   canBoardEdit,
+  collapsed = false,
 }: {
   thisBoardSection: BoardSection;
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
   setBoardSectionToDelete: (section: BoardSection) => void;
   canBoardEdit: boolean;
+  collapsed?: boolean;
 }) {
   const [highlightedSection, setHighlightedSection] = useState<string | null>(
     null
@@ -89,6 +91,19 @@ export default function SectionRow({
     });
   }
 
+  function onClick() {
+    console.log("Clicked Board Section! ", thisBoardSection);
+    const sectionEl =
+      sectionRefs.current?.[thisBoardSection.section.section_id];
+    setSelectedSection(thisBoardSection);
+    if (sectionEl) {
+      sectionEl.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }
+
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -121,6 +136,7 @@ export default function SectionRow({
         highlighted={highlighted}
         isLinked={isLinked}
         sectionId={thisBoardSection.section.section_id}
+        className={collapsed ? "" : "px-1"}
       >
         <ContextMenu
           onOpenChange={(isOpen) => {
@@ -136,58 +152,68 @@ export default function SectionRow({
           }}
         >
           <ContextMenuTrigger asChild>
-            <div
-              title="Go to section"
-              ref={triggerRef}
-              className="grid group items-center w-full"
-              style={{ gridTemplateColumns: "1fr auto" }}
-              onContextMenu={(e) => {
-                if (!canBoardEdit) e.preventDefault();
-              }}
-            >
+            {collapsed ? (
+              <button
+                type="button"
+                title={`Go to "${
+                  thisBoardSection.section.title ?? "Untitled Section"
+                }"`}
+                aria-label={`Select section: ${
+                  thisBoardSection.section.title ?? "Untitled Section"
+                }`}
+                aria-pressed={selected}
+                onClick={onClick}
+                className={`p-1.5 rounded-sm hover:bg-accent/40 cursor-pointer group
+                border border-transparent hover:border-accent `}
+              >
+                <FaCircle
+                  aria-hidden="true"
+                  className={`size-4 group-hover:text-accent transition-all duration-50
+                    ${selected ? "text-accent" : "text-white"}`}
+                />
+              </button>
+            ) : (
               <div
-                className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
-                onDoubleClick={() => {
-                  if (canSectionEdit) {
-                    setEditValue(thisBoardSection.section.title ?? "");
-                    setIsEditing(true);
-                  }
-                }}
-                onClick={() => {
-                  console.log("Clicked Board Section! ", thisBoardSection);
-                  const sectionEl =
-                    sectionRefs.current?.[thisBoardSection.section.section_id];
-                  setSelectedSection(thisBoardSection);
-                  if (sectionEl) {
-                    sectionEl.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }
+                title="Go to section"
+                ref={triggerRef}
+                className="grid group items-center w-full"
+                style={{ gridTemplateColumns: "1fr auto" }}
+                onContextMenu={(e) => {
+                  if (!canBoardEdit) e.preventDefault();
                 }}
               >
-                <FillingDot selected={selected} secondary={isLinked} />
-                {isEditing ? (
-                  <input
-                    ref={inputRef}
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={() => setIsEditing(false)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleRenameSubmit();
-                      if (e.key === "Escape") setIsEditing(false);
-                    }}
-                    className={`text-lg bg-transparent border 
+                <div
+                  className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
+                  onDoubleClick={() => {
+                    if (canSectionEdit) {
+                      setEditValue(thisBoardSection.section.title ?? "");
+                      setIsEditing(true);
+                    }
+                  }}
+                  onClick={onClick}
+                >
+                  <FillingDot selected={selected} secondary={isLinked} />
+                  {isEditing ? (
+                    <input
+                      ref={inputRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={() => setIsEditing(false)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleRenameSubmit();
+                        if (e.key === "Escape") setIsEditing(false);
+                      }}
+                      className={`text-lg bg-transparent border 
                       ${
                         isLinked
                           ? "border-secondary focus:ring-secondary/80"
                           : "border-accent focus:ring-accent/80"
                       } 
                       focus:outline-none focus:ring-2 font-header rounded w-full`}
-                  />
-                ) : (
-                  <h2
-                    className={`text-lg  
+                    />
+                  ) : (
+                    <h2
+                      className={`text-lg  
                     truncate whitespace-nowrap overflow-hidden min-w-0
                     ${
                       isLinked
@@ -195,57 +221,46 @@ export default function SectionRow({
                         : "group-hover:text-accent"
                     }
                     ${titleExists ? "" : "italic"} `}
-                  >
-                    {titleExists
-                      ? thisBoardSection.section.title
-                      : DEFAULT_SECTION_NAME}
-                  </h2>
-                )}
-              </div>
+                    >
+                      {titleExists
+                        ? thisBoardSection.section.title
+                        : DEFAULT_SECTION_NAME}
+                    </h2>
+                  )}
+                </div>
 
-              {canSectionEdit ? (
-                <HiDotsVertical
-                  className={`size-4 hover:scale-130 transition-all duration-300 
+                {canSectionEdit ? (
+                  <HiDotsVertical
+                    className={`size-4 hover:scale-130 transition-all duration-300 
                     opacity-0 group-hover:opacity-100 cursor-pointer flex-none 
                     ${isLinked ? "text-secondary" : "text-accent"}
                     ${selected ? "" : ""}`}
-                  title="Open Context Menu"
-                  onClick={(e) => {
-                    e.stopPropagation();
+                    title="Open Context Menu"
+                    onClick={(e) => {
+                      e.stopPropagation();
 
-                    const el = triggerRef.current;
-                    if (!el) return;
-                    const event = new MouseEvent("contextmenu", {
-                      bubbles: true,
-                      cancelable: true,
-                      view: window,
-                      clientX: e.clientX,
-                      clientY: e.clientY,
-                    });
-                    el.dispatchEvent(event);
-                  }}
-                />
-              ) : (
-                <FaLock
-                  title="Section locked from Edits"
-                  className={`opacity-30 size-3 ${
-                    canBoardEdit ? "" : "hidden"
-                  }`}
-                />
-              )}
-
-              {/* {sections.length > 1 && canEdit && (
-            <FaTrash
-              className="size-3.5 hover:rotate-24 text-accent transition-all duration-300 
-                    opacity-0 group-hover:opacity-100 cursor-pointer flex-none"
-              title="Delete Section"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSectionToDelete(section);
-              }}
-            />
-          )} */}
-            </div>
+                      const el = triggerRef.current;
+                      if (!el) return;
+                      const event = new MouseEvent("contextmenu", {
+                        bubbles: true,
+                        cancelable: true,
+                        view: window,
+                        clientX: e.clientX,
+                        clientY: e.clientY,
+                      });
+                      el.dispatchEvent(event);
+                    }}
+                  />
+                ) : (
+                  <FaLock
+                    title="Section locked from Edits"
+                    className={`opacity-30 size-3 ${
+                      canBoardEdit ? "" : "hidden"
+                    }`}
+                  />
+                )}
+              </div>
+            )}
           </ContextMenuTrigger>
 
           {canBoardEdit && (

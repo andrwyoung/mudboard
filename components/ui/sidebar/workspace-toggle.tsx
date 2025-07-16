@@ -8,18 +8,22 @@ function WorkspaceToggleButton({
   title,
   onClick,
   isActive,
+  collapsed,
 }: {
   icon: React.ReactNode;
-  label: string;
+  label?: string;
   title?: string;
   onClick: () => void;
   isActive: boolean;
+  collapsed: boolean;
 }) {
   return (
     <button
       type="button"
-      className={`flex items-center gap-2 cursor-pointer group px-2 rounded-sm
-          py-0.5 hover:outline hover:outline-accent ${
+      className={`flex items-center gap-2 cursor-pointer group rounded-sm
+           hover:outline hover:outline-accent 
+          ${collapsed ? "p-1 text-xl" : "px-2 py-0.5"}
+          ${
             isActive
               ? "bg-accent text-primary hover:bg-accent/70"
               : "text-white hover:bg-accent/40"
@@ -30,12 +34,16 @@ function WorkspaceToggleButton({
       aria-label={title || label}
     >
       {icon}
-      <span className="font-header">{label}</span>
+      {label && <span className="font-header">{label}</span>}
     </button>
   );
 }
 
-export function WorkspaceToggles() {
+export function WorkspaceToggles({
+  collapsed = false,
+}: {
+  collapsed?: boolean;
+}) {
   const freeformOn = useUIStore((s) => s.freeformMode);
   const setFreeformMode = useUIStore((s) => s.setFreeformMode);
 
@@ -44,11 +52,10 @@ export function WorkspaceToggles() {
   const greenhouseOpen = panelMode === "explore";
 
   return (
-    <div className="px-8 flex flex-col gap-1">
-      <h3 className="text-sm ">Workspaces:</h3>
+    <>
       <WorkspaceToggleButton
         icon={<FaVectorSquare />}
-        label="Freeform"
+        label={!collapsed ? "Freeform" : undefined}
         title={freeformOn ? "Switch to Grid View" : "Switch to Freeform Canvas"}
         onClick={() => {
           if (freeformOn) {
@@ -59,10 +66,11 @@ export function WorkspaceToggles() {
           }
         }}
         isActive={freeformOn}
+        collapsed={collapsed}
       />
       <WorkspaceToggleButton
         icon={<FaLeaf />}
-        label="Greenhouse"
+        label={!collapsed ? "Greenhouse" : undefined}
         title={greenhouseOpen ? "Close Greenhouse" : "Open Greenhouse"}
         onClick={() => {
           if (greenhouseOpen) {
@@ -73,7 +81,8 @@ export function WorkspaceToggles() {
           }
         }}
         isActive={greenhouseOpen}
+        collapsed={collapsed}
       />
-    </div>
+    </>
   );
 }

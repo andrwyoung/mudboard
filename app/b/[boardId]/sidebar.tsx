@@ -90,12 +90,13 @@ export default function ResizableSidebar({
         aria-label={sidebarCollapsed ? "Expand sidebar" : "Resize sidebar"}
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
+          if (e.key === "Enter") {
             e.preventDefault();
             setSidebarCollapsed(!sidebarCollapsed);
           }
         }}
-        className={`absolute top-0 right-0 w-1.5 h-full z-50 cursor-col-resize transition-all duration-200 select-none ${
+        className={`absolute top-0 right-0 w-1.5 h-full z-50  transition-all duration-200 select-none
+          ${sidebarCollapsed ? "cursor-e-resize" : "cursor-col-resize"} ${
           dragging ? "bg-accent" : "hover:bg-accent"
         }`}
         onMouseDown={(e) => {
@@ -107,10 +108,17 @@ export default function ResizableSidebar({
             startDragging(e);
           }
         }}
-        title={sidebarCollapsed ? "Click to Expand" : "Drag to resize"}
+        title={
+          sidebarCollapsed
+            ? "Click to Expand"
+            : "Drag to resize. Click to Collapse"
+        }
       />
       {sidebarCollapsed ? (
-        <CollapsedSidebar onExpand={() => setSidebarCollapsed(false)} />
+        <CollapsedSidebar
+          sectionRefs={sectionRefs}
+          onExpand={() => setSidebarCollapsed(false)}
+        />
       ) : (
         <Sidebar
           sectionRefs={sectionRefs}

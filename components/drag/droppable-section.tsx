@@ -10,6 +10,7 @@ export function DroppableForImages({
   highlighted,
   isLinked,
   sectionId,
+  className,
 }: {
   canEdit: boolean;
   id: string;
@@ -17,6 +18,7 @@ export function DroppableForImages({
   highlighted: boolean;
   isLinked: boolean;
   sectionId: string;
+  className: string;
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id,
@@ -31,7 +33,7 @@ export function DroppableForImages({
     <div
       ref={canEdit ? setNodeRef : undefined}
       data-id={canEdit ? id : undefined}
-      className={`border rounded-sm transition-colors duration-150 w-full px-1 ${
+      className={`border rounded-sm transition-colors duration-150 w-full ${className} ${
         isOver || highlighted
           ? isLinked
             ? "bg-secondary/40 border-secondary"

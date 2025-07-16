@@ -1,7 +1,6 @@
 // this is the little button on the sidebar to collapse the sidebar
 
-import { FiSidebar } from "react-icons/fi";
-import { IoCaretBackOutline } from "react-icons/io5";
+import { FaCaretLeft } from "react-icons/fa6";
 
 export function CollapseArrow({
   left = true,
@@ -13,15 +12,14 @@ export function CollapseArrow({
   return (
     <div
       className={`text-white hover:text-accent hover:scale-110
-          cursor-pointer transition-all duration-200
-          ${left ? "rotate-180" : ""}`}
+          cursor-pointer transition-all duration-200`}
       onClick={onClick}
       title={!left ? "Collapse Sidebar" : "Open Sidebar"}
     >
       {left ? (
-        <FiSidebar className="size-5.5" />
+        <FaCaretLeft className="size-6 rotate-180" />
       ) : (
-        <IoCaretBackOutline className="size-5" />
+        <FaCaretLeft className="size-5" />
       )}
     </div>
   );

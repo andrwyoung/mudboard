@@ -52,8 +52,10 @@ export default function Sidebar({
           <div className="px-4">
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
-
-          <WorkspaceToggles />
+          <div className="px-6 flex flex-col gap-1">
+            <h3 className="text-sm ">Workspaces:</h3>
+            <WorkspaceToggles />
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full px-4 pt-6">

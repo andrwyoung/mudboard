@@ -3,27 +3,16 @@
 
 import { useMetadataStore } from "@/store/metadata-store";
 import React, { RefObject, useEffect, useRef, useState } from "react";
-import { DEFAULT_BOARD_TITLE, DEFAULT_SECTION_NAME } from "@/types/constants";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "../../ui/alert-dialog";
+import { DEFAULT_BOARD_TITLE } from "@/types/constants";
+
 import { BoardSection } from "@/types/board-types";
-import { softDeleteBoardSection } from "@/lib/db-actions/soft-delete-board-section";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase/supabase-client";
-import { isLinkedSection } from "@/utils/is-linked-section";
-import { canEditSection } from "@/lib/auth/can-edit-section";
 import SectionRow from "./section-sections/section-row";
 import AddSectionButton from "./section-sections/add-section-button";
+import { DeleteBoardSectionModal } from "./section-sections/delete-section-modal";
 
 export default function SectionsSection({
   sectionRefs,
@@ -123,60 +112,12 @@ export default function SectionsSection({
               setBoardSectionToDelete={setBoardSectionToDelete}
             />
           ))}
-        {boardSectionToDelete &&
-          (() => {
-            const unLink =
-              isLinkedSection(boardSectionToDelete) ||
-              !canEditSection(boardSectionToDelete.section);
-
-            return (
-              <AlertDialog
-                open={!!boardSectionToDelete}
-                onOpenChange={(open) => !open && setBoardSectionToDelete(null)}
-              >
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle className="text-2xl text-primary">
-                      {unLink ? "Unlink" : "Delete"} &quot;
-                      {boardSectionToDelete.section.title ??
-                        DEFAULT_SECTION_NAME}
-                      &quot;?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {unLink ? (
-                        <span>
-                          This will remove the section from this board, but keep
-                          it available for reuse elsewhere.
-                        </span>
-                      ) : (
-                        <span>
-                          This is the only remaining copy of this section.
-                          Deleting it will permanently remove the section and
-                          all its blocks. This action cannot be undone.
-                        </span>
-                      )}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="font-semibold">
-                      Cancel
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                      className="font-semibold"
-                      variant={unLink ? "kinda_good" : "destructive"}
-                      onClick={() => {
-                        const user = useMetadataStore.getState().user;
-                        softDeleteBoardSection(boardSectionToDelete, user?.id);
-                        setBoardSectionToDelete(null);
-                      }}
-                    >
-                      {unLink ? "Unlink Section" : "Delete Section"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            );
-          })()}
+        {boardSectionToDelete && (
+          <DeleteBoardSectionModal
+            boardSection={boardSectionToDelete}
+            onClose={() => setBoardSectionToDelete(null)}
+          />
+        )}
       </div>
       {canBoardEdit && <AddSectionButton sectionRefs={sectionRefs} />}
     </div>

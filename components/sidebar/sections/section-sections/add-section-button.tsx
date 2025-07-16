@@ -9,8 +9,10 @@ import { BoardSection } from "@/types/board-types";
 
 export default function AddSectionButton({
   sectionRefs,
+  collapsed = false,
 }: {
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
+  collapsed?: boolean;
 }) {
   const board = useMetadataStore((s) => s.board);
   const boardSections = useMetadataStore((s) => s.boardSections);
@@ -63,14 +65,18 @@ export default function AddSectionButton({
         type="button"
         aria-label="Create a new section"
         title="Create a new section"
-        className="text-primary-foreground hover:underline hover:underline-offset-2 
-        transition-all duration-300 cursor-pointer px-4
-        flex gap-1 items-center text-sm
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+        className={`text-primary-foreground hover:underline hover:underline-offset-2 
+        transition-all duration-300 cursor-pointer flex gap-1 items-center text-sm
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded
+        
+        ${collapsed ? "" : "px-4"}`}
         onClick={() => handleAddSection(null)}
       >
-        <FaPlus className="size-2" aria-hidden="true" />
-        Add Section
+        <FaPlus
+          className={`${collapsed ? "size-4" : "size-2"}`}
+          aria-hidden="true"
+        />
+        {!collapsed && "Add Section"}
       </button>
 
       <SectionPickerDialog
