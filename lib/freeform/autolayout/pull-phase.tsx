@@ -1,9 +1,8 @@
+import { getDistance, isOverlappingWithSpacing } from "./autolayout-helpers";
 import {
   BLOCK_SPACING,
   BlockBounds,
   DirectionType,
-  getDistance,
-  isTooClose,
   SNAP_TOLERANCE,
 } from "./run-autolayout";
 
@@ -48,7 +47,10 @@ export function simulatePull(
     clone.centerX = clone.x + (clone.width * clone.scale) / 2;
     clone.centerY = clone.y + (clone.height * clone.scale) / 2;
 
-    const collided = otherBlocks.find((b) => isTooClose(clone, b));
+    // detect if there's a collisions. but give it some SNAP_TOLERANCE as a buffer (be forgiving)
+    const collided = otherBlocks.find((b) =>
+      isOverlappingWithSpacing(clone, b, BLOCK_SPACING - SNAP_TOLERANCE)
+    );
 
     if (collided) {
       let targetX = clone.x;

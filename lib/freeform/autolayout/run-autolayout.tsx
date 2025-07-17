@@ -1,8 +1,8 @@
 import { useFreeformStore } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
-import { FREEFROM_DEFAULT_WIDTH } from "@/types/constants";
 import { resolveBlockOverlap } from "./push-phase";
 import { pullTowardsCenter } from "./pull-phase";
+import { getWeightedCenter } from "./autolayout-helpers";
 
 export const BLOCK_SPACING = 40;
 export const SNAP_TOLERANCE = 0.1;
@@ -28,91 +28,15 @@ export type BlockBounds = {
 export const ALL_DIRECTIONS = ["up", "down", "left", "right"];
 export type DirectionType = (typeof ALL_DIRECTIONS)[number];
 
-export function getDistance(
-  a: { x: number; y: number },
-  b: { x: number; y: number }
+export function runFreeformAutoLayout(
+  blockBounds: BlockBounds[],
+  sectionId: string
 ) {
-  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y); // Manhattan distance
-}
-
-export function isOverlappingWithSpacing(
-  a: BlockBounds,
-  b: BlockBounds
-): boolean {
-  return !(
-    a.right + BLOCK_SPACING <= b.x ||
-    a.x >= b.right + BLOCK_SPACING ||
-    a.bottom + BLOCK_SPACING <= b.y ||
-    a.y >= b.bottom + BLOCK_SPACING
-  );
-}
-
-export function isTooClose(a: BlockBounds, b: BlockBounds): boolean {
-  return !(
-    a.right + BLOCK_SPACING - SNAP_TOLERANCE <= b.x ||
-    a.x >= b.right + BLOCK_SPACING - SNAP_TOLERANCE ||
-    a.bottom + BLOCK_SPACING - SNAP_TOLERANCE <= b.y ||
-    a.y >= b.bottom + BLOCK_SPACING - SNAP_TOLERANCE
-  );
-}
-
-// helper for step 1
-function getBlockBounds(blocks: Block[], sectionId: string): BlockBounds[] {
-  const getBlockPosition = useFreeformStore.getState().getBlockPosition;
-
-  return blocks.map((block) => {
-    const blockPos = getBlockPosition(sectionId, block.block_id);
-
-    const width = block.width ?? FREEFROM_DEFAULT_WIDTH;
-    const height = block.height;
-    const x = blockPos.x ?? 0;
-    const y = blockPos.y ?? 0;
-    const scale = blockPos.scale;
-
-    return {
-      block,
-      blockId: block.block_id,
-      x,
-      y,
-      width,
-      height,
-      scale,
-      right: x + width * scale,
-      bottom: y + height * scale,
-      centerX: x + (width * scale) / 2,
-      centerY: y + (height * scale) / 2,
-      zIndex: blockPos.z,
-    };
-  });
-}
-
-export function getWeightedCenter(blocks: BlockBounds[]): {
-  centerX: number;
-  centerY: number;
-} {
-  let totalWeight = 0;
-  let sumX = 0;
-  let sumY = 0;
-
-  for (const b of blocks) {
-    const area = b.width * b.height * b.scale * b.scale;
-    totalWeight += area;
-    sumX += b.centerX * area;
-    sumY += b.centerY * area;
-  }
-
-  return {
-    centerX: totalWeight > 0 ? sumX / totalWeight : 0,
-    centerY: totalWeight > 0 ? sumY / totalWeight : 0,
-  };
-}
-
-export function runFreeformAutoLayout(blocks: Block[], sectionId: string) {
   // PUSH PHASE
 
   // STEP 1: organize block by distance from center
   //
-  const originalBlockBounds = getBlockBounds(blocks, sectionId);
+  const originalBlockBounds = blockBounds;
 
   // compute center
   const { centerX: pushCenterX, centerY: pushCenterY } =

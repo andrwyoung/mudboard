@@ -29,8 +29,8 @@ import {
 import { useMarque } from "@/hooks/gallery/use-marque";
 import { MarqueBox } from "@/components/board/marque";
 import MultiSelectBorder from "@/components/freeform-canvas/multi-select-border";
-import { runFreeformAutoLayout } from "@/lib/freeform/autolayout/run-autolayout";
 import { MdAutoAwesomeMosaic } from "react-icons/md";
+import { runAutoLayoutWithClustering } from "@/lib/freeform/autolayout/detect-clusters";
 
 export default function FreeformCanvas({
   blocks,
@@ -257,7 +257,7 @@ export default function FreeformCanvas({
       <div className="absolute bottom-4 left-4 z-50 flex flex-col gap-1 items-start">
         <button
           type="button"
-          onClick={() => runFreeformAutoLayout(blocks, sectionId)}
+          onClick={() => runAutoLayoutWithClustering(blocks, sectionId)}
           aria-label="Run auto-layout on blocks"
           title="Auto-layout Blocks"
           className="p-1

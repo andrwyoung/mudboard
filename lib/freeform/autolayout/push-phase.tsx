@@ -1,10 +1,9 @@
+import { isOverlappingWithSpacing, getDistance } from "./autolayout-helpers";
 import {
   ALL_DIRECTIONS,
   BLOCK_SPACING,
   BlockBounds,
   DirectionType,
-  getDistance,
-  isOverlappingWithSpacing,
 } from "./run-autolayout";
 
 // HELPERS
@@ -23,7 +22,7 @@ function resolveBlockOverlapOneDirection(
   // until it doesn't overlap with anything
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const overlapping = otherBlocks.find((other) =>
-      isOverlappingWithSpacing(temp, other)
+      isOverlappingWithSpacing(temp, other, BLOCK_SPACING)
     );
     if (!overlapping) break;
 

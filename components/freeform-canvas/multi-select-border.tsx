@@ -9,6 +9,7 @@ import MultiBlockCornerResize from "./resize/multi-corner-handles";
 import { useMultiBlockDragHandler } from "@/lib/freeform/drag/selection-drag-handler";
 import { runFreeformAutoLayout } from "@/lib/freeform/autolayout/run-autolayout";
 import { MdAutoAwesomeMosaic } from "react-icons/md";
+import { getBlockBounds } from "@/lib/freeform/autolayout/convert-to-block-bounds";
 
 export default function MultiSelectBorder({
   sectionId,
@@ -128,7 +129,8 @@ export default function MultiSelectBorder({
           title="Auto-layout Selection"
           onClick={(e) => {
             e.stopPropagation();
-            runFreeformAutoLayout(filteredBlocks, sectionId);
+            const blockBounds = getBlockBounds(filteredBlocks, sectionId);
+            runFreeformAutoLayout(blockBounds, sectionId);
           }}
           className="w-4 h-4 cursor-pointer hover:text-accent text-white"
         >
