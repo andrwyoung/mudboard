@@ -5,9 +5,13 @@ import {
 } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { Block } from "@/types/block-types";
-import { MAX_SCALE, MIN_PIXEL_SIZE, MIN_SCALE } from "@/types/constants";
+import {
+  FREEFROM_DEFAULT_WIDTH,
+  MAX_SCALE,
+  MIN_PIXEL_SIZE,
+  MIN_SCALE,
+} from "@/types/constants";
 import { getCursorForSide, SideType } from "@/types/freeform-types";
-import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 
 function getSizeDelta(newScale: number, startScale: number, dimension: number) {
   return dimension * (newScale - startScale);
@@ -48,7 +52,7 @@ export function useResizeHandler({
       let newX = blockPosition.x ?? 0;
       let newY = blockPosition.y ?? 0;
 
-      const width = block.width ?? COMPRESSED_IMAGE_WIDTH;
+      const width = block.width ?? FREEFROM_DEFAULT_WIDTH;
       const height = block.height;
 
       if (side === "right") {
@@ -94,7 +98,7 @@ export function useResizeHandler({
         newX = (blockPosition.x ?? 0) - widthDiff / 2;
       }
 
-      const scaledWidth = (block.width ?? COMPRESSED_IMAGE_WIDTH) * newScale;
+      const scaledWidth = (block.width ?? FREEFROM_DEFAULT_WIDTH) * newScale;
       const scaledHeight = block.height * newScale;
 
       if (

@@ -4,10 +4,7 @@ import {
   FREEFORM_EDIT_MODE_DEFAULT,
   Z_INDEX_INCREMENT,
 } from "@/types/constants";
-import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
-import { toast } from "sonner";
 import { create } from "zustand";
-import { useLayoutStore } from "./layout-store";
 
 export type CameraType = {
   x: number; // pan offset x
@@ -44,7 +41,7 @@ type FreeformStore = {
 
   topZIndexMap: Record<string, number>;
   getAndIncrementZIndex: (sectionId: string) => number;
-  layoutBoundsMap: Record<string, BoundingBox>;
+  layoutBoundsMap: Record<string, BoundingBox>; // only used for init right now
   setLayoutBoundsForSection: (sectionId: string, bounds: BoundingBox) => void;
   getLayoutBoundsForSection: (sectionId: string) => BoundingBox | undefined;
 
@@ -59,6 +56,13 @@ type FreeformStore = {
   ) => void;
   bulkSetPositions: (
     map: Record<string, Record<string, FreeformPosition>>
+  ) => void;
+  updateMultipleBlockPositions: (
+    sectionId: string,
+    updates: {
+      blockId: string;
+      pos: { x: number; y: number };
+    }[]
   ) => void;
 
   // SECTION: syncing
@@ -129,6 +133,8 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
 
   positionMap: {},
   getBlockPosition: (sectionId: string, blockId: string) => {
+    // TODO: autolayout it
+
     return (
       get().positionMap[sectionId]?.[blockId] ?? {
         x: 0,
@@ -174,6 +180,33 @@ export const useFreeformStore = create<FreeformStore>((set, get) => ({
     set(() => ({
       positionMap: map,
     })),
+  updateMultipleBlockPositions: (sectionId, updates) =>
+    set((state) => {
+      const section = state.positionMap[sectionId] ?? {};
+
+      const newSection = { ...section };
+      for (const { blockId, pos } of updates) {
+        const prev = section[blockId] ?? {
+          x: 0,
+          y: 0,
+          z: 0,
+          scale: 1,
+        };
+
+        newSection[blockId] = {
+          ...prev,
+          x: pos.x,
+          y: pos.y,
+        };
+      }
+
+      return {
+        positionMap: {
+          ...state.positionMap,
+          [sectionId]: newSection,
+        },
+      };
+    }),
 
   // SECTION: syncing;
   freeformDirtyMap: {},

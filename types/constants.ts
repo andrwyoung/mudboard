@@ -1,4 +1,5 @@
 import { Enums } from "./supabase";
+import { COMPRESSED_IMAGE_WIDTH } from "./upload-settings";
 
 export const INDEX_MULTIPLIER = 10
 export const MAX_FREE_TIER_BOARDS = 3
@@ -84,3 +85,4 @@ export const Z_INDEX_INCREMENT = 10; // we want reserve some space for borders
 export const HANDLE_Z_OFFSET = 1; // note. has to be less than Z_INDEX_INCREMENT
 
 export const FREEFORM_MARGIN = 0.1; // 10% margin on "fit to screen" view
+export const FREEFROM_DEFAULT_WIDTH = COMPRESSED_IMAGE_WIDTH;

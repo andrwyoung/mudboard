@@ -1,8 +1,8 @@
 import { useFreeformStore } from "@/store/freeform-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { mainCanvasRef } from "@/store/ui-store";
-import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 import { getFitToScreenCamera } from "./get-default-camera";
+import { FREEFROM_DEFAULT_WIDTH } from "@/types/constants";
 
 export function FitCameraToScreen(sectionId: string) {
   const el = mainCanvasRef.current;
@@ -20,7 +20,7 @@ export function FitCameraToScreen(sectionId: string) {
   for (const [blockId, pos] of Object.entries(posMap)) {
     const block = blocks.get(blockId)?.block;
     const scale = pos.scale ?? 1;
-    const width = (block?.width ?? COMPRESSED_IMAGE_WIDTH) * scale;
+    const width = (block?.width ?? FREEFROM_DEFAULT_WIDTH) * scale;
     const height = (block?.height ?? 0) * scale;
 
     const x = pos.x ?? 0;

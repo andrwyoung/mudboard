@@ -4,9 +4,13 @@ import {
   useFreeformStore,
 } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
-import { MAX_SCALE, MIN_PIXEL_SIZE, MIN_SCALE } from "@/types/constants";
+import {
+  FREEFROM_DEFAULT_WIDTH,
+  MAX_SCALE,
+  MIN_PIXEL_SIZE,
+  MIN_SCALE,
+} from "@/types/constants";
 import { getCursorForSide, SideType } from "@/types/freeform-types";
-import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 
 export function useMultiResizeHandler({
   blocksWithPositions,
@@ -39,7 +43,7 @@ export function useMultiResizeHandler({
       ...blocksWithPositions.map(
         ({ block, blockPos }) =>
           (blockPos.x ?? 0) +
-          (block.width ?? COMPRESSED_IMAGE_WIDTH) * blockPos.scale
+          (block.width ?? FREEFROM_DEFAULT_WIDTH) * blockPos.scale
       )
     );
     const boxBottom = Math.max(
@@ -131,7 +135,7 @@ export function useMultiResizeHandler({
 
       for (const { block, blockPos } of blocksWithPositions) {
         const newScale = blockPos.scale * scaleRatio;
-        const newWidth = (block.width ?? COMPRESSED_IMAGE_WIDTH) * newScale;
+        const newWidth = (block.width ?? FREEFROM_DEFAULT_WIDTH) * newScale;
         const newHeight = block.height * newScale;
 
         if (

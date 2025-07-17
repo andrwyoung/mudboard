@@ -2,7 +2,6 @@ import { useFreeformStore } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { Block, MudboardImage } from "@/types/block-types";
 import { BlockChooser } from "../blocks/memoized-block";
-import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 import {
   ALL_CORNERS,
   ALL_SIDES,
@@ -22,6 +21,7 @@ import { fireConfetti } from "@/utils/fire-confetti";
 import SingleBlockSideBorder from "./resize/single-block-side-borders";
 import SingleBlockCornerResize from "./resize/single-block-corner-handles";
 import { useBlockDragHandler } from "@/lib/freeform/drag/block-drag-handler";
+import { FREEFROM_DEFAULT_WIDTH } from "@/types/constants";
 
 export function BlockRenderer({
   block,
@@ -62,7 +62,7 @@ export function BlockRenderer({
   const screenScale = worldScale * camera.scale;
 
   const scaledBlockWidth =
-    (block.width ?? COMPRESSED_IMAGE_WIDTH) * screenScale;
+    (block.width ?? FREEFROM_DEFAULT_WIDTH) * screenScale;
   const scaledBlockHeight = block.height * screenScale;
 
   const blockScreenRect: BlockScreenRect = {

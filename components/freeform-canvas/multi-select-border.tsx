@@ -1,13 +1,14 @@
 import { FreeformPosition, useFreeformStore } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 import { ALL_CORNERS, ALL_SIDES } from "@/types/freeform-types";
 import { useMemo } from "react";
-import { Z_INDEX_INCREMENT } from "@/types/constants";
+import { FREEFROM_DEFAULT_WIDTH, Z_INDEX_INCREMENT } from "@/types/constants";
 import MultiBlockSideBorder from "./resize/multi-side-border";
 import { Block } from "@/types/block-types";
 import MultiBlockCornerResize from "./resize/multi-corner-handles";
 import { useMultiBlockDragHandler } from "@/lib/freeform/drag/selection-drag-handler";
+import { runFreeformAutoLayout } from "@/lib/freeform/autolayout/run-autolayout";
+import { MdAutoAwesomeMosaic } from "react-icons/md";
 
 export default function MultiSelectBorder({
   sectionId,
@@ -72,7 +73,7 @@ export default function MultiSelectBorder({
     if (!pos) continue;
 
     const scale = pos.scale ?? 1;
-    const width = (block.width ?? COMPRESSED_IMAGE_WIDTH) * scale;
+    const width = (block.width ?? FREEFROM_DEFAULT_WIDTH) * scale;
     const height = block.height * scale;
 
     const x = pos.x ?? 0;
@@ -109,8 +110,31 @@ export default function MultiSelectBorder({
           height: `${blockScreenRect.height}px`,
           cursor: isPanning ? "grab" : "move",
         }}
-        className="absolute -z-10"
+        className="absolute -z-10 "
       />
+
+      <div
+        data-id="freeform-select-actions"
+        style={{
+          left: `${blockScreenRect.x + 16}px`,
+          top: `${blockScreenRect.y + 16}px`,
+          zIndex: topZIndex + Z_INDEX_INCREMENT,
+        }}
+        className="absolute"
+      >
+        <button
+          type="button"
+          aria-label="Run auto-layout for selected blocks"
+          title="Auto-layout Selection"
+          onClick={(e) => {
+            e.stopPropagation();
+            runFreeformAutoLayout(filteredBlocks, sectionId);
+          }}
+          className="w-4 h-4 cursor-pointer hover:text-accent text-white"
+        >
+          <MdAutoAwesomeMosaic className="size-5" aria-hidden="true" />
+        </button>
+      </div>
 
       {/* Side Borders */}
       {ALL_SIDES.map((side) => (

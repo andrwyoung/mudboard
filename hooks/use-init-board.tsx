@@ -15,6 +15,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { VisualOverride } from "@/types/block-types";
 import {
+  FREEFROM_DEFAULT_WIDTH,
   MAX_Z_THRESHOLD,
   MOBILE_BREAKPOINT,
   MOBILE_COLUMN_NUMBER,
@@ -27,7 +28,6 @@ import {
   BoundingBox,
   useFreeformStore,
 } from "@/store/freeform-store";
-import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 
 export function useInitBoard(
   boardId: string,
@@ -167,7 +167,7 @@ export function useInitBoard(
             minY = Math.min(minY, block.canvas_y ?? 0);
 
             const scale = block.canvas_scale ?? 1;
-            const width = (block.width ?? COMPRESSED_IMAGE_WIDTH) * scale;
+            const width = (block.width ?? FREEFROM_DEFAULT_WIDTH) * scale;
             const height = (block.height ?? 0) * scale;
             const x = block.canvas_x ?? 0;
             const y = block.canvas_y ?? 0;

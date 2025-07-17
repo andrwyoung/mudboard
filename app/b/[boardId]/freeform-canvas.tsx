@@ -29,6 +29,8 @@ import {
 import { useMarque } from "@/hooks/gallery/use-marque";
 import { MarqueBox } from "@/components/board/marque";
 import MultiSelectBorder from "@/components/freeform-canvas/multi-select-border";
+import { runFreeformAutoLayout } from "@/lib/freeform/autolayout/run-autolayout";
+import { MdAutoAwesomeMosaic } from "react-icons/md";
 
 export default function FreeformCanvas({
   blocks,
@@ -252,14 +254,29 @@ export default function FreeformCanvas({
         </ContextMenuContent>
       </ContextMenu>
 
-      <button
-        onClick={() => FitCameraToScreen(sectionId)}
-        title="Fit to screen"
-        className="absolute bottom-4 left-4 z-50 p-1
+      <div className="absolute bottom-4 left-4 z-50 flex flex-col gap-1 items-start">
+        <button
+          type="button"
+          onClick={() => runFreeformAutoLayout(blocks, sectionId)}
+          aria-label="Run auto-layout on blocks"
+          title="Auto-layout Blocks"
+          className="p-1
            text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
-      >
-        <FaExpand />
-      </button>
+        >
+          <MdAutoAwesomeMosaic className="size-5" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => FitCameraToScreen(sectionId)}
+          aria-label="Fit canvas to screen"
+          title="Fit to screen"
+          className=" p-1
+           text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
+        >
+          <FaExpand />
+        </button>
+      </div>
 
       <button
         onClick={() => setHelpOpen(true)}

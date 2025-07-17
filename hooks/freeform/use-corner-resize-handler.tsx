@@ -5,9 +5,13 @@ import {
 } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { Block } from "@/types/block-types";
-import { MAX_SCALE, MIN_PIXEL_SIZE, MIN_SCALE } from "@/types/constants";
+import {
+  FREEFROM_DEFAULT_WIDTH,
+  MAX_SCALE,
+  MIN_PIXEL_SIZE,
+  MIN_SCALE,
+} from "@/types/constants";
 import { CornerType } from "@/types/freeform-types";
-import { COMPRESSED_IMAGE_WIDTH } from "@/types/upload-settings";
 
 export function useCornerResizeHandler({
   block,
@@ -33,7 +37,7 @@ export function useCornerResizeHandler({
     const startX = e.clientX;
     const startY = e.clientY;
     const startScale = blockPosition.scale;
-    const width = block.width ?? COMPRESSED_IMAGE_WIDTH;
+    const width = block.width ?? FREEFROM_DEFAULT_WIDTH;
     const height = block.height;
 
     document.body.style.cursor =
