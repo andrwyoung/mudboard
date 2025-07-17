@@ -1,5 +1,6 @@
 import { useFreeformStore } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
+import { useUndoStore } from "@/store/undo-store";
 import { Block } from "@/types/block-types";
 
 const CLICK_THRESHOLD = 4;
@@ -29,6 +30,7 @@ export function useBlockDragHandler({
     const isCtrlClick = e.ctrlKey || e.metaKey;
     const store = useSelectionStore.getState();
 
+    // clicking behavior
     if (isCtrlClick) {
       const alreadySelected = !!store.selectedBlocks[selectedBlock.block_id];
       if (alreadySelected) {
@@ -44,6 +46,17 @@ export function useBlockDragHandler({
           z: useFreeformStore.getState().getAndIncrementZIndex(sectionId),
         }));
     }
+
+    const selectedBlocks = useSelectionStore.getState().selectedBlocks;
+
+    // track for undo behavior
+    const originalPositions = Object.entries(selectedBlocks).map(([id]) => ({
+      blockId: id,
+      pos: {
+        x: useFreeformStore.getState().getBlockPosition(sectionId, id).x ?? 0,
+        y: useFreeformStore.getState().getBlockPosition(sectionId, id).y ?? 0,
+      },
+    }));
 
     function onMouseMove(e: MouseEvent) {
       // determine whether this is a drag or a click
@@ -83,18 +96,55 @@ export function useBlockDragHandler({
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
 
-      if (!isDragging && !isCtrlClick) {
-        const selectedCount = Object.keys(store.selectedBlocks).length;
+      if (!isDragging) {
+        if (!isCtrlClick) {
+          const selectedCount = Object.keys(store.selectedBlocks).length;
 
-        // if more than 1 is selected, or it's not selected, then only select this one
-        if (isSelected && selectedCount > 1) {
-          store.selectOnlyThisBlock("main", selectedBlock);
-          useFreeformStore
-            .getState()
-            .setPositionForBlock(sectionId, selectedBlock.block_id, () => ({
-              z: useFreeformStore.getState().getAndIncrementZIndex(sectionId),
-            }));
+          // if more than 1 is selected, or it's not selected, then only select this one
+          if (isSelected && selectedCount > 1) {
+            store.selectOnlyThisBlock("main", selectedBlock);
+            useFreeformStore
+              .getState()
+              .setPositionForBlock(sectionId, selectedBlock.block_id, () => ({
+                z: useFreeformStore.getState().getAndIncrementZIndex(sectionId),
+              }));
+          }
         }
+      } else {
+        //
+        // log it into the UNDO stack
+        const newPositions = originalPositions.map(({ blockId }) => ({
+          blockId,
+          pos: {
+            x:
+              useFreeformStore.getState().getBlockPosition(sectionId, blockId)
+                .x ?? 0,
+            y:
+              useFreeformStore.getState().getBlockPosition(sectionId, blockId)
+                .y ?? 0,
+          },
+        }));
+
+        console.log(
+          "adding to undo stack: ",
+          originalPositions,
+          "new: ",
+          newPositions
+        );
+
+        useUndoStore.getState().execute({
+          label: "Move Blocks",
+          do: () => {
+            useFreeformStore
+              .getState()
+              .updateMultipleBlockPositions(sectionId, newPositions);
+          },
+          undo: () => {
+            useFreeformStore
+              .getState()
+              .updateMultipleBlockPositions(sectionId, originalPositions);
+          },
+        });
       }
     }
 

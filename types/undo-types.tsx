@@ -4,7 +4,7 @@ export type UndoableAction = {
   do: () => void;
   undo: () => void;
   label: string;
-  payload?: UndoPayload;
+  payload?: UndoPayload; // optional
 };
 
 export type UndoPayload = {

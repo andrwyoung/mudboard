@@ -1,8 +1,8 @@
-import { useFreeformStore } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
 import { resolveBlockOverlap } from "./push-phase";
 import { pullTowardsCenter } from "./pull-phase";
 import { getWeightedCenter } from "./autolayout-helpers";
+import { bulkUpdateFreeformBlockPositionsWithUndo } from "@/lib/undoable-actions/undoable-bulk-update-freeform-positions";
 
 export const BLOCK_SPACING = 40;
 export const SNAP_TOLERANCE = 0.1;
@@ -98,5 +98,9 @@ export function runFreeformAutoLayout(
   }));
 
   // step 2: update to store!
-  useFreeformStore.getState().updateMultipleBlockPositions(sectionId, updates);
+  bulkUpdateFreeformBlockPositionsWithUndo(
+    sectionId,
+    updates,
+    "Auto-layout Movement"
+  );
 }

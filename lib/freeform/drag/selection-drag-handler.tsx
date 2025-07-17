@@ -1,5 +1,6 @@
 import { useFreeformStore } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
+import { useUndoStore } from "@/store/undo-store";
 
 const CLICK_THRESHOLD = 4;
 
@@ -20,6 +21,16 @@ export function useMultiBlockDragHandler({
     const startMouse = { x: e.clientX, y: e.clientY };
     let isDragging = false;
     let internalMouseTracker = { ...startMouse };
+
+    // UNDO stack
+    const selectedBlocks = useSelectionStore.getState().selectedBlocks;
+    const originalPositions = Object.entries(selectedBlocks).map(([id]) => ({
+      blockId: id,
+      pos: {
+        x: useFreeformStore.getState().getBlockPosition(sectionId, id).x ?? 0,
+        y: useFreeformStore.getState().getBlockPosition(sectionId, id).y ?? 0,
+      },
+    }));
 
     function onMouseMove(e: MouseEvent) {
       const dxFromStart = e.clientX - startMouse.x;
@@ -54,6 +65,35 @@ export function useMultiBlockDragHandler({
 
       if (!isDragging) {
         useSelectionStore.getState().deselectBlocks();
+      } else {
+        //
+        // UNDO behavior
+
+        const newPositions = originalPositions.map(({ blockId }) => ({
+          blockId,
+          pos: {
+            x:
+              useFreeformStore.getState().getBlockPosition(sectionId, blockId)
+                .x ?? 0,
+            y:
+              useFreeformStore.getState().getBlockPosition(sectionId, blockId)
+                .y ?? 0,
+          },
+        }));
+
+        useUndoStore.getState().execute({
+          label: "Move Blocks",
+          do: () => {
+            useFreeformStore
+              .getState()
+              .updateMultipleBlockPositions(sectionId, newPositions);
+          },
+          undo: () => {
+            useFreeformStore
+              .getState()
+              .updateMultipleBlockPositions(sectionId, originalPositions);
+          },
+        });
       }
     }
 
