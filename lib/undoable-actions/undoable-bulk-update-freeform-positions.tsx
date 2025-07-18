@@ -33,6 +33,7 @@ export function bulkUpdateFreeformBlockPositionsWithUndo(
   // add to undo stack
   useUndoStore.getState().execute({
     label,
+    scope: "freeform",
     do: () => {
       store.updateMultipleBlockPositions(sectionId, updates);
     },

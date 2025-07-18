@@ -14,6 +14,7 @@ export async function deleteBlocksWithUndo(blocks: Block[]) {
   useUndoStore.getState().execute({
     label: "Delete Blocks",
     payload: { positionedBlocks },
+    scope: "shared",
     do: () => softDeleteBlocks(blocks),
     undo: async () => {
       putBackBlocks(positionedBlocks);
