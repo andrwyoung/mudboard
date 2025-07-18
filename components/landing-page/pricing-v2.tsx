@@ -31,7 +31,7 @@ const plans: Plan[] = [
     price: "$0",
     features: [
       { label: "3 Boards", status: "good" },
-      { label: "All core features ", status: "good" },
+      { label: "All features in the Lifetime License", status: "good" },
       // { label: "No publishing Mudkits", status: "bad" },
     ],
     ctaText: "Try the Demo",
@@ -47,13 +47,13 @@ const plans: Plan[] = [
         </Button>
       </Link>
     ),
-    note: "*During testing: Reach out to remove 3 board limit.",
+    // note: "*During testing: Reach out to remove 3 board limit.",
   },
   {
-    name: "Early Supporter",
+    name: "Lifetime License",
     description: "Lifetime access to all current features:",
     price: "$20 one-time",
-    // oldPrice: "20% off",
+    oldPrice: "Early Supporter Pricing",
     features: [
       {
         label: (
@@ -98,7 +98,18 @@ const plans: Plan[] = [
     highlight: true,
     badge: "Beta Pricing",
     badgeColor: "bg-accent text-primary",
-    // note: "You’ll keep these features for life — it’s our thank-you for believing early. Future tools may require a plan.",
+    note: (
+      <span>
+        <a
+          href="https://jondrew.notion.site/Mudboard-Pricing-2332e809fa4e802dab4be35bb639e5d8?pvs=74"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent underline hover:text-white transition-all duration-200 font-bold"
+        >
+          More Details (Lifetime Promise)
+        </a>
+      </span>
+    ),
   },
   // {
   //   name: "Pro",
@@ -203,11 +214,11 @@ export default function PricingTable() {
               </div>
             )}
             <div className="flex-grow mb-6">
-              <h3 className="text-md font-bold mt-4 mb-1">{plan.name}</h3>
+              <h3 className="text-md font-bold mt-4 mb-2">{plan.name}</h3>
               <div className="flex flex-col mb-8 h-12">
                 <p className="font-header text-2xl font-bold ">{plan.price}</p>
                 {plan.oldPrice && (
-                  <p className="font-header text-sm font-semibold text-white px-1">
+                  <p className="font-header text-xs font-semibold text-white">
                     {plan.oldPrice}
                   </p>
                 )}

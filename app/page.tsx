@@ -256,8 +256,9 @@ export default function Home() {
               .
             </p> */}
             <p className="text-center text-sm text-muted mb-6 font-semibold">
-              We&apos;re still testing, so pricing isn&apos;t implemented. But
-              here&apos;s a general idea of what it will be.
+              We&apos;re still testing, so pricing isn&apos;t implemented yet.
+              But you can join the waitlist to stay updated!
+              {/* Buthere&apos;s a general idea of what it will be. */}
             </p>
             {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2"> */}
             <div>

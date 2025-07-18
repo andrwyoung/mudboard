@@ -73,6 +73,25 @@ export default function FAQ() {
           the core tool
         </FAQItem> */}
 
+        <FAQItem question="Will I ever be forced into a subscription?">
+          No. I&apos;m commited to always providing a{" "}
+          <strong>one-time payment</strong> option for the core features of the
+          tool.
+          <br />
+          <br />
+          Here&apos;s the exact details of what that means (and doesn&apos;t
+          mean):{" "}
+          <a
+            href="https://jondrew.notion.site/Mudboard-Pricing-2332e809fa4e802dab4be35bb639e5d8?pvs=74"
+            className="text-accent underline hover:text-white transition-all duration-200 font-bold"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Lifetime Promise
+          </a>
+        </FAQItem>
+
         <FAQItem question="Who can see my board/sections?">
           All boards and sections are{" "}
           <span className="text-accent font-bold">private by default</span>.

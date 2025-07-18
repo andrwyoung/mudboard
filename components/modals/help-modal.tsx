@@ -50,7 +50,7 @@ export function PageOne() {
     <div className="mt-4">
       {/* <h1 className="text-2xl font-header mt-4 font-smibold">FAQ</h1> */}
       <div className="space-y-4 mb-8">
-        <AccordianWrapper
+        {/* <AccordianWrapper
           title="My data is deleted/missing!"
           titleClassName={faqClass}
         >
@@ -58,7 +58,7 @@ export function PageOne() {
             Don’t panic — your work is likely still recoverable. It might be a
             glitch on my end, so please reach out.
           </p>
-        </AccordianWrapper>
+        </AccordianWrapper> */}
 
         <AccordianWrapper
           title="Colors look off when uploading images"
@@ -70,8 +70,8 @@ export function PageOne() {
             colors. This happens due to how browsers handle image compression.
           </p>
           <p className="mt-2">
-            To avoid this, export your images in <strong>sRGB</strong> color
-            mode. PNGs also tend to preserve color better than JPEGs.
+            To avoid this, PNGs tend to preserve color better than JPEGs. Or if
+            your images are in <strong>sRGB</strong> color mode.
           </p>
         </AccordianWrapper>
 
