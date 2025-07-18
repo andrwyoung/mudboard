@@ -1,9 +1,9 @@
-import { useCornerResizeHandler } from "@/hooks/freeform/use-corner-resize-handler";
 import { FreeformPosition, CameraType } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
 import { BlockScreenRect, CornerType } from "@/types/freeform-types";
 import { CornerHandles } from "./corner-handles";
 import { HANDLE_Z_OFFSET } from "@/types/constants";
+import { useResizeHandler } from "@/hooks/freeform/use-resize-handler";
 
 export default function SingleBlockCornerResize({
   corner,
@@ -22,9 +22,9 @@ export default function SingleBlockCornerResize({
   isOnlySelected: boolean;
   disableResizing: boolean;
 }) {
-  const onMouseDown = useCornerResizeHandler({
+  const onMouseDown = useResizeHandler({
     block,
-    corner,
+    interaction: { type: "corner", corner },
     blockPosition,
     camera,
   });

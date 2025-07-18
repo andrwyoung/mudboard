@@ -10,16 +10,25 @@ import {
   MIN_PIXEL_SIZE,
   MIN_SCALE,
 } from "@/types/constants";
-import { getCursorForSide, SideType } from "@/types/freeform-types";
+import {
+  CornerType,
+  getCursorForCorner,
+  getCursorForSide,
+  SideType,
+} from "@/types/freeform-types";
 
 export function useMultiResizeHandler({
   blocksWithPositions,
-  side,
+  interaction,
   camera,
+  sectionId,
 }: {
   blocksWithPositions: { block: Block; blockPos: FreeformPosition }[];
-  side: SideType;
+  interaction:
+    | { type: "side"; side: SideType }
+    | { type: "corner"; corner: CornerType };
   camera: CameraType;
+  sectionId: string;
 }) {
   const setPosition = useFreeformStore((s) => s.setPositionForBlock);
 
@@ -59,7 +68,10 @@ export function useMultiResizeHandler({
       height: boxBottom - boxY,
     };
 
-    document.body.style.cursor = getCursorForSide(side);
+    document.body.style.cursor =
+      interaction.type === "side"
+        ? getCursorForSide(interaction.side)
+        : getCursorForCorner(interaction.corner);
 
     const handleMouseMove = (e: MouseEvent) => {
       const dx = (e.clientX - startX) / camera.scale;
@@ -76,61 +88,158 @@ export function useMultiResizeHandler({
       let newTopLeftX = initialBoundingBox.x;
       let newTopLeftY = initialBoundingBox.y;
 
-      if (side === "bottom") {
-        const delta = dy;
-        newBoxHeight = boxHeight + delta;
-        scaleRatio = newBoxHeight / boxHeight;
+      if (interaction.type === "side") {
+        const side = interaction.side;
 
-        newBoxWidth = boxWidth * scaleRatio;
+        if (side === "bottom") {
+          const delta = dy;
+          newBoxHeight = boxHeight + delta;
+          scaleRatio = newBoxHeight / boxHeight;
 
-        anchorX = initialBoundingBox.x + boxWidth / 2;
-        anchorY = initialBoundingBox.y;
+          newBoxWidth = boxWidth * scaleRatio;
 
-        newTopLeftX = anchorX - newBoxWidth / 2;
-        newTopLeftY = anchorY;
-      }
+          anchorX = initialBoundingBox.x + boxWidth / 2;
+          anchorY = initialBoundingBox.y;
 
-      if (side === "top") {
-        const delta = -dy;
-        newBoxHeight = boxHeight + delta;
+          newTopLeftX = anchorX - newBoxWidth / 2;
+          newTopLeftY = anchorY;
+        }
 
-        scaleRatio = newBoxHeight / boxHeight;
-        newBoxWidth = boxWidth * scaleRatio;
+        if (side === "top") {
+          const delta = -dy;
+          newBoxHeight = boxHeight + delta;
 
-        anchorX = initialBoundingBox.x + boxWidth / 2;
-        anchorY = initialBoundingBox.y + boxHeight;
+          scaleRatio = newBoxHeight / boxHeight;
+          newBoxWidth = boxWidth * scaleRatio;
 
-        newTopLeftX = anchorX - newBoxWidth / 2;
-        newTopLeftY = anchorY - newBoxHeight;
-      }
+          anchorX = initialBoundingBox.x + boxWidth / 2;
+          anchorY = initialBoundingBox.y + boxHeight;
 
-      if (side === "left") {
-        const delta = -dx;
-        newBoxWidth = boxWidth + delta;
+          newTopLeftX = anchorX - newBoxWidth / 2;
+          newTopLeftY = anchorY - newBoxHeight;
+        }
 
-        scaleRatio = newBoxWidth / boxWidth;
-        newBoxHeight = boxHeight * scaleRatio;
+        if (side === "left") {
+          const delta = -dx;
+          newBoxWidth = boxWidth + delta;
 
-        anchorX = initialBoundingBox.x + boxWidth;
-        anchorY = initialBoundingBox.y + boxHeight / 2;
+          scaleRatio = newBoxWidth / boxWidth;
+          newBoxHeight = boxHeight * scaleRatio;
 
-        newTopLeftX = anchorX - newBoxWidth;
-        newTopLeftY = anchorY - newBoxHeight / 2;
-      }
+          anchorX = initialBoundingBox.x + boxWidth;
+          anchorY = initialBoundingBox.y + boxHeight / 2;
 
-      if (side === "right") {
-        const delta = dx;
-        newBoxWidth = boxWidth + delta;
+          newTopLeftX = anchorX - newBoxWidth;
+          newTopLeftY = anchorY - newBoxHeight / 2;
+        }
 
-        scaleRatio = newBoxWidth / boxWidth;
+        if (side === "right") {
+          const delta = dx;
+          newBoxWidth = boxWidth + delta;
 
-        newBoxHeight = boxHeight * scaleRatio;
+          scaleRatio = newBoxWidth / boxWidth;
 
-        anchorX = initialBoundingBox.x;
-        anchorY = initialBoundingBox.y + boxHeight / 2;
+          newBoxHeight = boxHeight * scaleRatio;
 
-        newTopLeftX = anchorX;
-        newTopLeftY = anchorY - newBoxHeight / 2;
+          anchorX = initialBoundingBox.x;
+          anchorY = initialBoundingBox.y + boxHeight / 2;
+
+          newTopLeftX = anchorX;
+          newTopLeftY = anchorY - newBoxHeight / 2;
+        }
+
+        // CORNERS
+        //
+      } else {
+        const corner = interaction.corner;
+
+        if (corner === "top-left") {
+          const deltaX = -dx;
+          const deltaY = -dy;
+
+          newBoxWidth = boxWidth + deltaX;
+          newBoxHeight = boxHeight + deltaY;
+
+          const scaleRatioX = newBoxWidth / boxWidth;
+          const scaleRatioY = newBoxHeight / boxHeight;
+
+          scaleRatio = Math.min(scaleRatioX, scaleRatioY); // uniform scale
+
+          newBoxWidth = boxWidth * scaleRatio;
+          newBoxHeight = boxHeight * scaleRatio;
+
+          anchorX = initialBoundingBox.x + boxWidth;
+          anchorY = initialBoundingBox.y + boxHeight;
+
+          newTopLeftX = anchorX - newBoxWidth;
+          newTopLeftY = anchorY - newBoxHeight;
+        }
+
+        if (corner === "top-right") {
+          const deltaX = dx;
+          const deltaY = -dy;
+
+          newBoxWidth = boxWidth + deltaX;
+          newBoxHeight = boxHeight + deltaY;
+
+          const scaleRatioX = newBoxWidth / boxWidth;
+          const scaleRatioY = newBoxHeight / boxHeight;
+
+          scaleRatio = Math.min(scaleRatioX, scaleRatioY);
+
+          newBoxWidth = boxWidth * scaleRatio;
+          newBoxHeight = boxHeight * scaleRatio;
+
+          anchorX = initialBoundingBox.x;
+          anchorY = initialBoundingBox.y + boxHeight;
+
+          newTopLeftX = anchorX;
+          newTopLeftY = anchorY - newBoxHeight;
+        }
+
+        if (corner === "bottom-left") {
+          const deltaX = -dx;
+          const deltaY = dy;
+
+          newBoxWidth = boxWidth + deltaX;
+          newBoxHeight = boxHeight + deltaY;
+
+          const scaleRatioX = newBoxWidth / boxWidth;
+          const scaleRatioY = newBoxHeight / boxHeight;
+
+          scaleRatio = Math.min(scaleRatioX, scaleRatioY);
+
+          newBoxWidth = boxWidth * scaleRatio;
+          newBoxHeight = boxHeight * scaleRatio;
+
+          anchorX = initialBoundingBox.x + boxWidth;
+          anchorY = initialBoundingBox.y;
+
+          newTopLeftX = anchorX - newBoxWidth;
+          newTopLeftY = anchorY;
+        }
+
+        if (corner === "bottom-right") {
+          const deltaX = dx;
+          const deltaY = dy;
+
+          newBoxWidth = boxWidth + deltaX;
+          newBoxHeight = boxHeight + deltaY;
+
+          const scaleRatioX = newBoxWidth / boxWidth;
+          const scaleRatioY = newBoxHeight / boxHeight;
+
+          scaleRatio = Math.min(scaleRatioX, scaleRatioY);
+
+          newBoxWidth = boxWidth * scaleRatio;
+          newBoxHeight = boxHeight * scaleRatio;
+
+          anchorX = initialBoundingBox.x;
+          anchorY = initialBoundingBox.y;
+
+          newTopLeftX = anchorX;
+          newTopLeftY = anchorY;
+        }
       }
 
       for (const { block, blockPos } of blocksWithPositions) {
@@ -159,7 +268,7 @@ export function useMultiResizeHandler({
         const newX = newTopLeftX + relXRatio * newBoxWidth;
         const newY = newTopLeftY + relYRatio * newBoxHeight;
 
-        setPosition(block.section_id, block.block_id, {
+        setPosition(sectionId, block.block_id, {
           scale: blockPos.scale * scaleRatio,
           x: newX,
           y: newY,

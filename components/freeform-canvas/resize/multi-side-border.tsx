@@ -12,6 +12,7 @@ export default function MultiBlockSideBorder({
   camera,
   zIndex,
   disableResizing,
+  sectionId,
 }: {
   side: SideType;
   blocksWithPositions: { block: Block; blockPos: FreeformPosition }[];
@@ -19,11 +20,13 @@ export default function MultiBlockSideBorder({
   camera: CameraType;
   zIndex: number;
   disableResizing: boolean;
+  sectionId: string;
 }) {
   const onMouseDown = useMultiResizeHandler({
     blocksWithPositions,
-    side,
+    interaction: { type: "side", side },
     camera,
+    sectionId,
   });
 
   return (

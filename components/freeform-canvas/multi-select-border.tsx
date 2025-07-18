@@ -148,6 +148,7 @@ export default function MultiSelectBorder({
           disableResizing={isPanning}
           camera={camera}
           zIndex={topZIndex}
+          sectionId={sectionId}
         />
       ))}
 
@@ -161,6 +162,7 @@ export default function MultiSelectBorder({
           disableResizing={isPanning}
           camera={camera}
           zIndex={topZIndex}
+          sectionId={sectionId}
         />
       ))}
     </>

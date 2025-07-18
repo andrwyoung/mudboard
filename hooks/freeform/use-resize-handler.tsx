@@ -11,7 +11,12 @@ import {
   MIN_PIXEL_SIZE,
   MIN_SCALE,
 } from "@/types/constants";
-import { getCursorForSide, SideType } from "@/types/freeform-types";
+import {
+  CornerType,
+  getCursorForCorner,
+  getCursorForSide,
+  SideType,
+} from "@/types/freeform-types";
 
 function getSizeDelta(newScale: number, startScale: number, dimension: number) {
   return dimension * (newScale - startScale);
@@ -19,12 +24,14 @@ function getSizeDelta(newScale: number, startScale: number, dimension: number) {
 
 export function useResizeHandler({
   block,
-  side,
+  interaction,
   blockPosition,
   camera,
 }: {
   block: Block;
-  side: SideType;
+  interaction:
+    | { type: "side"; side: SideType }
+    | { type: "corner"; corner: CornerType };
   blockPosition: FreeformPosition;
   camera: CameraType;
 }) {
@@ -41,8 +48,13 @@ export function useResizeHandler({
     const startX = e.clientX;
     const startY = e.clientY;
     const startScale = blockPosition.scale;
+    const width = block.width ?? FREEFROM_DEFAULT_WIDTH;
+    const height = block.height;
 
-    document.body.style.cursor = getCursorForSide(side);
+    document.body.style.cursor =
+      interaction.type === "side"
+        ? getCursorForSide(interaction.side)
+        : getCursorForCorner(interaction.corner);
 
     const handleMouseMove = (e: MouseEvent) => {
       const dx = (e.clientX - startX) / camera.scale;
@@ -52,50 +64,75 @@ export function useResizeHandler({
       let newX = blockPosition.x ?? 0;
       let newY = blockPosition.y ?? 0;
 
-      const width = block.width ?? FREEFROM_DEFAULT_WIDTH;
-      const height = block.height;
+      if (interaction.type === "side") {
+        const side = interaction.side;
 
-      if (side === "right") {
-        const delta = dx;
-        const scaleDelta = delta / width;
-        newScale = startScale + scaleDelta;
+        if (side === "right") {
+          const delta = dx;
+          const scaleDelta = delta / width;
+          newScale = startScale + scaleDelta;
 
-        newX = blockPosition.x ?? 0;
+          newX = blockPosition.x ?? 0;
+          const heightDiff = getSizeDelta(newScale, startScale, height);
+          newY = (blockPosition.y ?? 0) - heightDiff / 2;
+        }
+
+        if (side === "bottom") {
+          const delta = dy;
+          const scaleDelta = delta / height;
+          newScale = startScale + scaleDelta;
+
+          newY = blockPosition.y ?? 0;
+          const widthDiff = getSizeDelta(newScale, startScale, width);
+          newX = (blockPosition.x ?? 0) - widthDiff / 2;
+        }
+
+        if (side === "left") {
+          const delta = -dx;
+          const scaleDelta = delta / width;
+          newScale = startScale + scaleDelta;
+
+          const widthDiff = getSizeDelta(newScale, startScale, width);
+          newX = (blockPosition.x ?? 0) - widthDiff;
+
+          const heightDiff = getSizeDelta(newScale, startScale, height);
+          newY = (blockPosition.y ?? 0) - heightDiff / 2;
+        }
+
+        if (side === "top") {
+          const delta = -dy;
+          const scaleDelta = delta / height;
+          newScale = startScale + scaleDelta;
+
+          newY = (blockPosition.y ?? 0) - delta;
+
+          const widthDiff = getSizeDelta(newScale, startScale, width);
+          newX = (blockPosition.x ?? 0) - widthDiff / 2;
+        }
+      } else {
+        const corner = interaction.corner;
+
+        const signX =
+          corner === "top-left" || corner === "bottom-left" ? -1 : 1;
+        const signY = corner === "top-left" || corner === "top-right" ? -1 : 1;
+
+        const scaleDeltaX = (signX * dx) / width;
+        const scaleDeltaY = (signY * dy) / height;
+        const avgScaleDelta = (scaleDeltaX + scaleDeltaY) / 2;
+
+        newScale = startScale + avgScaleDelta;
+
+        const widthDiff = getSizeDelta(newScale, startScale, width);
         const heightDiff = getSizeDelta(newScale, startScale, height);
-        newY = (blockPosition.y ?? 0) - heightDiff / 2;
-      }
 
-      if (side === "bottom") {
-        const delta = dy;
-        const scaleDelta = delta / height;
-        newScale = startScale + scaleDelta;
-
-        newY = blockPosition.y ?? 0;
-        const widthDiff = getSizeDelta(newScale, startScale, width);
-        newX = (blockPosition.x ?? 0) - widthDiff / 2;
-      }
-
-      if (side === "left") {
-        const delta = -dx;
-        const scaleDelta = delta / width;
-        newScale = startScale + scaleDelta;
-
-        const widthDiff = getSizeDelta(newScale, startScale, width);
-        newX = (blockPosition.x ?? 0) - widthDiff;
-
-        const heightDiff = getSizeDelta(newScale, startScale, height);
-        newY = (blockPosition.y ?? 0) - heightDiff / 2;
-      }
-
-      if (side === "top") {
-        const delta = -dy;
-        const scaleDelta = delta / height;
-        newScale = startScale + scaleDelta;
-
-        newY = (blockPosition.y ?? 0) - delta;
-
-        const widthDiff = getSizeDelta(newScale, startScale, width);
-        newX = (blockPosition.x ?? 0) - widthDiff / 2;
+        if (corner === "top-left") {
+          newX = newX - widthDiff;
+          newY = newY - heightDiff;
+        } else if (corner === "top-right") {
+          newY = newY - heightDiff;
+        } else if (corner === "bottom-left") {
+          newX = newX - widthDiff;
+        }
       }
 
       const scaledWidth = (block.width ?? FREEFROM_DEFAULT_WIDTH) * newScale;

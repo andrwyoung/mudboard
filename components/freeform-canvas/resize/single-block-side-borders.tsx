@@ -27,7 +27,7 @@ export default function SingleBlockSideBorder({
 }) {
   const onMouseDown = useResizeHandler({
     block,
-    side,
+    interaction: { type: "side", side },
     blockPosition,
     camera,
   });

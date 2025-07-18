@@ -2,7 +2,7 @@ import { FreeformPosition, CameraType } from "@/store/freeform-store";
 import { Block } from "@/types/block-types";
 import { BlockScreenRect, CornerType } from "@/types/freeform-types";
 import { CornerHandles } from "./corner-handles";
-import { useMultiCornerResizeHandler } from "@/hooks/freeform/use-multi-corner-resize-handler";
+import { useMultiResizeHandler } from "@/hooks/freeform/use-multi-resize-handler";
 
 export default function MultiBlockCornerResize({
   corner,
@@ -11,6 +11,7 @@ export default function MultiBlockCornerResize({
   camera,
   disableResizing,
   zIndex,
+  sectionId,
 }: {
   corner: CornerType;
   blocksWithPositions: { block: Block; blockPos: FreeformPosition }[];
@@ -18,11 +19,13 @@ export default function MultiBlockCornerResize({
   camera: CameraType;
   disableResizing: boolean;
   zIndex: number;
+  sectionId: string;
 }) {
-  const onMouseDown = useMultiCornerResizeHandler({
+  const onMouseDown = useMultiResizeHandler({
     blocksWithPositions,
-    corner,
+    interaction: { type: "corner", corner },
     camera,
+    sectionId,
   });
 
   return (
