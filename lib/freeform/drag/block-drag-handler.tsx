@@ -135,6 +135,7 @@ export function useBlockDragHandler({
         useUndoStore.getState().execute({
           label: "Move Blocks",
           scope: "freeform",
+          sectionId,
           do: () => {
             useFreeformStore
               .getState()

@@ -1,6 +1,8 @@
 import { PositionedBlock } from "@/types/sync-types";
 import { create } from "zustand";
 import { useUIStore } from "./ui-store";
+import { useSelectionStore } from "./selection-store";
+import { useMetadataStore } from "./metadata-store";
 
 // Define the shape of a reversible action
 export type UndoableAction = {
@@ -9,6 +11,7 @@ export type UndoableAction = {
   label: string;
   payload?: UndoPayload; // optional
   scope: "grid" | "freeform" | "shared";
+  sectionId?: string;
 };
 
 export type UndoPayload = {
@@ -45,21 +48,34 @@ export const useUndoStore = create<UndoStore>((set, get) => ({
     if (!action) return; // if no more
 
     const freeformMode = useUIStore.getState().freeformMode;
+    const currentSectionId =
+      useSelectionStore.getState().selectedSection?.section.section_id;
 
-    // if we're supposed to undo something in another mode, switch to that mode instead
-    if (
+    const isSameMode = // are in the correct mode?
       action.scope === "shared" ||
       (freeformMode && action.scope === "freeform") ||
-      (!freeformMode && action.scope === "grid")
-    ) {
+      (!freeformMode && action.scope === "grid");
+
+    const isSameSection = // are we in the correct section?
+      action.scope !== "freeform" || action.sectionId === currentSectionId;
+
+    if (isSameMode && isSameSection) {
       action.undo();
       set({
         undoStack: undoStack.slice(0, -1),
         redoStack: [...redoStack, action],
       });
     } else {
-      const shouldBeFreeform = action.scope === "freeform";
-      useUIStore.getState().setFreeformMode(shouldBeFreeform);
+      if (action.scope === "freeform") {
+        if (action.sectionId && action.sectionId !== currentSectionId) {
+          const boardSection =
+            useMetadataStore.getState().boardSectionMap[action.sectionId];
+          useSelectionStore.getState().setSelectedSection(boardSection);
+        }
+        useUIStore.getState().setFreeformMode(true);
+      } else if (action.scope === "grid") {
+        useUIStore.getState().setFreeformMode(false);
+      }
     }
   },
 
@@ -69,20 +85,34 @@ export const useUndoStore = create<UndoStore>((set, get) => ({
     if (!action) return;
 
     const freeformMode = useUIStore.getState().freeformMode;
+    const currentSectionId =
+      useSelectionStore.getState().selectedSection?.section.section_id;
 
-    if (
+    const isSameMode =
       action.scope === "shared" ||
       (freeformMode && action.scope === "freeform") ||
-      (!freeformMode && action.scope === "grid")
-    ) {
+      (!freeformMode && action.scope === "grid");
+
+    const isSameSection =
+      action.scope !== "freeform" || action.sectionId === currentSectionId;
+
+    if (isSameMode && isSameSection) {
       action.do();
       set({
         redoStack: redoStack.slice(0, -1),
         undoStack: [...undoStack, action],
       });
     } else {
-      const shouldBeFreeform = action.scope === "freeform";
-      useUIStore.getState().setFreeformMode(shouldBeFreeform);
+      if (action.scope === "freeform") {
+        if (action.sectionId && action.sectionId !== currentSectionId) {
+          const boardSection =
+            useMetadataStore.getState().boardSectionMap[action.sectionId];
+          useSelectionStore.getState().setSelectedSection(boardSection);
+        }
+        useUIStore.getState().setFreeformMode(true);
+      } else if (action.scope === "grid") {
+        useUIStore.getState().setFreeformMode(false);
+      }
     }
   },
 
