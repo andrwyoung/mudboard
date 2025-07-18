@@ -62,7 +62,7 @@ export function WorkspaceToggles({
             setFreeformMode(false);
           } else {
             setFreeformMode(true);
-            setPanelMode("none");
+            // setPanelMode("none");
           }
         }}
         isActive={freeformOn}
@@ -76,7 +76,7 @@ export function WorkspaceToggles({
           if (greenhouseOpen) {
             setPanelMode("none");
           } else {
-            setFreeformMode(false);
+            // setFreeformMode(false);
             setPanelMode("explore");
           }
         }}

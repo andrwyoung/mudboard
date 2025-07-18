@@ -38,7 +38,7 @@ export function FreeformEditToggleSlider() {
         type="button"
         aria-pressed={editMode}
         aria-label="Switch to arrange mode"
-        title="Arrange mode (for editing)"
+        title="Arrange mode (E)"
         onClick={() => {
           if (!editMode) setEditMode(true);
         }}
@@ -51,7 +51,7 @@ export function FreeformEditToggleSlider() {
         type="button"
         aria-pressed={!editMode}
         aria-label="Switch to view mode"
-        title="View mode (for browsing)"
+        title="View mode (E)"
         onClick={() => {
           if (editMode) setEditMode(false);
         }}

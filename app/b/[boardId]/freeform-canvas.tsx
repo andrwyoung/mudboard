@@ -88,6 +88,10 @@ export default function FreeformCanvas({
       if (e.key === "0") {
         FitCameraToScreen(sectionId);
       }
+
+      if (e.key === "a" || e.key === "A") {
+        if (editMode) runAutoLayoutWithClustering(blocks, sectionId);
+      }
     }
 
     function handleKeyUp(e: KeyboardEvent) {
@@ -100,7 +104,7 @@ export default function FreeformCanvas({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [zoomCameraCentered, sectionId]);
+  }, [zoomCameraCentered, sectionId, editMode, blocks]);
 
   useEffect(() => {
     if (camera) return;
@@ -255,22 +259,24 @@ export default function FreeformCanvas({
       </ContextMenu>
 
       <div className="absolute bottom-4 left-4 z-50 flex flex-col gap-1 items-start">
-        <button
-          type="button"
-          onClick={() => runAutoLayoutWithClustering(blocks, sectionId)}
-          aria-label="Run auto-layout on blocks"
-          title="Auto-layout Blocks"
-          className="p-1
+        {editMode && (
+          <button
+            type="button"
+            onClick={() => runAutoLayoutWithClustering(blocks, sectionId)}
+            aria-label="Run auto-layout on blocks"
+            title="Auto-layout Blocks (A)"
+            className="p-1
            text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
-        >
-          <MdAutoAwesomeMosaic className="size-5" />
-        </button>
+          >
+            <MdAutoAwesomeMosaic className="size-5" />
+          </button>
+        )}
 
         <button
           type="button"
           onClick={() => FitCameraToScreen(sectionId)}
           aria-label="Fit canvas to screen"
-          title="Fit to screen"
+          title="Fit to screen (0)"
           className=" p-1
            text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
         >

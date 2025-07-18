@@ -125,6 +125,7 @@ export function PageTwo() {
 
         <h3 className="mt-4 mb-1 font-semibold text-lg">Arrange Mode Only</h3>
         <Shortcut label="Pan" keys={["Space + Drag", "Middle Mouse Drag"]} />
+        <Shortcut label="AutoLayout" keys={["A"]} />
       </div>
     </div>
   );
