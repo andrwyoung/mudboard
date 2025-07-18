@@ -105,6 +105,7 @@ export function BlockRenderer({
                   isSelected={isSelected}
                   multipleSelected={multipleSelected}
                   disableResizing={disableResizing || multipleSelected}
+                  sectionId={sectionId}
                 />
               ))}
               {ALL_CORNERS.map((corner) => (
@@ -117,6 +118,7 @@ export function BlockRenderer({
                   camera={camera}
                   isOnlySelected={isOnlySelected}
                   disableResizing={disableResizing || multipleSelected}
+                  sectionId={sectionId}
                 />
               ))}
             </>

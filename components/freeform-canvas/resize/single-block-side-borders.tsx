@@ -15,6 +15,7 @@ export default function SingleBlockSideBorder({
   isSelected,
   multipleSelected,
   disableResizing,
+  sectionId,
 }: {
   side: SideType;
   block: Block;
@@ -24,12 +25,14 @@ export default function SingleBlockSideBorder({
   isSelected: boolean;
   multipleSelected: boolean;
   disableResizing: boolean;
+  sectionId: string;
 }) {
   const onMouseDown = useResizeHandler({
     block,
     interaction: { type: "side", side },
     blockPosition,
     camera,
+    sectionId,
   });
 
   return (

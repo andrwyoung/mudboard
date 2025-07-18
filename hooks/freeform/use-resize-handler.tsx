@@ -4,6 +4,7 @@ import {
   useFreeformStore,
 } from "@/store/freeform-store";
 import { useSelectionStore } from "@/store/selection-store";
+import { useUndoStore } from "@/store/undo-store";
 import { Block } from "@/types/block-types";
 import {
   FREEFROM_DEFAULT_WIDTH,
@@ -27,6 +28,7 @@ export function useResizeHandler({
   interaction,
   blockPosition,
   camera,
+  sectionId,
 }: {
   block: Block;
   interaction:
@@ -34,6 +36,7 @@ export function useResizeHandler({
     | { type: "corner"; corner: CornerType };
   blockPosition: FreeformPosition;
   camera: CameraType;
+  sectionId: string;
 }) {
   const setPosition = useFreeformStore((s) => s.setPositionForBlock);
   const selectBlock = useSelectionStore((s) => s.selectOnlyThisBlock);
@@ -55,6 +58,14 @@ export function useResizeHandler({
       interaction.type === "side"
         ? getCursorForSide(interaction.side)
         : getCursorForCorner(interaction.corner);
+
+    // capture UNDO
+    const undoStore = useUndoStore.getState();
+    const initial = {
+      x: blockPosition.x ?? 0,
+      y: blockPosition.y ?? 0,
+      scale: blockPosition.scale,
+    };
 
     const handleMouseMove = (e: MouseEvent) => {
       const dx = (e.clientX - startX) / camera.scale;
@@ -147,7 +158,7 @@ export function useResizeHandler({
         return;
       }
 
-      setPosition(block.section_id, block.block_id, {
+      setPosition(sectionId, block.block_id, {
         scale: newScale,
         x: newX,
         y: newY,
@@ -156,6 +167,31 @@ export function useResizeHandler({
 
     const handleMouseUp = () => {
       document.body.style.cursor = "default";
+
+      // UNDO
+      const final = useFreeformStore
+        .getState()
+        .getBlockPosition(sectionId, block.block_id);
+
+      // if changes were made
+      if (
+        final &&
+        (final.x !== initial.x ||
+          final.y !== initial.y ||
+          final.scale !== initial.scale)
+      ) {
+        undoStore.execute({
+          label: "Resize block",
+          scope: "freeform",
+          sectionId: block.section_id,
+          undo: () => {
+            setPosition(block.section_id, block.block_id, initial);
+          },
+          do: () => {
+            setPosition(block.section_id, block.block_id, final);
+          },
+        });
+      }
 
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);

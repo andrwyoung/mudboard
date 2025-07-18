@@ -3,6 +3,7 @@ import {
   FreeformPosition,
   useFreeformStore,
 } from "@/store/freeform-store";
+import { useUndoStore } from "@/store/undo-store";
 import { Block } from "@/types/block-types";
 import {
   FREEFROM_DEFAULT_WIDTH,
@@ -72,6 +73,19 @@ export function useMultiResizeHandler({
       interaction.type === "side"
         ? getCursorForSide(interaction.side)
         : getCursorForCorner(interaction.corner);
+
+    // UNDO
+    const undoStore = useUndoStore.getState();
+    const initialPositions = Object.fromEntries(
+      blocksWithPositions.map(({ block, blockPos }) => [
+        block.block_id,
+        {
+          x: blockPos.x ?? 0,
+          y: blockPos.y ?? 0,
+          scale: blockPos.scale,
+        },
+      ])
+    );
 
     const handleMouseMove = (e: MouseEvent) => {
       const dx = (e.clientX - startX) / camera.scale;
@@ -280,6 +294,39 @@ export function useMultiResizeHandler({
       document.body.style.cursor = "default";
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+
+      const finalPositions =
+        useFreeformStore.getState().positionMap[sectionId] ?? {};
+
+      const hasChanged = Object.entries(initialPositions).some(
+        ([blockId, initial]) => {
+          const final = finalPositions[blockId];
+          return (
+            final &&
+            (final.x !== initial.x ||
+              final.y !== initial.y ||
+              final.scale !== initial.scale)
+          );
+        }
+      );
+
+      if (hasChanged) {
+        undoStore.execute({
+          label: "Resize blocks",
+          scope: "freeform",
+          sectionId,
+          undo: () => {
+            for (const [blockId, pos] of Object.entries(initialPositions)) {
+              setPosition(sectionId, blockId, pos);
+            }
+          },
+          do: () => {
+            for (const [blockId, pos] of Object.entries(finalPositions)) {
+              setPosition(sectionId, blockId, pos);
+            }
+          },
+        });
+      }
     };
 
     window.addEventListener("mousemove", handleMouseMove);

@@ -13,6 +13,7 @@ export default function SingleBlockCornerResize({
   camera,
   isOnlySelected,
   disableResizing,
+  sectionId,
 }: {
   corner: CornerType;
   block: Block;
@@ -21,12 +22,14 @@ export default function SingleBlockCornerResize({
   camera: CameraType;
   isOnlySelected: boolean;
   disableResizing: boolean;
+  sectionId: string;
 }) {
   const onMouseDown = useResizeHandler({
     block,
     interaction: { type: "corner", corner },
     blockPosition,
     camera,
+    sectionId,
   });
 
   return (
