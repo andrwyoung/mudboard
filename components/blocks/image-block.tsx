@@ -59,6 +59,8 @@ export function ImageBlock({
     overrides?.is_greyscale ||
     overrides?.crop !== undefined;
 
+  const isTempBlock = img.uploadStatus === "uploading";
+
   // SECTION: filename and sizing
 
   // sizing fallback
@@ -152,6 +154,12 @@ export function ImageBlock({
                   clearVisualOverride(block.block_id);
                 }}
               />
+            )}
+
+            {isTempBlock && (
+              <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-white rounded-sm shadow-sm">
+                Uploading
+              </h1>
             )}
 
             {img.blurhash && (

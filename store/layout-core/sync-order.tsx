@@ -3,10 +3,8 @@
 // this is the function that syncs the block order to supabase
 
 import { BlockInsert } from "@/types/block-types";
-import { supabase } from "../../lib/supabase/supabase-client";
 import { PositionedBlock } from "@/types/sync-types";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
-import { SYNC_BATCH_SIZE } from "@/types/upload-settings";
 import { useMetadataStore } from "@/store/metadata-store";
 import { commitToSectionColumns } from "../../lib/db-actions/sync-local-order";
 import { shouldSyncSectionLayout } from "../../lib/columns/should-sync-indexes";
