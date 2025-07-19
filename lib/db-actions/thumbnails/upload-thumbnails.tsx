@@ -5,14 +5,14 @@
 import {
   DEFAULT_FILE_EXT,
   DEFAULT_FILE_MIME,
-  thumbnailNames,
+  ThumbnailNames,
 } from "@/types/upload-settings";
 import { supabase } from "@/lib/supabase/supabase-client";
 
 export const uploadThumbnail = async (
   dataUrl: string,
   boardId: string,
-  name: thumbnailNames
+  name: ThumbnailNames
 ) => {
   const res = await fetch(dataUrl);
   const blob = await res.blob();

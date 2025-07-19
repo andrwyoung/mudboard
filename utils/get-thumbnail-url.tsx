@@ -1,12 +1,12 @@
 import {
   DEFAULT_FILE_EXT,
   SUPABASE_THUMBNAIL_URL,
-  thumbnailNames,
+  ThumbnailNames,
 } from "@/types/upload-settings";
 
 export function getThumbnailUrl(
   board_id: string,
-  thumbType: thumbnailNames
+  thumbType: ThumbnailNames
 ): string {
   return `${SUPABASE_THUMBNAIL_URL}/${thumbType}-${board_id}.${DEFAULT_FILE_EXT}`;
 }

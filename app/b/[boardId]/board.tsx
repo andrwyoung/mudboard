@@ -153,7 +153,7 @@ export default function Board({ boardId }: { boardId: string }) {
   useGlobalListeners();
 
   // handling importing images
-  const onlyOneSectionMode = boardSections.length === 1;
+  const onlyOneSectionMode = boardSections.length === 1 || freeformMode;
   const autoSelectedSection =
     selectedSection?.section ??
     (onlyOneSectionMode ? boardSections[0].section : null);
@@ -208,7 +208,7 @@ export default function Board({ boardId }: { boardId: string }) {
           <div className="text-3xl font-header">Editing Board Disabled</div>
         </div>
       )}
-      {isDraggingExtFile && boardSections.length === 1 && (
+      {isDraggingExtFile && onlyOneSectionMode && (
         <div
           className={`fixed inset-0 z-50 flex flex-col gap-1 items-center justify-center text-primary 
         ${

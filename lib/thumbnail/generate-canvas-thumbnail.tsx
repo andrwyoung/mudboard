@@ -3,7 +3,7 @@ import { uploadThumbnail } from "@/lib/db-actions/thumbnails/upload-thumbnails";
 import {
   DEFAULT_FILE_MIME,
   THUMBNAIL_ASPECT_MAP,
-  thumbnailNames,
+  ThumbnailNames,
 } from "@/types/upload-settings";
 
 export async function generateAndUploadThumbnailFromRef({
@@ -13,7 +13,7 @@ export async function generateAndUploadThumbnailFromRef({
 }: {
   element: HTMLDivElement;
   boardId: string;
-  thumbnailType: thumbnailNames;
+  thumbnailType: ThumbnailNames;
 }) {
   const thumbnailHeight = THUMBNAIL_ASPECT_MAP[thumbnailType].height;
   const thumbnailWidth = THUMBNAIL_ASPECT_MAP[thumbnailType].width;

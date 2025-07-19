@@ -1,4 +1,4 @@
-import { THUMBNAIL_ASPECT_MAP, thumbnailNames } from "@/types/upload-settings";
+import { THUMBNAIL_ASPECT_MAP, ThumbnailNames } from "@/types/upload-settings";
 
 type GenerateThumbnailOptions = {
   width?: number;
@@ -11,7 +11,7 @@ type GenerateThumbnailOptions = {
 export async function generateCanvasThumbnail(
   blocks: { url: string }[],
   options: GenerateThumbnailOptions = {},
-  thumbnailType: thumbnailNames
+  thumbnailType: ThumbnailNames
 ): Promise<string> {
   const {
     width = THUMBNAIL_ASPECT_MAP[thumbnailType].width,

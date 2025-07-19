@@ -1,6 +1,6 @@
 // compress images based on the sizes we provide in IMAGE_VARIANT_MAP
 
-import { IMAGE_VARIANT_MAP, imageNames } from "@/types/upload-settings";
+import { IMAGE_VARIANT_MAP, ImageSizes } from "@/types/upload-settings";
 
 export type CompressedImage = {
   file: File;
@@ -10,7 +10,7 @@ export type CompressedImage = {
 
 export async function convertToWebP(
   file: File
-): Promise<Record<imageNames, CompressedImage>> {
+): Promise<Record<ImageSizes, CompressedImage>> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const reader = new FileReader();
@@ -23,12 +23,12 @@ export async function convertToWebP(
     reader.onerror = () => reject(new Error("Failed to read file"));
 
     img.onload = () => {
-      const variants: Partial<Record<imageNames, CompressedImage>> = {};
+      const variants: Partial<Record<ImageSizes, CompressedImage>> = {};
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       if (!ctx) return reject(new Error("No canvas context"));
 
-      const processSize = (name: imageNames): Promise<void> => {
+      const processSize = (name: ImageSizes): Promise<void> => {
         return new Promise((res, rej) => {
           const { width: maxWidth, quality } = IMAGE_VARIANT_MAP[name];
           const scale = Math.min(1, maxWidth / img.width);
@@ -58,11 +58,11 @@ export async function convertToWebP(
       };
 
       Promise.all(
-        (Object.keys(IMAGE_VARIANT_MAP) as imageNames[]).map((name) =>
+        (Object.keys(IMAGE_VARIANT_MAP) as ImageSizes[]).map((name) =>
           processSize(name)
         )
       )
-        .then(() => resolve(variants as Record<imageNames, CompressedImage>))
+        .then(() => resolve(variants as Record<ImageSizes, CompressedImage>))
         .catch(reject);
     };
 

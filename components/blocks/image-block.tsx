@@ -9,7 +9,7 @@ import { Blurhash } from "react-blurhash";
 import {
   CAPTION_HEIGHT,
   IMAGE_VARIANT_MAP,
-  imageNames,
+  ImageSizes,
 } from "@/types/upload-settings";
 import { useLoadingStore } from "@/store/loading-store";
 import { AnimatePresence, motion } from "framer-motion";
@@ -60,11 +60,27 @@ export function ImageBlock({
     overrides?.crop !== undefined;
 
   // SECTION: filename and sizing
-  let size: imageNames = "medium";
-  if (numCols > 6) size = "thumb";
-  else if (numCols < 4) size = "full";
 
-  const variant = IMAGE_VARIANT_MAP[size];
+  // sizing fallback
+  const getInitialSize = (): ImageSizes => {
+    if (numCols >= 7) return "thumb";
+    if (numCols >= 5) return "medium";
+    if (numCols >= 3) return "large";
+    return "full";
+  };
+
+  const [imageSize, setImageSize] = useState<ImageSizes>(getInitialSize());
+
+  // fallback strategy
+  const fallbackMap: Record<ImageSizes, ImageSizes | null> = {
+    full: "large",
+    large: "medium",
+    medium: "thumb",
+    thumb: null,
+  };
+
+  // sizing
+  const variant = IMAGE_VARIANT_MAP[imageSize];
   const aspectRatio = height / width;
   const realWidth = variant.width;
   const realHeight = Math.round(realWidth * aspectRatio);
@@ -80,7 +96,7 @@ export function ImageBlock({
   const fileName =
     img.fileType !== "database"
       ? img.fileName
-      : getImageUrl(img.image_id, img.file_ext, size);
+      : getImageUrl(img.image_id, img.file_ext, imageSize);
 
   // SECTION caption
 
@@ -163,7 +179,14 @@ export function ImageBlock({
               alt={caption ?? img.original_name}
               width={realWidth}
               height={realHeight}
-              onError={() => setIsErrored(true)}
+              onError={() => {
+                const fallback = fallbackMap[imageSize];
+                if (fallback) {
+                  setImageSize(fallback); // trigger fallback retry
+                } else {
+                  setIsErrored(true); // final failure
+                }
+              }}
               onLoad={() => setLoaded(true)}
               className={`w-full h-full ${showBlurImg ? "hidden" : "visible"}
             ${captionIsActive && false ? "rounded-t-sm" : "rounded-sm"}

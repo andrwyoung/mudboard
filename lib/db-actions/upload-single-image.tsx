@@ -16,6 +16,7 @@ export async function uploadImageToSupabase(
   block: BlockInsert,
   newImage: MudboardImage,
   fullImage?: File,
+  largeImage?: File,
   thumbnailImage?: File
 ): Promise<string> {
   //
@@ -25,6 +26,7 @@ export async function uploadImageToSupabase(
   const uploads = [
     { name: `${folder}/medium.${newImage.file_ext}`, file },
     { name: `${folder}/full.${newImage.file_ext}`, file: fullImage },
+    { name: `${folder}/large.${newImage.file_ext}`, file: largeImage },
     { name: `${folder}/thumb.${newImage.file_ext}`, file: thumbnailImage },
   ];
 

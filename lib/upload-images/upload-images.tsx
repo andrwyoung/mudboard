@@ -9,7 +9,7 @@ import {
   COMPRESSION_THREADS,
   DEFAULT_FILE_EXT,
   DROP_SPREAD_THRESHOLD,
-  imageNames,
+  ImageSizes,
   mimeToExtension,
   UPLOAD_THREADS,
 } from "@/types/upload-settings";
@@ -36,7 +36,7 @@ type PreparedImage = {
   original_name: string;
   fileExt: string;
 
-  variants: Record<imageNames, CompressedImage>;
+  variants: Record<ImageSizes, CompressedImage>;
   blurhash?: string;
 
   objectUrl: string;
@@ -133,7 +133,7 @@ export async function uploadImages(
     // SECTION: image compression
     //
 
-    let variants: Record<imageNames, CompressedImage>;
+    let variants: Record<ImageSizes, CompressedImage>;
     try {
       variants = await convertToWebP(processedFile);
     } catch (err) {
@@ -288,6 +288,7 @@ export async function uploadImages(
           img.bestEffortBlock,
           img.newImage,
           img.variants.full.file,
+          img.variants.large.file,
           img.variants.thumb.file
         )
           .then((block_id) => {
