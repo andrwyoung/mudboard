@@ -2,6 +2,10 @@ export const DEMO_BOARD_ID = "2c7a54d8-9770-476a-afce-cf831ebebd29";
 
 export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
 export const SUPABASE_THUMBNAIL_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-thumbnails`;
+export const IMAGE_PROXY_URL =
+  "https://image-proxy-holy-cloud-3487.fly.dev/proxy?url=";
+export const OFFSHORE_THUMBNAIL_GEN_URL =
+  "https://mudboard-export.fly.dev/api/export";
 
 // virtualization
 export const OVERSCAN_SIZE = 1000;

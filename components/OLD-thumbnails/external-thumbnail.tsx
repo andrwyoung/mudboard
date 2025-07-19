@@ -6,7 +6,7 @@ import { getImageUrl } from "@/utils/get-image-url";
 import Image from "next/image";
 import { THUMBNAIL_ASPECT_MAP } from "@/types/upload-settings";
 
-export default function ExternalThumbnail({
+export default function OLDExternalThumbnail({
   blocks,
   title,
   columns,

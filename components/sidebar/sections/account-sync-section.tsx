@@ -3,7 +3,7 @@
 // it's the login buttons and the sync thing you see
 
 import LoginModal from "@/components/modals/login-modal";
-import SyncButton from "../sync-button";
+import SyncButton from "../buttons/sync-button";
 import { useMetadataStore } from "@/store/metadata-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { claimBoard } from "@/lib/db-actions/claim-board";

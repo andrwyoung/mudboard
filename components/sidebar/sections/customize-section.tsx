@@ -1,7 +1,6 @@
 // this component renders that "Board options" dropdown
 
 import { useMetadataStore } from "@/store/metadata-store";
-import { useThumbnailStore } from "@/store/thumbnail-store";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
 import Image from "next/image";
@@ -10,21 +9,22 @@ import {
   THUMBNAIL_COLUMNS,
 } from "@/types/upload-settings";
 import InfoTooltip from "../../ui/info-tooltip";
-import { toast } from "sonner";
-import { FaCopy } from "react-icons/fa6";
-import { BOARD_BASE_URL } from "@/types/constants";
+import { useThumbnailStore } from "@/store/thumbnail-store";
+import { useLayoutStore } from "@/store/layout-store";
+import CopyBoardLinkButton from "../buttons/copy-board-button";
 
 export default function CustomizeSection() {
   const board = useMetadataStore((s) => s.board);
 
   const [thumbnailPreviewOpen, setThumbnailPreviewOpen] = useState(false);
   const extThumbnailUrl = useThumbnailStore((s) => s.extThumbnailUrl);
+  const generateThumbnails = useThumbnailStore((s) => s.generateThumbnail);
+
+  const syncLayout = useLayoutStore((s) => s.syncLayout);
 
   const thumbnailWidth = THUMBNAIL_ASPECT_MAP["board-thumb-ext"].width;
   const thumbnailHeight = THUMBNAIL_ASPECT_MAP["board-thumb-ext"].height;
   const extAspect = thumbnailWidth / thumbnailHeight;
-
-  const generateThumbnails = useThumbnailStore((s) => s.generateThumbnail);
 
   return (
     <>
@@ -45,27 +45,16 @@ export default function CustomizeSection() {
 
           {board && (
             <div className="px-2">
-              <button
-                type="button"
-                title="Share Board"
-                data-umami-event={`App: Share (Copy Link)`}
-                onClick={() => {
-                  const url = `${BOARD_BASE_URL}/${board?.board_id}`;
-                  navigator.clipboard.writeText(url).then(() => {
-                    console.log("Copied to clipboard:", url);
-                  });
-                  toast.success("Copied Board Link!");
-                }}
-                className="flex items-center px-2 mt-2 mb-1 gap-1 text-white text-sm font-bold font-header
-            cursor-pointer hover:text-accent transition-all duration-100"
-              >
-                <FaCopy />
-                Copy Board Link
-              </button>
+              <CopyBoardLinkButton
+                boardId={board.board_id}
+                className="px-2 mt-2 mb-1 text-white text-sm font-bold font-header
+                 hover:text-accent transition-all duration-100"
+              />
 
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
+                  await syncLayout(); // sync the order so it's correct
                   setThumbnailPreviewOpen(true);
                   generateThumbnails(board?.board_id);
                 }}
@@ -97,23 +86,33 @@ export default function CustomizeSection() {
             </span>
           </DialogTitle>
 
-          {extThumbnailUrl ? (
-            <Image
-              src={extThumbnailUrl}
-              alt="External thumbnail"
-              width={thumbnailWidth}
-              height={thumbnailHeight}
-              className="rounded shadow"
-            />
-          ) : (
-            <div
-              className="relative w-full flex items-center justify-center
+          <div className="flex flex-col items-center gap-4">
+            {extThumbnailUrl ? (
+              <Image
+                src={`${extThumbnailUrl}?t=${Date.now()}`} // cache buster
+                alt="External thumbnail"
+                width={thumbnailWidth}
+                height={thumbnailHeight}
+                className="rounded shadow"
+              />
+            ) : (
+              <div
+                className="relative w-full flex items-center justify-center
               font-header text-primary font-semibold border border-primary rounded-md"
-              style={{ aspectRatio: extAspect }}
-            >
-              Generating Thumbnail...
-            </div>
-          )}
+                style={{ aspectRatio: extAspect }}
+              >
+                Generating Thumbnail...
+              </div>
+            )}
+
+            {board && (
+              <CopyBoardLinkButton
+                boardId={board.board_id}
+                className="px-2 mt-2 text-primary text-sm font-bold font-header
+          hover:text-accent transition-all duration-100"
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </>

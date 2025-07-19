@@ -10,10 +10,7 @@ import Logo from "@/components/ui/logo";
 import AccountSyncSection from "@/components/sidebar/sections/account-sync-section";
 import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
-import ThumbnailGenerator from "@/components/thumbnails/thumbnail-generator";
-import { useLoadingStore } from "@/store/loading-store";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
-import { useMetadataStore } from "@/store/metadata-store";
 import { WorkspaceToggles } from "@/components/ui/sidebar/workspace-toggle";
 
 // const fontClass = "font-semibold text-sm font-header";
@@ -27,8 +24,6 @@ export default function Sidebar({
   sectionRefs: RefObject<Record<string, HTMLDivElement | null>>;
   onCollapse: () => void;
 }) {
-  const boardInitialized = useLoadingStore((s) => s.boardInitialized);
-  const board = useMetadataStore((s) => s.board);
   const canEdit = canEditBoard();
 
   return (
@@ -59,7 +54,6 @@ export default function Sidebar({
         </div>
       </div>
       <div className="flex flex-col gap-4 w-full px-4 pt-6">
-        {boardInitialized && board && <ThumbnailGenerator board={board} />}
         {canEdit && (
           <AccordianWrapper
             title="Board Options"

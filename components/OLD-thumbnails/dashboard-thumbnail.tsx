@@ -1,3 +1,5 @@
+// DEPRECATED for offshore
+
 // this is how we lay out the thumbnail you see on the dashboard
 
 import { Block, MudboardImage } from "@/types/block-types";
@@ -5,7 +7,7 @@ import { THUMBNAIL_ASPECT_MAP } from "@/types/upload-settings";
 import { getImageUrl } from "@/utils/get-image-url";
 import Image from "next/image";
 
-export default function DashboardThumbnail({
+export default function OLDDashboardThumbnail({
   blocks,
   columns,
 }: {

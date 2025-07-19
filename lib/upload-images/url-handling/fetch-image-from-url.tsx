@@ -1,5 +1,7 @@
 // when a user drags in an image from another website
 
+import { IMAGE_PROXY_URL } from "@/types/upload-settings";
+
 // first try using frontend to grab it (usually fails)
 // if not then we go through our proxy
 
@@ -31,9 +33,7 @@ export async function getImageBlobSmart(url: string): Promise<Blob | null> {
     if (direct) return direct;
   }
 
-  const proxyUrl = `https://image-proxy-holy-cloud-3487.fly.dev/proxy?url=${encodeURIComponent(
-    url
-  )}`;
+  const proxyUrl = `${IMAGE_PROXY_URL}${encodeURIComponent(url)}`;
 
   try {
     const res = await fetch(proxyUrl);

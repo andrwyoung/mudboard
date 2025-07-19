@@ -12,15 +12,15 @@ import {
   THUMBNAIL_REGENERATION_DELAY,
 } from "@/types/upload-settings";
 import { checkThumbnailExists } from "@/lib/db-actions/thumbnails/check-thumbnail-exists";
-import ExternalThumbnail from "./external-thumbnail";
-import DashboardThumbnail from "./dashboard-thumbnail";
+import OLDExternalThumbnail from "./external-thumbnail";
+import OLDDashboardThumbnail from "./dashboard-thumbnail";
 import { Block } from "@/types/block-types";
 import {
   DEFAULT_BOARD_TITLE,
   NUM_BLOCKS_TO_GRAB,
   NUM_SECTION_TO_CHECK,
 } from "@/types/constants";
-import { useThumbnailStore } from "@/store/thumbnail-store";
+import { OLDuseThumbnailStore } from "@/store/OLD-thumbnail-store";
 import { Board } from "@/types/board-types";
 import { PositionedBlock } from "@/types/sync-types";
 
@@ -28,13 +28,13 @@ export type ThumbnailGeneratorHandle = {
   generate: () => void;
 };
 
-export default function ThumbnailGenerator({ board }: { board: Board }) {
+export default function OLDThumbnailGenerator({ board }: { board: Board }) {
   const externalRef = useRef<HTMLDivElement | null>(null);
   const dashboardRef = useRef<HTMLDivElement | null>(null);
 
-  const generateThumbnails = useThumbnailStore((s) => s.generateThumbnail);
-  const dashThumbnailUrl = useThumbnailStore((s) => s.dashThumbnailUrl);
-  const extThumbnailUrl = useThumbnailStore((s) => s.extThumbnailUrl);
+  const generateThumbnails = OLDuseThumbnailStore((s) => s.generateThumbnail);
+  const dashThumbnailUrl = OLDuseThumbnailStore((s) => s.dashThumbnailUrl);
+  const extThumbnailUrl = OLDuseThumbnailStore((s) => s.extThumbnailUrl);
 
   const masterBlockOrder = useLayoutStore((s) => s.masterBlockOrder);
 
@@ -97,8 +97,8 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
 
   // mount the refs to the generator store
   useEffect(() => {
-    useThumbnailStore.getState().setExternalRef(externalRef);
-    useThumbnailStore.getState().setDashboardRef(dashboardRef);
+    OLDuseThumbnailStore.getState().setExternalRef(externalRef);
+    OLDuseThumbnailStore.getState().setDashboardRef(dashboardRef);
   }, []);
 
   // if no thumbnail exists on mount, queue a regeneration
@@ -192,14 +192,14 @@ export default function ThumbnailGenerator({ board }: { board: Board }) {
         }}
       >
         <div ref={externalRef}>
-          <ExternalThumbnail
+          <OLDExternalThumbnail
             blocks={blocks}
             title={board.title ?? DEFAULT_BOARD_TITLE}
             columns={columnsToRender}
           />
         </div>
         <div ref={dashboardRef}>
-          <DashboardThumbnail blocks={blocks} columns={columnsToRender} />
+          <OLDDashboardThumbnail blocks={blocks} columns={columnsToRender} />
         </div>
       </div>
     </div>

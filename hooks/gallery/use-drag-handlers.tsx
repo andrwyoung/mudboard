@@ -234,10 +234,11 @@ export function useGalleryHandlers({
 
       const { active, over } = event;
       const rawId = active.id.toString();
-      const cloneBlock = !active.data.current?.canEdit;
+      const canEdit = active.data.current?.canEdit;
+      const cloneBlock = !canEdit;
       const activeId = rawId.match(/^[^:]+::block-(.+)$/)?.[1] ?? "";
 
-      console.log("cloneBlock is ", cloneBlock);
+      console.log("cloneBlock is ", cloneBlock, "canEdit field: ", canEdit);
 
       // convert all draggedBlocks into positionedBlocks
       if (!draggedBlocks) return;
