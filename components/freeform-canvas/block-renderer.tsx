@@ -139,7 +139,7 @@ export function BlockRenderer({
             data-id={`main::block-${block.block_id}`}
             className={`absolute z-0`}
           >
-            <BlockChooser canEdit={true} block={block} numCols={4} />
+            <BlockChooser canEdit={true} block={block} numCols={5} />
           </div>
         </div>
       </ContextMenuTrigger>
