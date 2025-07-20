@@ -1,7 +1,7 @@
 // this component renders that "Board options" dropdown
 
 import { useMetadataStore } from "@/store/metadata-store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
 import Image from "next/image";
 import {
@@ -25,6 +25,29 @@ export default function CustomizeSection() {
   const thumbnailWidth = THUMBNAIL_ASPECT_MAP["board-thumb-ext"].width;
   const thumbnailHeight = THUMBNAIL_ASPECT_MAP["board-thumb-ext"].height;
   const extAspect = thumbnailWidth / thumbnailHeight;
+
+  const [thumbMessage, setThumbMessage] = useState("Generating Thumbnail...");
+
+  useEffect(() => {
+    if (thumbnailPreviewOpen) {
+      setThumbMessage("Generating Thumbnail...");
+      const timeouts: NodeJS.Timeout[] = [];
+
+      timeouts.push(
+        setTimeout(() => {
+          setThumbMessage("Grabbing Image...");
+        }, 1500)
+      );
+
+      timeouts.push(
+        setTimeout(() => {
+          setThumbMessage("Almost there...");
+        }, 3000)
+      );
+
+      return () => timeouts.forEach(clearTimeout);
+    }
+  }, [thumbnailPreviewOpen]);
 
   return (
     <>
@@ -98,10 +121,10 @@ export default function CustomizeSection() {
             ) : (
               <div
                 className="relative w-full flex items-center justify-center
-              font-header text-primary font-semibold border border-primary rounded-md"
+                  font-header text-primary font-semibold border border-primary rounded-md"
                 style={{ aspectRatio: extAspect }}
               >
-                Generating Thumbnail...
+                {thumbMessage}
               </div>
             )}
 
