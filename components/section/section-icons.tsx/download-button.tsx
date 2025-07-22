@@ -56,86 +56,98 @@ export default function SectionDownloadButton({
     setOpen(false);
     const toastId = toast.loading("Requesting export...");
 
-    setTimeout(() => {
-      toast.message("Building Board...", { id: toastId });
-    }, 500);
+    try {
+      setTimeout(() => {
+        toast.message("Building Board...", { id: toastId });
+      }, 500);
 
-    setTimeout(() => {
-      toast.message("Generating export image...", { id: toastId });
-    }, 2000);
+      setTimeout(() => {
+        toast.message("Generating export image...", { id: toastId });
+      }, 2000);
 
-    setTimeout(() => {
-      toast.message("Finalizing...", { id: toastId });
-    }, 5000);
+      setTimeout(() => {
+        toast.message("Finalizing...", { id: toastId });
+      }, 5000);
 
-    // Call your offshore export endpoint here
-    const res = await fetch(`${OFFSHORE_THUMBNAIL_GEN_URL}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        relevantId: sectionId,
-        exportType: "section",
-        boardExportOptions: {
-          isFreeform: exportMethod,
-          includeTitle: !includeTitle,
-          spacing: noSpacing ? 0 : undefined,
-          sidePadding: noSpacing ? 0 : undefined,
-          backgroundColor: transparentBg ? undefined : "#ffffff",
-        },
-      }),
-    });
+      // Call your offshore export endpoint here
+      const res = await fetch(`${OFFSHORE_THUMBNAIL_GEN_URL}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          relevantId: sectionId,
+          exportType: "section",
+          boardExportOptions: {
+            isFreeform: exportMethod,
+            includeTitle: !includeTitle,
+            spacing: noSpacing ? 0 : undefined,
+            sidePadding: noSpacing ? 0 : undefined,
+            backgroundColor: transparentBg ? undefined : "#ffffff",
+          },
+        }),
+      });
+      if (!res.ok) throw new Error(`Export failed: ${res.statusText}`);
 
-    toast.message("Downloading file...", { id: toastId });
+      toast.message("Downloading file...", { id: toastId });
 
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
 
-    // Create a download link and click it
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `mudboard-section-${sectionId}.png`; // or .zip/.webp
-    a.click();
+      // Create a download link and click it
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mudboard-section-${sectionId}.png`; // or .zip/.webp
+      a.click();
 
-    // Optional: revoke the URL after a few seconds
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-
-    toast.dismiss(toastId);
-    toast.success("Export ready");
+      // Revoke the URL after a few seconds
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+      toast.dismiss(toastId);
+      toast.success("Export ready");
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error("Server error. Please retry shortly.");
+      console.error(err);
+    }
   }
 
   async function handleZip() {
     setOpen(false);
     const toastId = toast.loading(`Preparing image ZIP…`);
 
-    setTimeout(() => {
-      toast.message(
-        `Collecting ${imageBlocks.length} image${
-          imageBlocks.length !== 1 ? "s" : ""
-        }…`,
-        {
+    try {
+      setTimeout(() => {
+        toast.message(
+          `Collecting ${imageBlocks.length} image${
+            imageBlocks.length !== 1 ? "s" : ""
+          }…`,
+          {
+            id: toastId,
+          }
+        );
+      }, 600);
+
+      setTimeout(() => {
+        toast.message("Compressing files…", { id: toastId });
+      }, 2200);
+
+      setTimeout(() => {
+        toast.message("Organizing ZIP archive…", { id: toastId });
+      }, 600);
+
+      setTimeout(() => {
+        toast.message("Still working… large exports may take a bit", {
           id: toastId,
-        }
-      );
-    }, 600);
+        });
+      }, 10000);
 
-    setTimeout(() => {
-      toast.message("Compressing files…", { id: toastId });
-    }, 2200);
+      await downloadImagesAsZip(imageBlocks, sectionTitle ?? undefined);
 
-    setTimeout(() => {
-      toast.message("Organizing ZIP archive…", { id: toastId });
-    }, 600);
-
-    setTimeout(() => {
-      toast.message("Still working… large exports may take a bit", {
-        id: toastId,
-      });
-    }, 10000);
-
-    await downloadImagesAsZip(imageBlocks, sectionTitle ?? undefined);
-
-    toast.dismiss(toastId);
-    toast.success("Export ready");
+      toast.dismiss(toastId);
+      toast.success("Export ready");
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error("Server error. Please retry shortly.");
+      console.error(err);
+    }
   }
 
   function resetDialog() {
