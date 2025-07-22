@@ -2,6 +2,7 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { Block, MudboardImage } from "@/types/block-types";
 import { getImageUrl } from "@/utils/get-image-url";
+import { runWithConcurrency } from "@/utils/concurrency-helper";
 
 export async function downloadImagesAsZip(blocks: Block[], title?: string) {
   const zip = new JSZip();
@@ -11,19 +12,16 @@ export async function downloadImagesAsZip(blocks: Block[], title?: string) {
       b.block_type === "image" && !!b.data
   );
 
-  for (let i = 0; i < imageBlocks.length; i++) {
-    const block = imageBlocks[i];
+  const tasks = imageBlocks.map((block, i) => async () => {
     const image = block.data;
-
     const paddedIndex = String(i + 1).padStart(3, "0");
     const rawTitle = (title ?? "section").toLowerCase();
     const safeTitle = rawTitle
-      .replace(/[^\w\d]+/g, "-") // Replace symbols with "-"
-      .replace(/-+$/, "") // Remove trailing dash if present
-      .replace(/^-+/, "") // Remove leading dash if present
-      .replace(/-+/g, "-") // Collapse multiple dashes
-      .slice(0, 40); // Limit filename length
-
+      .replace(/[^\w\d]+/g, "-")
+      .replace(/-+$/, "")
+      .replace(/^-+/, "")
+      .replace(/-+/g, "-")
+      .slice(0, 40);
     const filename = `${safeTitle}_${paddedIndex}.${image.file_ext}`;
 
     try {
@@ -34,7 +32,9 @@ export async function downloadImagesAsZip(blocks: Block[], title?: string) {
     } catch (err) {
       console.error(`Failed to fetch image ${image.image_id}:`, err);
     }
-  }
+  });
+
+  await runWithConcurrency(tasks, 8); // HARDCODED
 
   if (imageBlocks.length === 0) {
     console.warn("No valid image blocks to download.");

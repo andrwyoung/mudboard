@@ -95,8 +95,11 @@ function SectionHeader({
             )}
 
             <SectionDownloadButton
+              sectionId={section.section_id}
               sectionTitle={section.title}
               blocks={(sectionColumns[section.section_id] ?? []).flat()}
+              visualColumnNum={visualNumCols}
+              savedColumnNum={section.saved_column_num}
             />
 
             <SectionShareModal section={section} canEdit={canEdit} />
