@@ -48,7 +48,7 @@ export default function ComparisonTable() {
         >
           Great for collecting and discovering ideas. Mudboard helps you{" "}
           <span className="text-accent font-bold">use what you saved</span> —
-          with tools to view, organize, and <strong>reuse</strong>.
+          fast, without needing to dig or rebuild every time.
         </ComparisonTile>
 
         <ComparisonTile
@@ -63,9 +63,10 @@ export default function ComparisonTable() {
             />
           }
         >
-          Tons of flexibility. Mudboard trades that for <strong>speed</strong>,
-          so you can get inspired{" "}
-          <span className="text-accent font-bold">and get going faster</span>.
+          Offers deep control and flexibility. Mudboard keeps the freedom and
+          adds <strong>speed</strong>, so you can build faster and{" "}
+          <span className="text-accent font-bold">share them</span> just as
+          easily.
         </ComparisonTile>
 
         <ComparisonTile
@@ -89,9 +90,9 @@ export default function ComparisonTable() {
             />
           }
         >
-          Built for artists by an artist. Grow your skills,{" "}
-          <strong>reuse your best images</strong>, and contribute to a shared
-          visual library.
+          Built for artists by an artist. Organize faster,{" "}
+          <strong>reuse your best images</strong>, and build a visual library
+          you&apos;ll actually use.
         </ComparisonTile>
       </div>
     </div>

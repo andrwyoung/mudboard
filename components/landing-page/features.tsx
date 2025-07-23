@@ -51,27 +51,31 @@ export default function Features({
       </FeatureItem> */}
       <FeatureItem
         icon={<FaSun />}
-        title="Focus on drawing"
+        title="Freedom to Think"
         highlightedIndexes={highlightedIndexes}
       >
-        Spend <strong>more time drawing</strong>, not managing your references.
-        No setup, no distractions.
+        Swap freely between a grid and freeform: structure when you need,
+        freedom when you don&apos;t.
       </FeatureItem>
+
       <FeatureItem
         icon={<FaLeaf />}
-        title="Reuse your references"
+        title="Reuse Your References"
         highlightedIndexes={highlightedIndexes}
       >
-        Save your best images as reusable{" "}
-        <span className="text-accent font-bold"> Mudkits</span>. So you can{" "}
-        <strong>build</strong> on what inspired you.
+        Save your best images into sets you can reuse later. No more hunting
+        through old files.
       </FeatureItem>
-      {/* <FeatureItem icon={<FaSeedling />} title="Inspire others">
-        Share your Mudkits to the public{" "}
-        <span className="text-accent font-bold"> Greenhouse</span> to showcase
-        your collections and build your <strong>library</strong>.
-      </FeatureItem> */}
       <FeatureItem
+        icon={<FaSeedling />}
+        title="Show Off Your Work"
+        highlightedIndexes={highlightedIndexes}
+      >
+        Export exactly as you arranged it. No formatting mess - just clean,
+        sharable results.
+      </FeatureItem>
+
+      {/* <FeatureItem
         icon={<FaSeedling />}
         title="Inspire others"
         highlightedIndexes={highlightedIndexes}
@@ -79,7 +83,12 @@ export default function Features({
         Share your Mudkits in the{" "}
         <span className="text-accent font-bold"> Greenhouse</span>, a public
         library of inspiring reference sets.
-      </FeatureItem>
+      </FeatureItem> */}
+      {/* <FeatureItem icon={<FaSeedling />} title="Inspire others">
+        Share your Mudkits to the public{" "}
+        <span className="text-accent font-bold"> Greenhouse</span> to showcase
+        your collections and build your <strong>library</strong>.
+      </FeatureItem> */}
 
       {/* <h1>Features</h1> */}
       {/* <FeatureItem icon={<MdPalette />} title="Upload and Draw">

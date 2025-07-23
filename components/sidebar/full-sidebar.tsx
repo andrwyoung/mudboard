@@ -56,7 +56,7 @@ export default function Sidebar({
       <div className="flex flex-col gap-4 w-full px-4 pt-6">
         {canEdit && (
           <AccordianWrapper
-            title="Board Options"
+            title="Share Board"
             titleClassName="font-header text-sm px-4"
           >
             <CustomizeSection />

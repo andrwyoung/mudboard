@@ -135,7 +135,8 @@ export default function Home() {
                     : "text-white"
                 }`}
               >
-                Draw more. Organize less.
+                {/* Draw more. Organize less. */}
+                Draw more. Rebuild less.
                 {/* References that remember. */}
               </h1>
               <div className="flex flex-col items-center">
@@ -150,6 +151,14 @@ export default function Home() {
                   A workspace for illustrators to organize and reuse reference
                   images. So you're ready to ignite inspiration when it matters.
                 </p> */}
+                {/* <p className="text-lg mb-14 w-full font-semibold max-w-xl">
+                  For illustrators that gather references that they never look
+                  at again.
+                </p> */}
+                {/* <p className="text-lg mb-14 w-full font-semibold max-w-xl">
+                  A workspace to organize and reuse your favorite images. So you
+                  always find what you saved for a reason.
+                </p> */}
                 <p
                   data-id="subheader"
                   data-marque-track
@@ -160,8 +169,10 @@ export default function Home() {
                         : "text-white"
                     }`}
                 >
-                  A workspace to organize and reuse your favorite images. So you
-                  always find what you saved for a reason.
+                  For illustrators who <strong>lose hours</strong> building
+                  reference boards — and even more{" "}
+                  <strong>digging through folders</strong> for images they
+                  already saved.
                 </p>
               </div>
 
@@ -212,8 +223,26 @@ export default function Home() {
             </div>
           </div>
 
+          <div className="flex flex-col mb-16 items-center mt-4">
+            <h1 className=" text-xl md:text-3xl font-bold mb-2">
+              What is Mudboard?
+            </h1>
+            {/* <p className="text-sm md:text-[0.9375rem] leading-relaxed">
+              Mudboard is a workspace to quickly organize and build export-ready
+              reference boards. Without 
+              
+              needing to switch context between projects. Without 
+            </p> */}
+
+            <p className="text-sm md:text-[0.9375rem] leading-relaxed max-w-xl text-center">
+              Mudboard is a fast, visual workspace for illustrators to{" "}
+              <strong>build and export reference boards</strong> - without
+              setup, clutter or wasted time.
+            </p>
+          </div>
+
           {/* FEATURES */}
-          <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-32 text-left">
+          <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-36 text-left">
             <Features highlightedIndexes={highlightedIndexes} />
           </div>
 
@@ -248,7 +277,7 @@ export default function Home() {
 
           <div className="mb-24 max-w-3xl">
             <h2 className="text-3xl font-bold text-center mb-1">
-              Pricing (Planned)
+              Pricing (Coming Soon)
             </h2>
 
             {/* <p className="text-center text-sm text-muted mb-6 font-semibold">
@@ -273,7 +302,7 @@ export default function Home() {
 
           <section className="w-full text-center mb-24 px-6 flex flex-col items-center">
             <h2 className="text-2xl sm:text-3xl font-bold max-w-xl mb-2">
-              Bring your favorite references into your workflow.
+              Reuse your favorite images.
             </h2>
             <p className="text-sm font-medium mb-6">
               Try the demo board! No signup required.
