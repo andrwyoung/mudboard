@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/supabase-client";
 import Logo from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Board } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 import Link from "next/link";
@@ -34,7 +34,7 @@ import BoardCard from "./dashboard-card";
 import { softDeleteBoard } from "@/lib/db-actions/soft-delete-board";
 import { BoardWithStats } from "@/types/stat-types";
 import { fetchUserBoardsWithStats } from "@/lib/db-actions/explore/fetch-user-board-with-stats";
-import { currentLocalUserHasLicense } from "@/lib/tiers/user-has-license";
+import { getHasLicense } from "@/lib/tiers/user-has-license";
 import { FaPlus, FaSeedling } from "react-icons/fa6";
 
 type DashboardMode = "board" | "sections";
@@ -48,7 +48,12 @@ export default function DashboardPage() {
 
   const [loading, setLoading] = useState(true);
 
-  const hasLicense = currentLocalUserHasLicense();
+  const profile = useMetadataStore((s) => s.profile);
+  const hasLicense = useMemo(() => {
+    if (!profile) return undefined;
+    return getHasLicense(profile.tier);
+  }, [profile]);
+
   const canCreateBoards =
     hasLicense || userBoards.length < MAX_FREE_TIER_BOARDS;
 
