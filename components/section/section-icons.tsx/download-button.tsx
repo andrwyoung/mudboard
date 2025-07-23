@@ -15,6 +15,7 @@ import { downloadImagesAsZip } from "@/components/download-images/zip-images";
 import { useUIStore } from "@/store/ui-store";
 import { OFFSHORE_THUMBNAIL_GEN_URL } from "@/types/upload-settings";
 import { CheckField } from "@/components/ui/check-field";
+import { useLayoutStore } from "@/store/layout-store";
 
 export type ExportMethod = "grid" | "freeform" | "autofit";
 
@@ -54,6 +55,9 @@ export default function SectionDownloadButton({
 
   async function handleExport() {
     setOpen(false);
+    // sync order real quick
+    useLayoutStore.getState().syncLayout();
+
     const toastId = toast.loading("Requesting export...");
 
     try {
