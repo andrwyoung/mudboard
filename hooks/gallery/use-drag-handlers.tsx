@@ -321,6 +321,13 @@ export function useGalleryHandlers({
           });
         }
 
+        // special case: freeform canvas dropzone
+      } else if (over?.id === "freeform-canvas-dropzone") {
+        const selectedSection = useSelectionStore.getState().selectedSection;
+        if (selectedSection) {
+          handleSectionLevelDrop(selectedSection.section);
+        }
+
         // then we handle section matches
       } else if (sectionMatch) {
         const sectionIndex = Number(sectionMatch[1]);

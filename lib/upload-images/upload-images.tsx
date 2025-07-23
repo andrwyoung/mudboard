@@ -238,6 +238,7 @@ export async function uploadImages(
         : findShortestColumn(sectionId);
     const optimisticRowIndex =
       rowIndexPreference ?? cols[optimisticColIndex].length;
+
     const bestEffortBlock: BlockInsert = {
       ...incompleteBlock,
 

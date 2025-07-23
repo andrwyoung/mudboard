@@ -33,6 +33,7 @@ import { MdAutoAwesomeMosaic } from "react-icons/md";
 import { runAutoLayoutWithClustering } from "@/lib/freeform/autolayout/detect-clusters";
 import SectionDownloadButton from "@/components/section/section-icons.tsx/download-button";
 import { useLayoutStore } from "@/store/layout-store";
+import { DroppableFreeformCanvas } from "@/components/drag/droppable-freeform-canvas";
 
 export default function FreeformCanvas({
   blocks,
@@ -180,134 +181,136 @@ export default function FreeformCanvas({
   useMarque({ setMarqueRect, disable: cursorMovementsIsActive });
 
   return (
-    <div className="w-full h-full overflow-hidden relative ">
-      {editMode && !spaceHeld && marqueRect && (
-        <MarqueBox marqueRect={marqueRect} />
-      )}
-      <div className="absolute top-4 right-4 z-10">
-        <FreeformEditToggleSlider />
-      </div>
-
-      <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-10">
-        <h1 className="text-sm text-white font-header translate-y-[1px] font-semibold">
-          Freeform Mode
-        </h1>
-        <FreeformPreferenceModal />
-      </div>
-
-      {blocks.length === 0 && (
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center pointer-events-none z-20">
-          <h1 className="text-xl font-semibold mb-1">
-            No Images in this Section
-          </h1>
-          <p className="text-sm opacity-75">
-            Add images in grid mode or switch to another section
-          </p>
+    <DroppableFreeformCanvas id="freeform-canvas-dropzone">
+      <div className="w-full h-full overflow-hidden relative ">
+        {editMode && !spaceHeld && marqueRect && (
+          <MarqueBox marqueRect={marqueRect} />
+        )}
+        <div className="absolute top-4 right-4 z-10">
+          <FreeformEditToggleSlider />
         </div>
-      )}
 
-      <ContextMenu>
-        <ContextMenuTrigger asChild>
-          <div
-            onMouseDown={onMouseDown}
-            data-id="freeform-canvas"
-            onWheel={onWheel}
-            className={`w-full h-full z-0 relative ${
-              isDragging
-                ? "cursor-grabbing"
-                : cursorMovementsIsActive
-                ? "cursor-grab"
-                : "cursor-default"
-            }`}
-            style={{
-              backgroundColor: editMode
-                ? arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR
-                : viewBgColor ?? DEFAULT_VIEW_BG_COLOR,
-            }}
-          >
-            {camera && (
-              <>
-                {editMode && (
-                  <MultiSelectBorder
-                    sectionId={sectionId}
-                    isPanning={spaceHeld}
-                    editMode={editMode}
-                  />
-                )}
+        <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-10">
+          <h1 className="text-sm text-white font-header translate-y-[1px] font-semibold">
+            Freeform Mode
+          </h1>
+          <FreeformPreferenceModal />
+        </div>
 
-                {blocks.map((block) => (
-                  <BlockRenderer
-                    key={block.block_id}
-                    block={block}
-                    sectionId={sectionId}
-                    editMode={editMode}
-                    setEditMode={setEditMode}
-                    spacebarDown={spaceHeld}
-                    disableResizing={
-                      isDragging || spaceHeld || marqueRect !== null
-                    }
-                  />
-                ))}
-              </>
-            )}
+        {blocks.length === 0 && (
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center pointer-events-none z-20">
+            <h1 className="text-xl font-semibold mb-1">
+              No Images in this Section
+            </h1>
+            <p className="text-sm opacity-75">
+              Add images in grid mode or switch to another section
+            </p>
           </div>
-        </ContextMenuTrigger>
-
-        <ContextMenuContent>
-          <ContextMenuItem onClick={() => FitCameraToScreen(sectionId)}>
-            Fit to screen
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem onClick={() => setEditMode(!editMode)}>
-            Change Mode
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-
-      <div className="absolute bottom-4 left-4 z-50 flex flex-col gap-2 items-center">
-        {editMode && (
-          <button
-            type="button"
-            onClick={() => runAutoLayoutWithClustering(blocks, sectionId)}
-            aria-label="Run auto-layout on blocks"
-            title="Auto-layout Blocks (A)"
-            className="p-1
-           text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
-          >
-            <MdAutoAwesomeMosaic className="size-5" />
-          </button>
         )}
 
-        <SectionDownloadButton
-          sectionId={section.section_id}
-          blocks={blocks}
-          visualColumnNum={visualNumCols}
-          savedColumnNum={section.saved_column_num}
-        />
+        <ContextMenu>
+          <ContextMenuTrigger asChild>
+            <div
+              onMouseDown={onMouseDown}
+              data-id="freeform-canvas"
+              onWheel={onWheel}
+              className={`w-full h-full z-0 relative ${
+                isDragging
+                  ? "cursor-grabbing"
+                  : cursorMovementsIsActive
+                  ? "cursor-grab"
+                  : "cursor-default"
+              }`}
+              style={{
+                backgroundColor: editMode
+                  ? arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR
+                  : viewBgColor ?? DEFAULT_VIEW_BG_COLOR,
+              }}
+            >
+              {camera && (
+                <>
+                  {editMode && (
+                    <MultiSelectBorder
+                      sectionId={sectionId}
+                      isPanning={spaceHeld}
+                      editMode={editMode}
+                    />
+                  )}
+
+                  {blocks.map((block) => (
+                    <BlockRenderer
+                      key={block.block_id}
+                      block={block}
+                      sectionId={sectionId}
+                      editMode={editMode}
+                      setEditMode={setEditMode}
+                      spacebarDown={spaceHeld}
+                      disableResizing={
+                        isDragging || spaceHeld || marqueRect !== null
+                      }
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+          </ContextMenuTrigger>
+
+          <ContextMenuContent>
+            <ContextMenuItem onClick={() => FitCameraToScreen(sectionId)}>
+              Fit to screen
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem onClick={() => setEditMode(!editMode)}>
+              Change Mode
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+
+        <div className="absolute bottom-4 left-4 z-50 flex flex-col gap-2 items-center">
+          {editMode && (
+            <button
+              type="button"
+              onClick={() => runAutoLayoutWithClustering(blocks, sectionId)}
+              aria-label="Run auto-layout on blocks"
+              title="Auto-layout Blocks (A)"
+              className="p-1
+           text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
+            >
+              <MdAutoAwesomeMosaic className="size-5" />
+            </button>
+          )}
+
+          <SectionDownloadButton
+            sectionId={section.section_id}
+            blocks={blocks}
+            visualColumnNum={visualNumCols}
+            savedColumnNum={section.saved_column_num}
+          />
+
+          <button
+            type="button"
+            onClick={() => FitCameraToScreen(sectionId)}
+            aria-label="Fit canvas to screen"
+            title="Fit to screen (0)"
+            className=" p-1
+           text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
+          >
+            <FaExpand />
+          </button>
+        </div>
 
         <button
+          onClick={() => setHelpOpen(true)}
           type="button"
-          onClick={() => FitCameraToScreen(sectionId)}
-          aria-label="Fit canvas to screen"
-          title="Fit to screen (0)"
-          className=" p-1
-           text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
-        >
-          <FaExpand />
-        </button>
-      </div>
-
-      <button
-        onClick={() => setHelpOpen(true)}
-        type="button"
-        title="Help / Support"
-        className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
+          title="Help / Support"
+          className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
                border-primary text-primary-darker rounded-full hover:border-accent
               shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
-      >
-        <FaQuestion />
-      </button>
-      <HelpModal open={helpOpen} setOpen={setHelpOpen} pageNum={2} />
-    </div>
+        >
+          <FaQuestion />
+        </button>
+        <HelpModal open={helpOpen} setOpen={setHelpOpen} pageNum={2} />
+      </div>
+    </DroppableFreeformCanvas>
   );
 }
