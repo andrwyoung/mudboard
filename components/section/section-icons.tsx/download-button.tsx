@@ -43,7 +43,7 @@ export default function SectionDownloadButton({
   );
 
   // export options
-  const [includeTitle, setIncludeTitle] = useState(false);
+  const [excludeTitle, setExcludeTitle] = useState(false);
   const [noSpacing, setNoSpacing] = useState(false);
   const [transparentBg, setTransparentBg] = useState(false);
 
@@ -77,8 +77,8 @@ export default function SectionDownloadButton({
           relevantId: sectionId,
           exportType: "section",
           boardExportOptions: {
-            isFreeform: exportMethod,
-            includeTitle: !includeTitle,
+            isFreeform: exportMethod === "freeform",
+            includeTitle: !excludeTitle,
             spacing: noSpacing ? 0 : undefined,
             sidePadding: noSpacing ? 0 : undefined,
             backgroundColor: transparentBg ? undefined : "#ffffff",
@@ -151,7 +151,7 @@ export default function SectionDownloadButton({
   }
 
   function resetOptions() {
-    setIncludeTitle(false);
+    setExcludeTitle(false);
     setNoSpacing(false);
     setTransparentBg(false);
   }
@@ -182,7 +182,7 @@ export default function SectionDownloadButton({
             </DialogTitle>
             <DialogDescription className="text-primary text-xs">
               Beta Note: Only PNG exports are currently supported. Text blocks
-              and description are excluded. Individual images download as WebP.
+              are excluded.
             </DialogDescription>
           </DialogHeader>
 
@@ -223,8 +223,8 @@ export default function SectionDownloadButton({
               <div className="flex flex-col gap-1 mb-4">
                 <CheckField
                   text="Exclude Title"
-                  isChecked={includeTitle}
-                  onChange={setIncludeTitle}
+                  isChecked={excludeTitle}
+                  onChange={setExcludeTitle}
                 />
                 {exportMethod !== "freeform" && (
                   <CheckField
