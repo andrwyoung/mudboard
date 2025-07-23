@@ -1,7 +1,6 @@
 "use client";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { FaLeaf } from "react-icons/fa6";
 import { ModalType, useDemoStore } from "@/store/demo-store";
 import { BeanIcon } from "../ui/bean-icon";
 
@@ -17,14 +16,15 @@ const welcomePages: Record<
     title: "Welcome to Mudboard!",
     body: (
       <div>
-        <p className="text-sm text-primary mt-2 mb-2">
-          This is the real app. <strong>Drag images around</strong> and make
-          this board yours!
+        <p className="text-sm text-primary mt-2 mb-4">
+          This is a working board made and used by an artist for client work.{" "}
+          <br />
+          Explore it. Edit it. Add your own images.
         </p>
         <p className="text-sm text-primary mb-6 hidden sm:block">
-          When you&apos;re ready, I’ll be at the{" "}
-          <FaLeaf className="inline -translate-y-[1px] ml-1" />{" "}
-          <strong>Greenhouse</strong> to explain what it does.
+          Try <strong>dragging a few images</strong> to rearrange.
+          {/* <FaLeaf className="inline -translate-y-[1px] ml-1" />{" "}
+          <strong>Greenhouse</strong> to explain what it does. */}
         </p>
       </div>
     ),

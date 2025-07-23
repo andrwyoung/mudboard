@@ -1,4 +1,5 @@
-export const DEMO_BOARD_ID = "2c7a54d8-9770-476a-afce-cf831ebebd29";
+// export const DEMO_BOARD_ID = "2c7a54d8-9770-476a-afce-cf831ebebd29";
+export const DEMO_BOARD_ID = "d6c83b5f-0816-4a0f-a48b-f3c58a213dbc";
 
 export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
 export const SUPABASE_THUMBNAIL_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-thumbnails`;
