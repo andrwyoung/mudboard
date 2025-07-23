@@ -31,6 +31,8 @@ import { MarqueBox } from "@/components/board/marque";
 import MultiSelectBorder from "@/components/freeform-canvas/multi-select-border";
 import { MdAutoAwesomeMosaic } from "react-icons/md";
 import { runAutoLayoutWithClustering } from "@/lib/freeform/autolayout/detect-clusters";
+import SectionDownloadButton from "@/components/section/section-icons.tsx/download-button";
+import { useLayoutStore } from "@/store/layout-store";
 
 export default function FreeformCanvas({
   blocks,
@@ -47,6 +49,10 @@ export default function FreeformCanvas({
   const [spaceHeld, setSpaceHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const cursorMovementsIsActive = !editMode || (editMode && spaceHeld);
+
+  const visualNumCols = useLayoutStore((s) =>
+    s.getVisualNumColsForSection(section.section_id)
+  );
 
   const camera = useFreeformStore((s) => s.cameraMap[section.section_id]);
 
@@ -258,7 +264,7 @@ export default function FreeformCanvas({
         </ContextMenuContent>
       </ContextMenu>
 
-      <div className="absolute bottom-4 left-4 z-50 flex flex-col gap-1 items-start">
+      <div className="absolute bottom-4 left-4 z-50 flex flex-col gap-2 items-center">
         {editMode && (
           <button
             type="button"
@@ -271,6 +277,13 @@ export default function FreeformCanvas({
             <MdAutoAwesomeMosaic className="size-5" />
           </button>
         )}
+
+        <SectionDownloadButton
+          sectionId={section.section_id}
+          blocks={blocks}
+          visualColumnNum={visualNumCols}
+          savedColumnNum={section.saved_column_num}
+        />
 
         <button
           type="button"

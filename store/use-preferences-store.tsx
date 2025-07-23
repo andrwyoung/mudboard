@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import { UserProfile } from "./metadata-store";
+import { useMetadataStore, UserProfile } from "./metadata-store";
+import { supabase } from "@/lib/supabase/supabase-client";
+import { toast } from "sonner";
+
+let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 
 type UserPreferenceStore = {
   minimalBorders: boolean | null;
@@ -12,6 +16,7 @@ type UserPreferenceStore = {
   setArrangeBgColor: (color: string | null) => void;
 
   bulkSetPreferences: (profile: UserProfile) => void;
+  syncPreferences: () => void;
 
   initialized: boolean;
   logout: () => void;
@@ -39,6 +44,35 @@ export const useUserPreferenceStore = create<UserPreferenceStore>(
         arrangeBgColor: profile.freeform_arrange_color,
         initialized: true,
       });
+    },
+    syncPreferences: (delay = 1000) => {
+      if (syncTimeout) clearTimeout(syncTimeout);
+
+      syncTimeout = setTimeout(() => {
+        const { minimalBorders, viewBgColor, arrangeBgColor } = get();
+        const user = useMetadataStore.getState().user;
+
+        if (!user?.id) {
+          console.warn("No user found for preference update.");
+          return;
+        }
+
+        supabase
+          .from("users")
+          .update({
+            freeform_border_off: minimalBorders,
+            freeform_view_color: viewBgColor,
+            freeform_arrange_color: arrangeBgColor,
+          })
+          .eq("user_id", user.id)
+          .then(({ error }) => {
+            if (error) {
+              console.warn("Error updating user preferences: ", error);
+            } else {
+              toast("Freeform Preference Synced!");
+            }
+          });
+      }, delay);
     },
 
     initialized: false,

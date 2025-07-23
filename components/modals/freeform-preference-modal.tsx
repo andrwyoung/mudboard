@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +15,6 @@ import {
 } from "@/types/constants";
 import { useFreeformStore } from "@/store/freeform-store";
 import { getLuminanceFromHex } from "@/lib/color-picker/color-converters";
-import { supabase } from "@/lib/supabase/supabase-client";
-import { useMetadataStore } from "@/store/metadata-store";
 
 type VisiblePicker = "view" | "arrange" | null;
 
@@ -93,49 +91,17 @@ function ColorSettingRow({
 }
 
 export default function FreeformPreferenceModal() {
-  const showBorder = useUserPreferenceStore((s) => s.minimalBorders);
   const viewBgColor = useUserPreferenceStore((s) => s.viewBgColor);
   const setViewBgColor = useUserPreferenceStore((s) => s.setViewBgColor);
   const arrangeBgColor = useUserPreferenceStore((s) => s.arrangeBgColor);
   const setArrangeBgColor = useUserPreferenceStore((s) => s.setArrangeBgColor);
 
+  const syncPreferences = useUserPreferenceStore((s) => s.syncPreferences);
+
   const setEditMode = useFreeformStore((s) => s.setEditMode);
 
   const [isOpen, setIsOpen] = useState(false);
   const [visiblePicker, setVisiblePicker] = useState<VisiblePicker>(null);
-
-  const user = useMetadataStore((s) => s.user);
-
-  // updating db
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  function queueDbUpdate(delay = 2000) {
-    if (!user?.id) {
-      console.warn("No user found for preference update.");
-      return;
-    }
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(async () => {
-      const { error } = await supabase
-        .from("users")
-        .update({
-          freeform_border_off: showBorder,
-          freeform_view_color: viewBgColor,
-          freeform_arrange_color: arrangeBgColor,
-        })
-        .eq("user_id", user.id);
-
-      if (error) {
-        console.warn("Error updating user preferences: ", error);
-      }
-
-      console.log("Freeform Preference Synced!");
-      timeoutRef.current = null;
-    }, delay);
-  }
 
   return (
     <>
@@ -178,7 +144,7 @@ export default function FreeformPreferenceModal() {
                 defaultColor={DEFAULT_ARRANGE_BG_COLOR}
                 onChange={(color) => {
                   setArrangeBgColor(color);
-                  queueDbUpdate();
+                  syncPreferences();
                 }}
                 isEditMode={true}
                 pickerKey="arrange"
@@ -193,7 +159,7 @@ export default function FreeformPreferenceModal() {
                 defaultColor={DEFAULT_VIEW_BG_COLOR}
                 onChange={(color) => {
                   setViewBgColor(color);
-                  queueDbUpdate();
+                  syncPreferences();
                 }}
                 isEditMode={false}
                 pickerKey="view"
@@ -210,7 +176,7 @@ export default function FreeformPreferenceModal() {
                     initialColor={viewBgColor ?? DEFAULT_VIEW_BG_COLOR}
                     onChange={(color) => {
                       setViewBgColor(color);
-                      queueDbUpdate();
+                      syncPreferences();
                     }}
                   />
                 </div>
@@ -222,7 +188,7 @@ export default function FreeformPreferenceModal() {
                     initialColor={arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR}
                     onChange={(color) => {
                       setArrangeBgColor(color);
-                      queueDbUpdate();
+                      syncPreferences();
                     }}
                   />
                 </div>

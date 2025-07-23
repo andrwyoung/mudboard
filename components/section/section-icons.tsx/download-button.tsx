@@ -150,12 +150,15 @@ export default function SectionDownloadButton({
     }
   }
 
-  function resetDialog() {
-    setExportMethod(freeformMode ? "freeform" : "grid");
-
+  function resetOptions() {
     setIncludeTitle(false);
     setNoSpacing(false);
     setTransparentBg(false);
+  }
+
+  function resetDialog() {
+    setExportMethod(freeformMode ? "freeform" : "grid");
+    resetOptions();
   }
 
   return (
@@ -201,7 +204,10 @@ export default function SectionDownloadButton({
                         ? "bg-accent border-accent"
                         : "border-transparent"
                     }`}
-                    onClick={() => setExportMethod(method)}
+                    onClick={() => {
+                      resetOptions();
+                      setExportMethod(method);
+                    }}
                   >
                     {method.charAt(0).toUpperCase() + method.slice(1)}
                   </button>
