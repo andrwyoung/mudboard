@@ -46,7 +46,6 @@ function SectionHeader({
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
 
-  const sectionColumns = useLayoutStore((s) => s.sectionColumns);
   const mirrorMode = useUIStore((s) => s.mirrorMode);
 
   return (
@@ -94,13 +93,7 @@ function SectionHeader({
               />
             )}
 
-            <SectionDownloadButton
-              sectionId={section.section_id}
-              sectionTitle={section.title}
-              blocks={(sectionColumns[section.section_id] ?? []).flat()}
-              visualColumnNum={visualNumCols}
-              savedColumnNum={section.saved_column_num}
-            />
+            <SectionDownloadButton section={section} />
 
             <SectionShareModal section={section} canEdit={canEdit} />
           </div>

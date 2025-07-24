@@ -1,6 +1,6 @@
 import { BOARD_BASE_URL } from "@/types/constants";
 import React from "react";
-import { FaCopy } from "react-icons/fa";
+import { FaLink } from "react-icons/fa6";
 import { toast } from "sonner";
 
 export default function CopyBoardLinkButton({
@@ -25,7 +25,7 @@ export default function CopyBoardLinkButton({
       }}
       className={`flex items-center gap-1 cursor-pointer ${className}`}
     >
-      <FaCopy />
+      <FaLink />
       Copy Board Link
     </button>
   );

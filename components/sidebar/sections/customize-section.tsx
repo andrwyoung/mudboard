@@ -12,6 +12,7 @@ import InfoTooltip from "../../ui/info-tooltip";
 import { useThumbnailStore } from "@/store/thumbnail-store";
 import { useLayoutStore } from "@/store/layout-store";
 import CopyBoardLinkButton from "../buttons/copy-board-button";
+import BoardDownloadButton from "./board-download-button";
 
 export default function CustomizeSection() {
   const board = useMetadataStore((s) => s.board);
@@ -52,43 +53,29 @@ export default function CustomizeSection() {
   return (
     <>
       <div className=" flex flex-col gap-4 ">
-        <div className="flex flex-col gap-1 self-center w-full">
-          {/* {!boardUnclaimed && (
-            <div className="px-2">
-              <CheckField
-                text="Allow anyone to edit"
-                title="Allow anyone to edit"
-                isChecked={openToPublic}
-                onChange={(checked) => {
-                  changeBoardPermissions(checked ? "public" : "private");
-                }}
-              />
-            </div>
-          )} */}
-
-          {board && (
-            <div className="px-2">
-              <CopyBoardLinkButton
-                boardId={board.board_id}
-                className="px-2 mt-2 mb-1 text-white text-sm font-bold font-header
+        {board && (
+          <div className="px-2">
+            <BoardDownloadButton />
+            <CopyBoardLinkButton
+              boardId={board.board_id}
+              className="mt-2  text-white text-sm font-bold font-header
                  hover:text-accent transition-all duration-100"
-              />
+            />
 
-              <button
-                type="button"
-                onClick={async () => {
-                  await syncLayout(); // sync the order so it's correct
-                  setThumbnailPreviewOpen(true);
-                  generateThumbnails(board?.board_id);
-                }}
-                className="ml-2 py-1 w-fit cursor-pointer text-white hover:underline hover:text-accent text-xs
-          transition-all duration-200 rounded-sm"
-              >
-                Manually Update Thumbnail
-              </button>
-            </div>
-          )}
-        </div>
+            <button
+              type="button"
+              onClick={async () => {
+                await syncLayout(); // sync the order so it's correct
+                setThumbnailPreviewOpen(true);
+                generateThumbnails(board?.board_id);
+              }}
+              className="ml-2 py-1 w-fit cursor-pointer text-white hover:underline hover:text-accent text-xs
+                 transition-all duration-200 rounded-sm"
+            >
+              Manually Update Thumbnail
+            </button>
+          </div>
+        )}
       </div>
 
       <Dialog
