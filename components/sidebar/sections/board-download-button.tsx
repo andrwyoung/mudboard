@@ -14,12 +14,13 @@ export default function BoardDownloadButton() {
     <>
       <button
         title="Download Board"
+        type="button"
         className="flex items-center gap-1 cursor-pointer mt-2 mb-1 text-white text-sm font-bold font-header
                  hover:text-accent transition-all duration-100"
         onClick={() => setOpen(true)}
       >
         <FaFileDownload className="" />
-        Export Sections (ZIP)
+        Export All Sections
       </button>
 
       <ExportModal sections={sections} open={open} setOpen={setOpen} />

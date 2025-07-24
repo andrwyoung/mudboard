@@ -130,7 +130,7 @@ export default function ExportModal({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-primary">
-            Export {singleSectionExport ? "Single Section" : "Board"}
+            Export {singleSectionExport ? "Single Section" : "All Sections"}
           </DialogTitle>
           <DialogDescription className="text-primary text-xs leading-relaxed">
             {!singleSectionExport && (
@@ -274,7 +274,7 @@ export default function ExportModal({
                   }
                 }}
               >
-                Export {singleSectionExport ? "Section" : "Board"}
+                Export {singleSectionExport ? "Section" : "All"}
               </button>
             </div>
           </div>
