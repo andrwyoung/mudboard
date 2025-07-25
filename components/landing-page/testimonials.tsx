@@ -7,8 +7,8 @@ function TestimonialCard({
 }) {
   return (
     <div className="bg-primary/20 rounded-lg text-white">
-      <p className="italic mb-2">{children}</p>
-      <p className="font-semibold text-[0.85rem] ">— {author}</p>
+      <p className="mb-2">{children}</p>
+      <p className="font-semibold font-header text-md">— {author}</p>
     </div>
   );
 }
@@ -19,15 +19,19 @@ export default function Testimonials() {
       {/* <h2 className="text-xl font-semibold mb-2"></h2> */}
       <div className="h-px bg-stone-300 w-8 mb-8" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-sm sm:text-base">
-        <TestimonialCard author="Cecilia Y, concept artist">
+        {/* <TestimonialCard author="Cecilia Y, concept artist">
           It&apos;s great that everything is in one place! It&apos;s clear this
           was made by an artist.
+        </TestimonialCard> */}
+        <TestimonialCard author="Cassidy Y, Designer">
+          I used to build moodboards in Photoshop, but this is just way faster
+          and easier to share.
         </TestimonialCard>
-        <TestimonialCard author="Jonathan, art tutor">
-          I used to constantly lose my references. Now everything’s organized,
-          reusable, and just there when I need it.
+        <TestimonialCard author="Jonathan, Art Tutor">
+          Being able to switch between grid and freeform is something I
+          didn&apos;t even know I needed. So cool.
         </TestimonialCard>
-        <TestimonialCard author="Jenneth L, illustrator">
+        <TestimonialCard author="Jenneth L, Art Director">
           Mudboard is such a cool resource for creatives. The interface is so
           intuitive!
         </TestimonialCard>

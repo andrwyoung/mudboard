@@ -17,7 +17,7 @@ export default function LandingPageDemo() {
   const imageRef = useRef<HTMLImageElement>(null);
   const [displayedSize, setDisplayedSize] = useState({ width: 0, height: 0 });
 
-  const imageUrl = "/screeny3.png";
+  const imageUrl = "/screeny4.png";
   const [eyedropperPos, setEyedropperPos] = useState<{
     x: number;
     y: number;
@@ -103,7 +103,7 @@ export default function LandingPageDemo() {
       )}
       <div className="flex flex-col gap-2 items-center">
         <div
-          className="relative max-w-3xl w-full border-2 border-secondary rounded-lg overflow-hidden"
+          className="relative max-w-4xl w-full border-2 border-secondary rounded-lg overflow-hidden"
           onClick={(e) => {
             e.stopPropagation();
             if (eyedropperMode && hoveredColor) {

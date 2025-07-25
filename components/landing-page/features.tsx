@@ -1,7 +1,8 @@
 // landing page stuff
 
 import React from "react";
-import { FaLeaf, FaSeedling, FaSun } from "react-icons/fa6";
+import { FaRandom } from "react-icons/fa";
+import { FaImage, FaLeaf } from "react-icons/fa6";
 
 type FeatureItemProps = {
   title: string;
@@ -50,31 +51,31 @@ export default function Features({
         <strong>no distractions</strong>.
       </FeatureItem> */}
       <FeatureItem
-        icon={<FaSun />}
-        title="Freedom to Think"
+        icon={<FaRandom />}
+        title="Flexible Layouts"
         highlightedIndexes={highlightedIndexes}
       >
-        Swap freely between a grid and freeform: structure when you need,
-        freedom when you don&apos;t.
+        <strong>Swap freely</strong> between a grid and freeform. Structure when
+        you need, freedom when you don&apos;t.
+      </FeatureItem>
+
+      <FeatureItem
+        icon={<FaImage />}
+        title="Show Off Your Work"
+        highlightedIndexes={highlightedIndexes}
+      >
+        <strong>Export exactly</strong> as you arranged it. No formatting or
+        screenshots. Just clean, sharable results.
       </FeatureItem>
 
       <FeatureItem
         icon={<FaLeaf />}
-        title="Reuse Your References"
+        title="Reuse Your Ideas"
         highlightedIndexes={highlightedIndexes}
       >
-        Save your best images into sets you can reuse later. No more hunting
-        through old files.
+        Save your best images into sets you can <strong>reuse later</strong>. So
+        you always can tap into past ideas.
       </FeatureItem>
-      <FeatureItem
-        icon={<FaSeedling />}
-        title="Show Off Your Work"
-        highlightedIndexes={highlightedIndexes}
-      >
-        Export exactly as you arranged it. No formatting mess - just clean,
-        sharable results.
-      </FeatureItem>
-
       {/* <FeatureItem
         icon={<FaSeedling />}
         title="Inspire others"

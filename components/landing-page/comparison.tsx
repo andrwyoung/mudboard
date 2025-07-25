@@ -1,7 +1,6 @@
 "use client";
 
-import { FaPinterestP } from "react-icons/fa6";
-import { SiAdobephotoshop } from "react-icons/si";
+import { FaFigma, FaFolder, FaPinterestP } from "react-icons/fa6";
 import Image from "next/image";
 
 function ComparisonTile({
@@ -34,24 +33,24 @@ function ComparisonTile({
 
 export default function ComparisonTable() {
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-0 mb-24">
-      <h2 className="text-2xl font-bold text-center">
+    <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-0 mb-32">
+      <h2 className="text-2xl font-bold text-center mb-6">
         How is Mudboard different?
       </h2>
-      <p className="text-[0.9375rem] mb-6 text-center">
+      {/* <p className="text-[0.9375rem] mb-6 text-center">
         Mudboard fills the gap between inspiration and creation.
-      </p>
+      </p> */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm sm:text-base">
         <ComparisonTile
           title="Pinterest"
           icon={<FaPinterestP className="size-5" />}
         >
           Great for collecting and discovering ideas. Mudboard helps you{" "}
-          <span className="text-accent font-bold">use what you saved</span> —
-          fast, without needing to dig or rebuild every time.
+          <span className="text-accent font-bold">organize </span> what you need
+          and turn collections into clean, shareable assets.
         </ComparisonTile>
 
-        <ComparisonTile
+        {/* <ComparisonTile
           title="PureRef"
           icon={
             <Image
@@ -67,15 +66,33 @@ export default function ComparisonTable() {
           adds <strong>speed</strong>, so you can build faster and{" "}
           <span className="text-accent font-bold">share them</span> just as
           easily.
+        </ComparisonTile> */}
+
+        <ComparisonTile
+          title="Figma/Slides"
+          icon={<FaFigma className="size-5" />}
+        >
+          Great for final decks or high-effort design. Mudboard is for{" "}
+          <span className="text-accent font-bold">quick visual thinking</span>,
+          with flexibility and structure to iterate.
         </ComparisonTile>
 
+        <ComparisonTile
+          title="Screenshots"
+          icon={<FaFolder className="size-5" />}
+        >
+          This used to be my default. Mudboard lets you{" "}
+          <strong>visually organize and export</strong> instead of digging
+          through image piles.
+        </ComparisonTile>
+        {/* 
         <ComparisonTile
           title="Drawing Apps"
           icon={<SiAdobephotoshop className="size-5" />}
         >
           Mudboard doesn&apos;t replace these. Instead, it helps organize
           references so you can <strong>focus on drawing</strong>.
-        </ComparisonTile>
+        </ComparisonTile> */}
 
         <ComparisonTile
           title="Mudboard"
@@ -90,9 +107,9 @@ export default function ComparisonTable() {
             />
           }
         >
-          Built for artists by an artist. Organize faster,{" "}
-          <strong>reuse your best images</strong>, and build a visual library
-          you&apos;ll actually use.
+          Built for visual creatives who need fast, layout-faithful boards. Have
+          a workspace to <strong>manage, reuse and share</strong> all your
+          ideas.
         </ComparisonTile>
       </div>
     </div>

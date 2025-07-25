@@ -136,7 +136,10 @@ export default function Home() {
                 }`}
               >
                 {/* Draw more. Organize less. */}
-                Draw more. Rebuild less.
+                Create More. Organize Less.
+                {/* Build Moodboards Fast. */}
+                {/* Get Ideas Out Fast. */}
+                {/* Draw more. Rebuild less. */}
                 {/* References that remember. */}
               </h1>
               <div className="flex flex-col items-center">
@@ -159,6 +162,12 @@ export default function Home() {
                   A workspace to organize and reuse your favorite images. So you
                   always find what you saved for a reason.
                 </p> */}
+                {/* <p className="text-lg mb-14 w-full font-semibold max-w-xl">
+                  For illustrators who <strong>lose hours</strong> building
+                  reference boards — and even more{" "}
+                  <strong>digging through folders</strong> for images they
+                  already saved.
+                </p> */}
                 <p
                   data-id="subheader"
                   data-marque-track
@@ -169,10 +178,17 @@ export default function Home() {
                         : "text-white"
                     }`}
                 >
-                  For illustrators who <strong>lose hours</strong> building
-                  reference boards — and even more{" "}
-                  <strong>digging through folders</strong> for images they
-                  already saved.
+                  {/* A fast moodboarding tool for designers who want to test and
+                  export ideas fast — and are tired of spending hours aligning
+                  images. */}
+                  {/* A fast moodboarding tool for creatives who want to test ideas
+                  fast and export it cleanly. Without clutter or folder chaos. */}
+                  {/* An image organization tool for creatives who want to build
+                  moodboards fast and export it cleanly. */}
+                  For creatives that want to organize images and ideas without
+                  losing creative momentum — then share them cleanly.
+                  {/* Built for creatives who need to test ideas quickly, export
+                  cleanly, and never rebuild the same board twice. */}
                 </p>
               </div>
 
@@ -223,23 +239,17 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex flex-col mb-16 items-center mt-4">
+          {/* <div className="flex flex-col mb-16 items-center mt-4">
             <h1 className=" text-xl md:text-3xl font-bold mb-2">
               What is Mudboard?
             </h1>
-            {/* <p className="text-sm md:text-[0.9375rem] leading-relaxed">
-              Mudboard is a workspace to quickly organize and build export-ready
-              reference boards. Without 
-              
-              needing to switch context between projects. Without 
-            </p> */}
-
+    
             <p className="text-sm md:text-[0.9375rem] leading-relaxed max-w-xl text-center">
               Mudboard is a fast, visual workspace for illustrators to{" "}
               <strong>build and export reference boards</strong> - without
               setup, clutter or wasted time.
             </p>
-          </div>
+          </div> */}
 
           {/* FEATURES */}
           <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-36 text-left">
@@ -257,12 +267,39 @@ export default function Home() {
               />
             </div>
           </div> */}
+          <ComparisonTable />
 
           <LandingPageDemo />
 
-          <Testimonials />
+          <h1 className="text-2xl font-semibold">Exports in the Wild</h1>
+          <p className="mb-6 text-sm">
+            This early example board uses my own art, but you can build
+            anything!
+          </p>
+          <div className="flex flex-col  gap-20  max-w-3xl items-center mb-32 w-full">
+            <div className="flex flex-col items-center">
+              <h1 className="font-semibold mb-4">Grid Layout</h1>
+              <Image
+                src="/section_002.webp"
+                alt="Grid Export Example"
+                width={1600}
+                height={1529}
+                className=""
+              />
+            </div>
+            <div className="flex flex-col items-center">
+              <h1 className="font-semibold ">Freeform Layout</h1>
+              <Image
+                src="/section_001.webp"
+                alt="Freeform Export Example"
+                width={1600}
+                height={1025}
+                className=""
+              />
+            </div>
+          </div>
 
-          <ComparisonTable />
+          <Testimonials />
 
           <Image
             id="pricing"
@@ -302,7 +339,7 @@ export default function Home() {
 
           <section className="w-full text-center mb-24 px-6 flex flex-col items-center">
             <h2 className="text-2xl sm:text-3xl font-bold max-w-xl mb-2">
-              Reuse your favorite images.
+              Test ideas fast. Export even faster.
             </h2>
             <p className="text-sm font-medium mb-6">
               Try the demo board! No signup required.

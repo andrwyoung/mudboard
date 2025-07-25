@@ -52,7 +52,7 @@ const plans: Plan[] = [
   {
     name: "Lifetime License",
     description: "Lifetime access to all current features:",
-    price: "$20 one-time",
+    price: "$40 one-time",
     oldPrice: "Early Supporter Pricing",
     features: [
       {
