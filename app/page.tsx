@@ -135,8 +135,8 @@ export default function Home() {
                     : "text-white"
                 }`}
               >
-                {/* Draw more. Organize less. */}
-                Create More. Organize Less.
+                Draw more. Organize less.
+                {/* Create More. Organize Less. */}
                 {/* Build Moodboards Fast. */}
                 {/* Get Ideas Out Fast. */}
                 {/* Draw more. Rebuild less. */}
@@ -185,10 +185,12 @@ export default function Home() {
                   fast and export it cleanly. Without clutter or folder chaos. */}
                   {/* An image organization tool for creatives who want to build
                   moodboards fast and export it cleanly. */}
-                  For creatives that want to organize images and ideas without
-                  losing creative momentum — then share them cleanly.
+                  {/* For creatives that want to organize images and ideas without
+                  losing creative momentum — then share them cleanly. */}
                   {/* Built for creatives who need to test ideas quickly, export
                   cleanly, and never rebuild the same board twice. */}
+                  For illustators that want to organize and use references
+                  without digging through dozens of folders to find something.
                 </p>
               </div>
 

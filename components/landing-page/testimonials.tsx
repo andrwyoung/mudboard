@@ -24,14 +24,13 @@ export default function Testimonials() {
           was made by an artist.
         </TestimonialCard> */}
         <TestimonialCard author="Cassidy Y, Designer">
-          I used to build moodboards in Photoshop, but this is just way faster
-          and easier to share.
+          I used to reference photos Photoshop, but this is just way faster and
+          easier to come back to.
         </TestimonialCard>
         <TestimonialCard author="Jonathan, Art Tutor">
-          Being able to switch between grid and freeform is something I
-          didn&apos;t even know I needed. So cool.
+          It&apos;s much easier to switch between projects now.
         </TestimonialCard>
-        <TestimonialCard author="Jenneth L, Art Director">
+        <TestimonialCard author="Jenneth L, Illustrator">
           Mudboard is such a cool resource for creatives. The interface is so
           intuitive!
         </TestimonialCard>
