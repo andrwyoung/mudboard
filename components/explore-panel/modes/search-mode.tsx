@@ -39,10 +39,9 @@ export default function SearchMode({
         <h1 className="text-2xl mt-2 font-semibold">Greenhouse</h1>
       </div>
       <div className="flex flex-row justify-between items-start mb-8 gap-8">
-        <p className="text-sm font-medium">
-          The Greenhouse is a collection of reference galleries (called Mudkits)
-          made by Mudboard users — it&apos;s like a community reference library!
-          Drag what inspires you straight into your board.
+        <p className="text-sm font-medium mt-1">
+          Collections of images (called Mudkits) that you can use in your boards
+          — like a community reference library!
         </p>
         <RefreshButton />
       </div>

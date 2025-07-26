@@ -26,7 +26,7 @@ export default function AccountSyncSection() {
   return (
     <div className="flex flex-col gap-2">
       {boardUnclaimed && (
-        <div className="flex flex-col gap-2 mb-4">
+        <div className="flex flex-col gap-2 mb-2 mt-2">
           <p className="text-xs font-semibold text-center">
             This Board is Unclaimed. <br />
           </p>

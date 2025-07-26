@@ -25,6 +25,11 @@ type DemoStore = {
   markTempMudkitComplete: () => void;
   resetMissions: () => void;
 
+  // help modal
+  currentHelpMission: MissionType | null;
+  openHelp: (mission: MissionType) => void;
+  closeHelp: () => void;
+
   isDemoBoard: boolean;
   setDemoBoardYes: () => void;
 
@@ -90,6 +95,10 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
       isDemoBoard: true,
       showGreenhousePopup: true,
     })),
+
+  currentHelpMission: null,
+  openHelp: (mission: MissionType) => set({ currentHelpMission: mission }),
+  closeHelp: () => set({ currentHelpMission: null }),
 
   mode: null,
   openModal: (modal) => {

@@ -9,14 +9,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Section } from "@/types/board-types";
-import { FaLink, FaLeaf } from "react-icons/fa";
+import { FaLeaf } from "react-icons/fa";
 import { supabase } from "@/lib/supabase/supabase-client";
 import { useMetadataStore } from "@/store/metadata-store";
 import { CheckField } from "@/components/ui/check-field";
 import { SECTION_BASE_URL } from "@/types/constants";
 import { FaCopy, FaSeedling } from "react-icons/fa6";
 import { BeanIcon } from "@/components/ui/bean-icon";
-import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { useExploreStore } from "@/store/explore-store";
 import { SectionWithStats } from "@/types/stat-types";
 import { useLayoutStore } from "@/store/layout-store";
@@ -228,14 +227,14 @@ export default function SectionShareModal({
                   )}
                 </div>
               ) : (
-                <div className="text-sm mt-8 mb-8 text-center italic">
-                  <p className="mb-1">
+                <div className="text-sm my-12 text-center italic">
+                  {/* <p className="">
                     This is a <strong>temporary</strong> Mudkit.
                   </p>
+                  <p>Make an account to come back to it again.</p> */}
+                  <p>Congrats on creating your first Mudkit!!</p>
                   <p>
-                    Make an account to come back to it again,
-                    <br />
-                    or to share with the community.
+                    You should see it now on the main page of the Greenhouse!
                   </p>
                 </div>
               )}
@@ -243,14 +242,17 @@ export default function SectionShareModal({
           ) : (
             <div className="text-sm text-primary leading-relaxed mt-3 space-y-4">
               <div>
-                <p className="text-sm text-primary mt-1 mb-12 leading-relaxed">
+                <p className="text-sm text-primary mt-1 mb-8 leading-relaxed">
+                  {/* A Mudkit is a{" "}
+                  <strong>section that you can easily find</strong> in the
+                  Greenhouse */}
                   A Mudkit is a{" "}
-                  <strong>section that you can easily find</strong> and share —
-                  it&apos;s like turning this section into a reference pack you
-                  can come back to later.
+                  <strong>section that you can easily find</strong> in the
+                  Greenhouse. So that you can use those images easily in other
+                  projects!
                 </p>
               </div>
-
+              {/* 
               <AccordianWrapper title="What happens when you publish?">
                 <ul className="list-disc list-inside text-xs text-primary space-y-1">
                   <li>This section will appear in your private Greenhouse</li>
@@ -263,13 +265,14 @@ export default function SectionShareModal({
 
                   <li>You can unpublish at any time</li>
                 </ul>
-              </AccordianWrapper>
+              </AccordianWrapper> */}
             </div>
           )}
 
           <DialogFooter>
             <div className="flex items-center gap-3 pt-2 text-sm font-header">
               <Button
+                className="text-lg"
                 onClick={() => {
                   // first check that we even have blocks
                   const numBlocks = useLayoutStore
@@ -287,20 +290,20 @@ export default function SectionShareModal({
                   });
                 }}
               >
-                {published ? "Unpublish" : "Publish Mudkit!"}
+                {published ? "Unpublish" : "Create Mudkit!"}
               </Button>
-              {published && (
+              {/* {published && (
                 <Button variant="secondary" onClick={copyLink}>
                   <FaLink />
                   Copy Share Link
                 </Button>
-              )}
+              )} */}
             </div>
-            <p className="text-xs mt-1">
+            {/* <p className="text-xs mt-1">
               {!section.owned_by &&
                 !published &&
                 "This board hasn’t been saved yet — your Mudkit will be temporary."}
-            </p>
+            </p> */}
           </DialogFooter>
         </DialogContent>
       </Dialog>

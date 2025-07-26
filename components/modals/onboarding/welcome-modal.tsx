@@ -16,13 +16,14 @@ export default function WelcomeModal() {
           Welcome to Mudboard!
         </DialogTitle>
         <div className="flex flex-col">
-          <p className="text-sm text-primary mt-2 mb-4">
+          {/* <p className="text-sm text-primary mt-2 mb-4">
             This is a copy of a board used by an artist for client work. <br />
             It&apos;s <strong>free to edit</strong> and explore.
-          </p>
-          <p className="text-sm text-primary mb-6 hidden sm:block">
-            Not sure where to start? The <strong>“{TUTORIAL_TITLE}”</strong>{" "}
-            panel guides you through what Mudboard is about.
+          </p> */}
+
+          <p className="text-sm text-primary mt-2 mb-6 hidden sm:block">
+            Want a quick tour? The <strong>“{TUTORIAL_TITLE}”</strong> panel on
+            the button right guides you through the main features.
             <br />
             <br />
             Try <strong>dragging a few images</strong> to begin!

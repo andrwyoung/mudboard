@@ -39,7 +39,9 @@ export function useMarque({
 
       if (
         clickedId?.includes("::block-") ||
-        clickedId?.includes("freeform-") ||
+        clickedId === "freeform-multi-select-box" ||
+        clickedId === "freeform-select-actions" ||
+        clickedId === "freeform-canvas-options" ||
         clickedId === "context-menu" ||
         clickedId?.includes("resize-")
       )
