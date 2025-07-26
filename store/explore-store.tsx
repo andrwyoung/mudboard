@@ -2,10 +2,9 @@ import { create } from "zustand";
 import { BoardWithStats, SectionWithStats } from "@/types/stat-types";
 import { fetchUserBoardsWithStats } from "@/lib/db-actions/explore/fetch-user-board-with-stats";
 import fetchMudkits from "@/lib/db-actions/explore/fetch-mudkits";
-import { Section } from "@/types/board-types";
 
 export type ExploreMode = "search" | "focus";
-export type MudkitType = "mine" | "others";
+export type MudkitType = "mine" | "others" | "temp";
 
 type ExploreStore = {
   exploreMode: ExploreMode;

@@ -310,7 +310,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
         <DragOverlayBlock />
       </DndContext>
-      {false && <TutorialPanel />}
+      <TutorialPanel />
       <WelcomeModal />
     </div>
   );

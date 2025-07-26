@@ -101,17 +101,6 @@ export default function SectionShareModal({
       updates.first_published_at = new Date().toISOString();
     }
 
-    // don't allow publishing sections without any blocks
-    if (field === "is_public" && value) {
-      const numBlocks = useLayoutStore
-        .getState()
-        .sectionColumns[section.section_id].flat().length;
-      if (numBlocks === 0) {
-        toast.error("Please at least add 1 block");
-        return;
-      }
-    }
-
     if (section.owned_by) {
       const { error } = await supabase
         .from("sections")
@@ -123,7 +112,7 @@ export default function SectionShareModal({
       }
     }
 
-    // mark as correct
+    // mark locally
     useMetadataStore.getState().updateBoardSection(section.section_id, updates);
 
     toast.success(value ? toastText.on : toastText.off);
@@ -133,6 +122,7 @@ export default function SectionShareModal({
 
     // DEMO: handle temporary Mudkits
     if (!section.owned_by && field === "is_public") {
+      useDemoStore.getState().markMissionComplete("mudkit");
       const { tempMudkits, setTempMudkits } = useExploreStore.getState();
 
       if (value) {
@@ -259,30 +249,7 @@ export default function SectionShareModal({
                   it&apos;s like turning this section into a reference pack you
                   can come back to later.
                 </p>
-
-                {/* <p className="text-sm text-primary mt-1 mb-8">
-                  Mudkits are <strong>reusable reference kits</strong>. So that
-                  you can actually use your reference library.
-                  <br /> They are private by default, but you can share them
-                  with others, or just reuse them yourself.
-                </p> */}
               </div>
-
-              {/* <AccordianWrapper title="What happens when you publish?">
-                <ul className="list-disc list-inside text-xs text-primary space-y-1">
-                  <li>
-                    Only you can see it in your Greenhouse, unless you share it
-                    with the community.
-                  </li>
-                  <li>Your kit gets a sharable link</li>
-                  <li>
-                    If you share, only can edit the original section, but others
-                    can clone the images.
-                  </li>
-
-                  <li>You can unpublish or make it private anytime</li>
-                </ul>
-              </AccordianWrapper> */}
 
               <AccordianWrapper title="What happens when you publish?">
                 <ul className="list-disc list-inside text-xs text-primary space-y-1">
@@ -303,12 +270,22 @@ export default function SectionShareModal({
           <DialogFooter>
             <div className="flex items-center gap-3 pt-2 text-sm font-header">
               <Button
-                onClick={() =>
+                onClick={() => {
+                  // first check that we even have blocks
+                  const numBlocks = useLayoutStore
+                    .getState()
+                    .sectionColumns[section.section_id].flat().length;
+
+                  if (numBlocks === 0) {
+                    toast.error("Please at least add 1 block");
+                    return;
+                  }
+
                   updateField("is_public", !published, {
                     on: "Mudkit Published!",
                     off: "Mudkit Unpublished.",
-                  })
-                }
+                  });
+                }}
               >
                 {published ? "Unpublish" : "Publish Mudkit!"}
               </Button>

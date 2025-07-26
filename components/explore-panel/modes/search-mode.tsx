@@ -15,6 +15,9 @@ export default function SearchMode({
   handleFetchMudkit: (section: SectionWithStats) => void;
 }) {
   const boardSections = useMetadataStore((s) => s.boardSections ?? []);
+  const setCurrentSelectedMudkitType = useExploreStore(
+    (s) => s.setCurrentSelectedMudkitType
+  );
 
   const userMudkits = useExploreStore((s) => s.userMudkits);
   const otherMudkits = useExploreStore((s) => s.otherMudkits);
@@ -57,7 +60,10 @@ export default function SearchMode({
                   <MudkitSelectButtonExplore
                     key={section.section_id}
                     section={section}
-                    onClick={() => handleFetchMudkit(section)}
+                    onClick={() => {
+                      setCurrentSelectedMudkitType("temp");
+                      handleFetchMudkit(section);
+                    }}
                     isGrouped={false}
                     isSelected={false}
                     temporary
@@ -79,7 +85,10 @@ export default function SearchMode({
                   <MudkitSelectButtonExplore
                     key={section.section_id}
                     section={section}
-                    onClick={() => handleFetchMudkit(section)}
+                    onClick={() => {
+                      setCurrentSelectedMudkitType("mine");
+                      handleFetchMudkit(section);
+                    }}
                     isGrouped={false}
                     isSelected={false}
                     showIconForIsOnMarketplace
@@ -111,7 +120,10 @@ export default function SearchMode({
                       <MudkitSelectButtonExplore
                         key={section.section_id}
                         section={section}
-                        onClick={() => handleFetchMudkit(section)}
+                        onClick={() => {
+                          setCurrentSelectedMudkitType("others");
+                          handleFetchMudkit(section);
+                        }}
                         isGrouped={false}
                         isSelected={false}
                         showIconForIsOnMarketplace

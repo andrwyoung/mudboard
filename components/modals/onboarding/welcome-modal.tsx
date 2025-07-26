@@ -2,6 +2,7 @@
 import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
 import { Button } from "../../ui/button";
 import { useDemoStore } from "@/store/demo-store";
+import { TUTORIAL_TITLE } from "@/types/constants";
 
 export default function WelcomeModal() {
   const mode = useDemoStore((s) => s.mode);
@@ -16,12 +17,15 @@ export default function WelcomeModal() {
         </DialogTitle>
         <div className="flex flex-col">
           <p className="text-sm text-primary mt-2 mb-4">
-            This is a working board made and used by an artist for client work.{" "}
-            <br />
-            Explore it. Edit it. Add your own images.
+            This is a copy of a board used by an artist for client work. <br />
+            It&apos;s <strong>free to edit</strong> and explore.
           </p>
           <p className="text-sm text-primary mb-6 hidden sm:block">
-            Try <strong>dragging a few images</strong> to rearrange.
+            Not sure where to start? The <strong>“{TUTORIAL_TITLE}”</strong>{" "}
+            panel guides you through what Mudboard is about.
+            <br />
+            <br />
+            Try <strong>dragging a few images</strong> to begin!
           </p>
           <p className="text-sm text-primary mb-6 sm:hidden block">
             <strong>Note:</strong> Mobile has limited features.

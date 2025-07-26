@@ -15,6 +15,7 @@ import { handleClonedBlockDrop } from "@/lib/drag-handling/handle-clone-block-dr
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
 import { useDragStore } from "@/store/drag-store";
 import { useSelectionStore } from "@/store/selection-store";
+import { useDemoStore } from "@/store/demo-store";
 
 export function getMovingItem(
   activeId: string,
@@ -229,6 +230,9 @@ export function useGalleryHandlers({
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       document.body.classList.remove("cursor-grabbing");
+
+      // if demo
+      useDemoStore.getState().markMissionComplete("drag");
 
       initialPointerYRef.current = null;
 
