@@ -26,7 +26,8 @@ export function useMobileColumnResizeEffect(sectionIds: string[]) {
       const isMobile = width < MOBILE_BREAKPOINT;
       const regenerateAllSections =
         useLayoutStore.getState().regenerateAllSections;
-      const { forceMobileColumns, setMobileColumns } = useUIStore.getState();
+      const { isMobile: forceMobileColumns, setIsMobile: setMobileColumns } =
+        useUIStore.getState();
 
       if (isMobile !== forceMobileColumns) {
         setMobileColumns(isMobile);

@@ -58,7 +58,7 @@ export async function syncSectionOrderToSupabase(
   }
 
   // if visualNumCols !== section.saved_column_num, exit
-  const forceMobileColumns = useUIStore.getState().forceMobileColumns;
+  const forceMobileColumns = useUIStore.getState().isMobile;
   const shouldSyncColPos = shouldSyncSectionLayout(section, forceMobileColumns);
 
   // use position map to sync

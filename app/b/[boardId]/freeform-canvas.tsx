@@ -9,8 +9,7 @@ import { useCanvasZoom } from "@/hooks/freeform/use-freeform-zoom";
 import { BlockRenderer } from "@/components/freeform-canvas/block-renderer";
 import { Section } from "@/types/board-types";
 import { FreeformEditToggleSlider } from "@/components/freeform-canvas/edit-toggle";
-import { FaExpand, FaQuestion } from "react-icons/fa6";
-import HelpModal from "@/components/modals/help-modal";
+import { FaExpand } from "react-icons/fa6";
 import FreeformPreferenceModal from "@/components/modals/freeform-preference-modal";
 import {
   DEFAULT_ARRANGE_BG_COLOR,
@@ -34,6 +33,7 @@ import { runAutoLayoutWithClustering } from "@/lib/freeform/autolayout/detect-cl
 import SectionDownloadButton from "@/components/section/section-icons.tsx/download-button";
 import { DroppableFreeformCanvas } from "@/components/drag/droppable-freeform-canvas";
 import { useSelectionStore } from "@/store/selection-store";
+import HelpButton from "@/components/modals/help-modal/help-wrapper";
 
 export default function FreeformCanvas({
   blocks,
@@ -43,7 +43,6 @@ export default function FreeformCanvas({
   section: Section;
 }) {
   const sectionId = section.section_id;
-  const [helpOpen, setHelpOpen] = useState(false);
 
   const editMode = useFreeformStore((s) => s.editMode);
   const setEditMode = useFreeformStore((s) => s.setEditMode);
@@ -305,17 +304,7 @@ export default function FreeformCanvas({
           </button>
         </div>
 
-        <button
-          onClick={() => setHelpOpen(true)}
-          type="button"
-          title="Help / Support"
-          className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
-               border-primary text-primary-darker rounded-full hover:border-accent
-              shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
-        >
-          <FaQuestion />
-        </button>
-        <HelpModal open={helpOpen} setOpen={setHelpOpen} pageNum={2} />
+        <HelpButton pageNum={2} />
       </div>
     </DroppableFreeformCanvas>
   );

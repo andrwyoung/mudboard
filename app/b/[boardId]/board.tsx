@@ -33,7 +33,6 @@ import { useInitBoard } from "@/hooks/use-init-board";
 import { useGlobalListeners } from "@/hooks/gallery/use-global-listeners";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import BoardExpiredPopup from "@/components/board/board-expired-page";
-import WelcomeModal from "@/components/modals/welcome-modal";
 import { isLinkedSection } from "@/utils/is-linked-section";
 import ResizablePinnedPanel from "@/components/pinned-panel/resizable-panel";
 import PinnedPanel from "@/components/pinned-panel/pinned-panel";
@@ -46,6 +45,8 @@ import DragOverlayBlock from "@/components/drag/drag-overlay";
 import FreeformCanvas from "./freeform-canvas";
 import ResizableSidebar from "./sidebar";
 import { COLLAPSED_SIDEBAR_WIDTH } from "@/types/constants";
+import TutorialPanel from "@/components/modals/onboarding/tutorial-panel";
+import WelcomeModal from "@/components/modals/onboarding/welcome-modal";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -309,6 +310,7 @@ export default function Board({ boardId }: { boardId: string }) {
 
         <DragOverlayBlock />
       </DndContext>
+      {false && <TutorialPanel />}
       <WelcomeModal />
     </div>
   );

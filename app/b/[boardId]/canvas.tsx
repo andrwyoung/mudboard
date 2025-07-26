@@ -14,8 +14,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelectionStore } from "@/store/selection-store";
 import DroppableGallerySection from "@/components/drag/droppable-gallery-section";
 import { isLinkedSection } from "@/utils/is-linked-section";
-import HelpModal from "@/components/modals/help-modal";
-import { FaQuestion } from "react-icons/fa6";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { canEditSection } from "@/lib/auth/can-edit-section";
 import { useMetadataStore } from "@/store/metadata-store";
@@ -23,6 +21,7 @@ import React from "react";
 import { useDragStore } from "@/store/drag-store";
 import { MarqueBox } from "@/components/board/marque";
 import { useMarque } from "@/hooks/gallery/use-marque";
+import HelpButton from "@/components/modals/help-modal/help-wrapper";
 
 type CanvasProps = {
   isMirror: boolean;
@@ -42,7 +41,6 @@ function Canvas({
   isDraggingExtFile,
 }: CanvasProps) {
   const gallerySpacingSize = useUIStore((s) => s.gallerySpacingSize);
-  const [helpOpen, setHelpOpen] = useState(false);
 
   // marque
   const [marqueRect, setMarqueRect] = useState<{
@@ -250,17 +248,7 @@ function Canvas({
             </MirrorContext.Provider>
           </div>
         </div>
-        <button
-          onClick={() => setHelpOpen(true)}
-          type="button"
-          title="Help / Support"
-          className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
-               border-primary text-primary-darker rounded-full hover:border-accent
-              shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
-        >
-          <FaQuestion />
-        </button>
-        <HelpModal open={helpOpen} setOpen={setHelpOpen} pageNum={1} />
+        <HelpButton pageNum={1} />
       </div>
     </>
   );

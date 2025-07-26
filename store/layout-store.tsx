@@ -94,7 +94,7 @@ export const useLayoutStore = create<LayoutStore>()(
       const blocksInSection = currentColumns?.flat() ?? [];
 
       console.log("regenerating section");
-      const trueNumCols = useUIStore.getState().forceMobileColumns
+      const trueNumCols = useUIStore.getState().isMobile
         ? MOBILE_COLUMN_NUMBER
         : get().getVisualNumColsForSection(sectionId);
 

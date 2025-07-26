@@ -210,7 +210,7 @@ export function useInitBoard(
         // STEP 4: generate the columns
         const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
         if (isMobile) {
-          useUIStore.getState().setMobileColumns(true);
+          useUIStore.getState().setIsMobile(true);
         }
 
         const initColumns: SectionColumns = {};

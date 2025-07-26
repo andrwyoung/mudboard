@@ -1,8 +1,8 @@
 "use client";
-import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
-import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
+import { Button } from "../../ui/button";
 import { ModalType, useDemoStore } from "@/store/demo-store";
-import { BeanIcon } from "../ui/bean-icon";
+import { BeanIcon } from "../../ui/bean-icon";
 
 const welcomePages: Record<
   ModalType,
@@ -58,7 +58,7 @@ const welcomePages: Record<
   },
 };
 
-export default function WelcomeModal() {
+export default function OLDWelcomeModal() {
   const mode = useDemoStore((s) => s.mode);
   const closeModal = useDemoStore((s) => s.closeModal);
 

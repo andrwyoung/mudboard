@@ -42,7 +42,7 @@ export const useSecondaryLayoutStore = create<SecondaryLayoutStore>(
       const currentColumns = get().columns;
       const blocksInSection = currentColumns?.flat() ?? [];
 
-      const trueNumCols = useUIStore.getState().forceMobileColumns
+      const trueNumCols = useUIStore.getState().isMobile
         ? MOBILE_COLUMN_NUMBER
         : get().visualColumnNum;
 

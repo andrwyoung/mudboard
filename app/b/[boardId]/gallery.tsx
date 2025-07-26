@@ -33,7 +33,7 @@ function SectionGallery({
   const scope = isMirror ? "mirror" : "main";
 
   const spacingSize = useUIStore((s) => s.spacingSize);
-  const forceMobileColumns = useUIStore((s) => s.forceMobileColumns);
+  const forceMobileColumns = useUIStore((s) => s.isMobile);
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const lastSelectedBlock = useSelectionStore((s) => s.lastSelectedBlock);

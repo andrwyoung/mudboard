@@ -1,6 +1,6 @@
 "use client";
-import { AccordianWrapper } from "../ui/accordian-wrapper";
-import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { AccordianWrapper } from "../../ui/accordian-wrapper";
+import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
 import { SupportEmailAddress } from "@/utils/support-email";
 
 const faqClass = "font-header text-md ml-2";
