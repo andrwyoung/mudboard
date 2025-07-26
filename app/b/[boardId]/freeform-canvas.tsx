@@ -1,7 +1,7 @@
 "use client";
 
 import { useFreeformStore } from "@/store/freeform-store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Block } from "@/types/block-types";
 import { mainCanvasRef } from "@/store/ui-store";
 import { useCanvasPointerControls } from "@/hooks/freeform/use-canvas-pointer-controls";
@@ -33,6 +33,7 @@ import { MdAutoAwesomeMosaic } from "react-icons/md";
 import { runAutoLayoutWithClustering } from "@/lib/freeform/autolayout/detect-clusters";
 import SectionDownloadButton from "@/components/section/section-icons.tsx/download-button";
 import { DroppableFreeformCanvas } from "@/components/drag/droppable-freeform-canvas";
+import { useSelectionStore } from "@/store/selection-store";
 
 export default function FreeformCanvas({
   blocks,
@@ -52,6 +53,8 @@ export default function FreeformCanvas({
 
   const camera = useFreeformStore((s) => s.cameraMap[section.section_id]);
 
+  const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
+
   const [marqueRect, setMarqueRect] = useState<{
     x: number;
     y: number;
@@ -64,6 +67,16 @@ export default function FreeformCanvas({
   const arrangeBgColor = useUserPreferenceStore((s) => s.arrangeBgColor);
 
   const { onWheel, zoomCameraCentered } = useCanvasZoom(sectionId);
+
+  const runAutolayout = useCallback(() => {
+    const selected = Object.values(selectedBlocks);
+
+    if (selected.length <= 1) {
+      runAutoLayoutWithClustering(blocks, sectionId);
+    } else {
+      runAutoLayoutWithClustering(selected, sectionId);
+    }
+  }, [blocks, sectionId, selectedBlocks]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -92,7 +105,7 @@ export default function FreeformCanvas({
       }
 
       if (e.key === "a" || e.key === "A") {
-        if (editMode) runAutoLayoutWithClustering(blocks, sectionId);
+        if (editMode) runAutolayout();
       }
     }
 
@@ -106,7 +119,7 @@ export default function FreeformCanvas({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [zoomCameraCentered, sectionId, editMode, blocks]);
+  }, [zoomCameraCentered, sectionId, editMode, blocks, runAutolayout]);
 
   useEffect(() => {
     if (camera) return;
@@ -261,13 +274,16 @@ export default function FreeformCanvas({
           </ContextMenuContent>
         </ContextMenu>
 
-        <div className="absolute bottom-4 left-4 z-50 flex flex-col gap-2 items-center">
+        <div
+          className="absolute bottom-4 left-4 z-50 flex flex-col gap-2 items-center"
+          data-id="freeform-canvas-options"
+        >
           {editMode && (
             <button
               type="button"
-              onClick={() => runAutoLayoutWithClustering(blocks, sectionId)}
+              onClick={runAutolayout}
               aria-label="Run auto-layout on blocks"
-              title="Auto-layout Blocks (A)"
+              title="Auto-layout Canvas"
               className="p-1
            text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
             >

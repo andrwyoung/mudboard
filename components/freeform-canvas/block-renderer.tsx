@@ -137,7 +137,7 @@ export function BlockRenderer({
             }}
             onMouseDown={handleMouseDown}
             data-id={`main::block-${block.block_id}`}
-            className={`absolute z-0`}
+            className={`absolute z-0 select-none`}
           >
             <BlockChooser canEdit={true} block={block} numCols={5} />
           </div>
