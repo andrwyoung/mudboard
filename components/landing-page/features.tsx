@@ -29,7 +29,7 @@ function FeatureItem({
     >
       <div className="flex flex-col gap-2 mb-4">
         <div className="text-accent text-xl">{icon}</div>
-        <h2 className="font-semibold text-xl">{title}</h2>
+        <h2 className="font-semibold text-xl h-12">{title}</h2>
       </div>
       {/* <div className="h-px bg-stone-300 w-8 my-4" /> */}
       <p className="leading-relaxed text-[0.9375rem]">{children}</p>
@@ -50,32 +50,60 @@ export default function Features({
         Drop in images and get started. No setup,{" "}
         <strong>no distractions</strong>.
       </FeatureItem> */}
-      <FeatureItem
+      {/* <FeatureItem
         icon={<FaRandom />}
         title="Flexible Layouts"
         highlightedIndexes={highlightedIndexes}
       >
         <strong>Swap freely</strong> between a grid and freeform. Structure when
         you need, freedom when you don&apos;t.
-      </FeatureItem>
+      </FeatureItem> */}
 
       <FeatureItem
+        icon={<FaLeaf />}
+        title="Find your References Easily"
+        highlightedIndexes={highlightedIndexes}
+      >
+        Build a library of images you can <strong>use again and again</strong>.
+        So you don&apos;t need to maintain 50 Pinterest boards or 200 folders.
+      </FeatureItem>
+
+      {/* <FeatureItem
         icon={<FaImage />}
         title="Show Off Your Work"
         highlightedIndexes={highlightedIndexes}
       >
         <strong>Export exactly</strong> as you arranged it. No formatting or
         screenshots. Just clean, sharable results.
+      </FeatureItem> */}
+
+      <FeatureItem
+        icon={<FaRandom />}
+        title="View them However you want"
+        highlightedIndexes={highlightedIndexes}
+      >
+        View your images in a grid or freeform canvas. Pin an image. Split
+        things into sections. You&apos;re not <strong>constrained</strong> to a
+        single canvas (but you still can).
       </FeatureItem>
 
       <FeatureItem
+        icon={<FaImage />}
+        title="Come back to where you left off"
+        highlightedIndexes={highlightedIndexes}
+      >
+        Keep all your ideas in <strong>one place</strong>, so you don&apos;t
+        need to open new files everytime you switch projects.
+      </FeatureItem>
+
+      {/* <FeatureItem
         icon={<FaLeaf />}
         title="Reuse Your Ideas"
         highlightedIndexes={highlightedIndexes}
       >
         Save your best images into sets you can <strong>reuse later</strong>. So
         you always can tap into past ideas.
-      </FeatureItem>
+      </FeatureItem> */}
       {/* <FeatureItem
         icon={<FaSeedling />}
         title="Inspire others"

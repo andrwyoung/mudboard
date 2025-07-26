@@ -254,7 +254,7 @@ export default function Home() {
           </div> */}
 
           {/* FEATURES */}
-          <div className="max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 mb-36 text-left">
+          <div className="max-w-4xl grid grid-cols-1 sm:grid-cols-3 gap-x-12 gap-y-12 mb-36 text-left">
             <Features highlightedIndexes={highlightedIndexes} />
           </div>
 
@@ -269,18 +269,17 @@ export default function Home() {
               />
             </div>
           </div> */}
-          <ComparisonTable />
 
           <LandingPageDemo />
+          <ComparisonTable />
 
           <h1 className="text-2xl font-semibold">Exports in the Wild</h1>
           <p className="mb-6 text-sm">
-            This early example board uses my own art, but you can build
-            anything!
+            Export your sections to share ideas with friends or clients!
           </p>
           <div className="flex flex-col  gap-20  max-w-3xl items-center mb-32 w-full">
             <div className="flex flex-col items-center">
-              <h1 className="font-semibold mb-4">Grid Layout</h1>
+              <h1 className="font-semibold mb-4">Grid Layout </h1>
               <Image
                 src="/section_002.webp"
                 alt="Grid Export Example"
@@ -341,7 +340,7 @@ export default function Home() {
 
           <section className="w-full text-center mb-24 px-6 flex flex-col items-center">
             <h2 className="text-2xl sm:text-3xl font-bold max-w-xl mb-2">
-              Test ideas fast. Export even faster.
+              Find and use your References.
             </h2>
             <p className="text-sm font-medium mb-6">
               Try the demo board! No signup required.

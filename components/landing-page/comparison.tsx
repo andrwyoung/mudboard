@@ -34,12 +34,12 @@ function ComparisonTile({
 
 export default function ComparisonTable() {
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-0 mb-24">
+    <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-0 mb-36">
       <h2 className="text-2xl font-bold text-center">
         How is Mudboard different?
       </h2>
       <p className="text-[0.9375rem] mb-6 text-center">
-        Mudboard fills the gap between inspiration and creation.
+        Mudboard lets you use images that you like by making them easy to find.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm sm:text-base">
         <ComparisonTile
@@ -64,9 +64,9 @@ export default function ComparisonTable() {
           }
         >
           Offers deep control and flexibility. Mudboard keeps the freedom and
-          adds <strong>speed</strong>, so you can build faster and{" "}
-          <span className="text-accent font-bold">share them</span> just as
-          easily.
+          adds <strong>speed</strong>, so you can{" "}
+          <span className="text-accent font-bold">build faster</span> and share
+          it too!
         </ComparisonTile>
 
         <ComparisonTile
