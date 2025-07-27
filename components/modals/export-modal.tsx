@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useUIStore } from "@/store/ui-store";
 import { getMismatchedColumnData } from "./export/mismatched-columns";
 import { useMetadataStore } from "@/store/metadata-store";
+import { useDemoStore } from "@/store/demo-store";
 
 export type ExportMethod = "grid" | "freeform" | "autofit";
 
@@ -261,6 +262,9 @@ export default function ExportModal({
                 title="Export Section"
                 className="font-header items-center flex cursor-pointer px-4 py-0.5 border-2 border-primary/60 hover:border-accent rounded-lg hover:bg-accent/40"
                 onClick={() => {
+                  // if demo
+                  useDemoStore.getState().markMissionComplete("export");
+
                   if (singleSectionExport) {
                     handleSectionExport(sections[0].section_id, "section");
                   } else {

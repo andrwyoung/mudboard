@@ -272,7 +272,7 @@ export default function SectionShareModal({
           <DialogFooter>
             <div className="flex items-center gap-3 pt-2 text-sm font-header">
               <Button
-                className="text-lg"
+                className="text-lg px-4"
                 onClick={() => {
                   // first check that we even have blocks
                   const numBlocks = useLayoutStore

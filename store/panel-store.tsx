@@ -1,5 +1,6 @@
 import { Block } from "@/types/block-types";
 import { create } from "zustand";
+import { useDemoStore } from "./demo-store";
 
 export type PanelMode = "none" | "explore" | "focus";
 
@@ -28,10 +29,17 @@ export const usePanelStore = create<PanelStore>((set) => ({
 
   // pinned panel
   openPinnedPanel: () => set({ panelMode: "focus" }),
-  openPinnedPanelWithBlock: (block: Block) =>
-    set({ panelMode: "focus", pinnedBlock: block }),
+  openPinnedPanelWithBlock: (block: Block) => {
+    // if demo
+    useDemoStore.getState().markMissionComplete("spotlight");
+
+    set({ panelMode: "focus", pinnedBlock: block });
+  },
   pinnedBlock: null,
   setPinnedBlock: (b: Block | null) => {
+    // if demo
+    useDemoStore.getState().markMissionComplete("spotlight");
+
     if (b?.block_type === "image") {
       set({ pinnedBlock: b });
     } else {

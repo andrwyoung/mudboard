@@ -42,7 +42,7 @@ const extraItems: TutorialRowType[] = [
     text: (
       <div className="flex flex-col">
         <span>Upload an Image</span>{" "}
-        <span className="text-xs">(Try dragging from Pinterest)</span>
+        <span className="text-xs">(Pinterest might work too!)</span>
       </div>
     ),
     mission: "upload",

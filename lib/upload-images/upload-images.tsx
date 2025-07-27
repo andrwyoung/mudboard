@@ -30,6 +30,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { rasterizeVectorImage } from "./processing/rasterize-vectors";
 import { useMetadataStore } from "@/store/metadata-store";
+import { useDemoStore } from "@/store/demo-store";
 
 type PreparedImage = {
   image_id: string;
@@ -52,6 +53,9 @@ export async function uploadImages(
   rowIndexPreference?: number
 ) {
   if (!files || files.length === 0) return;
+
+  // if demo
+  useDemoStore.getState().markMissionComplete("upload");
 
   const user = useMetadataStore.getState().user;
 
