@@ -121,7 +121,10 @@ export default function SectionShareModal({
 
     // DEMO: handle temporary Mudkits
     if (!section.owned_by && field === "is_public") {
+      // tutorial specific
       useDemoStore.getState().markMissionComplete("mudkit");
+      useExploreStore.getState().setExploreMode("search");
+
       const { tempMudkits, setTempMudkits } = useExploreStore.getState();
 
       if (value) {

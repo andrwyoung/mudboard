@@ -10,6 +10,8 @@ import Image from "next/image";
 import { FaLeaf } from "react-icons/fa6";
 import { BeanIcon } from "@/components/ui/bean-icon";
 import { FaFileDownload } from "react-icons/fa";
+import { NEW_BOARD_LINK } from "@/types/constants";
+import Link from "next/link";
 
 type HelpType = {
   title: string;
@@ -67,10 +69,9 @@ export default function DemoHelpModal() {
         <div className="flex flex-col gap-1">
           <h2 className="text-lg">Where is it?</h2>
           <p className="leading-relaxed">
-            Make sure you&apos;re <strong>not in Freeform mode</strong>. Then
-            click the{" "}
+            Click the{" "}
             <BeanIcon className="inline size-4 mx-[1px] -translate-y-[2px]" />{" "}
-            icon in the section header:
+            icon in any of the section headers:
           </p>
           <Image
             src="/tutorial/mudkit1.png"
@@ -79,10 +80,13 @@ export default function DemoHelpModal() {
             height={68}
             className="self-center max-w-48 rounded-lg border-2 border-primary mb-2"
           />
-          <p className="mb-2">Click Create.</p>
-          <p className="mb-2">
-            Now your Mudkit should be published. You should see it on the first
-            page of the Greenhouse:
+          <p className="italic mb-4">
+            Note: If you can&apos;t find it, make sure you&apos;re{" "}
+            <strong>not in Freeform mode</strong>.
+          </p>
+
+          <p className="mb-4">
+            You should see your Mudkit in the Greenhouse after clicking Create:
           </p>
           <Image
             src="/tutorial/mudkit3.png"
@@ -180,21 +184,31 @@ export default function DemoHelpModal() {
       body: (
         <div className="flex flex-col gap-2">
           <p>You&apos;ve hit the essential flow of Mudboard.</p>
-          <p className="mb-4">
-            Feel free to explore more, or start your own board when you&apos;re
-            ready.
+          <p className="mb-6">
+            Feel free to explore more (complete the{" "}
+            <strong>Extra Credit</strong>), or start your own board when
+            you&apos;re ready.
           </p>
-          <p>
-            Feedback or ideas? I&apos;d love to hear from you:{" "}
-            <strong>andrew@mudboard.com</strong>
+          <p className="">
+            Feedback? I&apos;d love to hear from you:{" "}
+            <a href="mailto:andrew@mudboard.com" className="text-primary">
+              andrew@mudboard.com
+            </a>
           </p>
         </div>
       ),
-      // cta: (
-      //   <button className="mt-4 px-4 py-2 bg-primary text-white rounded">
-      //     Create your own board
-      //   </button>
-      // ),
+      cta: (
+        <Link
+          href={NEW_BOARD_LINK}
+          title="Create a New Board"
+          className="px-4 py-2 bg-primary text-white rounded-lg font-header
+          hover:bg-accent hover:text-primary cursor-pointer transition-all duration-100"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Create New Board
+        </Link>
+      ),
     },
 
     complete2: {
@@ -213,12 +227,9 @@ export default function DemoHelpModal() {
         </div>
       ),
       cta: (
-        <DialogFooter>
-          <button className="mt-4 px-4 py-2 bg-primary text-white rounded">
-            Create your own board
-          </button>
-          <button>Continue Exploring</button>
-        </DialogFooter>
+        <button className="mt-4 px-4 py-2 bg-primary text-white rounded">
+          Create your own board
+        </button>
       ),
     },
   };
@@ -238,9 +249,16 @@ export default function DemoHelpModal() {
 
         {currentTip.cta ? (
           <DialogFooter>
-            <div className="w-full flex justify-end">
+            <div className="w-full flex justify-end mt-4">
               <div className="flex gap-4 items-center">
-                <button>Continue Exploring</button>
+                <button
+                  type="button"
+                  onClick={close}
+                  title="Return to Demo Board"
+                  className="font-header cursor-pointer hover:text-accent"
+                >
+                  Continue Exploring
+                </button>
                 {currentTip.cta}
               </div>
             </div>

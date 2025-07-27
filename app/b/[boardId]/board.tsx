@@ -254,7 +254,7 @@ export default function Board({ boardId }: { boardId: string }) {
         <ResizableSidebar sectionRefs={sectionRefs} />
 
         {/* Gallery */}
-        <main className="flex-1">
+        <main className="flex-1 z-0">
           <div
             className={`absolute top-1/2 left-1/2 z-40 -translate-x-1/2 -translate-y-1/2 
             transition-opacity  duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 

@@ -24,13 +24,14 @@ export default function WelcomeModal() {
 
           <div className="text-sm text-primary hidden sm:flex flex-col">
             <p className=" mt-2 mb-6">
-              Want a quick tour? The <strong>“{TUTORIAL_TITLE}”</strong> panel
-              on the button right guides you through the main features.
+              Want a quick tour? Follow the <strong>“{TUTORIAL_TITLE}”</strong>{" "}
+              panel on the bottom right.
             </p>
 
             <p className=" mb-2">
-              If you get confused with any of the tasks, click the{" "}
-              <span className="underline">Guide</span> button:
+              Some concepts might be new, so click the{" "}
+              <span className="underline">Guide</span> button if you&apos;re
+              unsure what to do:
             </p>
             <Image
               src="/tutorial/welcome2.png"
@@ -40,7 +41,7 @@ export default function WelcomeModal() {
               className="self-center max-w-64 rounded-lg mb-6 border-2 border-primary"
             />
             <p>
-              Try <strong>dragging a few images</strong> to begin!
+              Try <strong>dragging around a few images</strong> to begin!
             </p>
           </div>
           <p className="text-sm text-primary mb-6 sm:hidden block">

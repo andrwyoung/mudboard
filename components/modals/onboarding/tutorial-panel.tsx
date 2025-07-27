@@ -42,7 +42,9 @@ const extraItems: TutorialRowType[] = [
     text: (
       <div className="flex flex-col">
         <span>Upload an Image</span>{" "}
-        <span className="text-xs">(Pinterest might work too!)</span>
+        <span className="text-xs">
+          (Hint: drag/drop works from most website)
+        </span>
       </div>
     ),
     mission: "upload",
@@ -137,7 +139,7 @@ export default function TutorialPanel() {
               {missionsCompleted.mudkit && (
                 <TutorialRow
                   item={{
-                    text: "(Bonus) Use an Image from your Mudkit",
+                    text: "(Final Boss) Grab an Image from your Mudkit",
                     mission: "mudkit2",
                   }}
                 />
