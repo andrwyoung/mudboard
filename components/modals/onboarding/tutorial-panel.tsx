@@ -66,6 +66,14 @@ function TutorialRow({ item }: { item: TutorialRowType }) {
   const completed = useDemoStore((s) => s.missionsCompleted[item.mission]);
   const openHelp = useDemoStore((s) => s.openHelp);
 
+  const missionsWithTips: MissionType[] = [
+    "greenhouse",
+    "mudkit",
+    // "upload",
+    "spotlight",
+    "export",
+  ];
+
   return (
     <div className="flex items-start justify-between gap-2">
       <div className="flex items-start gap-2">
@@ -84,12 +92,15 @@ function TutorialRow({ item }: { item: TutorialRowType }) {
           {item.text}
         </span>
       </div>
-      <button
-        className="text-xs underline text-primary hover:text-accent cursor-pointer"
-        onClick={() => openHelp(item.mission)}
-      >
-        Tips
-      </button>
+      {missionsWithTips.includes(item.mission) && (
+        <button
+          type="button"
+          className="text-xs underline text-primary hover:text-accent cursor-pointer"
+          onClick={() => openHelp(item.mission)}
+        >
+          Guide
+        </button>
+      )}
     </div>
   );
 }
@@ -126,7 +137,7 @@ export default function TutorialPanel() {
               {missionsCompleted.mudkit && (
                 <TutorialRow
                   item={{
-                    text: "(Bonus) Reuse an Image from your Mudkit",
+                    text: "(Bonus) Use an Image from your Mudkit",
                     mission: "mudkit2",
                   }}
                 />
@@ -139,7 +150,7 @@ export default function TutorialPanel() {
               flex items-center gap-1 hover:opacity-80 cursor-pointer "
                 onClick={() => setShowExtras((prev) => !prev)}
               >
-                Extras
+                Extra Credit
                 <FaCaretDown
                   className={`transition-transform duration-200 ${
                     showExtras ? "rotate-180" : ""
@@ -153,9 +164,6 @@ export default function TutorialPanel() {
                       <TutorialRow key={i} item={item} />
                     ))}
                   </div>
-                  {/* <div className="text-primary font-semibold text-xs self-center">
-                  Article: 8 ways to Add Images
-                </div> */}
                 </div>
               )}
             </div>

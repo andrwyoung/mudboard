@@ -26,7 +26,7 @@ type DemoStore = {
   resetMissions: () => void;
 
   // help modal
-  currentHelpMission: MissionType | null;
+  currentHelpMission: MissionType | "complete" | "complete2" | null;
   openHelp: (mission: MissionType) => void;
   closeHelp: () => void;
 
@@ -70,9 +70,18 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
 
   markTempMudkitComplete: () => {
     if (useExploreStore.getState().currentSelectedMudkitType === "temp") {
+      const alreadyCompleted = get().missionsCompleted.mudkit2;
+
       set((state) => ({
         missionsCompleted: { ...state.missionsCompleted, mudkit2: true },
       }));
+
+      if (!alreadyCompleted) {
+        setTimeout(() => {
+          fireConfetti();
+          set({ currentHelpMission: "complete" });
+        }, 500);
+      }
     }
   },
 
