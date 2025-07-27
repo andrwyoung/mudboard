@@ -17,7 +17,7 @@ const essentialItems: TutorialRowType[] = [
   {
     text: (
       <>
-        Drag an Image from the Greenhouse{" "}
+        Grab an Image from the Greenhouse{" "}
         <FaLeaf className="inline -translate-y-[2px] ml-0.5 opacity-75" />
       </>
     ),
