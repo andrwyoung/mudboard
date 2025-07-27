@@ -310,17 +310,21 @@ export default function SectionRow({
                 Move Down
               </ContextMenuItem>
 
-              <ContextMenuSeparator />
-              <ContextMenuItem
-                onClick={() => {
-                  setPendingDelete(true);
-                }}
-                variant={"destructive"}
-              >
-                {isLinked || !canSectionEdit
-                  ? "Unlink Section"
-                  : "Delete Section"}
-              </ContextMenuItem>
+              {allBoardSections.length > 1 && (
+                <>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem
+                    onClick={() => {
+                      setPendingDelete(true);
+                    }}
+                    variant={"destructive"}
+                  >
+                    {isLinked || !canSectionEdit
+                      ? "Unlink Section"
+                      : "Delete Section"}
+                  </ContextMenuItem>
+                </>
+              )}
             </ContextMenuContent>
           )}
         </ContextMenu>

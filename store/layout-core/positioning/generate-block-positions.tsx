@@ -16,6 +16,19 @@ export function generatePositionedBlocks(
   orderedBlocks: Record<string, PositionedBlock[]>;
   positionedBlockMap: Map<string, PositionedBlock>;
 } {
+  // guard against null
+  if (
+    sortedSectionIds.length === 0 ||
+    Object.values(sectionColumns).every((cols) =>
+      cols.every((col) => col.length === 0)
+    )
+  ) {
+    return {
+      orderedBlocks: {},
+      positionedBlockMap: new Map(),
+    };
+  }
+
   const positionedBlocksBySection: Record<string, PositionedBlock[][]> = {};
   const map = new Map<string, PositionedBlock>();
 
