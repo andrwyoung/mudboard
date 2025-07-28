@@ -54,20 +54,20 @@ export default function ExportModal({
 
     const toastId = toast.loading("Requesting export...");
 
+    const gatheringTimeout = setTimeout(() => {
+      toast.message("Gathering Images...", { id: toastId });
+    }, 500);
+
+    const buildingTimeout = setTimeout(() => {
+      toast.message("Building Board...", { id: toastId });
+    }, 2000);
+
+    const generatingTimeout = setTimeout(() => {
+      toast.message("Generating export image...", { id: toastId });
+    }, 5000);
+
     try {
-      setTimeout(() => {
-        toast.message("Gathering Images...", { id: toastId });
-      }, 500);
-
-      setTimeout(() => {
-        toast.message("Building Board...", { id: toastId });
-      }, 2000);
-
-      setTimeout(() => {
-        toast.message("Generating export image...", { id: toastId });
-      }, 5000);
-
-      // Call your offshore export endpoint here
+      // calling your offshore export endpoint
       const res = await fetch(`${OFFSHORE_THUMBNAIL_GEN_URL}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -100,12 +100,18 @@ export default function ExportModal({
 
       // Revoke the URL after a few seconds
       setTimeout(() => URL.revokeObjectURL(url), 3000);
+
       toast.dismiss(toastId);
       toast.success("Export ready");
     } catch (err) {
       toast.dismiss(toastId);
       toast.error("Server error. Please retry shortly.");
       console.error(err);
+    } finally {
+      // clear all timeouts
+      clearTimeout(gatheringTimeout);
+      clearTimeout(buildingTimeout);
+      clearTimeout(generatingTimeout);
     }
   }
 

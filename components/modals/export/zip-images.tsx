@@ -19,32 +19,30 @@ export default function ZipImagesButton(section: Section) {
   async function handleZip() {
     const toastId = toast.loading(`Preparing image ZIP…`);
 
+    const collectTimeout = setTimeout(() => {
+      toast.message(
+        `Collecting ${imageBlocks.length} image${
+          imageBlocks.length !== 1 ? "s" : ""
+        }…`,
+        { id: toastId }
+      );
+    }, 600);
+
+    const compressTimeout = setTimeout(() => {
+      toast.message("Compressing files…", { id: toastId });
+    }, 2200);
+
+    const organizeTimeout = setTimeout(() => {
+      toast.message("Organizing ZIP archive…", { id: toastId });
+    }, 4200);
+
+    const delayTimeout = setTimeout(() => {
+      toast.message("Still working… large exports may take a bit", {
+        id: toastId,
+      });
+    }, 10000);
+
     try {
-      setTimeout(() => {
-        toast.message(
-          `Collecting ${imageBlocks.length} image${
-            imageBlocks.length !== 1 ? "s" : ""
-          }…`,
-          {
-            id: toastId,
-          }
-        );
-      }, 600);
-
-      setTimeout(() => {
-        toast.message("Compressing files…", { id: toastId });
-      }, 2200);
-
-      setTimeout(() => {
-        toast.message("Organizing ZIP archive…", { id: toastId });
-      }, 600);
-
-      setTimeout(() => {
-        toast.message("Still working… large exports may take a bit", {
-          id: toastId,
-        });
-      }, 10000);
-
       await downloadImagesAsZip(imageBlocks, sectionTitle ?? undefined);
 
       toast.dismiss(toastId);
@@ -53,6 +51,11 @@ export default function ZipImagesButton(section: Section) {
       toast.dismiss(toastId);
       toast.error("Server error. Please retry shortly.");
       console.error(err);
+    } finally {
+      clearTimeout(collectTimeout);
+      clearTimeout(compressTimeout);
+      clearTimeout(organizeTimeout);
+      clearTimeout(delayTimeout);
     }
   }
 
