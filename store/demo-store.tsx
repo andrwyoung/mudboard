@@ -23,6 +23,7 @@ type DemoStore = {
   missionsCompleted: Record<MissionType, boolean>;
   markMissionComplete: (mission: MissionType) => void;
   markTempMudkitComplete: () => void;
+  markFinalComplete: () => void;
   resetMissions: () => void;
 
   // help modal
@@ -84,6 +85,8 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
       }
     }
   },
+
+  markFinalComplete: () => set({ currentHelpMission: "complete2" }),
 
   resetMissions: () =>
     set(() => ({

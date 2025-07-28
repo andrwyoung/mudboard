@@ -12,6 +12,8 @@ import { BeanIcon } from "@/components/ui/bean-icon";
 import { FaFileDownload } from "react-icons/fa";
 import { NEW_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useModalStore } from "@/store/modal-store";
 
 type HelpType = {
   title: string;
@@ -21,7 +23,9 @@ type HelpType = {
 
 export default function DemoHelpModal() {
   const currentTipMission = useDemoStore((s) => s.currentHelpMission);
-  const close = useDemoStore((s) => s.closeHelp);
+  const setLoginModalOpen = useModalStore((s) => s.setLoginModalOpen);
+
+  const closeHelpModal = useDemoStore((s) => s.closeHelp);
 
   const tipText: Record<string, HelpType> = {
     greenhouse: {
@@ -183,18 +187,22 @@ export default function DemoHelpModal() {
       title: "Hooray!",
       body: (
         <div className="flex flex-col gap-2">
-          <p>You&apos;ve hit the essential flow of Mudboard.</p>
-          <p className="mb-6">
-            Feel free to explore more (complete the{" "}
-            <strong>Extra Credit</strong>), or start your own board when
-            you&apos;re ready.
+          <p className="mb-2">
+            You&apos;ve hit the essential flow of reusing images in Mudboard!
           </p>
-          <p className="">
+          {/* <p className="mb-4">
+            You&apos;ve hit the essential flow of Mudboard.
+          </p> */}
+          <p className="mb-6">
+            There&apos;s much more to explore (check out the{" "}
+            <strong>Extra Credit</strong>), or you can start your own board.
+          </p>
+          {/* <p className="">
             Feedback? I&apos;d love to hear from you:{" "}
             <a href="mailto:andrew@mudboard.com" className="text-primary">
               andrew@mudboard.com
             </a>
-          </p>
+          </p> */}
         </div>
       ),
       cta: (
@@ -212,33 +220,63 @@ export default function DemoHelpModal() {
     },
 
     complete2: {
-      title: "Looks like you've got the hang of it!",
+      title: "You've Completed the Tutorial!",
       body: (
         <div className="flex flex-col gap-2">
-          <p>Thanks for giving Mudboard a try.</p>
+          <p className=""></p>
           <p className="mb-4">
-            You’ve hit the essentials—feel free to explore more, or start your
-            own board when you&apos;re ready.
+            {
+              "Looks like you've got the hang of it (you even did the Extra Credit!)"
+            }
           </p>
-          <p>
+          <p className="mb-6 leading-relaxed">
+            Want to save your work and create your own boards? <br />
+            <strong>Create a free account!</strong>
+          </p>
+          {/* <p>
             Feedback or ideas? I&apos;d love to hear from you:{" "}
             <strong>andrew@mudboard.com</strong>
+          </p> */}
+          <p className="text-sm text-muted-foreground mt-2">
+            Feedback?{" "}
+            <a href="mailto:andrew@mudboard.com" className="underline">
+              andrew@mudboard.com
+            </a>
           </p>
         </div>
       ),
       cta: (
-        <button className="mt-4 px-4 py-2 bg-primary text-white rounded">
-          Create your own board
+        <button
+          type="button"
+          onClick={() => {
+            setLoginModalOpen(true);
+            closeHelpModal();
+          }}
+          className="px-4 py-2 bg-primary text-white rounded-lg font-header
+        hover:bg-accent hover:text-primary cursor-pointer transition-all duration-100"
+        >
+          Create an Account
         </button>
       ),
     },
   };
 
+  const missions = useDemoStore((s) => s.missionsCompleted);
+  useEffect(() => {
+    const allComplete = Object.values(missions).every(Boolean);
+
+    if (allComplete) {
+      setTimeout(() => {
+        useDemoStore.getState().markFinalComplete();
+      }, 500);
+    }
+  }, [missions]);
+
   if (currentTipMission === null) return null;
   const currentTip = tipText[currentTipMission];
 
   return (
-    <Dialog open onOpenChange={close}>
+    <Dialog open onOpenChange={closeHelpModal}>
       <DialogContent className="max-w-md text-primary">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
@@ -253,7 +291,7 @@ export default function DemoHelpModal() {
               <div className="flex gap-4 items-center">
                 <button
                   type="button"
-                  onClick={close}
+                  onClick={closeHelpModal}
                   title="Return to Demo Board"
                   className="font-header cursor-pointer hover:text-accent"
                 >

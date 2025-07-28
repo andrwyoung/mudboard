@@ -10,14 +10,15 @@ import { claimBoard } from "@/lib/db-actions/claim-board";
 import { DASHBOARD_LINK } from "@/types/constants";
 import Link from "next/link";
 import { FaHome } from "react-icons/fa";
-import { useState } from "react";
 import { LuLogIn } from "react-icons/lu";
+import { useModalStore } from "@/store/modal-store";
 
 export default function AccountSyncSection() {
   const board = useMetadataStore((s) => s.board);
   const user = useMetadataStore((s) => s.user);
 
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const loginModalOpen = useModalStore((s) => s.loginModalOpen);
+  const setLoginModalOpen = useModalStore((s) => s.setLoginModalOpen);
 
   const boardUnclaimed = board !== null && board.user_id === null;
 
