@@ -25,7 +25,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { useGalleryHandlers } from "@/hooks/gallery/use-drag-handlers";
-import { useMetadataStore } from "@/store/metadata-store";
+import { sectionRefs, useMetadataStore } from "@/store/metadata-store";
 import { useLoadingStore } from "@/store/loading-store";
 import { useSelectionStore } from "@/store/selection-store";
 import Canvas from "./canvas";
@@ -79,7 +79,6 @@ export default function Board({ boardId }: { boardId: string }) {
 
   // sections
   const boardSections = useMetadataStore((s) => s.boardSections);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // when blurring images
   const sliderVal = useLoadingStore((s) => s.sliderVal);
@@ -230,27 +229,6 @@ export default function Board({ boardId }: { boardId: string }) {
         sensors={sensors}
         autoScroll={!mirrorMode}
       >
-        {/* Sidebar */}
-        {/* <aside
-          className={`hidden lg:block 
-            ${
-              sidebarCollapsed
-                ? "w-[60px]"
-                : "w-1/6 min-w-[200px] max-w-[250px]"
-            }
-            bg-primary`}
-          ref={sidebarRef}
-        >
-          {sidebarCollapsed ? (
-            <CollapsedSidebar onExpand={() => setSidebarCollapsed(false)} />
-          ) : (
-            <Sidebar
-              sectionRefs={sectionRefs}
-              onCollapse={() => setSidebarCollapsed(true)}
-            />
-          )}
-        </aside> */}
-
         <ResizableSidebar sectionRefs={sectionRefs} />
 
         {/* Gallery */}

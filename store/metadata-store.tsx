@@ -9,6 +9,12 @@ import { SetStateAction } from "react";
 
 export type UserProfile = Tables<"users">;
 
+export const sectionRefs: React.RefObject<
+  Record<string, HTMLDivElement | null>
+> = {
+  current: {},
+};
+
 type MetadataStore = {
   board: Board | null;
   setBoard: (board: Board) => void;

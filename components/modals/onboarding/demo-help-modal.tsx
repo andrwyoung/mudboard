@@ -110,7 +110,7 @@ export default function DemoHelpModal() {
     //   ),
     // },
     spotlight: {
-      title: "Spotlight an Image",
+      title: "Expand an Image",
       body: (
         <div className="flex flex-col gap-1">
           <h2 className="text-lg">What is it?</h2>
@@ -198,16 +198,26 @@ export default function DemoHelpModal() {
         </div>
       ),
       cta: (
-        <Link
-          href={NEW_BOARD_LINK}
-          title="Create a New Board"
-          className="px-4 py-2 bg-primary text-white rounded-lg font-header
+        <>
+          <Link
+            href={NEW_BOARD_LINK}
+            title="Create a New Board"
+            className="font-header cursor-pointer hover:text-accent"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Create New Board
+          </Link>
+          <button
+            type="button"
+            onClick={closeHelpModal}
+            title="Return to Demo Board"
+            className="px-4 py-2 bg-primary text-white rounded-lg font-header
           hover:bg-accent hover:text-primary cursor-pointer transition-all duration-100"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Create New Board
-        </Link>
+          >
+            Continue Exploring
+          </button>
+        </>
       ),
     },
 
@@ -238,17 +248,27 @@ export default function DemoHelpModal() {
         </div>
       ),
       cta: (
-        <button
-          type="button"
-          onClick={() => {
-            setLoginModalOpen(true);
-            closeHelpModal();
-          }}
-          className="px-4 py-2 bg-primary text-white rounded-lg font-header
+        <>
+          <button
+            type="button"
+            onClick={closeHelpModal}
+            title="Return to Demo Board"
+            className="font-header cursor-pointer hover:text-accent"
+          >
+            Continue Exploring
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setLoginModalOpen(true);
+              closeHelpModal();
+            }}
+            className="px-4 py-1 bg-primary text-white rounded-lg font-header
         hover:bg-accent hover:text-primary cursor-pointer transition-all duration-100"
-        >
-          Create an Account
-        </button>
+          >
+            Create an Account
+          </button>
+        </>
       ),
     },
   };
@@ -280,17 +300,7 @@ export default function DemoHelpModal() {
         {currentTip.cta ? (
           <DialogFooter>
             <div className="w-full flex justify-end mt-4">
-              <div className="flex gap-4 items-center">
-                <button
-                  type="button"
-                  onClick={closeHelpModal}
-                  title="Return to Demo Board"
-                  className="font-header cursor-pointer hover:text-accent"
-                >
-                  Continue Exploring
-                </button>
-                {currentTip.cta}
-              </div>
+              <div className="flex gap-4 items-center">{currentTip.cta}</div>
             </div>
           </DialogFooter>
         ) : null}

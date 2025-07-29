@@ -26,6 +26,8 @@ import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-ti
 import { isLinkedSection } from "@/utils/is-linked-section";
 import { canEditSection } from "@/lib/auth/can-edit-section";
 import { FaCircle, FaLock } from "react-icons/fa";
+import { FaBookBookmark } from "react-icons/fa6";
+import { IoLibrary } from "react-icons/io5";
 
 export default function SectionRow({
   thisBoardSection,
@@ -44,6 +46,7 @@ export default function SectionRow({
     null
   );
   const [pendingDelete, setPendingDelete] = useState(false);
+  const [pendingRename, setPendingRename] = useState(false);
   const canSectionEdit = canEditSection(thisBoardSection.section);
   const isLinked = isLinkedSection(thisBoardSection);
 
@@ -145,9 +148,18 @@ export default function SectionRow({
             );
 
             // this is here to wait for context menu to close first
-            if (!isOpen && pendingDelete) {
-              setPendingDelete(false);
-              setBoardSectionToDelete(thisBoardSection);
+            if (!isOpen) {
+              if (pendingDelete) {
+                setPendingDelete(false);
+                setBoardSectionToDelete(thisBoardSection);
+              }
+
+              if (pendingRename) {
+                setPendingRename(false);
+                setTimeout(() => {
+                  setIsEditing(true);
+                }, 250);
+              }
             }
           }}
         >
@@ -270,13 +282,33 @@ export default function SectionRow({
                   <ContextMenuItem
                     onClick={() => {
                       setEditValue(thisBoardSection.section.title ?? "");
+                      setPendingRename(true);
+                    }}
+                  >
+                    Rename
+                  </ContextMenuItem>
+
+                  <ContextMenuItem
+                    onClick={() => {
+                      setEditValue(thisBoardSection.section.title ?? "");
                       setTimeout(() => {
                         setIsEditing(true);
                       }, 100);
                     }}
                   >
-                    Rename
+                    {!thisBoardSection.section.is_public ? (
+                      <>
+                        <FaBookBookmark className="w-4 h-4" />
+                        <span>Add to Library</span>
+                      </>
+                    ) : (
+                      <>
+                        <IoLibrary className="w-4 h-4" />
+                        <span>Settings</span>
+                      </>
+                    )}
                   </ContextMenuItem>
+
                   <ContextMenuSub>
                     <ContextMenuSubTrigger>Add Block</ContextMenuSubTrigger>
                     <ContextMenuSubContent>
@@ -295,20 +327,26 @@ export default function SectionRow({
                 </>
               )}
 
-              <ContextMenuItem
-                disabled={thisBoardSection.order_index === 0}
-                onClick={() => handleMoveSection("up")}
-              >
-                Move Up
-              </ContextMenuItem>
-              <ContextMenuItem
-                disabled={
-                  thisBoardSection.order_index === allBoardSections.length - 1
-                }
-                onClick={() => handleMoveSection("down")}
-              >
-                Move Down
-              </ContextMenuItem>
+              <ContextMenuSub>
+                <ContextMenuSubTrigger>Move Section </ContextMenuSubTrigger>
+                <ContextMenuSubContent>
+                  <ContextMenuItem
+                    disabled={thisBoardSection.order_index === 0}
+                    onClick={() => handleMoveSection("up")}
+                  >
+                    Up
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    disabled={
+                      thisBoardSection.order_index ===
+                      allBoardSections.length - 1
+                    }
+                    onClick={() => handleMoveSection("down")}
+                  >
+                    Down
+                  </ContextMenuItem>
+                </ContextMenuSubContent>
+              </ContextMenuSub>
 
               {allBoardSections.length > 1 && (
                 <>

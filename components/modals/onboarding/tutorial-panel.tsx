@@ -6,6 +6,10 @@ import { FaBookBookmark, FaCaretDown } from "react-icons/fa6";
 import DemoHelpModal from "./demo-help-modal";
 import { FaFileDownload } from "react-icons/fa";
 import { IoLibrary } from "react-icons/io5";
+import { useUIStore } from "@/store/ui-store";
+import { scrollToSelectedSection } from "@/lib/sidebar/scroll-to-selected-section";
+import { usePanelStore } from "@/store/panel-store";
+import { toast } from "sonner";
 
 type TutorialRowType = {
   text: React.ReactNode;
@@ -28,9 +32,21 @@ const essentialItems: TutorialRowType[] = [
       <>
         Save a Section to your Library{" "}
         <FaBookBookmark
-          className="inline -translate-y-[2px] ml-0.5
+          className="inline -translate-y-[2px] mx-0.5
         size-3 opacity-75"
-        />
+        />{" "}
+        <button
+          type="button"
+          className="text-xs underline cursor-pointer hover:text-accent"
+          onClick={() => {
+            useUIStore.getState().setFreeformMode(false);
+            usePanelStore.getState().setPanelMode("none");
+            scrollToSelectedSection();
+            toast("Look for the Book Icon (Top Right)");
+          }}
+        >
+          (hint)
+        </button>
       </>
     ),
     mission: "mudkit",
@@ -49,7 +65,7 @@ const extraItems: TutorialRowType[] = [
     ),
     mission: "upload",
   },
-  { text: "Spotlight an Image", mission: "spotlight" },
+  { text: "Expand or Spotlight an Image", mission: "spotlight" },
   {
     text: (
       <>
@@ -98,7 +114,14 @@ function TutorialRow({ item }: { item: TutorialRowType }) {
         <button
           type="button"
           className="text-xs underline text-primary hover:text-accent cursor-pointer"
-          onClick={() => openHelp(item.mission)}
+          onClick={() => {
+            openHelp(item.mission);
+            if (item.mission === "mudkit") {
+              useUIStore.getState().setFreeformMode(false);
+              usePanelStore.getState().setPanelMode("none");
+              scrollToSelectedSection();
+            }
+          }}
         >
           Guide
         </button>

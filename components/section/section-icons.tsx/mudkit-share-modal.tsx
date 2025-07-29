@@ -20,6 +20,7 @@ import { useLayoutStore } from "@/store/layout-store";
 import { useDemoStore } from "@/store/demo-store";
 import { fireUserConfetti } from "@/lib/db-actions/fire-user-confetti";
 import { IoLibrary } from "react-icons/io5";
+import { usePanelStore } from "@/store/panel-store";
 
 type ShareableSectionField =
   | "is_public"
@@ -123,6 +124,7 @@ export default function SectionShareModal({
       // tutorial specific
       useDemoStore.getState().markMissionComplete("mudkit");
       useExploreStore.getState().setExploreMode("search");
+      usePanelStore.getState().setPanelMode("explore");
 
       const { tempMudkits, setTempMudkits } = useExploreStore.getState();
 
@@ -158,7 +160,7 @@ export default function SectionShareModal({
           title={
             section.is_public
               ? "Open Section Settings"
-              : `Save ${
+              : `Add ${
                   section.title ? `"${section.title}"` : "Untitled Section"
                 } To Library`
           }
@@ -190,7 +192,7 @@ export default function SectionShareModal({
                 ? `${
                     section.title ? `"${section.title}"` : "Untitled"
                   } Section Settings`
-                : `Save ${
+                : `Add ${
                     section.title ? `"${section.title}"` : "Untitled Section"
                   } To Library`}
             </DialogTitle>

@@ -4,6 +4,7 @@
 import { Block } from "@/types/block-types";
 import { CanvasScope } from "@/types/board-types";
 import { create, StateCreator } from "zustand";
+import { useDemoStore } from "./demo-store";
 
 export function useOverlayStore(scope: CanvasScope): OverlayState {
   return scope === "main" ? useMainOverlayStore() : useMirrorOverlayStore();
@@ -20,7 +21,11 @@ type OverlayState = {
 function createOverlayStoreInitializer(): StateCreator<OverlayState> {
   return (set) => ({
     isOpen: false,
-    openOverlay: (block) => set({ isOpen: true, overlayBlock: block }),
+    openOverlay: (block) => {
+      useDemoStore.getState().markMissionComplete("spotlight");
+
+      set({ isOpen: true, overlayBlock: block });
+    },
     closeOverlay: () => set({ isOpen: false, overlayBlock: null }),
 
     overlayBlock: null,
