@@ -39,10 +39,10 @@ export default function DemoHelpModal() {
             on the side bar to open.
           </p>
           <Image
-            src="/tutorial/greenhouse11.png"
+            src="/tutorial/greenhouse12.png"
             alt="Library Toggle"
-            width={217}
-            height={108}
+            width={203}
+            height={137}
             className="self-center mb-2 max-w-48 rounded-lg"
           />
           <h2 className="text-lg">How do I use it?</h2>

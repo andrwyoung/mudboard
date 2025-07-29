@@ -75,7 +75,7 @@ export default function PinnedPanel() {
             Drop an image from the gallery to focus it here!
           </h1>
           <p className="max-w-sm text-sm">
-            (or right click an image and choose "Spotlight")
+            (or right click an image and choose &quot;Spotlight&quot;)
           </p>
         </div>
       )}

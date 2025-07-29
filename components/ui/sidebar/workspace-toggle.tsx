@@ -2,7 +2,7 @@ import { usePanelStore } from "@/store/panel-store";
 import { useUIStore } from "@/store/ui-store";
 import { FaMagnifyingGlass, FaVectorSquare } from "react-icons/fa6";
 import { IoLibrary } from "react-icons/io5";
-import SpotlightToggle from "./spotlight-toggle";
+
 function WorkspaceToggleButton({
   icon,
   label,
@@ -10,6 +10,7 @@ function WorkspaceToggleButton({
   onClick,
   isActive,
   collapsed,
+  className,
 }: {
   icon: React.ReactNode;
   label?: string;
@@ -17,49 +18,13 @@ function WorkspaceToggleButton({
   onClick: () => void;
   isActive: boolean;
   collapsed: boolean;
+  className?: string;
 }) {
   return (
     <button
       type="button"
       className={`flex items-center w-full gap-2 cursor-pointer group rounded-sm
-           hover:outline hover:outline-accent 
-          ${collapsed ? "p-1 text-xl" : "px-2 py-0.5"}
-          ${
-            isActive
-              ? "bg-accent text-primary hover:bg-accent/70"
-              : "text-white hover:bg-accent/40"
-          }`}
-      onClick={onClick}
-      title={title}
-      aria-pressed={isActive}
-      aria-label={title || label}
-    >
-      {icon}
-      {label && <span className="font-header">{label}</span>}
-    </button>
-  );
-}
-
-function WorkspaceToggleButton2({
-  icon,
-  label,
-  title,
-  onClick,
-  isActive,
-  collapsed,
-}: {
-  icon: React.ReactNode;
-  label?: string;
-  title?: string;
-  onClick: () => void;
-  isActive: boolean;
-  collapsed: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      className={`flex items-center w-full gap-2 cursor-pointer group rounded-sm
-           hover:outline hover:outline-accent  text-sm
+           hover:outline hover:outline-accent ${className}
           ${collapsed ? "p-1 text-xl" : "px-2 py-0.5"}
           ${
             isActive
@@ -107,9 +72,16 @@ export function WorkspaceToggles({
         isActive={freeformOn}
         collapsed={collapsed}
       />
-      <h3 className="mt-2 text-sm text-semibold">Side Panel:</h3>
-      <div className="px-2 rounded-sm w-full flex flex-col gap-1">
-        <WorkspaceToggleButton2
+
+      {!collapsed && (
+        <h3 className="mt-2 text-sm text-semibold">Side Panel:</h3>
+      )}
+      <div
+        className={`rounded-sm w-full flex flex-col gap-1 text-sm ${
+          collapsed ? "mt-2" : "px-2"
+        }`}
+      >
+        <WorkspaceToggleButton
           icon={<IoLibrary />}
           label={!collapsed ? "Library" : undefined}
           title={greenhouseOpen ? "Close Library" : "Open Library"}
@@ -125,10 +97,10 @@ export function WorkspaceToggles({
           collapsed={collapsed}
         />
 
-        <WorkspaceToggleButton2
+        <WorkspaceToggleButton
           icon={<FaMagnifyingGlass />}
           label={!collapsed ? "Spotlight" : undefined}
-          title={spotlightOpen ? "Close Library" : "Open Library"}
+          title={spotlightOpen ? "Close Spotlight" : "Open Spotlight"}
           onClick={() => {
             if (spotlightOpen) {
               setPanelMode("none");
