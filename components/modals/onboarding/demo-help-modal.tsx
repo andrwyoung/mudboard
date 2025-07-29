@@ -7,12 +7,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import { FaBookBookmark, FaLeaf } from "react-icons/fa6";
+import { FaBookBookmark } from "react-icons/fa6";
 import { FaFileDownload } from "react-icons/fa";
 import { NEW_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useModalStore } from "@/store/modal-store";
+import { IoLibrary } from "react-icons/io5";
 
 type HelpType = {
   title: string;
@@ -34,11 +35,11 @@ export default function DemoHelpModal() {
           <h2 className="text-lg">Where is it?</h2>
           <p className="mb-2">
             Click the Library{" "}
-            <FaLeaf className="inline mx-[1px] -translate-y-[1px]" /> toggle on
-            the side bar to open.
+            <IoLibrary className="inline mx-[1px] -translate-y-[1px]" /> toggle
+            on the side bar to open.
           </p>
           <Image
-            src="/tutorial/greenhouse2.png"
+            src="/tutorial/greenhouse11.png"
             alt="Library Toggle"
             width={217}
             height={108}
@@ -113,11 +114,19 @@ export default function DemoHelpModal() {
       title: "Expand an Image",
       body: (
         <div className="flex flex-col gap-1">
-          <h2 className="text-lg">What is it?</h2>
+          <h2 className="text-lg">Expand</h2>
+          <p className="">Method 1: Double Click an Image</p>
           <p className=" mb-2">
-            The Spotlight is an easy way to always keep 1 image in view.
+            Method 2: Right Click an Image. Then click &quot;Expand Image&quot;
           </p>
-          <h2 className="text-lg">Where is it?</h2>
+          <Image
+            src="/tutorial/spotlight2.png"
+            alt="Spotlight Tutorial 1"
+            width={357}
+            height={284}
+            className="self-center max-w-64 rounded-lg mb-2"
+          />
+          <h2 className="text-lg">Spotlight</h2>
           <p className=" mb-2">
             Right click an image. Then click &quot;Spotlight Image&quot;
           </p>

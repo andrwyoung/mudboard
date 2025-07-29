@@ -29,8 +29,8 @@ export default function ExploreSingleMudkitMode({
         cursor-pointer flex items-center font-header gap-2 font-semibold mb-2 
         opacity-80 hover:opacity-100"
         onClick={backButton}
-        aria-label="Go back to all mudkits"
-        title="Go back to all mudkits"
+        aria-label="Go back to all sections"
+        title="Go back to all sections"
       >
         <FaArrowAltCircleLeft className="size-5" /> Back
       </button>

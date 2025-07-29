@@ -37,7 +37,7 @@ export default async function fetchMudkits(userId?: string): Promise<{
 
   if (myMudkitsError || otherMudkitsError) {
     console.error(
-      "Error fetching mudkits:",
+      "Error fetching sections:",
       myMudkitsError || otherMudkitsError
     );
     return { userMudkits: [], otherMudkits: [] };

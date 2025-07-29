@@ -78,7 +78,7 @@ export default function SearchMode({
                 <>
                   {addedUserMudkits.length > 0 && (
                     <div className="text-sm text-white italic py-1 w-full text-center ">
-                      All your mudkits are already on this board.
+                      All saved sections are already on this board.
                     </div>
                   )}
                 </>
@@ -107,7 +107,7 @@ export default function SearchMode({
                     className="text-white text-sm my-2 mx-4 hover:text-accent transition-all 
               cursor-pointer duration-200 hover:underline font-semibold flex gap-1 items-center"
                     aria-expanded={showAdded}
-                    aria-controls="added-mudkits"
+                    aria-controls="sections-in-board"
                   >
                     <FaCaretDown
                       className={`transition-transform duration-200 ${
@@ -119,7 +119,7 @@ export default function SearchMode({
 
                   {showAdded && (
                     <div
-                      id="added-mudkits"
+                      id="sections-in-board"
                       className="p-1 bg-muted rounded-lg "
                     >
                       {addedUserMudkits.map((section) => (

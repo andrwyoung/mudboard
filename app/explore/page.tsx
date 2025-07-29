@@ -35,7 +35,7 @@ export default function ExplorePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {mudkits.map((kit) => (
           <Link
-            href={`/mudkit/${kit.section_id}`}
+            href={`/section/${kit.section_id}`}
             key={kit.section_id}
             className="border rounded-xl overflow-hidden hover:shadow-md transition"
           >

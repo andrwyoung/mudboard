@@ -65,7 +65,7 @@ export async function handleLibrarySync(
           useExploreStore.getState().setUserMudkits(newMudkits);
         }
       } catch (err) {
-        console.error("Unexpected error while updating user mudkits:", err);
+        console.error("Unexpected error while updating user section:", err);
       }
     } else {
       // remove from userMudkits if unpublishing
