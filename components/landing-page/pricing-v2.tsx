@@ -66,7 +66,7 @@ const plans: Plan[] = [
       },
       { label: "Unlimited Boards and Sections", status: "good" },
       // { label: "All core features", status: "good" },
-      { label: "Publish, Clone and Remix Mudkits", status: "good" },
+      { label: "Save, Clone and Reuse Sections", status: "good" },
       { label: "Early user street cred", status: "good" },
       {
         label: <>I like you a lot</>,

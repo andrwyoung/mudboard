@@ -137,7 +137,12 @@ export default function ExportModal({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-primary">
-            Export {singleSectionExport ? "Single Section" : "All Sections"}
+            Export{" "}
+            {singleSectionExport
+              ? `${
+                  sections[0].title ? `"${sections[0].title}"` : "Untitled"
+                } Section`
+              : "All Sections"}
           </DialogTitle>
           <DialogDescription className="text-primary text-xs leading-relaxed">
             {!singleSectionExport && (

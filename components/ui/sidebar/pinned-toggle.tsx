@@ -3,7 +3,7 @@
 import { useDemoStore } from "@/store/demo-store";
 import { PanelMode, usePanelStore } from "@/store/panel-store";
 import { FaImage } from "react-icons/fa";
-import { FaLeaf } from "react-icons/fa6";
+import { FaBook } from "react-icons/fa6";
 
 export function PanelToggleButton({
   mode,
@@ -83,8 +83,8 @@ export function PinnedModeToggle({ showText = true }: { showText?: boolean }) {
             />
             <PanelToggleButton
               mode="explore"
-              icon={<FaLeaf />}
-              label="Greenhouse"
+              icon={<FaBook />}
+              label="Libary"
               title="Toggle Explore View"
             />
           </>

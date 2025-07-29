@@ -21,7 +21,7 @@ export default function RefreshButton() {
     setTimeout(() => {
       setIsSpinning(false);
 
-      toast.success("Successfully refreshed Mudkits!");
+      toast.success("Successfully refreshed Sections!");
     }, 1600); // matches animation duration
   };
 
@@ -29,8 +29,8 @@ export default function RefreshButton() {
   return (
     <button
       type="button"
-      aria-label="Refresh Mudkits"
-      title="Refresh Mudkits"
+      aria-label="Refresh all Sections"
+      title="Refresh all Sections"
       onClick={handleClick}
       className={`text-xs flex flex-row gap-0.5 items-center hover:text-accent 
         hover:underline cursor-pointer ${ACCESSIBLE_BUTTON}`}

@@ -1,5 +1,3 @@
-// /mudkit/[sectionId]/page.tsx
-
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { metadata as layoutMetadata } from "@/app/layout";
@@ -18,7 +16,7 @@ export async function generateMetadata({
 
   if (!section) return;
 
-  const title = section.title?.trim() || "Untitled Mudkit";
+  const title = section.title?.trim() || "Untitled Section";
   const thumbnailUrl = getThumbnailUrl(section.section_id, "section-thumb-ext");
 
   return {
@@ -26,19 +24,19 @@ export async function generateMetadata({
     title,
     openGraph: {
       ...layoutMetadata.openGraph,
-      title: `${title} – Mudkit`,
+      title: `${title} – Section`,
       images: [
         {
           url: thumbnailUrl,
           width: THUMBNAIL_ASPECT_MAP["section-thumb-ext"].width,
           height: THUMBNAIL_ASPECT_MAP["section-thumb-ext"].height,
-          alt: `${title} – Mudkit`,
+          alt: `${title} – Section`,
         },
       ],
     },
     twitter: {
       ...layoutMetadata.twitter,
-      title: `${title} – Mudkit`,
+      title: `${title} – Section`,
       images: [thumbnailUrl],
     },
   };

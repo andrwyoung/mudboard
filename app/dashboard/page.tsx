@@ -141,7 +141,7 @@ export default function DashboardPage() {
                       setDashboardMode("sections");
                     }}
                   >
-                    Mudkits
+                    Sections
                   </Button>
                 </div>
               </div>

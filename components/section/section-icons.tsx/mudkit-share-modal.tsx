@@ -9,18 +9,17 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Section } from "@/types/board-types";
-import { FaLeaf } from "react-icons/fa";
 import { supabase } from "@/lib/supabase/supabase-client";
 import { useMetadataStore } from "@/store/metadata-store";
 import { CheckField } from "@/components/ui/check-field";
 import { SECTION_BASE_URL } from "@/types/constants";
-import { FaCopy, FaSeedling } from "react-icons/fa6";
-import { BeanIcon } from "@/components/ui/bean-icon";
+import { FaBookBookmark, FaCopy } from "react-icons/fa6";
 import { useExploreStore } from "@/store/explore-store";
 import { SectionWithStats } from "@/types/stat-types";
 import { useLayoutStore } from "@/store/layout-store";
 import { useDemoStore } from "@/store/demo-store";
 import { fireUserConfetti } from "@/lib/db-actions/fire-user-confetti";
+import { IoLibrary } from "react-icons/io5";
 
 type ShareableSectionField =
   | "is_public"
@@ -128,7 +127,7 @@ export default function SectionShareModal({
       const { tempMudkits, setTempMudkits } = useExploreStore.getState();
 
       if (value) {
-        useDemoStore.getState().fireConfetti();
+        // useDemoStore.getState().fireConfetti();
 
         // Prevent duplicate entries
         const alreadyExists = tempMudkits.some(
@@ -156,19 +155,20 @@ export default function SectionShareModal({
         <button
           onClick={() => setOpen(true)}
           type="button"
-          // title={section.is_public ? "Open Sharing Options" : "Plant a Mudkit"}
-          title={"Open Sharing Options"}
+          title={
+            section.is_public
+              ? "Open Section Settings"
+              : `Save ${
+                  section.title ? `"${section.title}"` : "Untitled Section"
+                } To Library`
+          }
           aria-label={"Open Sharing Options"}
-          className="hover:text-accent cursor-pointer transition-all duration-200 "
+          className="hover:text-accent cursor-pointer transition-all duration-200 mr-[2px]"
         >
           {section.is_public ? (
-            section.is_on_marketplace ? (
-              <FaSeedling className="size-4.5 mr-[1px]" />
-            ) : (
-              <FaLeaf className="size-5 mr-[1px]" />
-            )
+            <IoLibrary className="size-5" />
           ) : (
-            <BeanIcon className="size-5 mr-[1px] -translate-y-[2px]" />
+            <FaBookBookmark className="size-4.5" />
           )}
         </button>
       ) : (
@@ -187,17 +187,20 @@ export default function SectionShareModal({
           <DialogHeader>
             <DialogTitle className="text-xl">
               {section.is_public
-                ? "Mudkit Settings"
-                : "Publish Section as a Mudkit"}
+                ? `${
+                    section.title ? `"${section.title}"` : "Untitled"
+                  } Section Settings`
+                : `Save ${
+                    section.title ? `"${section.title}"` : "Untitled Section"
+                  } To Library`}
             </DialogTitle>
           </DialogHeader>
 
           {published ? (
             <div>
               <p className="text-sm">
-                This Section is published as a Mudkit. Find it in the
-                <FaLeaf className="inline -translate-y-[1px] ml-1 mr-0.5" />{" "}
-                <strong>Greenhouse</strong>
+                This Section is saved in your <strong>Library</strong>
+                <IoLibrary className="inline -translate-y-[2px] ml-1 mr-0.5" />{" "}
               </p>
               {section.owned_by ? (
                 <div className="flex flex-col gap-4 mt-2">
@@ -230,15 +233,9 @@ export default function SectionShareModal({
                   )}
                 </div>
               ) : (
-                <div className="text-sm my-12 text-center italic">
-                  {/* <p className="">
-                    This is a <strong>temporary</strong> Mudkit.
-                  </p>
-                  <p>Make an account to come back to it again.</p> */}
-                  <p>Congrats on creating your first Mudkit!!</p>
-                  <p>
-                    You should see it now on the main page of the Greenhouse!
-                  </p>
+                <div className="text-sm my-8 text-center italic">
+                  <p>Congrats saving your first Section!!</p>
+                  <p>You should see it now in your personal Library.</p>
                 </div>
               )}
             </div>
@@ -246,29 +243,10 @@ export default function SectionShareModal({
             <div className="text-sm text-primary leading-relaxed mt-3 space-y-4">
               <div>
                 <p className="text-sm text-primary mt-1 mb-8 leading-relaxed">
-                  {/* A Mudkit is a{" "}
-                  <strong>section that you can easily find</strong> in the
-                  Greenhouse */}
-                  A Mudkit is a{" "}
-                  <strong>section that you can easily find</strong> in the
-                  Greenhouse. So that you can use those images easily in other
-                  projects!
+                  <strong>Add this section</strong> to your Library to reuse
+                  these images in other boards or projects.
                 </p>
               </div>
-              {/* 
-              <AccordianWrapper title="What happens when you publish?">
-                <ul className="list-disc list-inside text-xs text-primary space-y-1">
-                  <li>This section will appear in your private Greenhouse</li>
-                  <li>You get a sharable, view-only link</li>
-                  <li>
-                    If you share to the community, it will appear
-                    everyone&apos;s Greenhouse. Others can clone images, but
-                    can&apos;t edit your original
-                  </li>
-
-                  <li>You can unpublish at any time</li>
-                </ul>
-              </AccordianWrapper> */}
             </div>
           )}
 
@@ -288,25 +266,14 @@ export default function SectionShareModal({
                   }
 
                   updateField("is_public", !published, {
-                    on: "Mudkit Published!",
-                    off: "Mudkit Unpublished.",
+                    on: "Section Added to Library!",
+                    off: "Section Removed from Library.",
                   });
                 }}
               >
-                {published ? "Unpublish" : "Create Mudkit!"}
+                {published ? "Unpublish" : "Add to Library!"}
               </Button>
-              {/* {published && (
-                <Button variant="secondary" onClick={copyLink}>
-                  <FaLink />
-                  Copy Share Link
-                </Button>
-              )} */}
             </div>
-            {/* <p className="text-xs mt-1">
-              {!section.owned_by &&
-                !published &&
-                "This board hasn’t been saved yet — your Mudkit will be temporary."}
-            </p> */}
           </DialogFooter>
         </DialogContent>
       </Dialog>

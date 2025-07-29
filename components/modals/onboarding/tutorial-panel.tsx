@@ -2,10 +2,10 @@ import { useState } from "react";
 import { MissionType, useDemoStore } from "@/store/demo-store";
 import { TUTORIAL_TITLE } from "@/types/constants";
 import { ChevronDown, ChevronUp } from "lucide-react"; // or any icon set you’re using
-import { FaCaretDown, FaLeaf } from "react-icons/fa6";
+import { FaBookBookmark, FaCaretDown } from "react-icons/fa6";
 import DemoHelpModal from "./demo-help-modal";
-import { BeanIcon } from "@/components/ui/bean-icon";
 import { FaFileDownload } from "react-icons/fa";
+import { IoLibrary } from "react-icons/io5";
 
 type TutorialRowType = {
   text: React.ReactNode;
@@ -17,8 +17,8 @@ const essentialItems: TutorialRowType[] = [
   {
     text: (
       <>
-        Grab an Image from the Greenhouse{" "}
-        <FaLeaf className="inline -translate-y-[2px] ml-0.5 opacity-75" />
+        Grab an Image from the Library{" "}
+        <IoLibrary className="inline -translate-y-[2px] ml-0.5 opacity-75" />
       </>
     ),
     mission: "greenhouse",
@@ -26,8 +26,8 @@ const essentialItems: TutorialRowType[] = [
   {
     text: (
       <>
-        Create a Mudkit{" "}
-        <BeanIcon
+        Save a Section to your Library{" "}
+        <FaBookBookmark
           className="inline -translate-y-[2px] ml-0.5
         size-3 opacity-75"
         />
@@ -139,7 +139,7 @@ export default function TutorialPanel() {
               {missionsCompleted.mudkit && (
                 <TutorialRow
                   item={{
-                    text: "(Final Boss) Grab an Image from your Mudkit",
+                    text: "(Final Boss) Use an image from the section you just saved",
                     mission: "mudkit2",
                   }}
                 />

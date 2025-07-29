@@ -1,7 +1,7 @@
 import { usePanelStore } from "@/store/panel-store";
 import { useUIStore } from "@/store/ui-store";
-import { FaLeaf, FaVectorSquare } from "react-icons/fa6";
-
+import { FaVectorSquare } from "react-icons/fa6";
+import { IoLibrary } from "react-icons/io5";
 function WorkspaceToggleButton({
   icon,
   label,
@@ -69,9 +69,9 @@ export function WorkspaceToggles({
         collapsed={collapsed}
       />
       <WorkspaceToggleButton
-        icon={<FaLeaf />}
-        label={!collapsed ? "Greenhouse" : undefined}
-        title={greenhouseOpen ? "Close Greenhouse" : "Open Greenhouse"}
+        icon={<IoLibrary />}
+        label={!collapsed ? "Library" : undefined}
+        title={greenhouseOpen ? "Close Library" : "Open Library"}
         onClick={() => {
           if (greenhouseOpen) {
             setPanelMode("none");

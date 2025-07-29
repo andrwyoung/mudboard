@@ -4,11 +4,11 @@ import { useExploreStore } from "@/store/explore-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { SectionWithStats } from "@/types/stat-types";
 import { useState } from "react";
-import { FaCaretDown, FaLeaf, FaSeedling } from "react-icons/fa6";
+import { FaBookBookmark, FaCaretDown } from "react-icons/fa6";
 import { MudkitSelectButtonExplore } from "../mudkit-selectors copy";
 import RefreshButton from "./search-mode/refresh-button";
-import { BeanIcon } from "@/components/ui/bean-icon";
 import { useDemoStore } from "@/store/demo-store";
+import { FaGlobeAmericas } from "react-icons/fa";
 
 export default function SearchMode({
   handleFetchMudkit,
@@ -41,12 +41,11 @@ export default function SearchMode({
   return (
     <>
       <div>
-        <h1 className="text-2xl mt-2 font-semibold">Greenhouse</h1>
+        <h1 className="text-2xl mt-2 font-semibold">Library</h1>
       </div>
       <div className="flex flex-row justify-between items-start mb-8 gap-8">
         <p className="text-sm font-medium mt-1">
-          Collections of images (called Mudkits) that you can use in your boards
-          — like a community reference library!
+          Your collection of resuable sections.
         </p>
         <RefreshButton />
       </div>
@@ -54,10 +53,8 @@ export default function SearchMode({
       {(!isDemo || tempMudkits.length > 0) && (
         <div className="mb-8">
           <h3 className="text-white text-md font-bold mb-2 flex items-center gap-2">
-            {isDemo
-              ? "DEMO: These are the Mudkits you just created"
-              : "Your Private Mudkits"}
-            <FaLeaf />
+            Your Private Sections
+            <FaBookBookmark />
           </h3>
 
           {existsUserOrTempMudkits ? (
@@ -147,10 +144,10 @@ export default function SearchMode({
             </>
           ) : (
             <p className="w-full text-center py-8 text-sm font-semibold ">
-              You haven’t made any mudkits yet!
+              You haven’t saved any sections yet!
               <br /> Click the{" "}
-              <BeanIcon className="inline mx-1 size-4 -translate-y-[1px]" />{" "}
-              icon on any section to publish one.
+              <FaBookBookmark className="inline mx-1 size-4 -translate-y-[1px]" />{" "}
+              icon on any section to save one.
             </p>
           )}
         </div>
@@ -158,13 +155,14 @@ export default function SearchMode({
 
       <div>
         <h3 className="text-white text-md font-bold mb-2 flex items-center gap-2">
-          {isDemo ? "DEMO: Click any Mudkit to Explore" : "Community Mudkits "}{" "}
-          <FaSeedling />
+          Community Sections
+          {isDemo ? " (DEMO: Click on one!)" : ""}
+          <FaGlobeAmericas />
         </h3>
 
         {otherMudkits.length === 0 ? (
           <p className="text-sm italic text-white px-2 py-4 text-center">
-            Error fetching Community Mudkits
+            Error fetching Community Sections
           </p>
         ) : (
           <div className="p-1 bg-muted rounded-lg">

@@ -13,7 +13,7 @@ import { SupportEmailAddress } from "@/utils/support-email";
 export default function NotFoundComponent({
   pageTitle = "Page",
 }: {
-  pageTitle?: "Board" | "Page" | "Mudkit";
+  pageTitle?: "Board" | "Page" | "Section";
 }) {
   const user = useMetadataStore((s) => s.user);
 

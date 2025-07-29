@@ -2,7 +2,7 @@
 import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
 import { Button } from "../../ui/button";
 import { ModalType, useDemoStore } from "@/store/demo-store";
-import { BeanIcon } from "../../ui/bean-icon";
+import { FaFolderOpen } from "react-icons/fa6";
 
 const welcomePages: Record<
   ModalType,
@@ -49,7 +49,7 @@ const welcomePages: Record<
         {/* <p className="text-sm text-primary ">Take a look around!</p> */}
         <p className="text-sm text-primary mb-2 text-center">
           Click
-          <BeanIcon className="inline -translate-y-[1px] ml-1.5 mr-0.5 size-4" />{" "}
+          <FaFolderOpen className="inline -translate-y-[1px] ml-1.5 mr-0.5 size-4" />{" "}
           to create a Mudkit
         </p>
       </div>

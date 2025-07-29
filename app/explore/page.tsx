@@ -31,7 +31,7 @@ export default function ExplorePage() {
 
   return (
     <div className="p-4 md:p-8">
-      <h1 className="text-3xl font-bold mb-6">Explore Mudkits</h1>
+      <h1 className="text-3xl font-bold mb-6">Explore Sections</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {mudkits.map((kit) => (
           <Link

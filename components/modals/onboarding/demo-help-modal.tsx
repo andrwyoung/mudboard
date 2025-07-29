@@ -7,8 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import { FaLeaf } from "react-icons/fa6";
-import { BeanIcon } from "@/components/ui/bean-icon";
+import { FaFolderOpen, FaLeaf } from "react-icons/fa6";
 import { FaFileDownload } from "react-icons/fa";
 import { NEW_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
@@ -29,24 +28,24 @@ export default function DemoHelpModal() {
 
   const tipText: Record<string, HelpType> = {
     greenhouse: {
-      title: "Using the Greenhouse",
+      title: "Using the Library",
       body: (
         <div className="flex flex-col gap-1">
           <h2 className="text-lg">Where is it?</h2>
           <p className="mb-2">
-            Click the Greenhouse{" "}
+            Click the Library{" "}
             <FaLeaf className="inline mx-[1px] -translate-y-[1px]" /> toggle on
             the side bar to open.
           </p>
           <Image
             src="/tutorial/greenhouse2.png"
-            alt="Greenhouse Toggle"
+            alt="Library Toggle"
             width={217}
             height={108}
             className="self-center mb-2 max-w-48 rounded-lg"
           />
           <h2 className="text-lg">How do I use it?</h2>
-          <p className="mb-2">Click on one of the Mudkits.</p>
+          <p className="mb-2">Click on one of the Sections.</p>
           <Image
             src="/tutorial/greenhouse3.png"
             alt="Greenhouse Toggle"
@@ -68,13 +67,13 @@ export default function DemoHelpModal() {
       ),
     },
     mudkit: {
-      title: "Create a Mudkit",
+      title: "Save a Section to your Library",
       body: (
         <div className="flex flex-col gap-1">
           <h2 className="text-lg">Where is it?</h2>
           <p className="leading-relaxed">
             Click the{" "}
-            <BeanIcon className="inline size-4 mx-[1px] -translate-y-[2px]" />{" "}
+            <FaFolderOpen className="inline size-4 mx-[1px] -translate-y-[2px]" />{" "}
             icon in any of the section headers:
           </p>
           <Image
@@ -90,7 +89,7 @@ export default function DemoHelpModal() {
           </p>
 
           <p className="mb-4">
-            You should see your Mudkit in the Greenhouse after clicking Create:
+            You should see your Section in the Greenhouse after clicking Create:
           </p>
           <Image
             src="/tutorial/mudkit3.png"
@@ -99,9 +98,6 @@ export default function DemoHelpModal() {
             height={113}
             className="self-center mb-2 w-full rounded-lg"
           />
-          <p className="mb-2 italic">
-            Note: This is just a demo, so Mudkits you create here are temporary.
-          </p>
         </div>
       ),
     },
@@ -176,10 +172,6 @@ export default function DemoHelpModal() {
             height={133}
             className="self-center max-h-48 rounded-lg border-2 border-primary mb-2"
           />
-
-          {/* <p className="mb-2 italic">
-            Note: This is just a demo, so Mudkits you create here are temporary.
-          </p> */}
         </div>
       ),
     },
