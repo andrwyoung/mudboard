@@ -1,6 +1,5 @@
 import { Block } from "@/types/block-types";
 import { cloneBlocks } from "../db-actions/cloning/clone-blocks";
-import { toastClonedBlocks } from "@/utils/toast-clone-blocks";
 
 export async function handleClonedBlockDrop({
   block,
@@ -38,5 +37,5 @@ export async function handleClonedBlockDrop({
     },
   });
 
-  toastClonedBlocks(1);
+  // toastClonedBlocks(1);
 }

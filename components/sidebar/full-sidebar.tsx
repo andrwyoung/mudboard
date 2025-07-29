@@ -12,6 +12,7 @@ import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { WorkspaceToggles } from "@/components/ui/sidebar/workspace-toggle";
+import { useDemoStore } from "@/store/demo-store";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
@@ -25,6 +26,7 @@ export default function Sidebar({
   onCollapse: () => void;
 }) {
   const canEdit = canEditBoard();
+  const isDemo = useDemoStore((s) => s.isDemoBoard);
 
   return (
     <div
@@ -36,10 +38,18 @@ export default function Sidebar({
 
       <div className="flex flex-col gap-2 justify-center items-center py-8 px-4 ">
         <Logo />
-        <div className="flex flex-col items-center gap-1.5">
+        {/* <div className="flex flex-col items-center gap-1.5">
           <p className="font-header text-xs font-bold">Start creating:</p>
           <NewBoardButton />
-        </div>
+        </div> */}
+        {isDemo && (
+          <div className="flex flex-col items-center gap-1.5">
+            <p className="font-header text-xs font-bold">
+              This is a Demo Board
+            </p>
+            <NewBoardButton />
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col flex-grow justify-center gap-24">

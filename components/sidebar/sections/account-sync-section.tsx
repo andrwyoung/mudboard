@@ -12,6 +12,7 @@ import Link from "next/link";
 import { FaHome } from "react-icons/fa";
 import { LuLogIn } from "react-icons/lu";
 import { useModalStore } from "@/store/modal-store";
+import { useDemoStore } from "@/store/demo-store";
 
 export default function AccountSyncSection() {
   const board = useMetadataStore((s) => s.board);
@@ -23,10 +24,11 @@ export default function AccountSyncSection() {
   const boardUnclaimed = board !== null && board.user_id === null;
 
   const canEdit = canEditBoard();
+  const isDemo = useDemoStore((s) => s.isDemoBoard);
 
   return (
     <div className="flex flex-col gap-2">
-      {boardUnclaimed && (
+      {!isDemo && boardUnclaimed && (
         <div className="flex flex-col gap-2 mb-2 mt-2">
           <p className="text-xs font-semibold text-center">
             This Board is Unclaimed. <br />

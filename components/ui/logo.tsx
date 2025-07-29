@@ -6,7 +6,7 @@ import { DASHBOARD_LINK } from "@/types/constants";
 
 export default function Logo({
   color = "white",
-  enforceHome = true,
+  enforceHome = false,
 }: {
   color?: "white" | "brown";
   enforceHome?: boolean;

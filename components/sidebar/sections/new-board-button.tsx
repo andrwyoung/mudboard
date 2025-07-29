@@ -18,7 +18,7 @@ export default function NewBoardButton() {
       data-umami-event={`App: Create New Board`}
     >
       <FaPlus className="size-2" />
-      Create new board!
+      Create Your Own!
     </Link>
   );
 }
