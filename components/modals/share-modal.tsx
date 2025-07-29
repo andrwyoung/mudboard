@@ -157,7 +157,12 @@ export default function SectionShareModal() {
               This Section is saved in your <strong>Library</strong>
               <IoLibrary className="inline -translate-y-[2px] ml-1 mr-0.5" />{" "}
             </p>
-            {!isDemo ? (
+            {isDemo || !user ? (
+              <div className="text-sm my-8 text-center italic">
+                <p>Congrats saving a Section!!</p>
+                <p>You should see it now in your personal Library.</p>
+              </div>
+            ) : (
               <div className="flex flex-col gap-4 mt-2">
                 {shareOptions.map(
                   ({ label, desc, field, gated, flip, disabled }) => (
@@ -186,11 +191,6 @@ export default function SectionShareModal() {
                     </div>
                   )
                 )}
-              </div>
-            ) : (
-              <div className="text-sm my-8 text-center italic">
-                <p>Congrats saving your first Section!!</p>
-                <p>You should see it now in your personal Library.</p>
               </div>
             )}
           </div>
@@ -227,7 +227,11 @@ export default function SectionShareModal() {
                   off: "Section Removed from Library.",
                 });
 
-                await handleLibrarySync(section, !currentPublishState, isDemo);
+                await handleLibrarySync(
+                  section,
+                  !currentPublishState,
+                  isDemo || !user
+                );
               }}
             >
               {published ? "Unpublish" : "Add to Library!"}
