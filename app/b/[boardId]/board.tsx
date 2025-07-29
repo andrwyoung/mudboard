@@ -47,6 +47,7 @@ import ResizableSidebar from "./sidebar";
 import { COLLAPSED_SIDEBAR_WIDTH } from "@/types/constants";
 import TutorialPanel from "@/components/modals/onboarding/tutorial-panel";
 import WelcomeModal from "@/components/modals/onboarding/welcome-modal";
+import SectionShareModal from "@/components/modals/share-modal";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -290,6 +291,7 @@ export default function Board({ boardId }: { boardId: string }) {
       </DndContext>
       <TutorialPanel />
       <WelcomeModal />
+      <SectionShareModal />
     </div>
   );
 }

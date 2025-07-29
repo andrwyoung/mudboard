@@ -20,6 +20,8 @@ type ExploreStore = {
   otherMudkits: SectionWithStats[];
   fetchMudkits: (userId?: string) => Promise<void>;
 
+  setUserMudkits: (kits: SectionWithStats[]) => void;
+
   tempMudkits: SectionWithStats[];
   setTempMudkits: (kits: SectionWithStats[]) => void;
 
@@ -47,11 +49,16 @@ export const useExploreStore = create<ExploreStore>((set) => ({
     set({ userMudkits, otherMudkits });
   },
 
+  setUserMudkits: (kits: SectionWithStats[]) => set({ userMudkits: kits }),
+
   tempMudkits: [],
   setTempMudkits: (kits: SectionWithStats[]) => set({ tempMudkits: kits }),
 
   reset: () =>
     set({
+      exploreMode: "search",
+      currentSelectedMudkitType: null,
+
       userBoards: [],
       userMudkits: [],
       otherMudkits: [],

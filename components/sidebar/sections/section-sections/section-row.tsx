@@ -28,6 +28,8 @@ import { canEditSection } from "@/lib/auth/can-edit-section";
 import { FaCircle, FaLock } from "react-icons/fa";
 import { FaBookBookmark } from "react-icons/fa6";
 import { IoLibrary } from "react-icons/io5";
+import { useModalStore } from "@/store/modal-store";
+import { scrollToSection } from "@/lib/sidebar/scroll-to-selected-section";
 
 export default function SectionRow({
   thisBoardSection,
@@ -290,10 +292,11 @@ export default function SectionRow({
 
                   <ContextMenuItem
                     onClick={() => {
-                      setEditValue(thisBoardSection.section.title ?? "");
-                      setTimeout(() => {
-                        setIsEditing(true);
-                      }, 100);
+                      scrollToSection(thisBoardSection.section.section_id);
+
+                      useModalStore
+                        .getState()
+                        .openShareModal(thisBoardSection.section.section_id);
                     }}
                   >
                     {!thisBoardSection.section.is_public ? (

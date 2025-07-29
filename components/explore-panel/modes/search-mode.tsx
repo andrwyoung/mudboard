@@ -1,5 +1,3 @@
-// components/explore-panel/modes/search-mode.tsx
-
 import { useExploreStore } from "@/store/explore-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { SectionWithStats } from "@/types/stat-types";

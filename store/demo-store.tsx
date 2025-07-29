@@ -37,6 +37,8 @@ type DemoStore = {
   mode: ModalType | null;
   openModal: (modal: ModalType | null) => void;
   closeModal: () => void;
+
+  resetDemo: () => void;
 };
 
 export const useDemoStore = create<DemoStore>((set, get) => ({
@@ -126,4 +128,23 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
     }
   },
   closeModal: () => set({ mode: null }),
+
+  resetDemo: () =>
+    set(() => ({
+      showGreenhousePopup: false,
+      hasFiredConfetti: false,
+      isTempMudkitSelected: false,
+      missionsCompleted: {
+        drag: false,
+        greenhouse: false,
+        mudkit: false,
+        mudkit2: false,
+        upload: false,
+        spotlight: false,
+        export: false,
+      },
+      currentHelpMission: null,
+      isDemoBoard: false,
+      mode: null,
+    })),
 }));

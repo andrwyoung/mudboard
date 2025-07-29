@@ -13,3 +13,10 @@ export function scrollToSelectedSection() {
     });
   }
 }
+
+export function scrollToSection(sectionId: string) {
+  sectionRefs.current?.[sectionId]?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+}

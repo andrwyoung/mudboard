@@ -12,7 +12,7 @@ import { useUIStore } from "@/store/ui-store";
 import SectionDownloadButton from "./section-icons.tsx/download-button";
 import SectionAddImageButton from "./section-icons.tsx/add-image-button";
 import SectionColumnSelector from "./section-icons.tsx/change-columns-select";
-import SectionShareModal from "./section-icons.tsx/mudkit-share-modal";
+import SectionShareButton from "./section-icons.tsx/mudkit-share-modal";
 import { FaLock } from "react-icons/fa6";
 import { updateSectionDescription } from "@/lib/db-actions/sync-text/update-section-description";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
@@ -95,7 +95,7 @@ function SectionHeader({
 
             <SectionDownloadButton section={section} />
 
-            <SectionShareModal section={section} canEdit={canEdit} />
+            <SectionShareButton section={section} canEdit={canEdit} />
           </div>
 
           <div className="hidden sm:block">

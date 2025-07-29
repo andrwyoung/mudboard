@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
-import { FaFolderOpen, FaLeaf } from "react-icons/fa6";
+import { FaBookBookmark, FaLeaf } from "react-icons/fa6";
 import { FaFileDownload } from "react-icons/fa";
 import { NEW_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
@@ -73,11 +73,11 @@ export default function DemoHelpModal() {
           <h2 className="text-lg">Where is it?</h2>
           <p className="leading-relaxed">
             Click the{" "}
-            <FaFolderOpen className="inline size-4 mx-[1px] -translate-y-[2px]" />{" "}
+            <FaBookBookmark className="inline size-4 mx-[2px] -translate-y-[2px]" />{" "}
             icon in any of the section headers:
           </p>
           <Image
-            src="/tutorial/mudkit1.png"
+            src="/tutorial/mudkit4.png"
             alt="Greenhouse Toggle"
             width={108}
             height={68}
@@ -147,7 +147,7 @@ export default function DemoHelpModal() {
           </p>
           <div className="flex gap-6 self-center">
             <Image
-              src="/tutorial/mudkit1.png"
+              src="/tutorial/mudkit4.png"
               alt="Greenhouse Toggle"
               width={108}
               height={68}
