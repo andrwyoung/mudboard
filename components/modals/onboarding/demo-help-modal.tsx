@@ -272,7 +272,7 @@ export default function DemoHelpModal() {
               setLoginModalOpen(true);
               closeHelpModal();
             }}
-            className="px-4 py-1 bg-primary text-white rounded-lg font-header
+            className="px-4 py-2 bg-primary text-white rounded-lg font-header
         hover:bg-accent hover:text-primary cursor-pointer transition-all duration-100"
           >
             Create an Account
@@ -283,15 +283,16 @@ export default function DemoHelpModal() {
   };
 
   const missions = useDemoStore((s) => s.missionsCompleted);
+  const hasMarkedFinal = useDemoStore((s) => s.hasMarkedFinal);
   useEffect(() => {
     const allComplete = Object.values(missions).every(Boolean);
 
-    if (allComplete) {
+    if (allComplete && !hasMarkedFinal) {
       setTimeout(() => {
         useDemoStore.getState().markFinalComplete();
       }, 500);
     }
-  }, [missions]);
+  }, [missions, hasMarkedFinal]);
 
   if (currentTipMission === null) return null;
   const currentTip = tipText[currentTipMission];
