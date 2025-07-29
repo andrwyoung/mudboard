@@ -25,7 +25,8 @@ type PanelStore = {
 export const usePanelStore = create<PanelStore>((set) => ({
   panelMode: "none",
   setPanelMode: (mode: PanelMode) => set({ panelMode: mode }),
-  closePanel: () => set({ panelMode: "none" as PanelMode, pinnedBlock: null }),
+  // closePanel: () => set({ panelMode: "none" as PanelMode, pinnedBlock: null }),
+  closePanel: () => set({ panelMode: "none" }),
 
   // pinned panel
   openPinnedPanel: () => set({ panelMode: "focus" }),

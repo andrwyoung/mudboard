@@ -55,7 +55,7 @@ export function PinnedModeToggle({ showText = true }: { showText?: boolean }) {
   return (
     <div className="flex flex-col mb-2">
       <div className="flex justify-between items-center">
-        <h3 className="text-sm font-semibold">Side panel:</h3>
+        <h3 className="text-xs font-semibold">Side panel:</h3>
         {
           <button
             type="button"

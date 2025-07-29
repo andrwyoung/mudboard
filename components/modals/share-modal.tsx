@@ -85,6 +85,26 @@ export default function SectionShareModal() {
       return;
     }
 
+    // block if trying to publish to marketplace and it's less than 10 blocks
+    const isTryingToPublishToMarketplace =
+      field === "is_on_marketplace" &&
+      value === true &&
+      section.is_public &&
+      !section.is_on_marketplace;
+
+    if (isTryingToPublishToMarketplace) {
+      const numBlocks =
+        useLayoutStore.getState().sectionColumns[section.section_id]?.flat()
+          .length ?? 0;
+
+      if (numBlocks < 10) {
+        toast.error(
+          "Add at least 10 blocks before sharing to the Marketplace."
+        );
+        return;
+      }
+    }
+
     const updates: Record<string, boolean | string> = { [field]: value };
 
     const isFirstMarketplacePublish =
@@ -193,14 +213,14 @@ export default function SectionShareModal() {
                 const currentPublishState = published;
 
                 // first check that we even have blocks
-                const numBlocks = useLayoutStore
-                  .getState()
-                  .sectionColumns[section.section_id].flat().length;
+                // const numBlocks = useLayoutStore
+                //   .getState()
+                //   .sectionColumns[section.section_id].flat().length;
 
-                if (numBlocks === 0) {
-                  toast.error("Please at least add 1 block");
-                  return;
-                }
+                // if (numBlocks === 0) {
+                //   toast.error("Please at least add 1 block");
+                //   return;
+                // }
 
                 await updateField("is_public", !currentPublishState, {
                   on: "Section Added to Library!",

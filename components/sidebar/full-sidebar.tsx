@@ -47,8 +47,8 @@ export default function Sidebar({
           <div className="px-4">
             <SectionsSection sectionRefs={sectionRefs} />
           </div>
-          <div className="px-6 flex flex-col gap-1">
-            <h3 className="text-sm ">Toggles:</h3>
+          <div className="mx-6 flex flex-col gap-1 py-4  border-background ">
+            {/* <h3 className="text-sm ">Toggles:</h3> */}
             <WorkspaceToggles />
           </div>
         </div>

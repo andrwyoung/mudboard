@@ -169,7 +169,7 @@ export function BlockRenderer({
                 openPinnedPanelWithBlock(block);
               }}
             >
-              Spotlight Image
+              Spotlight
             </ContextMenuItem>
           </>
         )}

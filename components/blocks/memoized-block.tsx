@@ -27,6 +27,7 @@ import { usePanelStore } from "@/store/panel-store";
 import { useLayoutStore } from "@/store/layout-store";
 import { copyImageToClipboard } from "@/lib/local-helpers/copy-image-to-clipboard";
 import { useSecondaryLayoutStore } from "@/store/secondary-layout-store";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export function BlockChooser({
   canEdit,
@@ -165,7 +166,7 @@ function BlockComponent({
                 openPinnedPanelWithBlock(block);
               }}
             >
-              Spotlight Image
+              Spotlight
             </ContextMenuItem>
 
             {canEdit && (
