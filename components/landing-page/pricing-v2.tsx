@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { FaXmark, FaCheck } from "react-icons/fa6";
-import { INTEREST_LINK } from "@/types/constants";
+import { FREE_LICENSE_LINK, INTEREST_LINK } from "@/types/constants";
 import React from "react";
 
 type Feature = {
@@ -52,8 +52,8 @@ const plans: Plan[] = [
   {
     name: "Lifetime License",
     description: "Lifetime access to all current features:",
-    price: "$25 one-time",
-    oldPrice: "Early Supporter Pricing",
+    price: "$0",
+    oldPrice: "Grab a License Early! ($40 later)",
     features: [
       {
         label: (
@@ -80,23 +80,24 @@ const plans: Plan[] = [
     // cta: <BuyButton />,
     cta: (
       <a
-        href={INTEREST_LINK}
+        href={FREE_LICENSE_LINK}
         className="w-full mt-4 block"
         data-umami-event={`Landing page: Pricing CTA Demo Board`}
         target="_blank"
         rel="noopener noreferrer"
-        title="Mudboard Waitlist"
+        title="Get Free Lifetime License"
       >
         <Button
           variant="secondary"
           className={`w-full font-header bg-secondary`}
         >
-          Join the Waitlist
+          {/* Join the Waitlist */}
+          Get Free License
         </Button>
       </a>
     ),
     highlight: true,
-    badge: "Beta Pricing",
+    badge: "Beta Testing",
     badgeColor: "bg-accent text-primary",
     note: (
       <span>
@@ -130,7 +131,7 @@ const plans: Plan[] = [
 
   {
     name: "More Coming Soon",
-    description: "Optional monthly plan for teams (planned $7/month)",
+    description: "Monthly plan for teams",
     // price: "TBD",
     features: [
       // { label: "Unlimited images", status: "neutral" },
@@ -138,7 +139,7 @@ const plans: Plan[] = [
       { label: "Collaboration + Versioning", status: "neutral" },
       { label: "Uncompressed uploads", status: "neutral" },
       { label: "Advanced sharing controls", status: "neutral" },
-      { label: "Portfolio Features", status: "neutral" },
+      { label: "Image Search", status: "neutral" },
       // { label: "Note: plan to implement some monthly plan", status: "neutral" },
     ],
     // ctaText: "Upgrade to Pro",

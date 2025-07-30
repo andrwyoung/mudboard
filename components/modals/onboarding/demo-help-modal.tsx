@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import { FaBookBookmark } from "react-icons/fa6";
 import { FaFileDownload } from "react-icons/fa";
-import { NEW_BOARD_LINK } from "@/types/constants";
+import { FREE_LICENSE_LINK, NEW_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useModalStore } from "@/store/modal-store";
@@ -235,24 +235,43 @@ export default function DemoHelpModal() {
       body: (
         <div className="flex flex-col gap-2">
           <p className=""></p>
-          <p className="mb-4">
+          <p className="">
             {
               "Looks like you've got the hang of it (you even did the Extra Credit!)"
             }
           </p>
-          <p className="mb-6 leading-relaxed">
+          {/* <p className="mb-6 leading-relaxed">
             Want to save your work and create your own boards? <br />
             <strong>Create a free account!</strong>
+          </p> */}
+          <p className="mb-6 leading-relaxed">
+            <strong>Create a free account</strong> to save your work!
           </p>
           {/* <p>
             Feedback or ideas? I&apos;d love to hear from you:{" "}
             <strong>andrew@mudboard.com</strong>
           </p> */}
-          <p className="text-sm text-muted-foreground mt-2">
+          {/* <p className="text-sm text-muted-foreground mt-2">
             Feedback?{" "}
             <a href="mailto:andrew@mudboard.com" className="underline">
               andrew@mudboard.com
             </a>
+          </p> */}
+
+          <p className="text-sm text-primary mt-2 mb-2 leading-relaxed">
+            We&apos;re also giving out <strong>Free Lifetime Licenses</strong>{" "}
+            right now →{" "}
+            <a
+              href={FREE_LICENSE_LINK}
+              className="cursor-pointer underline hover:text-accent"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Mudboard Lifetime License"
+            >
+              {/* Join the Waitlist */}
+              get it here
+            </a>
+            <br /> (Or find out more info on the homepage)
           </p>
         </div>
       ),

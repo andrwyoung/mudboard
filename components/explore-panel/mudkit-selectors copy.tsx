@@ -1,6 +1,7 @@
 import { SectionWithStats } from "@/types/stat-types";
 import { cn } from "@/utils/utils";
-import { FaBookBookmark, FaCube } from "react-icons/fa6";
+import { FaGlobeAmericas } from "react-icons/fa";
+import { FaCube } from "react-icons/fa6";
 
 type Props = {
   section: SectionWithStats;
@@ -60,7 +61,7 @@ export function MudkitSelectButtonExplore({
         </div>
 
         <div className="grid grid-cols-[1fr_1fr_36px] w-30">
-          {blockCount && (
+          {blockCount !== undefined && (
             <p className="flex gap-1.5 items-center font-header text-start font-medium text-xs">
               <FaCube
                 className="opacity-60"
@@ -70,7 +71,7 @@ export function MudkitSelectButtonExplore({
             </p>
           )}
           {showIconForIsOnMarketplace && section.is_on_marketplace && (
-            <FaBookBookmark
+            <FaGlobeAmericas
               className="opacity-60 size-3.5"
               title="Section is shared publically"
             />

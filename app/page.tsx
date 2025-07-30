@@ -144,7 +144,7 @@ export default function Home() {
               </h1>
               <div className="flex flex-col items-center">
                 <p className="max-w-lg text-xs sm:text-sm text-accent font-bold">
-                  Early testing • Come try it!
+                  Early Testing • Get a Free License!
                 </p>
                 {/* <p className="text-lg mb-14 w-full font-semibold">
                   For illustrators who’d rather draw than organize reference
@@ -189,8 +189,11 @@ export default function Home() {
                   losing creative momentum — then share them cleanly. */}
                   {/* Built for creatives who need to test ideas quickly, export
                   cleanly, and never rebuild the same board twice. */}
-                  For illustators that want to organize and use references
-                  without digging through dozens of folders to find something.
+                  {/* For illustators that want to organize and use references
+                  without digging through dozens of folders to find something. */}
+                  For illustators that just want to use references, and
+                  don&apos;t like digging through dozens of folders to find
+                  something.
                 </p>
               </div>
 
@@ -314,19 +317,16 @@ export default function Home() {
           {/* PRICING */}
 
           <div className="mb-24 max-w-3xl">
-            <h2 className="text-3xl font-bold text-center mb-1">
-              Pricing (Coming Soon)
-            </h2>
+            <h2 className="text-3xl font-bold text-center mb-1">Pricing</h2>
 
-            {/* <p className="text-center text-sm text-muted mb-6 font-semibold">
-              Firsts 300 users get the Lifetime license for <strong>$20</strong>{" "}
-              .
-            </p> */}
             <p className="text-center text-sm text-muted mb-6 font-semibold">
+              Giving out Lifetime Licenses during Early Testing (planned until
+              late September)!
+            </p>
+            {/* <p className="text-center text-sm text-muted mb-6 font-semibold">
               We&apos;re still testing, so pricing isn&apos;t implemented yet.
               But you can join the waitlist to stay updated!
-              {/* Buthere&apos;s a general idea of what it will be. */}
-            </p>
+            </p> */}
             {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2"> */}
             <div>
               <PricingTable />

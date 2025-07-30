@@ -49,6 +49,7 @@ export const ROADMAP_LINK =
   "https://jondrew.notion.site/Mudboard-Roadmap-2162e809fa4e80eb94add8aa315c769d?source=copy_link";
 
 export const INTEREST_LINK = "https://forms.gle/QA96JUcRRP5YSqRT6";
+export const FREE_LICENSE_LINK = "https://forms.gle/aFJkyf2zz5UyAJSq6";
 
 export const TUTORIAL_TITLE = "Things to Try Out";
 
