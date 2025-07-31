@@ -6,7 +6,7 @@ import { THUMBNAIL_REGENERATION_DELAY } from "@/types/upload-settings";
 import { NUM_SECTION_TO_CHECK } from "@/types/constants";
 import { useThumbnailStore } from "@/store/thumbnail-store";
 
-export function useOffshoreThumbnailGeneration(boardId: string) {
+export function useOffshoreThumbnailGenerator(boardId: string) {
   const generateThumbnails = useThumbnailStore((s) => s.generateThumbnail);
 
   const [regenerationQueued, setRegenerationQueued] = useState(false);

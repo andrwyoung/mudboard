@@ -13,6 +13,8 @@ export const useThumbnailStore = create<ThumbnailStore>((set, get) => ({
   extThumbnailUrl: null,
 
   generateThumbnail: async (boardId: string) => {
+    console.log("Generating Thumbnail");
+
     set({
       dashThumbnailUrl: null,
       extThumbnailUrl: null,

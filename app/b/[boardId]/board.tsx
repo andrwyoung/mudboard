@@ -48,6 +48,7 @@ import { COLLAPSED_SIDEBAR_WIDTH } from "@/types/constants";
 import TutorialPanel from "@/components/modals/onboarding/tutorial-panel";
 import WelcomeModal from "@/components/modals/onboarding/welcome-modal";
 import SectionShareModal from "@/components/modals/share-modal";
+import { useOffshoreThumbnailGenerator } from "@/hooks/use-offshore-thumbnail-generator";
 
 // differentiating mirror gallery from real one
 export const MirrorContext = createContext(false);
@@ -152,6 +153,9 @@ export default function Board({ boardId }: { boardId: string }) {
   //
   // keyboard listeners
   useGlobalListeners();
+
+  // generating board thumbnails
+  useOffshoreThumbnailGenerator(boardId);
 
   // handling importing images
   const onlyOneSectionMode = boardSections.length === 1 || freeformMode;
