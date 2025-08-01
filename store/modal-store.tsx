@@ -1,4 +1,3 @@
-import { Section } from "@/types/board-types";
 import { create } from "zustand";
 
 type ModalStore = {

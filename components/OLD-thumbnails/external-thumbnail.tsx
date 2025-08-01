@@ -1,3 +1,6 @@
+// DEPRECATED for offshore generation.
+// Called by use-offshore-thumbnail-genreator.tsx
+
 // this is how we lay out the thumbnail you see when you send
 // a mudboard to your friends (if you have friends) through text
 

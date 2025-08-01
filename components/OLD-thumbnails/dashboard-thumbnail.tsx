@@ -1,4 +1,4 @@
-// DEPRECATED for offshore
+// DEPRECATED for use-offshore-thumbnail-genreator.tsx
 
 // this is how we lay out the thumbnail you see on the dashboard
 

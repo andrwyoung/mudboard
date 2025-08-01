@@ -1,3 +1,5 @@
+// DEPRECATED for use-offshore-thumbnail-genreator.tsx
+
 // KEY FILE: this is where all the thumbnail generation things "dock"
 
 // how this works:

@@ -1,3 +1,5 @@
+// this has the function that calls our offshore thumbnail regeneration
+
 import { OFFSHORE_THUMBNAIL_GEN_URL } from "@/types/upload-settings";
 import { create } from "zustand";
 

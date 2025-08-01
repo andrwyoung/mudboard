@@ -16,8 +16,8 @@ import GreyscaleWheel from "@/components/overlay-gallery/edit-buttons/color-pick
 import { getImageUrl } from "@/utils/get-image-url";
 import { usePanImage } from "@/hooks/overlay-gallery.tsx/use-pan-image";
 import { useGetInitialSizeOnLayout } from "@/hooks/overlay-gallery.tsx/use-get-initial-size";
-import { updateGreyscaleSupabase } from "@/lib/db-actions/block-editing.tsx/update-greyscale";
-import { updateFlippedSupabase } from "@/lib/db-actions/block-editing.tsx/update-flip";
+import { updateGreyscaleSupabase } from "@/lib/db-actions/block-editing/update-greyscale";
+import { updateFlippedSupabase } from "@/lib/db-actions/block-editing/update-flip";
 import { canEditSection } from "@/lib/auth/can-edit-section";
 import { GreyscaleToggleButton } from "@/components/overlay-gallery/edit-buttons/greyscale-button";
 import { FlippedToggleButton } from "@/components/overlay-gallery/edit-buttons/mirror-button";

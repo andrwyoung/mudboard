@@ -16,8 +16,8 @@ export const TEXT_BLOCK_HEIGHT = 196;
 export const CAPTION_HEIGHT = 28;
 
 // syncing
-export const AUTOSYNC_DELAY = 5000;
-export const THUMBNAIL_REGENERATION_DELAY = 5000;
+export const AUTOSYNC_DELAY = 5000; // how much time of "no movement" before we sync block order
+export const THUMBNAIL_REGENERATION_DELAY = 5000; // time AFTER order is sync before we generate thumbnail
 
 export const THUMBNAIL_COLUMNS = 3;
 

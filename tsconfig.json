@@ -28,7 +28,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/modals/onboarding"
+    "components/modals/onboarding",
+    "lib/db-actions/block-editing"
   ],
   "exclude": ["node_modules"]
 }
