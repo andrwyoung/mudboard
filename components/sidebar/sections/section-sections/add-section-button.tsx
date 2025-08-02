@@ -6,6 +6,7 @@ import { RefObject, useState } from "react";
 import SectionPickerDialog from "./section-picker";
 import { linkSectionToBoard } from "@/lib/db-actions/cloning/link-section";
 import { BoardSection } from "@/types/board-types";
+import { useDemoStore } from "@/store/demo-store";
 
 export default function AddSectionButton({
   sectionRefs,
@@ -70,7 +71,10 @@ export default function AddSectionButton({
         focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded
         
         ${collapsed ? "" : "px-4"}`}
-        onClick={() => handleAddSection(null)}
+        onClick={() => {
+          useDemoStore.getState().markMissionComplete("section");
+          handleAddSection(null);
+        }}
       >
         <FaPlus
           className={`${collapsed ? "size-4" : "size-2"}`}

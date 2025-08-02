@@ -1,16 +1,12 @@
 import { fireConfetti } from "@/utils/fire-confetti";
 import { create } from "zustand";
 import { useExploreStore } from "./explore-store";
-
-export type ModalType = "welcome" | "greenhouse";
-export type MissionType =
-  | "drag"
-  | "greenhouse"
-  | "mudkit"
-  | "mudkit2"
-  | "upload"
-  | "spotlight"
-  | "export";
+import {
+  extraTutorialItems,
+  mainTutorialItems,
+  MissionType,
+  ModalType,
+} from "@/types/demo-types";
 
 type DemoStore = {
   showGreenhousePopup: boolean;
@@ -24,9 +20,9 @@ type DemoStore = {
   markMissionComplete: (mission: MissionType) => void;
   markTempMudkitComplete: () => void;
 
-  hasMarkedFinal: boolean;
-  markFinalComplete: () => void;
-  resetMissions: () => void; // unused
+  hasInitalPopupRun: boolean;
+  hasFinalPopupRun: boolean;
+  decideToRunPopup: () => void;
 
   // help modal
   currentHelpMission: MissionType | "complete" | "complete2" | null;
@@ -60,6 +56,9 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
 
   missionsCompleted: {
     drag: false,
+    freeform: false,
+    section: false,
+    expand: false,
     greenhouse: false,
     mudkit: false,
     mudkit2: false,
@@ -90,22 +89,25 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
     }
   },
 
-  hasMarkedFinal: false,
-  markFinalComplete: () =>
-    set({ currentHelpMission: "complete2", hasMarkedFinal: true }),
+  hasInitalPopupRun: false,
+  hasFinalPopupRun: false,
+  decideToRunPopup: () => {
+    const isEssentialFlowComplete = mainTutorialItems.every(
+      (mission) => get().missionsCompleted[mission]
+    );
+    const isTutorialComplete =
+      isEssentialFlowComplete &&
+      extraTutorialItems.every((mission) => get().missionsCompleted[mission]);
 
-  resetMissions: () =>
-    set(() => ({
-      missionsCompleted: {
-        drag: false,
-        greenhouse: false,
-        mudkit: false,
-        mudkit2: false,
-        upload: false,
-        spotlight: false,
-        export: false,
-      },
-    })),
+    if (isEssentialFlowComplete && !get().hasInitalPopupRun) {
+      fireConfetti();
+      set({ currentHelpMission: "complete", hasInitalPopupRun: true });
+    }
+
+    if (isTutorialComplete && !get().hasFinalPopupRun) {
+      set({ currentHelpMission: "complete2", hasFinalPopupRun: true });
+    }
+  },
 
   isDemoBoard: false,
   setDemoBoardYes: () =>
@@ -140,6 +142,9 @@ export const useDemoStore = create<DemoStore>((set, get) => ({
       isTempMudkitSelected: false,
       missionsCompleted: {
         drag: false,
+        freeform: false,
+        expand: false,
+        section: false,
         greenhouse: false,
         mudkit: false,
         mudkit2: false,

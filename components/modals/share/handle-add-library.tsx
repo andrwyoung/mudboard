@@ -1,7 +1,5 @@
 import { supabase } from "@/lib/supabase/supabase-client";
-import { useDemoStore } from "@/store/demo-store";
 import { useExploreStore } from "@/store/explore-store";
-import { usePanelStore } from "@/store/panel-store";
 import { Section } from "@/types/board-types";
 import { SectionWithStats } from "@/types/stat-types";
 
@@ -12,9 +10,9 @@ export async function handleLibrarySync(
 ) {
   if (isDemo) {
     // tutorial specific
-    useDemoStore.getState().markMissionComplete("mudkit");
-    useExploreStore.getState().setExploreMode("search");
-    usePanelStore.getState().setPanelMode("explore");
+    // useDemoStore.getState().markMissionComplete("mudkit");
+    // useExploreStore.getState().setExploreMode("search");
+    // usePanelStore.getState().setPanelMode("explore");
 
     const { tempMudkits, setTempMudkits } = useExploreStore.getState();
 

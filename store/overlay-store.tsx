@@ -22,7 +22,7 @@ function createOverlayStoreInitializer(): StateCreator<OverlayState> {
   return (set) => ({
     isOpen: false,
     openOverlay: (block) => {
-      useDemoStore.getState().markMissionComplete("spotlight");
+      useDemoStore.getState().markMissionComplete("expand");
 
       set({ isOpen: true, overlayBlock: block });
     },

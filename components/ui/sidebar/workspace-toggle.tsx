@@ -1,3 +1,4 @@
+import { useDemoStore } from "@/store/demo-store";
 import { usePanelStore } from "@/store/panel-store";
 import { useUIStore } from "@/store/ui-store";
 import { FaMagnifyingGlass, FaVectorSquare } from "react-icons/fa6";
@@ -65,6 +66,8 @@ export function WorkspaceToggles({
           if (freeformOn) {
             setFreeformMode(false);
           } else {
+            useDemoStore.getState().markMissionComplete("freeform");
+
             setFreeformMode(true);
             // setPanelMode("none");
           }
@@ -74,7 +77,7 @@ export function WorkspaceToggles({
       />
 
       {!collapsed && (
-        <h3 className="mt-2 text-sm text-semibold">Side Panel:</h3>
+        <h3 className="mt-2 text-sm text-semibold">Side Panel Features:</h3>
       )}
       <div
         className={`rounded-sm w-full flex flex-col gap-1 text-sm ${

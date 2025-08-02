@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
 import { Button } from "../../ui/button";
 import { useDemoStore } from "@/store/demo-store";
 import { TUTORIAL_TITLE } from "@/types/constants";
-import Image from "next/image";
 
 export default function WelcomeModal() {
   const mode = useDemoStore((s) => s.mode);
@@ -28,7 +27,7 @@ export default function WelcomeModal() {
               panel on the bottom right.
             </p>
 
-            <p className=" mb-2">
+            {/* <p className=" mb-2">
               Some concepts might be new, so click the{" "}
               <span className="underline">Guide</span> button if you&apos;re
               unsure what to do:
@@ -39,7 +38,7 @@ export default function WelcomeModal() {
               width={302}
               height={95}
               className="self-center max-w-64 rounded-lg mb-6 border-2 border-primary"
-            />
+            /> */}
             <p>
               Try <strong>dragging around a few images</strong> to begin!
             </p>

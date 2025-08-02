@@ -5,10 +5,13 @@ import { usePanelStore } from "@/store/panel-store";
 import { useRef, useState } from "react";
 import { useGetInitialSizeOnLayout } from "@/hooks/overlay-gallery.tsx/use-get-initial-size";
 import ClosePanelButton from "./close-panel-button";
+import { useUIStore } from "@/store/ui-store";
 
 export default function PinnedPanel() {
   const pinnedBlock = usePanelStore((s) => s.pinnedBlock);
   const setPinnedBlock = usePanelStore((s) => s.setPinnedBlock);
+
+  const freeformMode = useUIStore((s) => s.freeformMode);
 
   const image = pinnedBlock?.data as MudboardImage;
 
@@ -71,12 +74,20 @@ export default function PinnedPanel() {
           className="absolute inset-0 flex flex-col justify-center
         text-center items-center font-header gap-4 px-12"
         >
-          <h1 className="max-w-sm text-xl">
-            Drop an image from the gallery to focus it here!
-          </h1>
-          <p className="max-w-sm text-sm">
-            (or right click an image and choose &quot;Spotlight&quot;)
-          </p>
+          {!freeformMode ? (
+            <>
+              <h1 className="max-w-sm text-xl">
+                Drop an image from the gallery to focus it here!
+              </h1>
+              <p className="max-w-sm text-sm">
+                (or right click an image and choose &quot;Spotlight&quot;)
+              </p>
+            </>
+          ) : (
+            <h1 className="max-w-sm text-xl">
+              Right click an image and choose &quot;Spotlight&quot;!
+            </h1>
+          )}
         </div>
       )}
     </div>

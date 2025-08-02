@@ -195,8 +195,13 @@ export default function DemoHelpModal() {
             You&apos;ve hit the essential flow of Mudboard.
           </p> */}
           <p className="mb-6">
-            There&apos;s much more to explore (check out the{" "}
-            <strong>Extra Credit</strong>), or you can start your own board.
+            There&apos;s much more to explore.
+            <br />
+            (Check out <strong>Extra Credit</strong> in the &quot;Things to Try
+            Out&quot; panel)
+            <br />
+            <br />
+            Or start your own board!
           </p>
           {/* <p className="">
             Feedback? I&apos;d love to hear from you:{" "}
@@ -302,16 +307,11 @@ export default function DemoHelpModal() {
   };
 
   const missions = useDemoStore((s) => s.missionsCompleted);
-  const hasMarkedFinal = useDemoStore((s) => s.hasMarkedFinal);
   useEffect(() => {
-    const allComplete = Object.values(missions).every(Boolean);
-
-    if (allComplete && !hasMarkedFinal) {
-      setTimeout(() => {
-        useDemoStore.getState().markFinalComplete();
-      }, 500);
-    }
-  }, [missions, hasMarkedFinal]);
+    setTimeout(() => {
+      useDemoStore.getState().decideToRunPopup();
+    }, 1000);
+  }, [missions]);
 
   if (currentTipMission === null) return null;
   const currentTip = tipText[currentTipMission];

@@ -1,84 +1,18 @@
 import { useState } from "react";
-import { MissionType, useDemoStore } from "@/store/demo-store";
+import { useDemoStore } from "@/store/demo-store";
 import { TUTORIAL_TITLE } from "@/types/constants";
 import { ChevronDown, ChevronUp } from "lucide-react"; // or any icon set you’re using
-import { FaBookBookmark, FaCaretDown } from "react-icons/fa6";
+import { FaCaretDown } from "react-icons/fa6";
 import DemoHelpModal from "./demo-help-modal";
-import { FaFileDownload } from "react-icons/fa";
-import { IoLibrary } from "react-icons/io5";
 import { useUIStore } from "@/store/ui-store";
 import { scrollToSelectedSection } from "@/lib/sidebar/scroll-to-selected-section";
 import { usePanelStore } from "@/store/panel-store";
-import { toast } from "sonner";
-
-type TutorialRowType = {
-  text: React.ReactNode;
-  mission: MissionType;
-};
-
-const essentialItems: TutorialRowType[] = [
-  { text: "Drag around an image", mission: "drag" },
-  {
-    text: (
-      <>
-        Grab an Image from the Library{" "}
-        <IoLibrary className="inline -translate-y-[2px] ml-0.5 opacity-75" />
-      </>
-    ),
-    mission: "greenhouse",
-  },
-  {
-    text: (
-      <>
-        Save a Section to your Library{" "}
-        <FaBookBookmark
-          className="inline -translate-y-[2px] mx-0.5
-        size-3 opacity-75"
-        />{" "}
-        <button
-          type="button"
-          className="text-xs underline cursor-pointer hover:text-accent"
-          onClick={() => {
-            useUIStore.getState().setFreeformMode(false);
-            usePanelStore.getState().setPanelMode("none");
-            scrollToSelectedSection();
-            toast("Look for the Book Icon (Top Right)");
-          }}
-        >
-          (hint)
-        </button>
-      </>
-    ),
-    mission: "mudkit",
-  },
-];
-
-const extraItems: TutorialRowType[] = [
-  {
-    text: (
-      <div className="flex flex-col">
-        <span>Upload an Image</span>{" "}
-        <span className="text-xs">
-          (Hint: drag/drop works from most website)
-        </span>
-      </div>
-    ),
-    mission: "upload",
-  },
-  { text: "Expand or Spotlight an Image", mission: "spotlight" },
-  {
-    text: (
-      <>
-        Export a Section{" "}
-        <FaFileDownload
-          className="inline -translate-y-[2px] ml-0.5
-          size-3 opacity-75"
-        />
-      </>
-    ),
-    mission: "export",
-  },
-];
+import {
+  essentialItems,
+  extraItems,
+  MissionType,
+  TutorialRowType,
+} from "@/types/demo-types";
 
 function TutorialRow({ item }: { item: TutorialRowType }) {
   const completed = useDemoStore((s) => s.missionsCompleted[item.mission]);

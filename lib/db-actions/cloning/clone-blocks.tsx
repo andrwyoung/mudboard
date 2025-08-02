@@ -6,7 +6,6 @@ import { supabase } from "@/lib/supabase/supabase-client";
 import { TablesInsert } from "@/types/supabase";
 import { Block } from "@/types/block-types";
 import { v4 as uuidv4 } from "uuid";
-import { useDemoStore } from "@/store/demo-store";
 
 export async function cloneBlocks(
   blocks: Block[],
@@ -15,8 +14,8 @@ export async function cloneBlocks(
   if (!blocks.length) return {};
 
   // if demo
-  useDemoStore.getState().markMissionComplete("greenhouse");
-  useDemoStore.getState().markTempMudkitComplete();
+  // useDemoStore.getState().markMissionComplete("greenhouse");
+  // useDemoStore.getState().markTempMudkitComplete();
 
   // STEP 1: build the entry to insert. then insert into db
   const idMap: Record<string, string> = {};
