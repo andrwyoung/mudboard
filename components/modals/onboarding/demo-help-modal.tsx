@@ -9,7 +9,11 @@ import {
 import Image from "next/image";
 import { FaBookBookmark } from "react-icons/fa6";
 import { FaFileDownload } from "react-icons/fa";
-import { FREE_LICENSE_LINK, NEW_BOARD_LINK } from "@/types/constants";
+import {
+  FREE_LICENSE_LINK,
+  NEW_BOARD_LINK,
+  TUTORIAL_TITLE,
+} from "@/types/constants";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useModalStore } from "@/store/modal-store";
@@ -195,13 +199,13 @@ export default function DemoHelpModal() {
             You&apos;ve hit the essential flow of Mudboard.
           </p> */}
           <p className="mb-6">
-            There&apos;s much more to explore.
+            There&apos;s much more to explore:
             <br />
-            (Check out <strong>Extra Credit</strong> in the &quot;Things to Try
-            Out&quot; panel)
+            check out <strong>Extra Credit</strong> in the &quot;
+            {TUTORIAL_TITLE}&quot; panel
             <br />
             <br />
-            Or start your own board!
+            (Or start your own board!)
           </p>
           {/* <p className="">
             Feedback? I&apos;d love to hear from you:{" "}
