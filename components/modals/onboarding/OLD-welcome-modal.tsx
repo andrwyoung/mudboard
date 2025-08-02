@@ -1,8 +1,9 @@
 "use client";
 import { Dialog, DialogContent, DialogTitle } from "../../ui/dialog";
 import { Button } from "../../ui/button";
-import { ModalType, useDemoStore } from "@/store/demo-store";
+import { useDemoStore } from "@/store/demo-store";
 import { FaFolderOpen } from "react-icons/fa6";
+import { ModalType } from "@/types/demo-types";
 
 const welcomePages: Record<
   ModalType,

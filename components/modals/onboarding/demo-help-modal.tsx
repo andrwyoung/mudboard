@@ -193,7 +193,7 @@ export default function DemoHelpModal() {
       body: (
         <div className="flex flex-col gap-2">
           <p className="mb-2">
-            You&apos;ve hit the essential flow of reusing images in Mudboard!
+            You&apos;ve hit the essential flow of using images in Mudboard!
           </p>
           {/* <p className="mb-4">
             You&apos;ve hit the essential flow of Mudboard.
