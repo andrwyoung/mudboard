@@ -7,7 +7,7 @@ export default async function fetchGroupedSections(
   userId: string
 ): Promise<SectionWithStatsAndBoardInfo[]> {
   const { data, error } = await supabase
-    .from("user_section_with_board_info")
+    .from("user_section_with_board_info_stats")
     .select("*")
     .eq("user_id", userId);
 
@@ -15,6 +15,7 @@ export default async function fetchGroupedSections(
     console.error("Error fetching mudkit:", error);
     return [];
   }
+  console.log("boardSection data: ", data);
 
   return data as SectionWithStatsAndBoardInfo[];
 }

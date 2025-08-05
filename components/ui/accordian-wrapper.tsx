@@ -59,3 +59,52 @@ export function AccordianWrapper({
     </div>
   );
 }
+
+export function AccordianWrapperLibrary({
+  title,
+  children,
+  titleClassName = "",
+  onCollapse,
+  right,
+}: {
+  title?: string;
+  children: React.ReactNode;
+  titleClassName?: string;
+  onCollapse?: () => void;
+  right: React.ReactNode;
+}) {
+  const [showForm, setShowForm] = useState(false);
+  return (
+    <div className="flex flex-col gap-2 w-full">
+      <div
+        className={`flex flex-row justify-between w-full items-center transition-all duration-200
+              font-semibold cursor-pointer hover:underline hover:underline-offset-2 
+              ${showForm ? "underline" : ""}`}
+        onClick={() => {
+          setShowForm((prev) => {
+            const next = !prev;
+            if (!next && onCollapse) onCollapse();
+            return next;
+          });
+        }}
+      >
+        <span className={titleClassName}> {title}</span>
+        <span className="text-sm">{right}</span>
+      </div>
+      <AnimatePresence initial={false}>
+        {showForm && (
+          <motion.div
+            key="login"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

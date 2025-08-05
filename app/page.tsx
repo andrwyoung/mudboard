@@ -135,7 +135,8 @@ export default function Home() {
                     : "text-white"
                 }`}
               >
-                Draw more. Organize less.
+                {/* Draw more. Organize less. */}
+                Organize Your References.
                 {/* Create More. Organize Less. */}
                 {/* Build Moodboards Fast. */}
                 {/* Get Ideas Out Fast. */}
@@ -144,7 +145,7 @@ export default function Home() {
               </h1>
               <div className="flex flex-col items-center">
                 <p className="max-w-lg text-xs sm:text-sm text-accent font-bold">
-                  Early Testing • Get a Free License!
+                  Early Testing • Come check it out!
                 </p>
                 {/* <p className="text-lg mb-14 w-full font-semibold">
                   For illustrators who’d rather draw than organize reference
@@ -191,7 +192,7 @@ export default function Home() {
                   cleanly, and never rebuild the same board twice. */}
                   {/* For illustators that want to organize and use references
                   without digging through dozens of folders to find something. */}
-                  For illustators that just want to use references, and
+                  For illustators that want to use references fast, and
                   don&apos;t like digging through dozens of folders to find
                   something.
                 </p>

@@ -6,7 +6,7 @@ import { FaCaretDown, FaRegStar, FaStar } from "react-icons/fa6";
 import { MudkitSelectButtonExplore } from "../mudkit-selectors copy";
 import RefreshButton from "./search-mode/refresh-button";
 import { useDemoStore } from "@/store/demo-store";
-import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
+import { AccordianWrapperLibrary } from "@/components/ui/accordian-wrapper";
 
 export default function SearchMode({
   handleFetchMudkit,
@@ -161,16 +161,26 @@ export default function SearchMode({
       > */}
       <h1 className="font-semibold">All Boards</h1>
       {groupedSections.length > 0 ? (
-        <div className="mt-4">
+        <div className="mt-4 w-full">
           {groupedSections.map(([boardInfo, sections]) => (
             <div
               key={`userBoards-${boardInfo.boardId}`}
-              className="flex flex-col mb-4"
+              className="flex flex-col mb-4 w-full"
             >
-              <AccordianWrapper
-                title={boardInfo.title ?? "Untitled Board"}
+              <AccordianWrapperLibrary
+                title={`${boardInfo.title ?? "Untitled Board"} `}
                 titleClassName="font-header text-lg mx-4"
-                hideCaret
+                right={
+                  <div className="">
+                    <span className="font-mono font-bold">
+                      {boardInfo.section_count}
+                    </span>{" "}
+                    sections | <FaStar className="inline -translate-y-[2px]" />{" "}
+                    <span className="w-16 font-mono font-bold">
+                      {boardInfo.mudkit_count}
+                    </span>
+                  </div>
+                }
               >
                 {/* <Link
                   href={buildMudboardLink(boardInfo.boardId)}
@@ -193,10 +203,11 @@ export default function SearchMode({
                       }}
                       isGrouped={false}
                       isSelected={false}
+                      showIconForIsOnMarketplace
                     />
                   ))}
                 </div>
-              </AccordianWrapper>
+              </AccordianWrapperLibrary>
             </div>
           ))}
         </div>

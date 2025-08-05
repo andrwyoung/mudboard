@@ -12,6 +12,13 @@ import fetchGroupedSections from "@/lib/db-actions/explore/fetch-grouped-section
 export type ExploreMode = "search" | "focus";
 export type MudkitType = "mine" | "others" | "temp";
 
+type GroupedBoardInfo = {
+  boardId: string;
+  title?: string | null;
+  section_count: number;
+  mudkit_count: number;
+};
+
 type ExploreStore = {
   exploreMode: ExploreMode;
   setExploreMode: (mode: ExploreMode) => void;
@@ -26,10 +33,7 @@ type ExploreStore = {
   userMudkits: SectionWithStats[];
   otherMudkits: SectionWithStats[];
 
-  groupedUserSections: [
-    { boardId: string; title?: string | null },
-    SectionWithStats[]
-  ][];
+  groupedUserSections: [GroupedBoardInfo, SectionWithStats[]][];
 
   fetchMudkits: (userId?: string) => Promise<void>;
   fetchAndGroupUserBoards: (userId: string) => Promise<void>;
@@ -95,10 +99,20 @@ export const useExploreStore = create<ExploreStore>((set) => ({
       const groupedUserSections = Array.from(groupedMap.entries()).map(
         ([boardId, { title, sections }]) =>
           [
-            { boardId, title },
+            {
+              boardId,
+              title: title ?? undefined,
+              section_count: sections[0].section_count,
+              mudkit_count: sections[0].mudkit_count,
+            },
             sections.sort((a, b) => a.order_index - b.order_index),
           ] as [
-            { boardId: string; title?: string | null },
+            {
+              boardId: string;
+              title?: string | null;
+              section_count: number;
+              mudkit_count: number;
+            },
             SectionWithStatsAndBoardInfo[]
           ]
       );

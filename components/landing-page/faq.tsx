@@ -73,7 +73,7 @@ export default function FAQ() {
           the core tool
         </FAQItem> */}
 
-        <FAQItem question="Will I ever be forced into a subscription?">
+        {/* <FAQItem question="Will I ever be forced into a subscription?">
           No. I&apos;m commited to always providing a{" "}
           <strong>one-time payment</strong> option for the core features of the
           tool.
@@ -90,7 +90,7 @@ export default function FAQ() {
           >
             Lifetime Promise
           </a>
-        </FAQItem>
+        </FAQItem> */}
 
         <FAQItem question="Who can see my board/sections?">
           All boards and sections are{" "}

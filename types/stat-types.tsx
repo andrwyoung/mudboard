@@ -32,6 +32,9 @@ export type SectionWithStatsAndBoardInfo = SectionWithStats & {
   board_title?: string | null;
   order_index: number;
   board_created_at: string;
+
+  section_count: number;
+  mudkit_count: number;
 };
 
 export type BoardWithStats = Board & BoardStats;

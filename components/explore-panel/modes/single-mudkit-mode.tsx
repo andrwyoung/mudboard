@@ -40,7 +40,7 @@ export default function ExploreSingleMudkitMode({
       </p>
       <SectionHeader
         section={selectedSection}
-        canEdit={false}
+        canEdit={true}
         scope="mirror"
         // username={selectedSection.username}
       />
@@ -49,7 +49,7 @@ export default function ExploreSingleMudkitMode({
         isMirror={true}
         section={selectedSection}
         columns={columns}
-        canEdit={false}
+        canEdit={true}
       />
     </div>
   );
