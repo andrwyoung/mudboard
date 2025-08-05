@@ -44,22 +44,26 @@ export default function ExplorePanel() {
   useExploreHistory({ selectedSection });
 
   return (
-    <div
-      className={`h-full overflow-y-auto py-4 px-4 bg-primary
-    ${SCROLLBAR_STYLE_WHITE}`}
-    >
+    <div className={`relative h-full bg-primary `}>
       <ClosePanelButton />
-      {exploreMode === "search" && (
-        <SearchMode handleFetchMudkit={handleFetchMudkit} />
+      {exploreMode === "focus" && selectedSection && (
+        <div
+          className={`absolute inset-0 z-10 bg-primary
+        overflow-y-auto py-4 px-4 ${SCROLLBAR_STYLE_WHITE}`}
+        >
+          <ExploreSingleMudkitMode
+            selectedSection={selectedSection}
+            columns={secondaryColumns}
+            backButton={() => setExploreMode("search")}
+          />
+        </div>
       )}
 
-      {exploreMode === "focus" && selectedSection && (
-        <ExploreSingleMudkitMode
-          selectedSection={selectedSection}
-          columns={secondaryColumns}
-          backButton={() => setExploreMode("search")}
-        />
-      )}
+      <div
+        className={`absolute inset-0 overflow-y-auto py-4 px-4 ${SCROLLBAR_STYLE_WHITE}`}
+      >
+        <SearchMode handleFetchMudkit={handleFetchMudkit} />
+      </div>
     </div>
   );
 }

@@ -27,4 +27,11 @@ export type SectionStats = {
 };
 
 export type SectionWithStats = Section & SectionStats;
+export type SectionWithStatsAndBoardInfo = SectionWithStats & {
+  board_id: string;
+  board_title?: string | null;
+  order_index: number;
+  board_created_at: string;
+};
+
 export type BoardWithStats = Board & BoardStats;

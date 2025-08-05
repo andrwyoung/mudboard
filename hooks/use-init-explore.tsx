@@ -4,14 +4,14 @@ import { useEffect } from "react";
 
 export function useInitExplore() {
   const user = useMetadataStore((s) => s.user);
-  const { fetchMudkits, fetchUserBoards } = useExploreStore();
+  const { fetchMudkits, fetchAndGroupUserBoards } = useExploreStore();
 
   useEffect(() => {
     const fetch = async () => {
       await fetchMudkits(user?.id);
 
       if (user?.id) {
-        await fetchUserBoards(user.id);
+        await fetchAndGroupUserBoards(user.id);
       }
     };
 

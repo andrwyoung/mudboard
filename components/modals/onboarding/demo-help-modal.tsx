@@ -9,11 +9,7 @@ import {
 import Image from "next/image";
 import { FaBookBookmark } from "react-icons/fa6";
 import { FaFileDownload } from "react-icons/fa";
-import {
-  FREE_LICENSE_LINK,
-  NEW_BOARD_LINK,
-  TUTORIAL_TITLE,
-} from "@/types/constants";
+import { NEW_BOARD_LINK, TUTORIAL_TITLE } from "@/types/constants";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useModalStore } from "@/store/modal-store";
@@ -267,7 +263,7 @@ export default function DemoHelpModal() {
             </a>
           </p> */}
 
-          <p className="text-sm text-primary mt-2 mb-2 leading-relaxed">
+          {/* <p className="text-sm text-primary mt-2 mb-2 leading-relaxed">
             We&apos;re also giving out <strong>Free Lifetime Licenses</strong>{" "}
             right now →{" "}
             <a
@@ -277,11 +273,10 @@ export default function DemoHelpModal() {
               rel="noopener noreferrer"
               title="Mudboard Lifetime License"
             >
-              {/* Join the Waitlist */}
               get it here
             </a>
             <br /> (Or find out more info on the homepage)
-          </p>
+          </p> */}
         </div>
       ),
       cta: (

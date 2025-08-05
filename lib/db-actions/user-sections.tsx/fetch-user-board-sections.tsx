@@ -11,6 +11,7 @@ export async function getUserBoardSections(
     .from("user_board_sections")
     .select("*")
     .eq("board_owner", userId);
+  // NOTE: our database query itself checks for deleted sectinos
 
   if (error) {
     console.error("Failed to fetch user_board_sections", error);

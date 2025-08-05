@@ -10,6 +10,9 @@ import { toast } from "sonner";
 
 export default function RefreshButton() {
   const fetchMudkits = useExploreStore((s) => s.fetchMudkits);
+  const fetchAndGroupUserBoards = useExploreStore(
+    (s) => s.fetchAndGroupUserBoards
+  );
   const user = useMetadataStore((s) => s.user);
 
   const handleClick = () => {
@@ -17,6 +20,9 @@ export default function RefreshButton() {
     setIsSpinning(true);
 
     fetchMudkits(user?.id);
+    if (user?.id) {
+      fetchAndGroupUserBoards(user.id);
+    }
 
     setTimeout(() => {
       setIsSpinning(false);

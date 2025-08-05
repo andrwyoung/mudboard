@@ -10,11 +10,13 @@ export function AccordianWrapper({
   children,
   titleClassName = "",
   onCollapse,
+  hideCaret = false,
 }: {
   title?: string;
   children: React.ReactNode;
   titleClassName?: string;
   onCollapse?: () => void;
+  hideCaret?: boolean;
 }) {
   const [showForm, setShowForm] = useState(false);
   return (
@@ -32,11 +34,13 @@ export function AccordianWrapper({
         }}
       >
         {title}
-        <FaCaretDown
-          className={`transition-transform  duration-300 ${
-            showForm ? "rotate-180" : "rotate-0"
-          }`}
-        />
+        {!hideCaret && (
+          <FaCaretDown
+            className={`transition-transform  duration-300 ${
+              showForm ? "rotate-180" : "rotate-0"
+            }`}
+          />
+        )}
       </div>
       <AnimatePresence initial={false}>
         {showForm && (

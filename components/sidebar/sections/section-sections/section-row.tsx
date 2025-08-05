@@ -26,10 +26,9 @@ import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-ti
 import { isLinkedSection } from "@/utils/is-linked-section";
 import { canEditSection } from "@/lib/auth/can-edit-section";
 import { FaCircle, FaLock } from "react-icons/fa";
-import { FaBookBookmark } from "react-icons/fa6";
-import { IoLibrary } from "react-icons/io5";
-import { useModalStore } from "@/store/modal-store";
+import { FaRegStar, FaStar } from "react-icons/fa6";
 import { scrollToSection } from "@/lib/sidebar/scroll-to-selected-section";
+import { toggleFavorited } from "@/lib/db-actions/explore/toggle-starred";
 
 export default function SectionRow({
   thisBoardSection,
@@ -292,22 +291,21 @@ export default function SectionRow({
 
                   <ContextMenuItem
                     onClick={() => {
-                      scrollToSection(thisBoardSection.section.section_id);
+                      const section = thisBoardSection.section;
 
-                      useModalStore
-                        .getState()
-                        .openShareModal(thisBoardSection.section.section_id);
+                      scrollToSection(section.section_id);
+                      toggleFavorited(!section.is_public, section);
                     }}
                   >
                     {!thisBoardSection.section.is_public ? (
                       <>
-                        <FaBookBookmark className="w-4 h-4" />
-                        <span>Add to Library</span>
+                        <FaStar className="w-4 h-4" />
+                        <span>Star</span>
                       </>
                     ) : (
                       <>
-                        <IoLibrary className="w-4 h-4" />
-                        <span>Settings</span>
+                        <FaRegStar className="w-4 h-4" />
+                        <span>Unstar</span>
                       </>
                     )}
                   </ContextMenuItem>

@@ -2,10 +2,11 @@ import { useExploreStore } from "@/store/explore-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { SectionWithStats } from "@/types/stat-types";
 import { useState } from "react";
-import { FaBookBookmark, FaCaretDown, FaStar } from "react-icons/fa6";
+import { FaCaretDown, FaRegStar, FaStar } from "react-icons/fa6";
 import { MudkitSelectButtonExplore } from "../mudkit-selectors copy";
 import RefreshButton from "./search-mode/refresh-button";
 import { useDemoStore } from "@/store/demo-store";
+import { AccordianWrapper } from "@/components/ui/accordian-wrapper";
 
 export default function SearchMode({
   handleFetchMudkit,
@@ -18,6 +19,7 @@ export default function SearchMode({
   );
 
   const userMudkits = useExploreStore((s) => s.userMudkits);
+  const groupedSections = useExploreStore((s) => s.groupedUserSections);
 
   const tempMudkits = useExploreStore((s) => s.tempMudkits);
   const existsUserOrTempMudkits =
@@ -92,7 +94,6 @@ export default function SearchMode({
                       }}
                       isGrouped={false}
                       isSelected={false}
-                      showIconForIsOnMarketplace
                     />
                   ))}
                 </div>
@@ -130,7 +131,6 @@ export default function SearchMode({
                           }}
                           isGrouped={false}
                           isSelected={false}
-                          showIconForIsOnMarketplace
                           disabled
                         />
                       ))}
@@ -143,12 +143,70 @@ export default function SearchMode({
             <p className="w-full text-center py-8 text-sm font-semibold ">
               You haven’t saved any sections yet!
               <br /> Click the{" "}
-              <FaBookBookmark className="inline mx-1 size-4 -translate-y-[1px]" />{" "}
+              <FaRegStar className="inline size-4 mx-[1px] -translate-y-[2px] " />{" "}
               icon on any section to save one.
             </p>
           )}
         </div>
       )}
+
+      {/* <AccordianWrapper
+        title="All Boards"
+        titleClassName={"text-white font-header text-md"}
+        // onCollapse={() => {
+        //   requestAnimationFrame(() => {
+        //     setSelectedSection(null);
+        //   });
+        // }}
+      > */}
+      <h1 className="font-semibold">All Boards</h1>
+      {groupedSections.length > 0 ? (
+        <div className="mt-4">
+          {groupedSections.map(([boardInfo, sections]) => (
+            <div
+              key={`userBoards-${boardInfo.boardId}`}
+              className="flex flex-col mb-4"
+            >
+              <AccordianWrapper
+                title={boardInfo.title ?? "Untitled Board"}
+                titleClassName="font-header text-lg mx-4"
+                hideCaret
+              >
+                {/* <Link
+                  href={buildMudboardLink(boardInfo.boardId)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Open Board in new tab"
+                  className="text-md font-semibold mb-1 text-white hover:text-accent 
+                  transition-all duration-150 self-start"
+                >
+                  {boardInfo.title || "Untitled Board"}
+                </Link> */}
+                <div className="p-1 bg-background rounded-lg">
+                  {sections.map((section) => (
+                    <MudkitSelectButtonExplore
+                      key={section.section_id}
+                      section={section}
+                      onClick={() => {
+                        setCurrentSelectedMudkitType("mine");
+                        handleFetchMudkit(section);
+                      }}
+                      isGrouped={false}
+                      isSelected={false}
+                    />
+                  ))}
+                </div>
+              </AccordianWrapper>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-white text-center text-sm font-semibold py-2">
+          No other boards found.
+          <br /> Create boards to reuse them here!
+        </div>
+      )}
+      {/* </AccordianWrapper> */}
 
       {/* <div>
         <h3 className="text-white text-md font-bold mb-2 flex items-center gap-2">

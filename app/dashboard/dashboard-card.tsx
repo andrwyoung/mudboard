@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaTrashAlt } from "react-icons/fa";
 import Image from "next/image";
 import { formatCreationDate } from "@/utils/time-formatters";
-import { FaArrowRight, FaBookBookmark } from "react-icons/fa6";
+import { FaArrowRight, FaStar } from "react-icons/fa6";
 import { getThumbnailUrl } from "@/utils/get-thumbnail-url";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -57,7 +57,7 @@ export default function BoardCard({
             {board.section_count === 1 ? "section" : "sections"}{" "}
             {board.mudkit_count > 0 && (
               <span className="inline-flex items-center gap-1 font-bold">
-                (<FaBookBookmark className="inline-block translate-y-[1px]" />
+                (<FaStar className="inline-block translate-y-[1px]" />
                 {board.mudkit_count} )
               </span>
             )}{" "}
