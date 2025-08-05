@@ -11,7 +11,7 @@ export default function SectionAddImageButton({
   fileInput,
 }: Props) {
   return (
-    <div className="group flex flex-row cursor-pointer text-primary">
+    <div className="group flex flex-row cursor-pointer ">
       {fileInput}
       <button
         type="button"

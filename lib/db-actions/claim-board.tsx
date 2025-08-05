@@ -11,7 +11,6 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { Enums } from "@/types/supabase";
 import { supabase } from "@/lib/supabase/supabase-client";
 import { toast } from "sonner";
-import { currentUserCanCreateBoardsFromDB } from "../tiers/user-can-create-boards";
 import { useExploreStore } from "@/store/explore-store";
 
 export async function claimBoard() {
@@ -24,10 +23,10 @@ export async function claimBoard() {
 
   // check if they're allowed to
 
-  const canCreate = await currentUserCanCreateBoardsFromDB();
-  if (!canCreate) {
-    return;
-  }
+  // const canCreate = await currentUserCanCreateBoardsFromDB();
+  // if (!canCreate) {
+  //   return;
+  // }
 
   // race condition safe
   // STEP 1: claim the board itself

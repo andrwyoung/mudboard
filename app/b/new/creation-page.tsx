@@ -6,7 +6,6 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { createNewBoard } from "@/lib/db-actions/create-new-board";
 import { DEMO_BOARD_ID } from "@/types/upload-settings";
 import { cloneBoard } from "@/lib/db-actions/cloning/clone-board";
-import { currentUserCanCreateBoardsFromDB } from "@/lib/tiers/user-can-create-boards";
 
 export default function CreateBoardPage({ type }: { type: "new" | "demo" }) {
   const router = useRouter();
@@ -22,11 +21,11 @@ export default function CreateBoardPage({ type }: { type: "new" | "demo" }) {
 
       try {
         // block if board limit has been hit
-        const allowed = await currentUserCanCreateBoardsFromDB();
-        if (!allowed) {
-          router.replace("/");
-          return;
-        }
+        // const allowed = await currentUserCanCreateBoardsFromDB();
+        // if (!allowed) {
+        //   router.replace("/");
+        //   return;
+        // }
 
         let boardId: string | null = null;
 

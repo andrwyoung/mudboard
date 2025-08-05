@@ -5,16 +5,11 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/supabase-client";
 import Logo from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Board } from "@/types/board-types";
 import { useMetadataStore } from "@/store/metadata-store";
 import Link from "next/link";
-import {
-  DEFAULT_BOARD_TITLE,
-  MAX_FREE_TIER_BOARDS,
-  NEW_BOARD_LINK,
-  PRICING_PAGE,
-} from "@/types/constants";
+import { DEFAULT_BOARD_TITLE, NEW_BOARD_LINK } from "@/types/constants";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,8 +29,7 @@ import BoardCard from "./dashboard-card";
 import { softDeleteBoard } from "@/lib/db-actions/soft-delete-board";
 import { BoardWithStats } from "@/types/stat-types";
 import { fetchUserBoardsWithStats } from "@/lib/db-actions/explore/fetch-user-board-with-stats";
-import { getHasLicense } from "@/lib/tiers/user-has-license";
-import { FaPlus, FaSeedling } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa6";
 
 type DashboardMode = "board" | "sections";
 
@@ -48,14 +42,14 @@ export default function DashboardPage() {
 
   const [loading, setLoading] = useState(true);
 
-  const profile = useMetadataStore((s) => s.profile);
-  const hasLicense = useMemo(() => {
-    if (!profile) return undefined;
-    return getHasLicense(profile.tier);
-  }, [profile]);
+  // const profile = useMetadataStore((s) => s.profile);
+  // const hasLicense = useMemo(() => {
+  //   if (!profile) return undefined;
+  //   return getHasLicense(profile.tier);
+  // }, [profile]);
 
-  const canCreateBoards =
-    hasLicense || userBoards.length < MAX_FREE_TIER_BOARDS;
+  // const canCreateBoards =
+  //   hasLicense || userBoards.length < MAX_FREE_TIER_BOARDS;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -106,9 +100,9 @@ export default function DashboardPage() {
             <div>
               <div className="lg:hidden flex flex-col text-white">
                 <h1 className="text-3xl font-bold">Dashboard</h1>
-                <p className="text-sm opacity-80 mt-1">
+                {/* <p className="text-sm opacity-80 mt-1">
                   {hasLicense ? "Free Mode" : "License Active"}
-                </p>
+                </p> */}
               </div>
 
               <div className="hidden lg:flex flex-col gap-2 my-12 items-center  text-white">
@@ -150,14 +144,14 @@ export default function DashboardPage() {
             <div className="flex flex-row lg:flex-col gap-2">
               <Link
                 href={NEW_BOARD_LINK}
-                onClick={(e) => {
-                  if (!canCreateBoards) {
-                    e.preventDefault();
-                    toast.error(
-                      "You’ve reached your board limit. Upgrade to remove limit"
-                    );
-                  }
-                }}
+                // onClick={(e) => {
+                // if (!canCreateBoards) {
+                //   e.preventDefault();
+                //   toast.error(
+                //     "You’ve reached your board limit. Upgrade to remove limit"
+                //   );
+                // }
+                // }}
                 className={`hidden sm:flex `}
                 title="Create a New Board"
               >
@@ -165,7 +159,7 @@ export default function DashboardPage() {
                   type="button"
                   className="font-header text-sm"
                   variant="outline_accent"
-                  disabled={!canCreateBoards}
+                  // disabled={!canCreateBoards}
                 >
                   New Board
                 </Button>
@@ -218,7 +212,7 @@ export default function DashboardPage() {
                 )}
               </div>
               <div className=" flex flex-col items-end">
-                <p className="text-sm opacity-80">
+                {/* <p className="text-sm opacity-80">
                   {hasLicense
                     ? "License active"
                     : `${MAX_FREE_TIER_BOARDS - userBoards.length} free board${
@@ -226,8 +220,8 @@ export default function DashboardPage() {
                           ? ""
                           : "s"
                       } left`}
-                </p>
-                {!hasLicense && (
+                </p> */}
+                {/* {!hasLicense && (
                   <Link
                     type="button"
                     href={PRICING_PAGE}
@@ -236,7 +230,7 @@ export default function DashboardPage() {
                   >
                     <FaSeedling /> Get License
                   </Link>
-                )}
+                )} */}
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
