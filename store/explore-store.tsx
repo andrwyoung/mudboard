@@ -45,8 +45,8 @@ export const useExploreStore = create<ExploreStore>((set) => ({
   userMudkits: [],
   otherMudkits: [],
   fetchMudkits: async (userId?: string) => {
-    const { userMudkits, otherMudkits } = await fetchMudkits(userId);
-    set({ userMudkits, otherMudkits });
+    const { userMudkits } = await fetchMudkits(userId);
+    set({ userMudkits });
   },
 
   setUserMudkits: (kits: SectionWithStats[]) => set({ userMudkits: kits }),

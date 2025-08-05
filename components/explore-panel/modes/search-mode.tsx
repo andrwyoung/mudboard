@@ -2,11 +2,10 @@ import { useExploreStore } from "@/store/explore-store";
 import { useMetadataStore } from "@/store/metadata-store";
 import { SectionWithStats } from "@/types/stat-types";
 import { useState } from "react";
-import { FaBookBookmark, FaCaretDown } from "react-icons/fa6";
+import { FaBookBookmark, FaCaretDown, FaStar } from "react-icons/fa6";
 import { MudkitSelectButtonExplore } from "../mudkit-selectors copy";
 import RefreshButton from "./search-mode/refresh-button";
 import { useDemoStore } from "@/store/demo-store";
-import { FaGlobeAmericas } from "react-icons/fa";
 
 export default function SearchMode({
   handleFetchMudkit,
@@ -19,7 +18,6 @@ export default function SearchMode({
   );
 
   const userMudkits = useExploreStore((s) => s.userMudkits);
-  const otherMudkits = useExploreStore((s) => s.otherMudkits);
 
   const tempMudkits = useExploreStore((s) => s.tempMudkits);
   const existsUserOrTempMudkits =
@@ -43,7 +41,7 @@ export default function SearchMode({
       </div>
       <div className="flex flex-row justify-between items-start mb-8 gap-8">
         <p className="text-sm font-medium mt-1">
-          Your collection of resuable sections.
+          Access all the boards and sections you&apos;ve created in the past.
         </p>
         <RefreshButton />
       </div>
@@ -51,8 +49,8 @@ export default function SearchMode({
       {(!isDemo || tempMudkits.length > 0) && (
         <div className="mb-8">
           <h3 className="text-white text-md font-bold mb-2 flex items-center gap-2">
-            Your Private Sections
-            <FaBookBookmark />
+            Favorite Sections
+            <FaStar className="size-5" />
           </h3>
 
           {existsUserOrTempMudkits ? (
@@ -133,6 +131,7 @@ export default function SearchMode({
                           isGrouped={false}
                           isSelected={false}
                           showIconForIsOnMarketplace
+                          disabled
                         />
                       ))}
                     </div>
@@ -151,7 +150,7 @@ export default function SearchMode({
         </div>
       )}
 
-      <div>
+      {/* <div>
         <h3 className="text-white text-md font-bold mb-2 flex items-center gap-2">
           Community Sections
           {isDemo ? " (DEMO: Click on one!)" : ""}
@@ -175,7 +174,7 @@ export default function SearchMode({
             ))}
           </div>
         )}
-      </div>
+      </div> */}
     </>
   );
 }

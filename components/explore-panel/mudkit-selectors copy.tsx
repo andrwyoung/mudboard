@@ -1,6 +1,5 @@
 import { SectionWithStats } from "@/types/stat-types";
 import { cn } from "@/utils/utils";
-import { FaGlobeAmericas } from "react-icons/fa";
 import { FaCube } from "react-icons/fa6";
 
 type Props = {
@@ -21,7 +20,6 @@ export function MudkitSelectButtonExplore({
   onDoubleClick,
   isGrouped = true,
   disabled = false,
-  showIconForIsOnMarketplace = false,
   temporary = false,
 }: Props) {
   const title = section.title;
@@ -70,12 +68,12 @@ export function MudkitSelectButtonExplore({
               {blockCount}
             </p>
           )}
-          {showIconForIsOnMarketplace && section.is_on_marketplace && (
+          {/* {showIconForIsOnMarketplace && section.is_on_marketplace && (
             <FaGlobeAmericas
               className="opacity-60 size-3.5"
               title="Section is shared publically"
             />
-          )}
+          )} */}
           {temporary && (
             <div
               className="px-2 text-xs font-header bg-accent/60 rounded-lg"

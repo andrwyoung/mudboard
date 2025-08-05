@@ -42,7 +42,7 @@ export default function ExploreSingleMudkitMode({
         section={selectedSection}
         canEdit={false}
         scope="mirror"
-        username={selectedSection.username}
+        // username={selectedSection.username}
       />
 
       <SectionGallery

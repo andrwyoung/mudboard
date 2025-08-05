@@ -20,12 +20,10 @@ import React from "react";
 
 function SectionHeader({
   section,
-  username,
   canEdit,
   scope = "main",
 }: {
   section: Section;
-  username?: string;
   canEdit: boolean;
   scope?: CanvasScope;
 }) {
@@ -67,11 +65,11 @@ function SectionHeader({
               className={`text-lg sm:text-xl md:text-2xl text-left  ${textColor} `}
             />
           </div>
-          {!canEdit && username && (
+          {/* {!canEdit && username && (
             <h3 className="ml-4 text-xs font-semibold mb-4">
               Created by: {username}
             </h3>
-          )}
+          )} */}
         </div>
         <div className={`flex flex-col items-end gap-2 ${textColor}`}>
           <div

@@ -37,24 +37,25 @@ const shareOptions: ShareOption[] = [
     label: "Share with Community",
     desc: "Let others discover this kit publicly",
     field: "is_on_marketplace",
-    gated: "License required (Free in Beta)",
+    // gated: "License required (Free in Beta)",
+    gated: "Requires 10 or more blocks",
   },
-  {
-    label: "Prevent Copies",
-    desc: "Stop others from duplicating this kit into their own boards.",
-    field: "is_forkable",
-    gated: "Pro plan",
-    flip: true,
-    disabled: true,
-  },
-  {
-    label: "Disable Live Embeds",
-    desc: "Stop others from embedding this kit with live updates.",
-    field: "is_linkable",
-    gated: "Pro plan",
-    flip: true,
-    disabled: true,
-  },
+  // {
+  //   label: "Prevent Copies",
+  //   desc: "Stop others from duplicating this kit into their own boards.",
+  //   field: "is_forkable",
+  //   gated: "Pro plan",
+  //   flip: true,
+  //   disabled: true,
+  // },
+  // {
+  //   label: "Disable Live Embeds",
+  //   desc: "Stop others from embedding this kit with live updates.",
+  //   field: "is_linkable",
+  //   gated: "Pro plan",
+  //   flip: true,
+  //   disabled: true,
+  // },
 ];
 
 export default function SectionShareModal() {

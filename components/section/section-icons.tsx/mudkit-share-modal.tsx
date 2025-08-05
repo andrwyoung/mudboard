@@ -1,9 +1,11 @@
 import { toast } from "sonner";
 import { Section } from "@/types/board-types";
 import { SECTION_BASE_URL } from "@/types/constants";
-import { FaBookBookmark, FaCopy } from "react-icons/fa6";
-import { IoLibrary } from "react-icons/io5";
-import { useModalStore } from "@/store/modal-store";
+import { FaCopy, FaRegStar, FaStar } from "react-icons/fa6";
+import { supabase } from "@/lib/supabase/supabase-client";
+import { useMetadataStore } from "@/store/metadata-store";
+import { handleLibrarySync } from "@/components/modals/share/handle-add-library";
+import { useDemoStore } from "@/store/demo-store";
 
 export default function SectionShareButton({
   section,
@@ -17,28 +19,61 @@ export default function SectionShareButton({
     toast.success("Share link copied to clipboard");
   };
 
-  const setOpen = useModalStore((s) => s.openShareModal);
+  const sectionIsPublic = section.is_public;
+
+  const isDemo = useDemoStore((s) => s.isDemoBoard);
+  const user = useMetadataStore.getState().user;
+
+  async function toggleFavorited() {
+    const newResult = !sectionIsPublic;
+    const update = { is_public: newResult };
+
+    if (section.owned_by) {
+      const { error } = await supabase
+        .from("sections")
+        .update(update)
+        .eq("section_id", section.section_id);
+      if (error) {
+        toast.error(`Failed to update Section`);
+        return;
+      }
+    }
+
+    useMetadataStore.getState().updateBoardSection(section.section_id, update);
+
+    const sectionTitle = section.title
+      ? `"${section.title}"`
+      : "Untitled Section";
+    if (newResult) {
+      toast.success(`Starred: ${sectionTitle}`);
+    } else {
+      toast.success(`Unstarred: ${sectionTitle}`);
+    }
+
+    await handleLibrarySync(section, newResult, isDemo || !user);
+  }
 
   return (
     <>
       {canEdit ? (
         <button
-          onClick={() => setOpen(section.section_id)}
+          onClick={() => toggleFavorited()}
           type="button"
-          title={
-            section.is_public
-              ? "Open Section Settings"
-              : `Add ${
-                  section.title ? `"${section.title}"` : "Untitled Section"
-                } To Library`
-          }
+          // title={
+          //   section.is_public
+          //     ? "Open Section Settings"
+          //     : `Star ${
+          //         section.title ? `"${section.title}"` : "Untitled Section"
+          //       } in Library`
+          // }
+          title={section.is_public ? "Unfavorite Section" : `Star Section`}
           aria-label={"Open Sharing Options"}
-          className="hover:text-accent cursor-pointer transition-all duration-200 mr-[2px]"
+          className="hover:text-accent cursor-pointer transition-all duration-200 mr-[1px] "
         >
           {section.is_public ? (
-            <IoLibrary className="size-5" />
+            <FaStar className="size-5.5" />
           ) : (
-            <FaBookBookmark className="size-4.5" />
+            <FaRegStar className="size-5.5" />
           )}
         </button>
       ) : (
