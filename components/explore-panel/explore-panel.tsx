@@ -44,7 +44,7 @@ export default function ExplorePanel() {
   useExploreHistory({ selectedSection });
 
   return (
-    <div className={`relative h-full bg-primary `}>
+    <div className={`relative h-full bg-primary`}>
       <ClosePanelButton />
       {exploreMode === "focus" && selectedSection && (
         <div

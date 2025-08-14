@@ -151,13 +151,13 @@ function SectionGallery({
                 onClick={() => triggerImagePicker()}
               >
                 <Image
-                  src="/1.png"
+                  src="/1white.png"
                   alt="No images yet"
                   width={375}
                   height={150}
                   draggable={false}
                 />
-                <h3 className="text-primary text-sm">
+                <h3 className="text-sm">
                   No Images Yet! Drag one in or click here to add.
                 </h3>
               </div>

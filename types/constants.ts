@@ -7,7 +7,7 @@ export const MAX_FREE_TIER_BOARDS = 3;
 export const SCROLLBAR_STYLE =
   "scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-primary scrollbar-track-transparent";
 export const SCROLLBAR_STYLE_WHITE =
-  "scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-white scrollbar-track-transparent";
+  "scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-scrollbar scrollbar-track-transparent";
 export const ACCESSIBLE_BUTTON =
   "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded";
 
@@ -80,8 +80,8 @@ export const MIN_SCALE = 0.1;
 export const MAX_SCALE = 100;
 export const MIN_PIXEL_SIZE = 40;
 
-export const DEFAULT_VIEW_BG_COLOR = "#505050";
-export const DEFAULT_ARRANGE_BG_COLOR = "#838383";
+export const DEFAULT_VIEW_BG_COLOR = "#363636";
+export const DEFAULT_ARRANGE_BG_COLOR = "#4e4e4e";
 
 export const MAX_Z_THRESHOLD = 100_000;
 export const Z_INDEX_INCREMENT = 10; // we want reserve some space for borders

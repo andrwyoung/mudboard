@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Recursive, Gantari, Overpass_Mono } from "next/font/google";
+import { Recursive, Gantari, Overpass_Mono, Figtree } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
@@ -12,7 +12,13 @@ const headerFont = Recursive({
   subsets: ["latin"],
 });
 
-const bodyFont = Gantari({
+const bodyFont2 = Gantari({
+  variable: "--font-body-secondary",
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
+
+const bodyFont = Figtree({
   variable: "--font-body",
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
@@ -131,7 +137,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${headerFont.variable} ${bodyFont.variable} ${monoFont.variable} antialiased`}
+        className={`${headerFont.variable} ${bodyFont.variable} ${bodyFont2.variable} ${monoFont.variable} antialiased`}
       >
         <LoginDetector />
         {children}

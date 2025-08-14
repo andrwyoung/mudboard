@@ -17,6 +17,9 @@ type UIStore = {
   // numCols: number;
   // setNumCols: (cols: number) => void;
 
+  darkMode: boolean;
+  setDarkMode: (mode: boolean) => void;
+
   spacingSize: number;
   setSpacingSize: (spacing: number) => void;
 
@@ -40,6 +43,9 @@ export const useUIStore = create<UIStore>((set, get) => ({
     set((state) => ({
       mirrorMode: !state.mirrorMode,
     })),
+
+  darkMode: false,
+  setDarkMode: (mode: boolean) => set({ darkMode: mode }),
 
   // numCols: DEFAULT_COLUMNS,
   // setNumCols: (cols) => set({ numCols: cols }),

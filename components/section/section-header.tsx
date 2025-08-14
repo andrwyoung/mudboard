@@ -8,7 +8,6 @@ import { useLoadingStore } from "@/store/loading-store";
 import { useImagePicker } from "@/hooks/use-image-picker";
 import InlineEditTextarea from "../ui/inline-textarea";
 import { useLayoutStore } from "@/store/layout-store";
-import { useUIStore } from "@/store/ui-store";
 import SectionDownloadButton from "./section-icons.tsx/download-button";
 import SectionAddImageButton from "./section-icons.tsx/add-image-button";
 import SectionColumnSelector from "./section-icons.tsx/change-columns-select";
@@ -40,11 +39,10 @@ function SectionHeader({
   const visualNumCols =
     scope === "mirror" ? visualNumColsMirror : visualNumColsMain;
 
-  const textColor = scope === "main" ? "text-primary" : "text-primary-text";
+  const textColor =
+    scope === "main" ? "text-primary-text" : "text-primary-text";
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
-
-  const mirrorMode = useUIStore((s) => s.mirrorMode);
 
   return (
     <div className="flex flex-col">
@@ -73,9 +71,7 @@ function SectionHeader({
         </div>
         <div className={`flex flex-col items-end gap-2 ${textColor}`}>
           <div
-            className={`flex flex-row-reverse gap-2 items-center ${
-              mirrorMode ? "opacity-50" : "opacity-80"
-            }`}
+            className={`flex flex-row-reverse gap-2 items-center opacity-80`}
           >
             {!canEdit && scope === "main" && (
               <FaLock

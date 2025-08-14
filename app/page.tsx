@@ -172,7 +172,7 @@ export default function Home() {
                 <p
                   data-id="subheader"
                   data-marque-track
-                  className={`text-sm sm:text-lg mb-14 w-full font-semibold max-w-xl 
+                  className={`text-sm sm:text-lg mb-14 w-full font-body-secondary font-semibold max-w-xl 
                     transition-colors duration-200 ${
                       highlightedIndexes.includes("subheader")
                         ? "text-accent"

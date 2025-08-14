@@ -82,7 +82,7 @@ export default function ResizableSidebar({
           ? COLLAPSED_SIDEBAR_WIDTH
           : Math.min(Math.max(width, MIN_SIDEBAR_WIDTH), MAX_SIDEBAR_WIDTH),
       }}
-      className="hidden lg:block bg-primary relative h-full select-none"
+      className="hidden lg:block bg-sidebar-background relative h-full select-none"
     >
       <div
         role="separator"

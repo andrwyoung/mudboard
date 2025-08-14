@@ -29,7 +29,7 @@ export async function cloneBoard({
   try {
     // STEP 1: first make new board
     const board = await createNewBoard({
-      title: isDemo ? "My Demo Board" : `Copy of ${boardToClone.title}`,
+      title: isDemo ? "Demo Board" : `Copy of ${boardToClone.title}`,
       initializeSection: false,
       isDemo,
       claimedBy,

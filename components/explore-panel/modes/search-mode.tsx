@@ -6,7 +6,6 @@ import { FaCaretDown, FaRegStar, FaStar } from "react-icons/fa6";
 import { MudkitSelectButtonExplore } from "../mudkit-selectors copy";
 import RefreshButton from "./search-mode/refresh-button";
 import { useDemoStore } from "@/store/demo-store";
-import { AccordianWrapperLibrary } from "@/components/ui/accordian-wrapper";
 
 export default function SearchMode({
   handleFetchMudkit,
@@ -19,7 +18,7 @@ export default function SearchMode({
   );
 
   const userMudkits = useExploreStore((s) => s.userMudkits);
-  const groupedSections = useExploreStore((s) => s.groupedUserSections);
+  // const groupedSections = useExploreStore((s) => s.groupedUserSections);
 
   const tempMudkits = useExploreStore((s) => s.tempMudkits);
   const existsUserOrTempMudkits =
@@ -159,7 +158,7 @@ export default function SearchMode({
         //   });
         // }}
       > */}
-      <h1 className="font-semibold">All Boards</h1>
+      {/* <h1 className="font-semibold">All Boards</h1>
       {groupedSections.length > 0 ? (
         <div className="mt-4 w-full">
           {groupedSections.map(([boardInfo, sections]) => (
@@ -182,16 +181,6 @@ export default function SearchMode({
                   </div>
                 }
               >
-                {/* <Link
-                  href={buildMudboardLink(boardInfo.boardId)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Open Board in new tab"
-                  className="text-md font-semibold mb-1 text-primary-text hover:text-accent 
-                  transition-all duration-150 self-start"
-                >
-                  {boardInfo.title || "Untitled Board"}
-                </Link> */}
                 <div className="p-1 bg-background rounded-lg">
                   {sections.map((section) => (
                     <MudkitSelectButtonExplore
@@ -216,7 +205,7 @@ export default function SearchMode({
           No other boards found.
           <br /> Create boards to reuse them here!
         </div>
-      )}
+      )} */}
       {/* </AccordianWrapper> */}
 
       {/* <div>
