@@ -55,7 +55,7 @@ function Slider({
         <SliderPrimitive.Thumb
           data-slot="slider-thumb"
           key={index}
-          className={`bg-white
+          className={`primary-foreground
          ${isDraggingSlider ? "cursor-grabbing" : "cursor-pointer"}
           ring-accent block w-6 h-4 shrink-0 rounded-full border shadow-sm 
           transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden 

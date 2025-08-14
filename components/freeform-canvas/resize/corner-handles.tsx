@@ -96,7 +96,7 @@ export function CornerHandles({
             zIndex,
           }}
           data-id={`resize-${corner}`}
-          className="absolute bg-white border-3 
+          className="absolute primary-foreground border-3 
           border-accent z-4 pointer-events-none rounded-sm"
         />
       )}

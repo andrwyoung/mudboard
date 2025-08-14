@@ -61,7 +61,8 @@
   --card-foreground: #262626;
   --popover: #ffffff;
   --popover-foreground: #262626;
-  --primary: #7f6463;
+  /* --primary: #7f6463; */
+  --primary: #574845;
   --primary-lighter: #927978;
   --primary-darker: #624847;
   --primary-text: #ffffff;
@@ -128,7 +129,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-
 @keyframes spin-once {
   from {
     transform: rotate(0deg);
@@ -159,14 +159,18 @@
 
 @layer base {
   * {
-    @apply border-border font-body font-medium outline-ring/50 ;
+    @apply border-border font-body font-medium outline-ring/50;
   }
   body {
     @apply bg-background text-primary-foreground;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-header;
   }
 }
-

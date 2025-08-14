@@ -11,7 +11,7 @@ export default function NewBoardButton() {
       href={NEW_BOARD_LINK}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-xs font-bold tracking-wide bg-transparent outline-2 outline-white text-white 
+      className="text-xs font-bold tracking-wide bg-transparent outline-2 outline-white text-primary-text 
       hover:text-accent hover:outline-accent flex flex-row gap-1.5 items-center justify-center cursor-pointer
       rounded-md transition-all px-3 py-1 duration-300"
       title="Create a new Board"

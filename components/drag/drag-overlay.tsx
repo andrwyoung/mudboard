@@ -32,7 +32,7 @@ export default function DragOverlayBlock() {
 
         {draggedBlocks.length > 1 && (
           <div
-            className="absolute bottom-0 font-header right-0 bg-white px-3 py-1 
+            className="absolute bottom-0 font-header right-0 primary-foreground px-3 py-1 
             text-md text-primary rounded-lg"
           >
             {draggedBlocks.length}

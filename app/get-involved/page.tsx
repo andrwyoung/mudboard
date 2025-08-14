@@ -15,7 +15,7 @@ export default function ReviewPage() {
         href="https://forms.gle/QA96JUcRRP5YSqRT6"
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-block bg-primary text-white px-5 py-2 mb-1
+        className="inline-block bg-primary text-primary-text px-5 py-2 mb-1
           rounded-lg hover:bg-accent transition-all duration-300 font-header"
       >
         Interest Form

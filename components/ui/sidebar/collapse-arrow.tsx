@@ -11,7 +11,7 @@ export function CollapseArrow({
 }) {
   return (
     <div
-      className={`text-white hover:text-accent hover:scale-110
+      className={`text-primary-text hover:text-accent hover:scale-110
           cursor-pointer transition-all duration-200`}
       onClick={onClick}
       title={!left ? "Collapse Sidebar" : "Open Sidebar"}

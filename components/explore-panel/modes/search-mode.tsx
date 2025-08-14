@@ -50,7 +50,7 @@ export default function SearchMode({
 
       {(!isDemo || tempMudkits.length > 0) && (
         <div className="mb-8">
-          <h3 className="text-white text-md font-bold mb-2 flex items-center gap-2">
+          <h3 className="text-primary-text text-md font-bold mb-2 flex items-center gap-2">
             Favorite Sections
             <FaStar className="size-5" />
           </h3>
@@ -77,7 +77,7 @@ export default function SearchMode({
               {activeUserMudkits.length === 0 ? (
                 <>
                   {addedUserMudkits.length > 0 && (
-                    <div className="text-sm text-white italic py-1 w-full text-center ">
+                    <div className="text-sm text-primary-text italic py-1 w-full text-center ">
                       All saved sections are already on this board.
                     </div>
                   )}
@@ -103,7 +103,7 @@ export default function SearchMode({
                 <div>
                   <button
                     onClick={() => setShowAdded((prev) => !prev)}
-                    className="text-white text-sm my-2 mx-4 hover:text-accent transition-all 
+                    className="text-primary-text text-sm my-2 mx-4 hover:text-accent transition-all 
               cursor-pointer duration-200 hover:underline font-semibold flex gap-1 items-center"
                     aria-expanded={showAdded}
                     aria-controls="sections-in-board"
@@ -152,7 +152,7 @@ export default function SearchMode({
 
       {/* <AccordianWrapper
         title="All Boards"
-        titleClassName={"text-white font-header text-md"}
+        titleClassName={"text-primary-text font-header text-md"}
         // onCollapse={() => {
         //   requestAnimationFrame(() => {
         //     setSelectedSection(null);
@@ -187,7 +187,7 @@ export default function SearchMode({
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Open Board in new tab"
-                  className="text-md font-semibold mb-1 text-white hover:text-accent 
+                  className="text-md font-semibold mb-1 text-primary-text hover:text-accent 
                   transition-all duration-150 self-start"
                 >
                   {boardInfo.title || "Untitled Board"}
@@ -212,7 +212,7 @@ export default function SearchMode({
           ))}
         </div>
       ) : (
-        <div className="text-white text-center text-sm font-semibold py-2">
+        <div className="text-primary-text text-center text-sm font-semibold py-2">
           No other boards found.
           <br /> Create boards to reuse them here!
         </div>
@@ -220,14 +220,14 @@ export default function SearchMode({
       {/* </AccordianWrapper> */}
 
       {/* <div>
-        <h3 className="text-white text-md font-bold mb-2 flex items-center gap-2">
+        <h3 className="text-primary-text text-md font-bold mb-2 flex items-center gap-2">
           Community Sections
           {isDemo ? " (DEMO: Click on one!)" : ""}
           <FaGlobeAmericas />
         </h3>
 
         {otherMudkits.length === 0 ? (
-          <p className="text-sm italic text-white px-2 py-4 text-center">
+          <p className="text-sm italic text-primary-text px-2 py-4 text-center">
             Error fetching Community Sections
           </p>
         ) : (

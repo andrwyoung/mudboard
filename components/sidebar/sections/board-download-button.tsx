@@ -15,7 +15,7 @@ export default function BoardDownloadButton() {
       <button
         title="Download Board"
         type="button"
-        className="flex items-center gap-1 cursor-pointer mt-2 mb-1 text-white text-sm font-bold font-header
+        className="flex items-center gap-1 cursor-pointer mt-2 mb-1 text-primary-text text-sm font-bold font-header
                  hover:text-accent transition-all duration-100"
         onClick={() => setOpen(true)}
       >

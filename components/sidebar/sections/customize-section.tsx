@@ -58,7 +58,7 @@ export default function CustomizeSection() {
             <BoardDownloadButton />
             <CopyBoardLinkButton
               boardId={board.board_id}
-              className="mt-2  text-white text-sm font-bold font-header
+              className="mt-2  text-primary-text text-sm font-bold font-header
                  hover:text-accent transition-all duration-100"
             />
 
@@ -69,7 +69,7 @@ export default function CustomizeSection() {
                 setThumbnailPreviewOpen(true);
                 generateThumbnails(board?.board_id);
               }}
-              className="ml-2 py-1 w-fit cursor-pointer text-white hover:underline hover:text-accent text-xs
+              className="ml-2 py-1 w-fit cursor-pointer text-primary-text hover:underline hover:text-accent text-xs
                  transition-all duration-200 rounded-sm"
             >
               Manually Update Thumbnail

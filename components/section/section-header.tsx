@@ -40,7 +40,7 @@ function SectionHeader({
   const visualNumCols =
     scope === "mirror" ? visualNumColsMirror : visualNumColsMain;
 
-  const textColor = scope === "main" ? "text-primary" : "text-white";
+  const textColor = scope === "main" ? "text-primary" : "text-primary-text";
 
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
 

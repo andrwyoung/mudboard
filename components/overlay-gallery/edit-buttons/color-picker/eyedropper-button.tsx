@@ -11,8 +11,8 @@ export function EyedropperToggleButton({
     <button
       title="Use Eyedropper"
       onClick={onToggle}
-      className={`cursor-pointer hover:text-accent hover:bg-white transition-all p-2 rounded-lg ${
-        isEyedropperActive ? "bg-white text-stone-800/80" : ""
+      className={`cursor-pointer hover:text-accent hover:primary-foreground transition-all p-2 rounded-lg ${
+        isEyedropperActive ? "primary-foreground text-stone-800/80" : ""
       }`}
     >
       <FaEyeDropper />

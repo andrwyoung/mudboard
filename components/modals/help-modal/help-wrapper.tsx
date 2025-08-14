@@ -16,7 +16,7 @@ export default function HelpButton({ pageNum }: { pageNum: number }) {
             onClick={() => setHelpOpen(true)}
             type="button"
             title="Help / Support"
-            className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 bg-white 
+            className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 p-1.5 primary-foreground 
                border-primary text-primary-darker rounded-full hover:border-accent
               shadow hover:bg-accent transition-all duration-200 text-sm cursor-pointer"
           >

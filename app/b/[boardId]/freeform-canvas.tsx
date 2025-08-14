@@ -198,14 +198,14 @@ export default function FreeformCanvas({
         </div>
 
         <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-10">
-          <h1 className="text-sm text-white font-header translate-y-[1px] font-semibold">
+          <h1 className="text-sm text-primary-text font-header translate-y-[1px] font-semibold">
             Freeform Mode
           </h1>
           <FreeformPreferenceModal />
         </div>
 
         {blocks.length === 0 && (
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center pointer-events-none z-20">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-primary-text text-center pointer-events-none z-20">
             <h1 className="text-xl font-semibold mb-1">
               No Images in this Section
             </h1>
@@ -284,7 +284,7 @@ export default function FreeformCanvas({
               aria-label="Run auto-layout on blocks"
               title="Auto-layout Canvas"
               className="p-1
-           text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
+           text-primary-text hover:text-accent transition-all duration-200 text-lg cursor-pointer"
             >
               <MdAutoAwesomeMosaic className="size-5" />
             </button>
@@ -298,7 +298,7 @@ export default function FreeformCanvas({
             aria-label="Fit canvas to screen"
             title="Fit to screen (0)"
             className=" p-1
-           text-white hover:text-accent transition-all duration-200 text-lg cursor-pointer"
+           text-primary-text hover:text-accent transition-all duration-200 text-lg cursor-pointer"
           >
             <FaExpand />
           </button>

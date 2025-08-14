@@ -142,7 +142,7 @@ function Canvas({
       {marqueRect && <MarqueBox marqueRect={marqueRect} />}
       <div
         className={`relative h-full w-full ${
-          isMirror ? "bg-stone-300 text-white" : "bg-background"
+          isMirror ? "bg-stone-300 text-primary-text" : "bg-background"
         }`}
         data-id="canvas"
       >

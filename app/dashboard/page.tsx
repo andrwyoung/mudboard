@@ -93,19 +93,19 @@ export default function DashboardPage() {
 
       {/* Board Cards Grid */}
       <div className="flex flex-col lg:flex-row gap-8 md:gap-12  mx-auto mt-20 justify-center">
-        {/* <div className="w-64 h-180 bg-white mt-24" /> */}
+        {/* <div className="w-64 h-180 primary-foreground mt-24" /> */}
 
         <div className="flex flex-col max-w-5xl">
           <div className="flex flex-row lg:flex-col justify-between items-center w-full min-w-32 mx-auto mb-2">
             <div>
-              <div className="lg:hidden flex flex-col text-white">
+              <div className="lg:hidden flex flex-col text-primary-text">
                 <h1 className="text-3xl font-bold">Dashboard</h1>
                 {/* <p className="text-sm opacity-80 mt-1">
                   {hasLicense ? "Free Mode" : "License Active"}
                 </p> */}
               </div>
 
-              <div className="hidden lg:flex flex-col gap-2 my-12 items-center  text-white">
+              <div className="hidden lg:flex flex-col gap-2 my-12 items-center  text-primary-text">
                 <h1 className="font-semibold">Select View:</h1>
                 <div className="flex flex-col gap-2 font-header text-sm">
                   <Button
@@ -202,11 +202,11 @@ export default function DashboardPage() {
 
         {!loading && userBoards.length > 0 ? (
           <div className="flex flex-col gap-8">
-            <div className="hidden lg:flex justify-between items-center text-white">
+            <div className="hidden lg:flex justify-between items-center text-primary-text">
               <div className="flex flex-col gap-2">
                 <h1 className="text-3xl font-bold">Dashboard</h1>
                 {SHOW_GLOBAL_ANNOUNCEMENT && (
-                  <div className="text-sm text-white mb-4 max-w-sm">
+                  <div className="text-sm text-primary-text mb-4 max-w-sm">
                     {GlobalAnnouncement}
                   </div>
                 )}
@@ -225,7 +225,7 @@ export default function DashboardPage() {
                   <Link
                     type="button"
                     href={PRICING_PAGE}
-                    className="font-header text-accent hover:text-white transition-all duration-200
+                    className="font-header text-accent hover:text-primary-text transition-all duration-200
                     cursor-pointer hover:underline text-left flex gap-2 items-center"
                   >
                     <FaSeedling /> Get License
@@ -245,7 +245,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="flex flex-col min-h-48 w-full gap-4">
-            <div className="flex-1 flex flex-col items-center p-12 gap-4 text-white">
+            <div className="flex-1 flex flex-col items-center p-12 gap-4 text-primary-text">
               {!loading && userBoards.length === 0 ? (
                 <div className="flex flex-col items-center gap-2">
                   <h2 className="text-xl">No Boards to show</h2>
@@ -265,7 +265,7 @@ export default function DashboardPage() {
                 <h2 className="text-lg">Loading Boards...</h2>
               )}
               {SHOW_GLOBAL_ANNOUNCEMENT && (
-                <div className="text-sm text-white mb-4 max-w-sm">
+                <div className="text-sm text-primary-text mb-4 max-w-sm">
                   {GlobalAnnouncement}
                 </div>
               )}

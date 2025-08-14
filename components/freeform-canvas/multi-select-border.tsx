@@ -132,7 +132,7 @@ export default function MultiSelectBorder({
             const blockBounds = getBlockBounds(filteredBlocks, sectionId);
             runFreeformAutoLayout(blockBounds, sectionId);
           }}
-          className="w-4 h-4 cursor-pointer hover:text-accent text-white"
+          className="w-4 h-4 cursor-pointer hover:text-accent text-primary-text"
         >
           <MdAutoAwesomeMosaic className="size-5" aria-hidden="true" />
         </button>

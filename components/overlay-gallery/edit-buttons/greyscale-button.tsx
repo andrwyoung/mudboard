@@ -21,7 +21,7 @@ export function GreyscaleToggleButton({
       onClick={handleClick}
       title="Toggle Greyscale"
       className={`p-2 rounded-lg cursor-pointer group transition-all ${
-        isGreyscale ? "bg-white text-stone-800/80" : ""
+        isGreyscale ? "primary-foreground text-stone-800/80" : ""
       }`}
     >
       <FaAdjust

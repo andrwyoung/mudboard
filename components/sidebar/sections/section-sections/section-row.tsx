@@ -182,7 +182,7 @@ export default function SectionRow({
                 <FaCircle
                   aria-hidden="true"
                   className={`size-4 group-hover:text-accent transition-all duration-50
-                    ${selected ? "text-accent" : "text-white"}`}
+                    ${selected ? "text-accent" : "text-primary-text"}`}
                 />
               </button>
             ) : (

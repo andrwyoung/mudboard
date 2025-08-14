@@ -92,7 +92,7 @@ export default function LandingPageDemo() {
           </div>
           {/* <div
             className={`absolute bottom-0 right-2 text-sm px-2 py-1 rounded shadow w-28
-                ${isColorLight ? "text-stone-700" : "text-white"}`}
+                ${isColorLight ? "text-stone-700" : "text-primary-text"}`}
             style={{
               backgroundColor: hoveredColor,
             }}

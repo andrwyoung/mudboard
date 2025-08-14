@@ -16,7 +16,7 @@ import { useDemoStore } from "@/store/demo-store";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
-//   "text-white hover:text-primary-foreground transition-all hover:underline";
+//   "text-primary-text hover:text-primary-foreground transition-all hover:underline";
 
 export default function Sidebar({
   sectionRefs,

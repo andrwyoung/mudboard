@@ -41,7 +41,7 @@ export default function PasswordForm({
       <button
         type="submit"
         className="cursor-pointer hover:secondary text-sm text-primary-darker
-        transition-all duration-200 self-start px-2 py-0.5 bg-secondary hover:bg-white
+        transition-all duration-200 self-start px-2 py-0.5 bg-secondary hover:primary-foreground
          rounded-sm w-full"
       >
         {buttonLabel}

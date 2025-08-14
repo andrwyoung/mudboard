@@ -20,7 +20,7 @@ export default function SpotlightToggle() {
           ${
             isOpen
               ? "bg-accent text-primary hover:bg-accent/70"
-              : "text-white hover:bg-accent/40"
+              : "text-primary-text hover:bg-accent/40"
           }`}
         onClick={() => {
           if (isOpen) {

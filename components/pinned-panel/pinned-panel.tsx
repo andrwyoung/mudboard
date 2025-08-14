@@ -25,9 +25,9 @@ export default function PinnedPanel() {
   useGetInitialSizeOnLayout(scrollRef, pinnedBlock, setInitialSize);
 
   return (
-    <div className="flex flex-col h-full w-full bg-overlay-background text-white overflow-auto relative">
+    <div className="flex flex-col h-full w-full bg-overlay-background text-primary-text overflow-auto relative">
       <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-100">
-        <h1 className="text-sm text-white font-header translate-y-[1px]">
+        <h1 className="text-sm text-primary-text font-header translate-y-[1px]">
           Spotlight View
         </h1>
         <InfoTooltip
@@ -42,7 +42,7 @@ export default function PinnedPanel() {
             type="button"
             aria-label="Clear spotlight image"
             title="Clear Image"
-            className="text-sm px-3 py-0.5 font-header bg-white text-primary 
+            className="text-sm px-3 py-0.5 font-header primary-foreground text-primary 
         rounded-lg hover:bg-accent cursor-pointer"
             onClick={() => setPinnedBlock(null)}
           >

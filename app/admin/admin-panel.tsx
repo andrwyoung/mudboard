@@ -128,7 +128,7 @@ export default function AdminPanel() {
             type="button"
             title="Collapse all expanded boards"
             className="px-2 py-1 rounded-lg text-xs bg-primary hover:bg-accent font-header 
-               cursor-pointer text-white transition-all duration-200"
+               cursor-pointer text-primary-text transition-all duration-200"
             onClick={() => setExpandedBoards([])}
           >
             Collapse All
@@ -163,7 +163,7 @@ export default function AdminPanel() {
                           ? "bg-gray-100"
                           : isExpired || board.deleted
                           ? "bg-rose-50"
-                          : "bg-white"
+                          : "primary-foreground"
                       }`}
                       onClick={() => toggleExpand(board.board_id)}
                     >

@@ -209,7 +209,7 @@ export default function Board({ boardId }: { boardId: string }) {
     <div className="flex h-screen overflow-hidden relative">
       {isExpired && <BoardExpiredPopup />}
       {isDraggingExtFile && !isExpired && !canBoardEdit && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-white ">
+        <div className="fixed inset-0 bg-black/50 z-50 flex flex-col gap-1 items-center justify-center text-primary-text ">
           <div className="text-3xl font-header">Editing Board Disabled</div>
         </div>
       )}
@@ -240,7 +240,7 @@ export default function Board({ boardId }: { boardId: string }) {
         <main className="flex-1 z-0">
           <div
             className={`absolute top-1/2 left-1/2 z-40 -translate-x-1/2 -translate-y-1/2 
-            transition-opacity  duration-200 text-white text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
+            transition-opacity  duration-200 text-primary-text text-3xl bg-primary px-6 py-3 rounded-xl shadow-xl 
              ${fadeGallery ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           >
             {showLoading ? "Loading" : `${sliderVal} Columns`}

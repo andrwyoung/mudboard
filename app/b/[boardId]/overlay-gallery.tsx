@@ -362,7 +362,7 @@ export default function OverlayGallery({
               <div className="w-3 h-5" />
               {/* <p
                 className={`text-xs font-mono font-bold translate-y-[1px] ${
-                  isColorLight ? "text-stone-800" : "text-white"
+                  isColorLight ? "text-stone-800" : "text-primary-text"
                 }`}
               >
                 {" "}
@@ -465,7 +465,7 @@ export default function OverlayGallery({
           ${
             getPrevImage(selectedBlock.block_id)
               ? "bg-stone-800/80 hover:bg-stone-700/80 cursor-pointer"
-              : "bg-stone-800/20 text-white/20"
+              : "bg-stone-800/20 text-primary-text/20"
           } 
           ${overlayUIClass}`}
             onClick={(e) => {
@@ -480,7 +480,7 @@ export default function OverlayGallery({
           ${
             getNextImage(selectedBlock.block_id)
               ? "bg-stone-800/80 hover:bg-stone-700/80 cursor-pointer"
-              : "bg-stone-800/20 text-white/20"
+              : "bg-stone-800/20 text-primary-text/20"
           } 
           ${overlayUIClass}`}
             onClick={(e) => {

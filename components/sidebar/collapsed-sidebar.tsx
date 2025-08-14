@@ -11,7 +11,7 @@ import { RefObject } from "react";
 import CollapsedSectionSections from "./collapsed-sections/collapsed-section-sections";
 
 const iconClassname =
-  "hover:text-accent hover:scale-110 transition-all duration-200 text-white";
+  "hover:text-accent hover:scale-110 transition-all duration-200 text-primary-text";
 
 export function CollapsedSidebar({
   onExpand,

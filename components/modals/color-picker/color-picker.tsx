@@ -126,7 +126,11 @@ export default function ColorPickerWheel({
         />
         <div
           className={`absolute top-1/2 w-[3px] h-4 
-            ${hsv.h >= 20 && hsv.h <= 140 ? "bg-slate-500" : "bg-white"}`}
+            ${
+              hsv.h >= 20 && hsv.h <= 140
+                ? "bg-slate-500"
+                : "primary-foreground"
+            }`}
           style={{
             left: `${(hsv.h / 360) * 100}%`,
             transform: "translate(-50%, -50%)",
