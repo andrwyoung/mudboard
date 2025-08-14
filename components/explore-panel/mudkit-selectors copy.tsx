@@ -98,7 +98,7 @@ export function MudkitSelectButtonExplore({
                   "w-2 h-2 rounded-full translate-y-[1px]",
                   lastCopy
                     ? isSelected
-                      ? "primary-foreground"
+                      ? "bg-primary-foreground"
                       : "bg-accent group-hover:bg-accent"
                     : "bg-secondary"
                 )}

@@ -42,7 +42,7 @@ export default function PinnedPanel() {
             type="button"
             aria-label="Clear spotlight image"
             title="Clear Image"
-            className="text-sm px-3 py-0.5 font-header primary-foreground text-primary 
+            className="text-sm px-3 py-0.5 font-header bg-primary-foreground text-primary 
         rounded-lg hover:bg-accent cursor-pointer"
             onClick={() => setPinnedBlock(null)}
           >

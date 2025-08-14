@@ -30,7 +30,7 @@ export function FreeformEditToggleSlider() {
 
   return (
     <div
-      className="flex flex-col items-center gap-1 p-1 primary-foreground rounded-sm"
+      className="flex flex-col items-center gap-1 p-1 bg-primary-foreground rounded-sm"
       role="group"
       aria-label="Toggle between view and arrange mode"
     >

@@ -157,7 +157,7 @@ export function ImageBlock({
             )}
 
             {isTempBlock && (
-              <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 primary-foreground rounded-sm shadow-sm">
+              <h1 className="absolute text-xs top-2 right-2 text-slate-600 z-10 py-0.5 px-1 bg-primary-foreground rounded-sm shadow-sm">
                 Uploading
               </h1>
             )}

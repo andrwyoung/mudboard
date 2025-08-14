@@ -161,7 +161,7 @@ export default function OLDThumbnailGenerator({ board }: { board: Board }) {
             type="button"
             onClick={() => generateThumbnails(board?.board_id)}
             className="px-2 py-1 cursor-pointer bg-accent text-primary text-xs
-         hover:primary-foreground transition-all duration-200 rounded-sm"
+         hover:bg-primary-foreground transition-all duration-200 rounded-sm"
           >
             Generate Thumbnail
           </button>

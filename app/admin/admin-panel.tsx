@@ -163,7 +163,7 @@ export default function AdminPanel() {
                           ? "bg-gray-100"
                           : isExpired || board.deleted
                           ? "bg-rose-50"
-                          : "primary-foreground"
+                          : "bg-primary-foreground"
                       }`}
                       onClick={() => toggleExpand(board.board_id)}
                     >

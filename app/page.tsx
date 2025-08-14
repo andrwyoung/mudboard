@@ -71,7 +71,7 @@ export default function Home() {
               href={LOGIN_LINK}
               className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-primary-text text-sm font-header transition-all duration-500
-                hover:text-primary-text hover:primary-foreground/30 
+                hover:text-primary-text hover:bg-primary-foreground/30 
                 `}
               data-umami-event={`Landing page: Login`}
             >
@@ -83,7 +83,7 @@ export default function Home() {
               data-umami-event={`Landing page: Dashboard`}
               className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
                 rounded-md text-primary-text text-sm font-header transition-all duration-500
-                hover:text-primary-text hover:primary-foreground/30 
+                hover:text-primary-text hover:bg-primary-foreground/30 
                 `}
             >
               Dashboard

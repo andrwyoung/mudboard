@@ -62,7 +62,7 @@ export default function ColorWheel({
             ${
               hoveredHSV.h >= 20 && hoveredHSV.h <= 140
                 ? "bg-slate-500"
-                : "primary-foreground"
+                : "bg-primary-foreground"
             }`}
           style={{
             left: `${(hoveredHSV.h / 360) * 100}%`,

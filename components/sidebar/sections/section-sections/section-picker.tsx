@@ -144,7 +144,7 @@ export default function SectionPickerDialog({
                     >
                       {sections[0]?.board_title || "Untitled Board"}
                     </Link>
-                    <div className="p-1 primary-foreground/80 rounded-lg">
+                    <div className="p-1 bg-primary-foreground/80 rounded-lg">
                       {sections.map((section) => (
                         <MudkitSelectButton
                           key={`${section.section_id} - ${boardId}`}
@@ -181,7 +181,7 @@ export default function SectionPickerDialog({
                 });
               }}
             >
-              <div className="flex flex-col primary-foreground p-2 rounded-lg">
+              <div className="flex flex-col bg-primary-foreground p-2 rounded-lg">
                 {allUserOrphanedSections.map((section) => (
                   <MudkitSelectButton
                     key={section.section_id}

@@ -238,7 +238,7 @@ export default function PricingTable() {
                       <FaXmark className="size-4 flex-none" />
                     )}
                     {feature.status === "neutral" && (
-                      <div className="h-1 w-1 primary-foreground rounded-full"></div>
+                      <div className="h-1 w-1 bg-primary-foreground rounded-full"></div>
                     )}
                     {feature.label}
                   </li>

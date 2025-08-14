@@ -129,7 +129,7 @@ export default function ColorPickerWheel({
             ${
               hsv.h >= 20 && hsv.h <= 140
                 ? "bg-slate-500"
-                : "primary-foreground"
+                : "bg-primary-foreground"
             }`}
           style={{
             left: `${(hsv.h / 360) * 100}%`,

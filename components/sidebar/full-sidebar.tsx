@@ -16,7 +16,7 @@ import { useDemoStore } from "@/store/demo-store";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
-//   "text-primary-text hover:text-primary-foreground transition-all hover:underline";
+//   "text-primary-text hover:text-bg-primary-foreground transition-all hover:underline";
 
 export default function Sidebar({
   sectionRefs,
@@ -78,7 +78,7 @@ export default function Sidebar({
       </div>
       <a
         className="flex flex-col items-center px-4 py-4 
-      font-mono font-semibold mt-auto text-xs pt-6 text-primary-foreground
+      font-mono font-semibold mt-auto text-xs pt-6 text-bg-primary-foreground
       hover:underline"
         href="https://www.andrwyoung.com/"
         title="Andrew's website"

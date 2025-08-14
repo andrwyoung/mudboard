@@ -66,7 +66,7 @@ export default function AddSectionButton({
         type="button"
         aria-label="Create a new section"
         title="Create a new section"
-        className={`text-primary-foreground hover:underline hover:underline-offset-2 
+        className={`text-bg-primary-foreground hover:underline hover:underline-offset-2 
         transition-all duration-300 cursor-pointer flex gap-1 items-center text-sm
         focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded
         

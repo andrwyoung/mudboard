@@ -12,17 +12,18 @@ const buttonVariants = cva(
         default:
           "bg-primary border-primary text-primary-text hover:text-primary hover:bg-accent",
         secondary:
-          "primary-foreground border-white text-primary hover:bg-accent hover:text-primary-text",
+          "bg-primary-foreground border-white text-primary hover:bg-accent hover:text-primary-text",
         white:
-          "primary-foreground text-primary-darker border-white hover:bg-secondary-lighter",
+          "bg-primary-foreground text-primary-darker border-white hover:bg-secondary-lighter",
         destructive:
           "bg-rose-400 outline-2 outline-rose-400 text-primary-text  hover:outline-rose-500 hover:bg-rose-300",
         good: "bg-accent outline-2 outline-accent text-primary hover:text-primary-text hover:bg-accent/60",
         kinda_good:
-          "text-primary bg-secondary outline-2 outline-secondary hover:primary-foreground",
-        accent: "primary-foreground text-primary hover:primary-foreground",
+          "text-primary bg-secondary outline-2 outline-secondary hover:bg-primary-foreground",
+        accent:
+          "bg-primary-foreground text-primary hover:bg-primary-foreground",
         outline:
-          "bg-transparent outline-2 outline-white text-primary-text hover:primary-foreground/30 ",
+          "bg-transparent outline-2 outline-white text-primary-text hover:bg-primary-foreground/30 ",
         outline_primary:
           "bg-transparent outline-2 outline-primary text-primary hover:bg-secondary/50 ",
         outline_accent:

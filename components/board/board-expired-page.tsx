@@ -14,7 +14,7 @@ export default function BoardExpiredPopup() {
         <Link
           href="/"
           className="flex bg-accent text-primary-darker px-4 py-2 rounded-lg font-semibold
-          font-header hover:primary-foreground hover:text-primary transition-all duration-300"
+          font-header hover:bg-primary-foreground hover:text-primary transition-all duration-300"
         >
           Go Home
         </Link>

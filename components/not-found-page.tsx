@@ -47,7 +47,7 @@ export default function NotFoundComponent({
 
       <Link
         href={user ? DASHBOARD_LINK : "/"}
-        className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary-lighter 
+        className="bg-primary text-bg-primary-foreground px-4 py-2 rounded-md hover:bg-primary-lighter 
         hover:scale-105 transition-all duration-200
         flex flex-row gap-1 items-center"
       >
