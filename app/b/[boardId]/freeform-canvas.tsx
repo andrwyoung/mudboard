@@ -10,12 +10,6 @@ import { BlockRenderer } from "@/components/freeform-canvas/block-renderer";
 import { Section } from "@/types/board-types";
 import { FreeformEditToggleSlider } from "@/components/freeform-canvas/edit-toggle";
 import { FaExpand } from "react-icons/fa6";
-import FreeformPreferenceModal from "@/components/modals/freeform-preference-modal";
-import {
-  DEFAULT_ARRANGE_BG_COLOR,
-  DEFAULT_VIEW_BG_COLOR,
-} from "@/types/constants";
-import { useUserPreferenceStore } from "@/store/use-preferences-store";
 import { getFitToScreenCamera } from "@/lib/freeform/get-default-camera";
 import { FitCameraToScreen } from "@/lib/freeform/fit-camera-to-screen";
 import {
@@ -71,9 +65,6 @@ export default function FreeformCanvas({
   } | null>(null);
 
   // preferences
-  const viewBgColor = useUserPreferenceStore((s) => s.viewBgColor);
-  const arrangeBgColor = useUserPreferenceStore((s) => s.arrangeBgColor);
-
   const { onWheel, zoomCameraCentered } = useCanvasZoom(sectionId);
 
   const runAutolayout = useCallback(() => {
