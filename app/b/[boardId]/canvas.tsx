@@ -4,7 +4,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import OverlayGallery from "./overlay-gallery";
 import { useMeasureStore, useUIStore } from "@/store/ui-store";
-import { SCROLLBAR_STYLE } from "@/types/constants";
+import { SCROLLBAR_STYLE, SCROLLBAR_STYLE_WHITE } from "@/types/constants";
 import { MirrorContext } from "./board";
 import SectionHeader from "@/components/section/section-header";
 import SectionGallery from "./gallery";
@@ -59,6 +59,7 @@ function Canvas({
   const setSelectedSection = useSelectionStore((s) => s.setSelectedSection);
   const boardSectionMap = useMetadataStore((s) => s.boardSectionMap);
 
+  const isDarkMode = useUIStore((s) => s.darkMode);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const setScroll = useMeasureStore((s) => s.setScroll);
   const assignSectionRef = useCallback(
@@ -141,10 +142,10 @@ function Canvas({
     <>
       {marqueRect && <MarqueBox marqueRect={marqueRect} />}
       <div
-        className={`relative h-full w-full ${
-          isMirror
-            ? "bg-stone-300 text-primary-text"
-            : "bg-grid-background text-primary-text"
+        className={`relative h-full w-full  transition-colors duration-200 ${
+          isDarkMode
+            ? "bg-canvas-background-dark text-off-white"
+            : "bg-canvas-background-light text-dark-text"
         }`}
         data-id="canvas"
       >
@@ -168,7 +169,9 @@ function Canvas({
 
         <div
           key="test-key"
-          className={`flex-1 overflow-y-scroll h-full ${SCROLLBAR_STYLE}`}
+          className={`flex-1 overflow-y-scroll h-full ${
+            isDarkMode ? SCROLLBAR_STYLE_WHITE : SCROLLBAR_STYLE
+          }`}
           tabIndex={-1}
           ref={scrollRef}
           style={{

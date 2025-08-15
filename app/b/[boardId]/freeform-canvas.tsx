@@ -3,7 +3,7 @@
 import { useFreeformStore } from "@/store/freeform-store";
 import { useCallback, useEffect, useState } from "react";
 import { Block } from "@/types/block-types";
-import { mainCanvasRef } from "@/store/ui-store";
+import { mainCanvasRef, useUIStore } from "@/store/ui-store";
 import { useCanvasPointerControls } from "@/hooks/freeform/use-canvas-pointer-controls";
 import { useCanvasZoom } from "@/hooks/freeform/use-freeform-zoom";
 import { BlockRenderer } from "@/components/freeform-canvas/block-renderer";
@@ -49,6 +49,15 @@ export default function FreeformCanvas({
   const [spaceHeld, setSpaceHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const cursorMovementsIsActive = !editMode || (editMode && spaceHeld);
+
+  const isDarkMode = useUIStore((s) => s.darkMode);
+  const bgColor = isDarkMode
+    ? editMode
+      ? "bg-canvas-background-dark"
+      : "bg-canvas-background-dark-secondary"
+    : editMode
+    ? "bg-canvas-background-light"
+    : "bg-canvas-background-light-secondary";
 
   const camera = useFreeformStore((s) => s.cameraMap[section.section_id]);
 
@@ -189,23 +198,27 @@ export default function FreeformCanvas({
 
   return (
     <DroppableFreeformCanvas id="freeform-canvas-dropzone">
-      <div className="w-full h-full overflow-hidden relative ">
+      <div
+        className={`w-full h-full overflow-hidden relative ${
+          isDarkMode ? "text-off-white" : "text-dark-text"
+        }`}
+      >
         {editMode && !spaceHeld && marqueRect && (
           <MarqueBox marqueRect={marqueRect} />
         )}
         <div className="absolute top-4 right-4 z-10">
-          <FreeformEditToggleSlider />
+          <FreeformEditToggleSlider isDarkMode={isDarkMode} />
         </div>
 
         <div className="top-4 left-4 flex flex-row gap-2 items-center absolute z-10">
-          <h1 className="text-sm text-primary-text font-header translate-y-[1px] font-semibold">
+          <h1 className="text-md font-header translate-y-[1px] font-semibold">
             Freeform Mode
           </h1>
-          <FreeformPreferenceModal />
+          {/* <FreeformPreferenceModal /> */}
         </div>
 
         {blocks.length === 0 && (
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-primary-text text-center pointer-events-none z-20">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-20">
             <h1 className="text-xl font-semibold mb-1">
               No Images in this Section
             </h1>
@@ -221,18 +234,18 @@ export default function FreeformCanvas({
               onMouseDown={onMouseDown}
               data-id="freeform-canvas"
               onWheel={onWheel}
-              className={`w-full h-full z-0 relative ${
+              className={`w-full h-full z-0 relative  transition-colors duration-200 ${bgColor} ${
                 isDragging
                   ? "cursor-grabbing"
                   : cursorMovementsIsActive
                   ? "cursor-grab"
                   : "cursor-default"
               }`}
-              style={{
-                backgroundColor: editMode
-                  ? arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR
-                  : viewBgColor ?? DEFAULT_VIEW_BG_COLOR,
-              }}
+              // style={{
+              //   backgroundColor: editMode
+              //     ? arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR
+              //     : viewBgColor ?? DEFAULT_VIEW_BG_COLOR,
+              // }}
             >
               {camera && (
                 <>
@@ -284,7 +297,7 @@ export default function FreeformCanvas({
               aria-label="Run auto-layout on blocks"
               title="Auto-layout Canvas"
               className="p-1
-           text-primary-text hover:text-accent transition-all duration-200 text-lg cursor-pointer"
+            hover:text-accent transition-all duration-200 text-lg cursor-pointer"
             >
               <MdAutoAwesomeMosaic className="size-5" />
             </button>
@@ -298,7 +311,7 @@ export default function FreeformCanvas({
             aria-label="Fit canvas to screen"
             title="Fit to screen (0)"
             className=" p-1
-           text-primary-text hover:text-accent transition-all duration-200 text-lg cursor-pointer"
+           hover:text-accent transition-all duration-200 text-lg cursor-pointer"
           >
             <FaExpand />
           </button>

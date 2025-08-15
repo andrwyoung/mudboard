@@ -6,7 +6,7 @@ function TestimonialCard({
   author: string;
 }) {
   return (
-    <div className="bg-primary/20 rounded-lg text-primary-text">
+    <div className="bg-primary/20 rounded-lg text-off-white">
       <p className="mb-2">{children}</p>
       <p className="font-semibold font-header text-md">— {author}</p>
     </div>

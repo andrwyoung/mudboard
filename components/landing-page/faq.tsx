@@ -83,7 +83,7 @@ export default function FAQ() {
           mean):{" "}
           <a
             href="https://jondrew.notion.site/Mudboard-Pricing-2332e809fa4e802dab4be35bb639e5d8?pvs=74"
-            className="text-accent underline hover:text-primary-text transition-all duration-200 font-bold"
+            className="text-accent underline hover:text-off-white transition-all duration-200 font-bold"
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
@@ -107,7 +107,7 @@ export default function FAQ() {
           Probably! You can check out this{" "}
           <Link
             href="/roadmap"
-            className="text-accent underline hover:text-primary-text transition-all duration-200 font-bold"
+            className="text-accent underline hover:text-off-white transition-all duration-200 font-bold"
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
@@ -121,7 +121,7 @@ export default function FAQ() {
           direction, you can{" "}
           <a
             href={INTEREST_LINK}
-            className="text-accent underline hover:text-primary-text transition-all duration-200 font-bold"
+            className="text-accent underline hover:text-off-white transition-all duration-200 font-bold"
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

@@ -7,9 +7,7 @@ export default function BoardExpiredPopup() {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center p-8 text-center z-100 bg-slate-700/80">
       <h1 className="text-3xl font-bold ">This board has expired</h1>
-      <p className="text-primary-text  mb-6">
-        This board is no longer available
-      </p>
+      <p className="text-off-white  mb-6">This board is no longer available</p>
       <div className="flex items-center gap-4">
         <Link
           href="/"
@@ -21,7 +19,7 @@ export default function BoardExpiredPopup() {
         <Link
           href={NEW_BOARD_LINK}
           className="border-2 border-accent text-accent px-4 py-1.5 rounded-lg font-semibold
-          font-header hover:border-white hover:text-primary-text transition-all duration-300"
+          font-header hover:border-white hover:text-off-white transition-all duration-300"
         >
           Create New Board
         </Link>

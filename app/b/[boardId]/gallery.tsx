@@ -34,6 +34,7 @@ function SectionGallery({
 
   const spacingSize = useUIStore((s) => s.spacingSize);
   const forceMobileColumns = useUIStore((s) => s.isMobile);
+  const isDarkMode = useUIStore((s) => s.darkMode);
 
   const selectedBlocks = useSelectionStore((s) => s.selectedBlocks);
   const lastSelectedBlock = useSelectionStore((s) => s.lastSelectedBlock);
@@ -151,7 +152,7 @@ function SectionGallery({
                 onClick={() => triggerImagePicker()}
               >
                 <Image
-                  src="/1white.png"
+                  src={isDarkMode || isMirror ? "/1white.png" : "/1.png"}
                   alt="No images yet"
                   width={375}
                   height={150}

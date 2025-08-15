@@ -10,7 +10,7 @@ export function FreeformEditToggle() {
     <button
       type="button"
       className={`flex items-center gap-1 cursor-pointer group transition-all duration-300
-        ${editMode ? "text-accent" : "text-primary-text hover:text-accent/80"}`}
+        ${editMode ? "text-accent" : "text-off-white hover:text-accent/80"}`}
       onClick={() => setEditMode(!editMode)}
     >
       <FaArrowPointer className="" />
@@ -24,13 +24,18 @@ export function FreeformEditToggle() {
 const sliderClass =
   "text-sm font-header px-2 py-1 cursor-pointer hover:bg-accent/60 text-primary rounded-md w-full";
 
-export function FreeformEditToggleSlider() {
+export function FreeformEditToggleSlider({
+  isDarkMode,
+}: {
+  isDarkMode: boolean;
+}) {
   const editMode = useFreeformStore((s) => s.editMode);
   const setEditMode = useFreeformStore((s) => s.setEditMode);
 
   return (
     <div
-      className="flex flex-col items-center gap-1 p-1 bg-primary-foreground rounded-sm"
+      className={`flex flex-col items-center gap-1 p-1  rounded-sm
+        ${isDarkMode ? "bg-off-white" : "bg-off-white"}`}
       role="group"
       aria-label="Toggle between view and arrange mode"
     >

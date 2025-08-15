@@ -70,8 +70,8 @@ export default function Home() {
             <Link
               href={LOGIN_LINK}
               className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
-                rounded-md text-primary-text text-sm font-header transition-all duration-500
-                hover:text-primary-text hover:bg-primary-foreground/30 
+                rounded-md text-off-white text-sm font-header transition-all duration-500
+                hover:text-off-white hover:bg-primary-foreground/30 
                 `}
               data-umami-event={`Landing page: Login`}
             >
@@ -82,8 +82,8 @@ export default function Home() {
               href={DASHBOARD_LINK}
               data-umami-event={`Landing page: Dashboard`}
               className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
-                rounded-md text-primary-text text-sm font-header transition-all duration-500
-                hover:text-primary-text hover:bg-primary-foreground/30 
+                rounded-md text-off-white text-sm font-header transition-all duration-500
+                hover:text-off-white hover:bg-primary-foreground/30 
                 `}
             >
               Dashboard
@@ -94,7 +94,7 @@ export default function Home() {
             data-umami-event={`Landing page: Demo Board Navbar`}
             className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
                 rounded-md text-primary text-lg font-header transition-all duration-500
-                hover:text-primary-text hover:bg-accent/90 
+                hover:text-off-white hover:bg-accent/90 
                 `}
           >
             Demo
@@ -114,7 +114,7 @@ export default function Home() {
 
       <div className=" flex flex-col items-center">
         <div
-          className="z-10 w-full max-w-screen mx-auto px-6 text-primary-text 
+          className="z-10 w-full max-w-screen mx-auto px-6 text-off-white 
           flex flex-col items-center"
         >
           {/* HERO */}
@@ -132,7 +132,7 @@ export default function Home() {
                 ${
                   highlightedIndexes.includes("hero")
                     ? "text-accent"
-                    : "text-primary-text"
+                    : "text-off-white"
                 }`}
               >
                 {/* Draw more. Organize less. */}
@@ -176,7 +176,7 @@ export default function Home() {
                     transition-colors duration-200 ${
                       highlightedIndexes.includes("subheader")
                         ? "text-accent"
-                        : "text-primary-text"
+                        : "text-off-white"
                     }`}
                 >
                   {/* A fast moodboarding tool for designers who want to test and
@@ -205,7 +205,7 @@ export default function Home() {
                   title="Demo board link"
                   className="flex flex-col px-6 py-2 bg-accent justify-center
                 rounded-md text-primary text-xl font-header transition-all duration-300
-                hover:text-primary-text hover:bg-accent/90"
+                hover:text-off-white hover:bg-accent/90"
                   data-umami-event={`Landing page: Demo Board CTA`}
                 >
                   <div className="flex gap-2 items-center">
@@ -226,7 +226,7 @@ export default function Home() {
                 ${
                   highlightedIndexes.includes("new_board")
                     ? "text-accent"
-                    : "text-primary-text"
+                    : "text-off-white"
                 }`}
                   data-umami-event={`Landing page: Blank Board`}
                   title="New board link"
@@ -237,7 +237,7 @@ export default function Home() {
 
               {SHOW_GLOBAL_ANNOUNCEMENT && (
                 <div className="p-2 rounded-lg mt-12  max-w-sm mx-auto border-2 border-yellow-300 bg-primary/80">
-                  <div className="text-xs text-primary-text text-center ">
+                  <div className="text-xs text-off-white text-center ">
                     {GlobalAnnouncement}
                   </div>
                 </div>
@@ -352,7 +352,7 @@ export default function Home() {
                 href={DEMO_BOARD_LINK}
                 title="Demo board link"
                 className="px-6 py-2 bg-accent text-primary text-lg rounded-md font-header
-              hover:bg-accent/90 hover:text-primary-text transition-all duration-300"
+              hover:bg-accent/90 hover:text-off-white transition-all duration-300"
               >
                 Try Demo Board
               </Link>
@@ -361,7 +361,7 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 href={INTEREST_LINK}
-                className="text-sm font-header hover:underline text-primary-text hover:text-accent"
+                className="text-sm font-header hover:underline text-off-white hover:text-accent"
                 title="Mudboard interest form"
               >
                 Follow along for the journey

@@ -40,6 +40,7 @@ function ColumnComponent({
 }: Props) {
   const sectionId = section.section_id;
   const mirrorMode = useUIStore((s) => s.mirrorMode);
+  const isDarkMode = useUIStore((s) => s.darkMode);
 
   const draggedBlocks = useDragStore((s) => s.draggedBlocks);
   const overId = useDragStore((s) => s.dropIndicatorId);
@@ -166,6 +167,7 @@ function ColumnComponent({
         <BlockAdder
           addImage={() => triggerImagePicker(columnIndex)}
           addText={() => createTextBlock(section.section_id, columnIndex)}
+          isDarkMode={isDarkMode}
         />
       )}
     </div>

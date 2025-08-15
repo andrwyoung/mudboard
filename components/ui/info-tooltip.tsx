@@ -20,7 +20,7 @@ export default function InfoTooltip({
       <TooltipTrigger asChild>
         <FaQuestionCircle
           className={`size-4 text-primary translate-y-[1px] cursor-help
-          ${white ? "text-primary-text" : "text-primary"}`}
+          ${white ? "text-off-white" : "text-primary"}`}
         />
       </TooltipTrigger>
       <TooltipContent

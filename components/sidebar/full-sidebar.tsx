@@ -13,10 +13,11 @@ import { CollapseArrow } from "@/components/ui/sidebar/collapse-arrow";
 import { canEditBoard } from "@/lib/auth/can-edit-board";
 import { WorkspaceToggles } from "@/components/ui/sidebar/workspace-toggle";
 import { useDemoStore } from "@/store/demo-store";
+import DarkModeButton from "./buttons/dark-mode-button";
 
 // const fontClass = "font-semibold text-sm font-header";
 // const refClass =
-//   "text-primary-text hover:text-bg-primary-foreground transition-all hover:underline";
+//   "text-off-white hover:text-bg-primary-foreground transition-all hover:underline";
 
 export default function Sidebar({
   sectionRefs,
@@ -50,6 +51,8 @@ export default function Sidebar({
             <NewBoardButton />
           </div>
         )}
+
+        <DarkModeButton />
       </div>
 
       <div className="flex flex-col flex-grow justify-center gap-24">

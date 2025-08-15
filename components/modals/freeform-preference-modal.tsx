@@ -44,7 +44,7 @@ function ColorSettingRow({
   const textColor =
     getLuminanceFromHex(displayColor) > 0.5
       ? "text-stone-800"
-      : "text-primary-text";
+      : "text-off-white";
 
   const handleToggle = () => {
     const next = isActive ? null : pickerKey;
@@ -117,7 +117,7 @@ export default function FreeformPreferenceModal() {
         }}
       >
         <DialogTrigger title="Canvas Preferences">
-          <FaSliders className="size-3.5 text-primary-text cursor-pointer hover:text-accent transition-colors duration-75 translate-y-[1px]" />
+          <FaSliders className="size-3.5 text-off-white cursor-pointer hover:text-accent transition-colors duration-75 translate-y-[1px]" />
         </DialogTrigger>
         <DialogContent className="text-primary select-none ">
           <DialogHeader>

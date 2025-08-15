@@ -105,7 +105,7 @@ const plans: Plan[] = [
           href="https://jondrew.notion.site/Mudboard-Pricing-2332e809fa4e802dab4be35bb639e5d8?pvs=74"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-accent underline hover:text-primary-text transition-all duration-200 font-bold"
+          className="text-accent underline hover:text-off-white transition-all duration-200 font-bold"
         >
           More Details (Lifetime Promise)
         </a>
@@ -154,7 +154,7 @@ const plans: Plan[] = [
           href="https://jondrew.notion.site/Mudboard-Roadmap-2162e809fa4e80eb94add8aa315c769d?source=copy_link"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-accent underline hover:text-primary-text transition-all duration-200 font-bold"
+          className="text-accent underline hover:text-off-white transition-all duration-200 font-bold"
         >
           → Check the roadmap
         </a>
@@ -219,7 +219,7 @@ export default function PricingTable() {
               <div className="flex flex-col mb-8 h-12">
                 <p className="font-header text-2xl font-bold ">{plan.price}</p>
                 {plan.oldPrice && (
-                  <p className="font-header text-xs font-semibold text-primary-text">
+                  <p className="font-header text-xs font-semibold text-off-white">
                     {plan.oldPrice}
                   </p>
                 )}
@@ -260,7 +260,7 @@ export default function PricingTable() {
         <p className="text-xs mb-4 text-muted font-semibold">
           *More storage can only be bought with a lifetime license
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left text-primary-text">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left text-off-white">
           <StorageBox title="1,000 Images" price="$6" />
           <StorageBox title="5,000 Images" price="$16" />
           <StorageBox

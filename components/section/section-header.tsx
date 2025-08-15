@@ -39,9 +39,6 @@ function SectionHeader({
   const visualNumCols =
     scope === "mirror" ? visualNumColsMirror : visualNumColsMain;
 
-  const textColor =
-    scope === "main" ? "text-primary-text" : "text-primary-text";
-
   const { triggerImagePicker, fileInput } = useImagePicker(section.section_id);
 
   return (
@@ -60,7 +57,7 @@ function SectionHeader({
               onChange={(newTitle) => {
                 updateSectionTitle(section.section_id, newTitle, canEdit);
               }}
-              className={`text-lg sm:text-xl md:text-2xl text-left  ${textColor} `}
+              className={`text-lg sm:text-xl md:text-2xl text-left  `}
             />
           </div>
           {/* {!canEdit && username && (
@@ -69,7 +66,7 @@ function SectionHeader({
             </h3>
           )} */}
         </div>
-        <div className={`flex flex-col items-end gap-2 ${textColor}`}>
+        <div className={`flex flex-col items-end gap-2 `}>
           <div
             className={`flex flex-row-reverse gap-2 items-center opacity-80`}
           >
@@ -113,7 +110,7 @@ function SectionHeader({
           onChange={(newDesc) => {
             updateSectionDescription(section.section_id, newDesc);
           }}
-          className={`leading-relaxed ${textColor}`}
+          className={`leading-relaxed `}
         />
       </div>
     </div>

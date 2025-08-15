@@ -83,7 +83,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-primary text-primary-text p-6 pb-12 lg:px-12 relative">
+    <div className="min-h-screen bg-primary text-off-white p-6 pb-12 lg:px-12 relative">
       {/* Logo */}
       <div className="absolute top-4 left-6">
         <Logo enforceHome={true} />

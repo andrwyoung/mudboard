@@ -25,7 +25,7 @@ export default function ExploreSingleMudkitMode({
 
       <button
         type="button"
-        className="text-primary-text hover:text-accent transition-all duration-200 w-fit 
+        className="text-off-white hover:text-accent transition-all duration-200 w-fit 
         cursor-pointer flex items-center font-header gap-2 font-semibold mb-2 
         opacity-80 hover:opacity-100"
         onClick={backButton}

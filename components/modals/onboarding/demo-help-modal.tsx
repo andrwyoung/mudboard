@@ -226,7 +226,7 @@ export default function DemoHelpModal() {
             type="button"
             onClick={closeHelpModal}
             title="Return to Demo Board"
-            className="px-4 py-2 bg-primary text-primary-text rounded-lg font-header
+            className="px-4 py-2 bg-primary text-off-white rounded-lg font-header
           hover:bg-accent hover:text-primary cursor-pointer transition-all duration-100"
           >
             Continue Exploring
@@ -295,7 +295,7 @@ export default function DemoHelpModal() {
               setLoginModalOpen(true);
               closeHelpModal();
             }}
-            className="px-4 py-2 bg-primary text-primary-text rounded-lg font-header
+            className="px-4 py-2 bg-primary text-off-white rounded-lg font-header
         hover:bg-accent hover:text-primary cursor-pointer transition-all duration-100"
           >
             Create an Account

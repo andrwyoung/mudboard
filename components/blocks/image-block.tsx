@@ -223,7 +223,7 @@ export function ImageBlock({
                         border-none focus:outline-none rounded-b-sm
                     ${
                       isFocused
-                        ? "text-primary bg-primary-text"
+                        ? "text-primary bg-off-white"
                         : "text-primary-darker bg-transparent"
                     }`}
                   style={{ height: CAPTION_HEIGHT }}

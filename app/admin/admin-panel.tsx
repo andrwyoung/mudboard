@@ -128,7 +128,7 @@ export default function AdminPanel() {
             type="button"
             title="Collapse all expanded boards"
             className="px-2 py-1 rounded-lg text-xs bg-primary hover:bg-accent font-header 
-               cursor-pointer text-primary-text transition-all duration-200"
+               cursor-pointer text-off-white transition-all duration-200"
             onClick={() => setExpandedBoards([])}
           >
             Collapse All

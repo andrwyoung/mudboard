@@ -25,7 +25,7 @@ function FeatureItem({
       data-id={title}
       data-marque-track
       className={`transition-all duration-200 ${
-        isHighlighted ? "text-accent" : "text-primary-text"
+        isHighlighted ? "text-accent" : "text-off-white"
       }`}
     >
       <div className="flex flex-col gap-2 mb-4">

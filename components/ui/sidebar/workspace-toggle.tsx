@@ -30,7 +30,7 @@ function WorkspaceToggleButton({
           ${
             isActive
               ? "bg-accent text-primary hover:bg-accent/70"
-              : "text-primary-text hover:bg-accent/40"
+              : "text-off-white hover:bg-accent/40"
           }`}
       onClick={onClick}
       title={title}

@@ -94,7 +94,7 @@ export default function BoardCard({
           onClick={(e) => e.stopPropagation()}
           className="text-sm font-header bg-primary px-3 py-1 rounded-lg cursor-pointer 
             flex flex-row gap-1.5 items-center justify-center transition-all duration-300 
-            hover:text-primary hover:bg-accent text-primary-text"
+            hover:text-primary hover:bg-accent text-off-white"
           title="Open Board"
         >
           Open
