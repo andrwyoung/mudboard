@@ -44,7 +44,7 @@ export default function Sidebar({
           <NewBoardButton />
         </div> */}
         {isDemo && (
-          <div className="flex flex-col items-center gap-1.5">
+          <div className="flex flex-col items-center gap-1.5 mb-4">
             <p className="font-header text-xs font-bold">
               This is a Demo Board
             </p>

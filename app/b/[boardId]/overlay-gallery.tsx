@@ -90,7 +90,7 @@ export default function OverlayGallery({
   // zoomingggg
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showOverlayUI, setShowOverlayUI] = useState(true);
-  const overlayUIClass = `transition-all duration-700 ${
+  const overlayUIClass = `transition-all duration-700 text-off-white ${
     showOverlayUI
       ? "opacity-100 pointer-events-auto"
       : "opacity-0 pointer-events-none"
