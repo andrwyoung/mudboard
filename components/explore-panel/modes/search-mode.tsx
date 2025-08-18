@@ -5,7 +5,6 @@ import { useState } from "react";
 import { FaCaretDown, FaRegStar, FaStar } from "react-icons/fa6";
 import { MudkitSelectButtonExplore } from "../mudkit-selectors copy";
 import RefreshButton from "./search-mode/refresh-button";
-import { useDemoStore } from "@/store/demo-store";
 
 export default function SearchMode({
   handleFetchMudkit,
@@ -23,8 +22,6 @@ export default function SearchMode({
   const tempMudkits = useExploreStore((s) => s.tempMudkits);
   const existsUserOrTempMudkits =
     userMudkits.length > 0 || tempMudkits.length > 0;
-
-  const isDemo = useDemoStore((s) => s.isDemoBoard);
 
   const [showAdded, setShowAdded] = useState(false);
   const boardSectionIds = new Set(boardSections.map((s) => s.section_id));
@@ -47,107 +44,105 @@ export default function SearchMode({
         <RefreshButton />
       </div>
 
-      {(!isDemo || tempMudkits.length > 0) && (
-        <div className="mb-8">
-          <h3 className="text-off-white text-md font-bold mb-2 flex items-center gap-2">
-            Favorite Sections
-            <FaStar className="size-5" />
-          </h3>
+      <div className="mb-8">
+        <h3 className="text-off-white text-md font-bold mb-2 flex items-center gap-2">
+          Favorite Sections
+          <FaStar className="size-5" />
+        </h3>
 
-          {existsUserOrTempMudkits ? (
-            <>
-              {tempMudkits.length > 0 && (
-                <div className="p-1 bg-muted rounded-lg mb-1">
-                  {tempMudkits.map((section) => (
-                    <MudkitSelectButtonExplore
-                      key={section.section_id}
-                      section={section}
-                      onClick={() => {
-                        setCurrentSelectedMudkitType("temp");
-                        handleFetchMudkit(section);
-                      }}
-                      isGrouped={false}
-                      isSelected={false}
-                      temporary
-                    />
-                  ))}
-                </div>
-              )}
-              {activeUserMudkits.length === 0 ? (
-                <>
-                  {addedUserMudkits.length > 0 && (
-                    <div className="text-sm text-off-white italic py-1 w-full text-center ">
-                      All saved sections are already on this board.
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="p-1 bg-muted rounded-lg">
-                  {activeUserMudkits.map((section) => (
-                    <MudkitSelectButtonExplore
-                      key={section.section_id}
-                      section={section}
-                      onClick={() => {
-                        setCurrentSelectedMudkitType("mine");
-                        handleFetchMudkit(section);
-                      }}
-                      isGrouped={false}
-                      isSelected={false}
-                    />
-                  ))}
-                </div>
-              )}
+        {existsUserOrTempMudkits ? (
+          <>
+            {tempMudkits.length > 0 && (
+              <div className="p-1 bg-muted rounded-lg mb-1">
+                {tempMudkits.map((section) => (
+                  <MudkitSelectButtonExplore
+                    key={section.section_id}
+                    section={section}
+                    onClick={() => {
+                      setCurrentSelectedMudkitType("temp");
+                      handleFetchMudkit(section);
+                    }}
+                    isGrouped={false}
+                    isSelected={false}
+                    temporary
+                  />
+                ))}
+              </div>
+            )}
+            {activeUserMudkits.length === 0 ? (
+              <>
+                {addedUserMudkits.length > 0 && (
+                  <div className="text-sm text-off-white italic py-1 w-full text-center ">
+                    All saved sections are already on this board.
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="p-1 bg-muted rounded-lg">
+                {activeUserMudkits.map((section) => (
+                  <MudkitSelectButtonExplore
+                    key={section.section_id}
+                    section={section}
+                    onClick={() => {
+                      setCurrentSelectedMudkitType("mine");
+                      handleFetchMudkit(section);
+                    }}
+                    isGrouped={false}
+                    isSelected={false}
+                  />
+                ))}
+              </div>
+            )}
 
-              {addedUserMudkits.length > 0 && (
-                <div>
-                  <button
-                    onClick={() => setShowAdded((prev) => !prev)}
-                    className="text-off-white text-sm my-2 mx-4 hover:text-accent transition-all 
+            {addedUserMudkits.length > 0 && (
+              <div>
+                <button
+                  onClick={() => setShowAdded((prev) => !prev)}
+                  className="text-off-white text-sm my-2 mx-4 hover:text-accent transition-all 
               cursor-pointer duration-200 hover:underline font-semibold flex gap-1 items-center"
-                    aria-expanded={showAdded}
-                    aria-controls="sections-in-board"
-                  >
-                    <FaCaretDown
-                      className={`transition-transform duration-200 ${
-                        showAdded ? "rotate-180" : ""
-                      }`}
-                    />
-                    Already in board ({addedUserMudkits.length})
-                  </button>
+                  aria-expanded={showAdded}
+                  aria-controls="sections-in-board"
+                >
+                  <FaCaretDown
+                    className={`transition-transform duration-200 ${
+                      showAdded ? "rotate-180" : ""
+                    }`}
+                  />
+                  Already in board ({addedUserMudkits.length})
+                </button>
 
-                  {showAdded && (
-                    <div
-                      id="sections-in-board"
-                      className="p-1 bg-muted rounded-lg "
-                    >
-                      {addedUserMudkits.map((section) => (
-                        <MudkitSelectButtonExplore
-                          key={section.section_id}
-                          section={section}
-                          onClick={() => {
-                            setCurrentSelectedMudkitType("others");
-                            handleFetchMudkit(section);
-                          }}
-                          isGrouped={false}
-                          isSelected={false}
-                          disabled
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          ) : (
-            <p className="w-full text-center py-8 text-sm font-semibold ">
-              You haven’t saved any sections yet!
-              <br /> Click the{" "}
-              <FaRegStar className="inline size-4 mx-[1px] -translate-y-[2px] " />{" "}
-              icon on any section to save one.
-            </p>
-          )}
-        </div>
-      )}
+                {showAdded && (
+                  <div
+                    id="sections-in-board"
+                    className="p-1 bg-muted rounded-lg "
+                  >
+                    {addedUserMudkits.map((section) => (
+                      <MudkitSelectButtonExplore
+                        key={section.section_id}
+                        section={section}
+                        onClick={() => {
+                          setCurrentSelectedMudkitType("others");
+                          handleFetchMudkit(section);
+                        }}
+                        isGrouped={false}
+                        isSelected={false}
+                        disabled
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="w-full text-center py-8 text-sm font-semibold ">
+            You haven’t saved any sections yet!
+            <br /> Click the{" "}
+            <FaRegStar className="inline size-4 mx-[1px] -translate-y-[2px] " />{" "}
+            icon on any section to save one.
+          </p>
+        )}
+      </div>
 
       {/* <AccordianWrapper
         title="All Boards"
