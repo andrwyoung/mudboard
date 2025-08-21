@@ -4,7 +4,6 @@
 
 import Logo from "@/components/ui/logo";
 import { useEffect, useState } from "react";
-import PricingTable from "@/components/landing-page/pricing-v2";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
@@ -317,25 +316,18 @@ export default function Home() {
 
           {/* PRICING */}
 
-          <div className="mb-24 max-w-3xl">
+          {/* <div className="mb-24 max-w-3xl">
             <h2 className="text-3xl font-bold text-center mb-1">Pricing</h2>
 
             <p className="text-center text-sm text-muted mb-6 font-semibold">
               Giving out Lifetime Licenses during Early Testing (planned until
               late September)!
             </p>
-            {/* <p className="text-center text-sm text-muted mb-6 font-semibold">
-              We&apos;re still testing, so pricing isn&apos;t implemented yet.
-              But you can join the waitlist to stay updated!
-            </p> */}
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-left mb-2"> */}
+
             <div>
               <PricingTable />
             </div>
-            {/* <p className="text-center text-sm font-semibold">
-              *Boards currently have a limit of around 1k images
-            </p> */}
-          </div>
+          </div> */}
 
           <FAQ />
 
