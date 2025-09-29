@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Editor } from "@tiptap/react";
-import { Bold, Italic, Palette, LucideIcon } from "lucide-react";
+import { Bold, Italic, Underline, Palette, LucideIcon } from "lucide-react";
 import ColorPickerWheel from "@/components/modals/color-picker/color-picker";
 import { FaEyeDropper } from "react-icons/fa6";
 
@@ -40,13 +40,7 @@ function FormatButton({
   );
 }
 
-export default function FormatBar({
-  editor,
-  onCancel,
-}: {
-  editor: Editor;
-  onCancel: () => void;
-}) {
+export default function FormatBar({ editor }: { editor: Editor }) {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showFullPicker, setShowFullPicker] = useState(false);
 
@@ -64,6 +58,13 @@ export default function FormatBar({
         isActive={editor.isActive("italic")}
         onClick={() => editor.chain().focus().toggleItalic().run()}
         title="Italic (Ctrl+I)"
+      />
+
+      <FormatButton
+        icon={Underline}
+        isActive={editor.isActive("underline")}
+        onClick={() => editor.chain().focus().toggleUnderline().run()}
+        title="Underline (Ctrl+U)"
       />
 
       <div className="relative">
@@ -150,14 +151,6 @@ export default function FormatBar({
       </div>
 
       <div className="flex-1" />
-
-      <button
-        type="button"
-        onClick={onCancel}
-        className="text-xs px-2 py-1 text-muted-foreground hover:text-primary"
-      >
-        Discard (Esc)
-      </button>
     </div>
   );
 }

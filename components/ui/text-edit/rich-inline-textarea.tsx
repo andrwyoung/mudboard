@@ -5,6 +5,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Color from "@tiptap/extension-color";
 import { TextStyle } from "@tiptap/extension-text-style";
+import Underline from "@tiptap/extension-underline";
 import FormatBar from "./format-bar";
 
 export default function RichInlineTextarea({
@@ -46,17 +47,29 @@ export default function RichInlineTextarea({
       }),
       TextStyle,
       Color,
+      Underline,
     ],
     content: value || "",
     editorProps: {
       attributes: {
         class: "w-full p-0 focus:outline-none prose prose-sm max-w-none",
       },
+      handleKeyDown: (view, event) => {
+        // Intercept Cmd/Ctrl + Enter BEFORE Tiptap processes it
+        if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+          return true; // Prevent Tiptap from handling it
+        }
+        // Intercept Escape
+        if (event.key === "Escape") {
+          return true; // Prevent Tiptap from handling it
+        }
+        return false; // Let Tiptap handle other keys
+      },
     },
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      // Don't trigger onChange on every keystroke, just update local state
-    },
+    // onUpdate: ({ editor }) => {
+    //   const html = editor.getHTML();
+    //   // Don't trigger onChange on every keystroke, just update local state
+    // },
   });
 
   useEffect(() => {
@@ -110,14 +123,14 @@ export default function RichInlineTextarea({
     >
       {isEditing ? (
         <div
-          className="space-y-2"
+          className="flex flex-col gap-2"
           onKeyDown={(e) => {
-            // Enter without Shift = Save
-            if (e.key === "Enter" && !e.shiftKey) {
+            // Handle Cmd/Ctrl + Enter = Save
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
               e.preventDefault();
               confirm();
             }
-            // Escape = Cancel
+            // Handle Escape = Cancel
             if (e.key === "Escape") {
               e.preventDefault();
               cancel();
@@ -125,7 +138,7 @@ export default function RichInlineTextarea({
           }}
         >
           {/* Formatting Toolbar */}
-          <FormatBar editor={editor} onCancel={cancel} />
+          <FormatBar editor={editor} />
 
           {/* Editor */}
           <div onMouseDown={(e) => e.stopPropagation()}>
@@ -136,8 +149,31 @@ export default function RichInlineTextarea({
             />
           </div>
 
-          <div className="text-xs text-muted-foreground pt-1">
-            Press Shift+Enter for new line, Enter to save
+          <div className="self-end mb-2">
+            <button
+              type="button"
+              onClick={cancel}
+              className="text-xs px-2 py-1 text-muted-foreground hover:text-primary"
+            >
+              Discard (Esc)
+            </button>
+
+            <button
+              type="button"
+              onClick={confirm}
+              className="text-sm px-3 py-1 bg-accent text-accent-foreground 
+              rounded hover:bg-accent/80 transition-colors font-medium"
+            >
+              Save{" "}
+              <span className="opacity-60 text-xs">
+                (
+                {typeof navigator !== "undefined" &&
+                navigator.platform.toLowerCase().includes("mac")
+                  ? "⌘↵"
+                  : "Ctrl+↵"}
+                )
+              </span>
+            </button>
           </div>
         </div>
       ) : (
@@ -160,6 +196,7 @@ export default function RichInlineTextarea({
                 className={`
                   ${!value ? "italic opacity-50" : ""}
                   whitespace-pre-wrap transition-colors select-none w-full
+                  [&_strong]:font-bold [&_em]:italic [&_u]:underline
                 `}
                 dangerouslySetInnerHTML={{
                   __html:
