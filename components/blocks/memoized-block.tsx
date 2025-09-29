@@ -109,6 +109,7 @@ function BlockComponent({
           tabIndex={-1}
           className={`flex flex-col rounded-sm object-cover transition-all duration-150 cursor-pointer shadow-md 
               hover:scale-101 hover:shadow-xl hover:opacity-100
+              has-[.text-block-editing]:!scale-100
               relative bg-background
           ${isDragging ? "opacity-30" : ""} 
           ${

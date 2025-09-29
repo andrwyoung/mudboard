@@ -6,7 +6,7 @@ import InlineEditText from "../ui/inline-edit";
 import { updateSectionTitle } from "@/lib/db-actions/sync-text/update-section-title";
 import { useLoadingStore } from "@/store/loading-store";
 import { useImagePicker } from "@/hooks/use-image-picker";
-import InlineEditTextarea from "../ui/inline-textarea";
+import RichInlineTextarea from "../ui/text-edit/rich-inline-textarea";
 import { useLayoutStore } from "@/store/layout-store";
 import SectionDownloadButton from "./section-icons.tsx/download-button";
 import SectionAddImageButton from "./section-icons.tsx/add-image-button";
@@ -101,8 +101,8 @@ function SectionHeader({
         </div>
       </div>
 
-      <div className=" px-1 sm:px-3">
-        <InlineEditTextarea
+      <div className=" px-1 sm:px-3 mt-2 text-foreground">
+        <RichInlineTextarea
           isEditable={canEdit}
           value={description && description.trim() != "" ? description : null}
           unnamedPlaceholder="Double click to add a Description"
@@ -110,7 +110,7 @@ function SectionHeader({
           onChange={(newDesc) => {
             updateSectionDescription(section.section_id, newDesc);
           }}
-          className={`leading-relaxed `}
+          className={`leading-relaxed bg-border/90`}
         />
       </div>
     </div>

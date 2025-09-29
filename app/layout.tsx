@@ -21,6 +21,7 @@ const bodyFont2 = Gantari({
 const bodyFont = Figtree({
   variable: "--font-body",
   weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
 });
 

@@ -1,7 +1,8 @@
 // this what a text block looks like
 
+import { useState } from "react";
 import { Block, TextBlockType } from "@/types/block-types";
-import InlineEditTextarea from "../ui/inline-textarea";
+import RichInlineTextarea from "../ui/text-edit/rich-inline-textarea";
 import { updateTextBlockText } from "@/lib/db-actions/sync-text/update-text-block-text";
 
 export default function TextBlock({
@@ -12,12 +13,17 @@ export default function TextBlock({
   canEdit: boolean;
 }) {
   const textData = block.data as TextBlockType;
+  const [isEditing, setIsEditing] = useState(false);
 
   // console.log("textdata: ", textData);
 
   return (
-    <div className="outline outline-border rounded-sm text-primary">
-      <InlineEditTextarea
+    <div
+      className={`outline outline-border rounded-sm text-foreground ${
+        isEditing ? "text-block-editing" : ""
+      }`}
+    >
+      <RichInlineTextarea
         value={textData?.text ?? null}
         onChange={(newTitle) => {
           updateTextBlockText(block, newTitle, canEdit);
@@ -25,6 +31,7 @@ export default function TextBlock({
         isEditable={canEdit}
         unnamedPlaceholder="Double Click to add Text!"
         className="text-sm sm:text-md md:text-lg"
+        onEditingChange={setIsEditing}
       />
     </div>
     // <div
