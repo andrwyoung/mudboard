@@ -3,9 +3,20 @@
 import ColorPickerWheel from "@/components/modals/color-picker/color-picker";
 import Logo from "@/components/ui/logo";
 import { useState, useCallback, useRef, useEffect } from "react";
-import { parseColor, formatRgb, formatHsl, formatHsv } from "./conversions";
+import {
+  parseColor,
+  formatRgb,
+  formatHsl,
+  formatHsv,
+  hexToRgb,
+  rgbToHsl,
+  rgbToHsv,
+  hslToRgb,
+  hsvToRgb,
+} from "./conversions";
 import { FaCopy, FaHashtag } from "react-icons/fa";
 import { toast } from "sonner";
+import ColorSlider from "./components/ColorSlider";
 
 const DEFAULT_COLOR = "#3b82f6";
 const COLOR_DEBOUNCE_TIME = 500;
@@ -29,6 +40,13 @@ export default function ColorPickerPage() {
   const [masterInput, setMasterInput] = useState<"hex" | "rgb" | "hsl" | "hsv">(
     "hex"
   );
+
+  // Individual component values for sliders
+  const [componentValues, setComponentValues] = useState({
+    rgb: { r: 59, g: 130, b: 246 },
+    hsl: { h: 213, s: 91, l: 60 },
+    hsv: { h: 213, s: 76, v: 96 },
+  });
 
   // Debounced history update
   const historyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -81,6 +99,13 @@ export default function ColorPickerPage() {
         }
 
         setInputErrors({ hex: false, rgb: false, hsl: false, hsv: false });
+
+        // Update component values for sliders
+        setComponentValues({
+          rgb: parsed.rgb,
+          hsl: parsed.hsl,
+          hsv: parsed.hsv,
+        });
 
         // Add to history with debounce
         updateColorHistory(hex);
@@ -154,6 +179,53 @@ export default function ColorPickerPage() {
     } catch (err) {
       console.error("Failed to copy color:", err);
     }
+  };
+
+  // Slider handlers for individual components
+  const handleSliderChange = (
+    format: "rgb" | "hsl" | "hsv",
+    component: string,
+    value: number
+  ) => {
+    const newComponents = {
+      ...componentValues[format],
+      [component]: value,
+    };
+
+    setComponentValues((prev) => ({
+      ...prev,
+      [format]: newComponents,
+    }));
+
+    // Convert to hex and update all formats
+    let hex: string;
+    if (format === "rgb") {
+      const rgb = newComponents as { r: number; g: number; b: number };
+      hex = `#${Math.round(rgb.r).toString(16).padStart(2, "0")}${Math.round(
+        rgb.g
+      )
+        .toString(16)
+        .padStart(2, "0")}${Math.round(rgb.b).toString(16).padStart(2, "0")}`;
+    } else if (format === "hsl") {
+      const hsl = newComponents as { h: number; s: number; l: number };
+      const rgb = hslToRgb(hsl);
+      hex = `#${Math.round(rgb.r).toString(16).padStart(2, "0")}${Math.round(
+        rgb.g
+      )
+        .toString(16)
+        .padStart(2, "0")}${Math.round(rgb.b).toString(16).padStart(2, "0")}`;
+    } else {
+      // hsv
+      const hsv = newComponents as { h: number; s: number; v: number };
+      const rgb = hsvToRgb(hsv);
+      hex = `#${Math.round(rgb.r).toString(16).padStart(2, "0")}${Math.round(
+        rgb.g
+      )
+        .toString(16)
+        .padStart(2, "0")}${Math.round(rgb.b).toString(16).padStart(2, "0")}`;
+    }
+
+    updateAllFormats(hex);
   };
 
   return (
@@ -272,6 +344,122 @@ export default function ColorPickerPage() {
                         </button>
                       )}
                     </div>
+
+                    {/* Sliders for RGB, HSL, HSV */}
+                    {key !== "hex" && (
+                      <div className="mt-3 space-y-2">
+                        {key === "rgb" && (
+                          <>
+                            <ColorSlider
+                              label="R"
+                              min={0}
+                              max={255}
+                              value={componentValues.rgb.r}
+                              onChange={(value) =>
+                                handleSliderChange("rgb", "r", value)
+                              }
+                              isActive={masterInput === "rgb"}
+                            />
+                            <ColorSlider
+                              label="G"
+                              min={0}
+                              max={255}
+                              value={componentValues.rgb.g}
+                              onChange={(value) =>
+                                handleSliderChange("rgb", "g", value)
+                              }
+                              isActive={masterInput === "rgb"}
+                            />
+                            <ColorSlider
+                              label="B"
+                              min={0}
+                              max={255}
+                              value={componentValues.rgb.b}
+                              onChange={(value) =>
+                                handleSliderChange("rgb", "b", value)
+                              }
+                              isActive={masterInput === "rgb"}
+                            />
+                          </>
+                        )}
+
+                        {key === "hsl" && (
+                          <>
+                            <ColorSlider
+                              label="H"
+                              min={0}
+                              max={360}
+                              value={componentValues.hsl.h}
+                              onChange={(value) =>
+                                handleSliderChange("hsl", "h", value)
+                              }
+                              unit="°"
+                              isActive={masterInput === "hsl"}
+                            />
+                            <ColorSlider
+                              label="S"
+                              min={0}
+                              max={100}
+                              value={componentValues.hsl.s}
+                              onChange={(value) =>
+                                handleSliderChange("hsl", "s", value)
+                              }
+                              unit="%"
+                              isActive={masterInput === "hsl"}
+                            />
+                            <ColorSlider
+                              label="L"
+                              min={0}
+                              max={100}
+                              value={componentValues.hsl.l}
+                              onChange={(value) =>
+                                handleSliderChange("hsl", "l", value)
+                              }
+                              unit="%"
+                              isActive={masterInput === "hsl"}
+                            />
+                          </>
+                        )}
+
+                        {key === "hsv" && (
+                          <>
+                            <ColorSlider
+                              label="H"
+                              min={0}
+                              max={360}
+                              value={componentValues.hsv.h}
+                              onChange={(value) =>
+                                handleSliderChange("hsv", "h", value)
+                              }
+                              unit="°"
+                              isActive={masterInput === "hsv"}
+                            />
+                            <ColorSlider
+                              label="S"
+                              min={0}
+                              max={100}
+                              value={componentValues.hsv.s}
+                              onChange={(value) =>
+                                handleSliderChange("hsv", "s", value)
+                              }
+                              unit="%"
+                              isActive={masterInput === "hsv"}
+                            />
+                            <ColorSlider
+                              label="V"
+                              min={0}
+                              max={100}
+                              value={componentValues.hsv.v}
+                              onChange={(value) =>
+                                handleSliderChange("hsv", "v", value)
+                              }
+                              unit="%"
+                              isActive={masterInput === "hsv"}
+                            />
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
