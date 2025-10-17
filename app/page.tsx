@@ -63,7 +63,23 @@ export default function Home() {
           scrolled ? "bg-primary/95 backdrop-blur-md" : "bg-transparent"
         }`}
       >
-        <Logo enforceHome={true} />
+        <div className="flex flex-row gap-8 items-center justify-center">
+          <Logo enforceHome={true} />
+          <div className="gap-4 flex flex-row items-center">
+            <Link
+              href="/colors"
+              className="font-header font-bold hover:text-accent transition-colors duration-300"
+            >
+              Color Picker
+            </Link>
+            <Link
+              href="/compress"
+              className="font-header font-bold hover:text-accent transition-colors duration-300"
+            >
+              Image Compressor
+            </Link>
+          </div>
+        </div>
         <div className="flex gap-3">
           {!user ? (
             <Link

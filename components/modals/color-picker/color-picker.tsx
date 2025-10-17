@@ -5,14 +5,22 @@ import {
 } from "@/lib/color-picker/color-converters";
 import React, { useState } from "react";
 
-const COLOR_PICKER_SIZE = 144;
+const DEFAULT_COLOR_PICKER_SIZE = 144;
+const DEFAULT_HUE_HEIGHT = 16;
+const DEFAULT_PICKER_SIZE = 12;
 
 export default function ColorPickerWheel({
   initialColor,
   onChange,
+  size = DEFAULT_COLOR_PICKER_SIZE,
+  hueHeight = DEFAULT_HUE_HEIGHT,
+  pickerSize = DEFAULT_PICKER_SIZE,
 }: {
   initialColor: string;
   onChange: (color: string) => void;
+  size?: number;
+  hueHeight?: number;
+  pickerSize?: number;
 }) {
   const [hsv, setHSV] = useState(() => hexToHSV(initialColor));
   const isColorLight = getLuminanceFromHSV(hsv) > 0.5;
@@ -79,10 +87,10 @@ export default function ColorPickerWheel({
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center rounded-md">
       <div
         className="relative rounded-t-sm overflow-hidden shadow-lg cursor-pointer "
-        style={{ width: COLOR_PICKER_SIZE, height: COLOR_PICKER_SIZE }}
+        style={{ width: size, height: size }}
         onMouseDown={handleSVMouseDown}
       >
         <div
@@ -101,20 +109,22 @@ export default function ColorPickerWheel({
           }}
         />
         <div
-          className={`absolute w-3 h-3 rounded-full border-2 shadow-lg ${
+          className={`absolute rounded-full border-2 shadow-lg ${
             isColorLight ? "border-stone-800" : "border-white"
           }`}
           style={{
             left: `${hsv.s}%`,
             top: `${100 - hsv.v}%`,
             transform: "translate(-50%, -50%)",
+            width: pickerSize,
+            height: pickerSize,
           }}
         />
       </div>
 
       <div
-        className="relative h-4 rounded-b-sm overflow-hidden shadow-inner cursor-pointer"
-        style={{ width: COLOR_PICKER_SIZE }}
+        className="relative rounded-b-sm overflow-hidden shadow-inner cursor-pointer"
+        style={{ width: size, height: hueHeight }}
         onMouseDown={handleHueMouseDown}
       >
         <div
@@ -134,6 +144,7 @@ export default function ColorPickerWheel({
           style={{
             left: `${(hsv.h / 360) * 100}%`,
             transform: "translate(-50%, -50%)",
+            height: hueHeight,
           }}
         />
       </div>
