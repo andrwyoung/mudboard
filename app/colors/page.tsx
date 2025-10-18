@@ -26,12 +26,13 @@ import {
   getHsvGradient,
 } from "./lib/gradients";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaCopy, FaEyeDropper, FaHashtag } from "react-icons/fa6";
+import { FaCopy, FaHashtag } from "react-icons/fa6";
 import ColorWheelSection from "./components/sections/color-wheel-section";
-
-export const DEFAULT_COLOR = "#4cde7e";
-const COLOR_DEBOUNCE_TIME = 500;
-const MAX_HISTORY = 20;
+import {
+  COLOR_DEBOUNCE_TIME,
+  DEFAULT_COLOR,
+  MAX_HISTORY,
+} from "./lib/types/color-picker-constants";
 
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
@@ -48,6 +49,7 @@ export default function ColorPickerPage() {
     hsv: false,
   });
   const [masterInput, setMasterInput] = useState<ColorFormat>("hex");
+  const [isEyedropperMode, setIsEyedropperMode] = useState(false);
 
   // Individual component values for sliders
   const [componentValues, setComponentValues] = useState<ComponentValues>(
@@ -77,6 +79,26 @@ export default function ColorPickerPage() {
     },
     [colorHistory]
   );
+
+  // Global click handler to cancel eyedropper mode
+  useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      if (
+        isEyedropperMode &&
+        !(e.target as HTMLElement).closest("[data-swatch]")
+      ) {
+        setIsEyedropperMode(false);
+      }
+    };
+
+    if (isEyedropperMode) {
+      document.addEventListener("click", handleGlobalClick);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleGlobalClick);
+    };
+  }, [isEyedropperMode]);
 
   // clear on unmount
   useEffect(() => {
@@ -265,23 +287,25 @@ export default function ColorPickerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-canvas-background-light text-primary relative pb-24">
+    <div className="min-h-screen bg-canvas-background-light text-primary relative flex flex-col">
       <div className="absolute top-4 left-6">
         <Logo color="brown" />
       </div>
 
-      <div className="container mx-auto px-4 pt-20">
+      <div className="mx-auto flex-1 items-center flex mt-24 mb-16 md:my-0">
         {/* Header */}
-        <div className="text-center mb-12">
+        {/* <div className="text-center mb-12">
           <h1 className="text-4xl font-bold ">Nice Color Picker</h1>
-        </div>
+        </div> */}
 
-        <div className="max-w-4xl mx-auto mb-24 grid grid-cols-1 lg:grid-cols-2 gap-8 ">
+        <div className="max-w-4xl mx-auto  grid grid-cols-1 lg:grid-cols-2 gap-6 my-auto">
           {/* Color Picker */}
           <ColorWheelSection
             colorWheelColor={colorWheelColor}
             componentValues={componentValues}
             updateAllFormats={updateAllFormats}
+            isEyedropperMode={isEyedropperMode}
+            setIsEyedropperMode={setIsEyedropperMode}
           />
 
           {/* Color Information */}
