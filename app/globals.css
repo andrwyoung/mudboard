@@ -205,21 +205,19 @@
   .slider-custom::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    height: 18px;
-    width: 24px; /* <-- wider */
+    height: 26px;
+    width: 32px; /* <-- wider */
     border-radius: 9999px; /* <-- pill */
     background: var(--canvas-background-dark);
-    border: 5px solid var(--canvas-background-light);
+    border: 4px solid var(--canvas-background-light);
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
   }
 
   .slider-custom::-webkit-slider-thumb:hover {
     transform: scale(1.1);
-  }
-
-  .slider-custom::-webkit-slider-thumb:active {
-    transform: scale(0.95);
   }
 
   /* Firefox slider handle */
@@ -236,4 +234,17 @@
   .slider-custom::-moz-range-thumb:hover {
     transform: scale(1.1);
   }
+}
+
+/* Prevent mobile overscroll bounce */
+html,
+body {
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent overscroll on all elements */
+* {
+  overscroll-behavior: none;
 }

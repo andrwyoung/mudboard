@@ -378,6 +378,10 @@ export default function ColorPickerPage() {
                             ? "border-primary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
                             : "border-stone-500 focus:ring-blue-500"
                         }`}
+                        style={{
+                          fontSize: key === "hex" ? "1.5rem" : "16px", // Prevent mobile zoom
+                          touchAction: "manipulation", // Prevent double-tap zoom
+                        }}
                         placeholder={config.placeholder}
                       />
 

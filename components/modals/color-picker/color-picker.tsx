@@ -98,13 +98,89 @@ export default function ColorPickerWheel({
     window.addEventListener("mouseup", up);
   };
 
+  // Touch handlers for mobile support
+  const handleSVTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const touch = e.touches[0];
+
+    const update = (clientX: number, clientY: number) => {
+      const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+
+      const newHSV = { ...hsv, s: x * 100, v: (1 - y) * 100 };
+      setHSV(newHSV);
+      onChange(hsvToHex(newHSV));
+    };
+
+    update(touch.clientX, touch.clientY);
+
+    let frame: number | null = null;
+    const move = (moveEvent: TouchEvent) => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const touch = moveEvent.touches[0];
+        update(touch.clientX, touch.clientY);
+      });
+    };
+
+    const up = () => {
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("touchend", up);
+    };
+
+    window.addEventListener("touchmove", move);
+    window.addEventListener("touchend", up);
+  };
+
+  const handleHueTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const touch = e.touches[0];
+
+    const updateHue = (clientX: number) => {
+      const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const hue = x * 360;
+      const newHSV = { ...hsv, h: hue };
+      setHSV(newHSV);
+      onChange(hsvToHex(newHSV));
+    };
+
+    updateHue(touch.clientX);
+
+    let frame: number | null = null;
+    const move = (moveEvent: TouchEvent) => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const touch = moveEvent.touches[0];
+        updateHue(touch.clientX);
+      });
+    };
+
+    const up = () => {
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("touchend", up);
+    };
+
+    window.addEventListener("touchmove", move);
+    window.addEventListener("touchend", up);
+  };
+
   return (
     // <div className="flex flex-col items-center rounded-lg ring-8 ring-canvas-background-dark-secondary shadow-lg">
     <div className="flex flex-col items-center ">
       <div
-        className="relative rounded-t-lg overflow-hidden shadow-lg cursor-pointer "
-        style={{ width: size, height: size }}
+        className="relative rounded-t-lg overflow-hidden shadow-lg cursor-pointer select-none"
+        style={{
+          width: size,
+          height: size,
+          touchAction: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          WebkitTouchCallout: "none",
+        }}
         onMouseDown={handleSVMouseDown}
+        onTouchStart={handleSVTouchStart}
       >
         <div
           className="absolute inset-0"
@@ -137,9 +213,17 @@ export default function ColorPickerWheel({
       </div>
 
       <div
-        className="relative rounded-b-lg overflow-hidden shadow-inner cursor-pointer"
-        style={{ width: size, height: hueHeight }}
+        className="relative rounded-b-lg overflow-hidden shadow-inner cursor-pointer select-none"
+        style={{
+          width: size,
+          height: hueHeight,
+          touchAction: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          WebkitTouchCallout: "none",
+        }}
         onMouseDown={handleHueMouseDown}
+        onTouchStart={handleHueTouchStart}
       >
         <div
           className="absolute inset-0"
