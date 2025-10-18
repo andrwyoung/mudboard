@@ -3,27 +3,33 @@ import {
   hexToHSV,
   hsvToHex,
 } from "@/lib/color-picker/color-converters";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const DEFAULT_COLOR_PICKER_SIZE = 144;
 const DEFAULT_HUE_HEIGHT = 16;
 const DEFAULT_PICKER_SIZE = 12;
 
 export default function ColorPickerWheel({
-  initialColor,
+  color,
   onChange,
   size = DEFAULT_COLOR_PICKER_SIZE,
   hueHeight = DEFAULT_HUE_HEIGHT,
   pickerSize = DEFAULT_PICKER_SIZE,
 }: {
-  initialColor: string;
+  color: string;
   onChange: (color: string) => void;
   size?: number;
   hueHeight?: number;
   pickerSize?: number;
 }) {
-  const [hsv, setHSV] = useState(() => hexToHSV(initialColor));
+  const [hsv, setHSV] = useState(() => hexToHSV(color));
   const isColorLight = getLuminanceFromHSV(hsv) > 0.5;
+
+  // Sync with external color changes (backwards compatibility)
+  useEffect(() => {
+    const newHSV = hexToHSV(color);
+    setHSV(newHSV);
+  }, [color]);
 
   const handleSVMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();

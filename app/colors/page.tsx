@@ -8,15 +8,14 @@ import {
   formatRgb,
   formatHsl,
   formatHsv,
-  hexToRgb,
-  rgbToHsl,
-  rgbToHsv,
   hslToRgb,
   hsvToRgb,
-} from "./conversions";
+} from "./lib/conversions";
 import { FaCopy, FaHashtag } from "react-icons/fa";
 import { toast } from "sonner";
-import ColorSlider from "./components/ColorSlider";
+import ColorSlider from "./components/color-slider";
+import { colorFormatConfig } from "./lib/colors-config";
+import { AnimatePresence, motion } from "framer-motion";
 
 const DEFAULT_COLOR = "#3b82f6";
 const COLOR_DEBOUNCE_TIME = 500;
@@ -111,7 +110,7 @@ export default function ColorPickerPage() {
         updateColorHistory(hex);
       }
     },
-    [colorHistory, masterInput, updateColorHistory]
+    [masterInput, updateColorHistory]
   );
 
   const handleColorChange = (color: string) => {
@@ -146,6 +145,8 @@ export default function ColorPickerPage() {
 
   // Track which input was last clicked to prevent aggressive selection
   const lastClickedInputRef = useRef<HTMLInputElement | null>(null);
+  // Track if a slider interaction is happening to prevent blur from resetting masterInput
+  const sliderInteractionRef = useRef<boolean>(false);
 
   const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
@@ -167,11 +168,6 @@ export default function ColorPickerPage() {
     setMasterInput(format);
   };
 
-  const handleInputBlur = () => {
-    setMasterInput("hex");
-    lastClickedInputRef.current = null; // Reset click tracking
-  };
-
   const copyToClipboard = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
@@ -187,6 +183,11 @@ export default function ColorPickerPage() {
     component: string,
     value: number
   ) => {
+    // Mark that a slider interaction is happening
+    sliderInteractionRef.current = true;
+    // Set this format as the master input when using sliders
+    setMasterInput(format);
+
     const newComponents = {
       ...componentValues[format],
       [component]: value,
@@ -251,7 +252,7 @@ export default function ColorPickerPage() {
               </h2>
               <div className="flex justify-center">
                 <ColorPickerWheel
-                  initialColor={selectedColor}
+                  color={selectedColor}
                   onChange={handleColorChange}
                   size={320}
                   pickerSize={16}
@@ -268,15 +269,14 @@ export default function ColorPickerPage() {
 
               {/* Color Formats */}
               <div className="space-y-3">
-                {[
-                  { key: "hex", label: "HEX", placeholder: "#000000" },
-                  { key: "rgb", label: "RGB", placeholder: "rgb(0, 0, 0)" },
-                  { key: "hsl", label: "HSL", placeholder: "hsl(0, 0%, 0%)" },
-                  { key: "hsv", label: "HSV", placeholder: "hsv(0, 0%, 0%)" },
-                ].map(({ key, label, placeholder }) => (
-                  <div key={key}>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      {label}
+                {Object.entries(colorFormatConfig).map(([key, config]) => (
+                  <div key={key} className={`${key === "hex" ? "mb-8" : ""}`}>
+                    <label
+                      className={`block font-medium text-slate-700 dark:text-slate-300 mb-1 ${
+                        key === "hex" ? "text-lg font-semibold" : "text-sm"
+                      }`}
+                    >
+                      {config.label}
                     </label>
                     <div className="relative">
                       <input
@@ -291,7 +291,6 @@ export default function ColorPickerPage() {
                         onFocus={() =>
                           handleInputFocus(key as "hex" | "rgb" | "hsl" | "hsv")
                         }
-                        onBlur={handleInputBlur}
                         onClick={handleInputClick}
                         onPaste={(e) => {
                           e.preventDefault();
@@ -301,17 +300,19 @@ export default function ColorPickerPage() {
                             pastedText
                           );
                         }}
-                        className={`w-full px-4 py-2 bg-slate-50 dark:bg-slate-700 border rounded-md 
-                            font-mono text-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:border-transparent ${
-                              key === "hex" ? "pr-20" : "pr-10"
+                        className={`w-full justify-center px-4 py-2 bg-slate-50 dark:bg-slate-700 border-2 rounded-md 
+                            font-header text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:border-transparent ${
+                              key === "hex"
+                                ? "pr-20 text-2xl py-3 font-semibold"
+                                : "pr-10 text-sm py-1.5"
                             } ${
                           inputErrors[key as keyof typeof inputErrors]
                             ? "border-red-500 focus:ring-red-500"
                             : masterInput === key
-                            ? "border-blue-500 focus:ring-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                            ? "border-secondary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
                             : "border-slate-300 dark:border-slate-600 focus:ring-blue-500"
                         }`}
-                        placeholder={placeholder}
+                        placeholder={config.placeholder}
                       />
 
                       {/* Copy button for all formats */}
@@ -326,10 +327,16 @@ export default function ColorPickerPage() {
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1
                           cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
                         title={
-                          key === "hex" ? "Copy HEX without #" : `Copy ${label}`
+                          key === "hex"
+                            ? "Copy HEX without #"
+                            : `Copy ${config.label}`
                         }
                       >
-                        <FaCopy className="w-5 h-5 " />
+                        <FaCopy
+                          className={` ${
+                            key === "hex" ? "w-5 h-5 " : "w-4 h-4"
+                          }`}
+                        />
                       </button>
 
                       {/* Additional button for HEX with hashtag */}
@@ -346,120 +353,50 @@ export default function ColorPickerPage() {
                     </div>
 
                     {/* Sliders for RGB, HSL, HSV */}
-                    {key !== "hex" && (
-                      <div className="mt-3 space-y-2">
-                        {key === "rgb" && (
-                          <>
-                            <ColorSlider
-                              label="R"
-                              min={0}
-                              max={255}
-                              value={componentValues.rgb.r}
-                              onChange={(value) =>
-                                handleSliderChange("rgb", "r", value)
-                              }
-                              isActive={masterInput === "rgb"}
-                            />
-                            <ColorSlider
-                              label="G"
-                              min={0}
-                              max={255}
-                              value={componentValues.rgb.g}
-                              onChange={(value) =>
-                                handleSliderChange("rgb", "g", value)
-                              }
-                              isActive={masterInput === "rgb"}
-                            />
-                            <ColorSlider
-                              label="B"
-                              min={0}
-                              max={255}
-                              value={componentValues.rgb.b}
-                              onChange={(value) =>
-                                handleSliderChange("rgb", "b", value)
-                              }
-                              isActive={masterInput === "rgb"}
-                            />
-                          </>
+                    <AnimatePresence initial={false}>
+                      {key !== "hex" &&
+                        masterInput === key &&
+                        config.sliders && (
+                          <motion.div
+                            key={key} // required for AnimatePresence to isolate blocks
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.22, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                          >
+                            <div className="flex flex-col gap-2 mt-4 mb-2">
+                              {config.sliders.map((slider) => (
+                                <ColorSlider
+                                  key={slider.component}
+                                  label={slider.label}
+                                  min={slider.min}
+                                  max={slider.max}
+                                  value={
+                                    componentValues[
+                                      key as keyof typeof componentValues
+                                    ][
+                                      slider.component as keyof (
+                                        | typeof componentValues.rgb
+                                        | typeof componentValues.hsl
+                                        | typeof componentValues.hsv
+                                      )
+                                    ] as number
+                                  }
+                                  onChange={(value) =>
+                                    handleSliderChange(
+                                      key as "rgb" | "hsl" | "hsv",
+                                      slider.component,
+                                      value
+                                    )
+                                  }
+                                  unit={slider.unit}
+                                />
+                              ))}
+                            </div>
+                          </motion.div>
                         )}
-
-                        {key === "hsl" && (
-                          <>
-                            <ColorSlider
-                              label="H"
-                              min={0}
-                              max={360}
-                              value={componentValues.hsl.h}
-                              onChange={(value) =>
-                                handleSliderChange("hsl", "h", value)
-                              }
-                              unit="°"
-                              isActive={masterInput === "hsl"}
-                            />
-                            <ColorSlider
-                              label="S"
-                              min={0}
-                              max={100}
-                              value={componentValues.hsl.s}
-                              onChange={(value) =>
-                                handleSliderChange("hsl", "s", value)
-                              }
-                              unit="%"
-                              isActive={masterInput === "hsl"}
-                            />
-                            <ColorSlider
-                              label="L"
-                              min={0}
-                              max={100}
-                              value={componentValues.hsl.l}
-                              onChange={(value) =>
-                                handleSliderChange("hsl", "l", value)
-                              }
-                              unit="%"
-                              isActive={masterInput === "hsl"}
-                            />
-                          </>
-                        )}
-
-                        {key === "hsv" && (
-                          <>
-                            <ColorSlider
-                              label="H"
-                              min={0}
-                              max={360}
-                              value={componentValues.hsv.h}
-                              onChange={(value) =>
-                                handleSliderChange("hsv", "h", value)
-                              }
-                              unit="°"
-                              isActive={masterInput === "hsv"}
-                            />
-                            <ColorSlider
-                              label="S"
-                              min={0}
-                              max={100}
-                              value={componentValues.hsv.s}
-                              onChange={(value) =>
-                                handleSliderChange("hsv", "s", value)
-                              }
-                              unit="%"
-                              isActive={masterInput === "hsv"}
-                            />
-                            <ColorSlider
-                              label="V"
-                              min={0}
-                              max={100}
-                              value={componentValues.hsv.v}
-                              onChange={(value) =>
-                                handleSliderChange("hsv", "v", value)
-                              }
-                              unit="%"
-                              isActive={masterInput === "hsv"}
-                            />
-                          </>
-                        )}
-                      </div>
-                    )}
+                    </AnimatePresence>
                   </div>
                 ))}
               </div>
