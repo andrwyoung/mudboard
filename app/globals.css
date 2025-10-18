@@ -193,4 +193,47 @@
   h6 {
     @apply font-header;
   }
+
+  /* Custom slider handle styles */
+  .slider-custom {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slider-custom::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 18px;
+    width: 24px; /* <-- wider */
+    border-radius: 9999px; /* <-- pill */
+    background: var(--canvas-background-dark);
+    border: 5px solid var(--canvas-background-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .slider-custom::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
+
+  .slider-custom::-webkit-slider-thumb:active {
+    transform: scale(0.95);
+  }
+
+  /* Firefox slider handle */
+  .slider-custom::-moz-range-thumb {
+    height: 18px;
+    width: 24px; /* <-- wider */
+    border-radius: 9999px; /* <-- pill */
+    background: var(--canvas-background-dark);
+    border: 5px solid var(--canvas-background-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .slider-custom::-moz-range-thumb:hover {
+    transform: scale(1.1);
+  }
 }

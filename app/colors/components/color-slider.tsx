@@ -19,7 +19,7 @@ export default function ColorSlider({
 }: ColorSliderProps) {
   return (
     <div className="flex items-center gap-2 transition-all duration-200 opacity-100">
-      <label className="font-header text-md font-semibold w-4 transition-colors duration-200 text-dark-text">
+      <label className="font-header text-md font-semibold w-4 transition-colors duration-200 ">
         {label}
       </label>
       <input
@@ -28,12 +28,12 @@ export default function ColorSlider({
         max={max}
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}
-        className="flex-1 h-2 rounded-lg appearance-none cursor-pointer transition-all duration-200"
+        className="flex-1 h-3 rounded-lg appearance-none cursor-pointer transition-all duration-200 slider-custom"
         style={{
           background: gradient || "bg-secondary",
         }}
       />
-      <span className="text-md font-header w-8 text-right transition-colors duration-200 text-dark-text  font-semibold">
+      <span className="text-md font-header w-8 text-right transition-colors duration-200  font-semibold">
         {value}
         {unit}
       </span>

@@ -269,219 +269,214 @@ export default function ColorPickerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-canvas-background-dark relative">
+    <div className="min-h-screen bg-canvas-background-light text-primary relative pb-24">
       <div className="absolute top-4 left-6">
-        <Logo />
+        <Logo color="brown" />
       </div>
 
-      <div className="container mx-auto px-4 pt-24">
+      <div className="container mx-auto px-4 pt-20">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Color Picker</h1>
+        <div className="text-center mb-18">
+          <h1 className="text-4xl font-bold ">Color Picker!</h1>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Color Picker */}
-            <div className="p-6">
-              <div className="flex justify-center ">
-                <ColorPickerWheel
-                  color={selectedColor}
-                  onChange={handleColorChange}
-                  size={320}
-                  pickerSize={20}
-                  hueHeight={36}
-                  selectorBorderSize={4}
-                />
-              </div>
+        <div className="max-w-4xl mx-auto mb-24 grid grid-cols-1 lg:grid-cols-2 gap-8 ">
+          {/* Color Picker */}
+          <div className="">
+            <div className="flex justify-center ">
+              <ColorPickerWheel
+                color={selectedColor}
+                onChange={handleColorChange}
+                size={320}
+                pickerSize={20}
+                hueHeight={36}
+                selectorBorderSize={4}
+              />
             </div>
+          </div>
 
-            {/* Color Information */}
-            <div className="bg-canvas-background-light-secondary rounded-xl shadow-lg p-6">
-              {/* <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
+          {/* Color Information */}
+          <div className="px-8">
+            {/* <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
                 Color Information
               </h2> */}
 
-              {/* Color Formats */}
-              <div className="space-y-3">
-                {Object.entries(colorFormatConfig).map(([key, config]) => (
+            {/* Color Formats */}
+            <div className="space-y-3">
+              {Object.entries(colorFormatConfig).map(([key, config]) => (
+                <div
+                  key={key}
+                  className={`${
+                    key === "hex" ? "mb-12" : "flex flex-col self-end"
+                  }`}
+                >
                   <div
-                    key={key}
                     className={`${
-                      key === "hex" ? "mb-12" : "flex flex-col self-end"
+                      key === "hex" ? "" : "flex items-center gap-4"
                     }`}
                   >
-                    <div
-                      className={`${
-                        key === "hex" ? "" : "flex items-center gap-4"
+                    <label
+                      className={`block font-header font-medium w-10  dark:text-slate-300 mb-1 ${
+                        key === "hex" ? "text-lg font-semibold" : "text-sm"
                       }`}
                     >
-                      <label
-                        className={`block font-header font-medium w-10 text-slate-700 dark:text-slate-300 mb-1 ${
-                          key === "hex" ? "text-lg font-semibold" : "text-sm"
-                        }`}
-                      >
-                        {config.label}:
-                      </label>
+                      {config.label}:
+                    </label>
 
-                      <div className="relative">
-                        <input
-                          ref={(el) => {
-                            inputRefs.current[
-                              key as keyof typeof inputRefs.current
-                            ] = el;
-                          }}
-                          type="text"
-                          value={inputValues[key as keyof typeof inputValues]}
-                          maxLength={key === "hex" ? 7 : undefined}
-                          readOnly={key === "oklch"}
-                          tabIndex={key === "oklch" ? -1 : 0}
-                          onChange={(e) =>
-                            handleInputChange(
-                              key as ColorFormat,
-                              e.target.value
-                            )
-                          }
-                          onFocus={() => handleInputFocus(key as ColorFormat)}
-                          onBlur={handleInputBlur}
-                          onClick={
-                            key === "oklch" ? undefined : handleInputClick
-                          }
-                          onPaste={(e) => {
-                            // OKLCH is read-only, don't allow paste
-                            if (key === "oklch") {
-                              e.preventDefault();
-                              return;
-                            }
+                    <div className="relative w-full">
+                      <input
+                        ref={(el) => {
+                          inputRefs.current[
+                            key as keyof typeof inputRefs.current
+                          ] = el;
+                        }}
+                        type="text"
+                        value={inputValues[key as keyof typeof inputValues]}
+                        maxLength={key === "hex" ? 7 : undefined}
+                        readOnly={key === "oklch"}
+                        tabIndex={key === "oklch" ? -1 : 0}
+                        onChange={(e) =>
+                          handleInputChange(key as ColorFormat, e.target.value)
+                        }
+                        onFocus={() => handleInputFocus(key as ColorFormat)}
+                        onBlur={handleInputBlur}
+                        onClick={key === "oklch" ? undefined : handleInputClick}
+                        onPaste={(e) => {
+                          // OKLCH is read-only, don't allow paste
+                          if (key === "oklch") {
                             e.preventDefault();
-                            const pastedText = e.clipboardData.getData("text");
-                            handleInputChange(key as ColorFormat, pastedText);
-                          }}
-                          className={`w-full justify-center px-4 py-2 border-2 rounded-md 
+                            return;
+                          }
+                          e.preventDefault();
+                          const pastedText = e.clipboardData.getData("text");
+                          handleInputChange(key as ColorFormat, pastedText);
+                        }}
+                        className={`w-full justify-center px-4 py-2 border-2 rounded-md 
                             font-header text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:border-transparent ${
                               key === "hex"
                                 ? "pr-20 text-2xl py-3 font-semibold"
                                 : "pr-10 text-sm py-1.5"
                             } ${
-                            key === "oklch"
-                              ? "bg-slate-200 dark:bg-slate-500 cursor-not-allowed opacity-60 pointer-events-none"
-                              : "bg-slate-50 dark:bg-slate-700"
-                          } ${
-                            inputErrors[key as keyof typeof inputErrors]
-                              ? "border-red-500 focus:ring-red-500"
-                              : masterInput === key
-                              ? "border-primary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
-                              : "border-stone-500 focus:ring-blue-500"
-                          }`}
-                          placeholder={config.placeholder}
-                        />
+                          key === "oklch"
+                            ? "bg-slate-200 dark:bg-slate-500 cursor-not-allowed opacity-60 pointer-events-none"
+                            : key === "hex"
+                            ? "bg-slate-50"
+                            : "bg-slate-50 opacity-95"
+                        } ${
+                          inputErrors[key as keyof typeof inputErrors]
+                            ? "border-red-500 focus:ring-red-500"
+                            : masterInput === key
+                            ? "border-primary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
+                            : "border-stone-500 focus:ring-blue-500"
+                        }`}
+                        placeholder={config.placeholder}
+                      />
 
-                        {/* Copy button for all formats */}
-                        <button
-                          onClick={() =>
-                            copyToClipboard(
-                              key === "hex"
-                                ? inputValues.hex.replace("#", "")
-                                : inputValues[key as keyof typeof inputValues]
-                            )
-                          }
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1
-                          cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
-                          title={
+                      {/* Copy button for all formats */}
+                      <button
+                        onClick={() =>
+                          copyToClipboard(
                             key === "hex"
-                              ? "Copy HEX without #"
-                              : `Copy ${config.label}`
-                          }
-                        >
-                          <FaCopy
-                            className={` ${
-                              key === "hex" ? "w-5 h-5 " : "w-4 h-4"
-                            }`}
-                          />
-                        </button>
-
-                        {/* Additional button for HEX with hashtag */}
-                        {key === "hex" && (
-                          <button
-                            onClick={() => copyToClipboard(inputValues.hex)}
-                            className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1
+                              ? inputValues.hex.replace("#", "")
+                              : inputValues[key as keyof typeof inputValues]
+                          )
+                        }
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1
                           cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
-                            title="Copy HEX with #"
-                          >
-                            <FaHashtag className="w-5 h-5 " />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                        title={
+                          key === "hex"
+                            ? "Copy HEX without #"
+                            : `Copy ${config.label}`
+                        }
+                      >
+                        <FaCopy
+                          className={` ${
+                            key === "hex" ? "w-5 h-5 " : "w-4 h-4"
+                          }`}
+                        />
+                      </button>
 
-                    {/* Sliders for RGB, HSL, HSV */}
-                    <AnimatePresence initial={false}>
-                      {key !== "hex" &&
-                        masterInput === key &&
-                        config.sliders && (
-                          <motion.div
-                            key={key} // required for AnimatePresence to isolate blocks
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.22, ease: "easeInOut" }}
-                            className="overflow-hidden"
-                          >
-                            <div className="flex flex-col gap-2 mt-4 mb-2 mx-2">
-                              {config.sliders.map((slider) => (
-                                <ColorSlider
-                                  key={slider.component}
-                                  label={slider.label}
-                                  min={slider.min}
-                                  max={slider.max}
-                                  value={
-                                    componentValues[
-                                      key as keyof typeof componentValues
-                                    ][
-                                      slider.component as keyof (
-                                        | typeof componentValues.rgb
-                                        | typeof componentValues.hsl
-                                        | typeof componentValues.hsv
-                                      )
-                                    ] as number
-                                  }
-                                  onChange={(value) =>
-                                    handleSliderChange(
-                                      key as "rgb" | "hsl" | "hsv",
-                                      slider.component,
-                                      value
-                                    )
-                                  }
-                                  unit={slider.unit}
-                                  gradient={
-                                    key === "rgb"
-                                      ? getRgbGradient(
-                                          slider.component as "r" | "g" | "b",
-                                          componentValues.rgb
-                                        )
-                                      : key === "hsl"
-                                      ? getHslGradient(
-                                          slider.component as "h" | "s" | "l",
-                                          componentValues.hsl
-                                        )
-                                      : getHsvGradient(
-                                          slider.component as "h" | "s" | "v",
-                                          componentValues.hsv
-                                        )
-                                  }
-                                />
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                    </AnimatePresence>
+                      {/* Additional button for HEX with hashtag */}
+                      {key === "hex" && (
+                        <button
+                          onClick={() => copyToClipboard(inputValues.hex)}
+                          className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1
+                          cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
+                          title="Copy HEX with #"
+                        >
+                          <FaHashtag className="w-5 h-5 " />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                ))}
-              </div>
+
+                  {/* Sliders for RGB, HSL, HSV */}
+                  <AnimatePresence initial={false}>
+                    {key !== "hex" && masterInput === key && config.sliders && (
+                      <motion.div
+                        key={key} // required for AnimatePresence to isolate blocks
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="flex flex-col gap-2 mt-4 mb-2 mx-2">
+                          {config.sliders.map((slider) => (
+                            <ColorSlider
+                              key={slider.component}
+                              label={slider.label}
+                              min={slider.min}
+                              max={slider.max}
+                              value={
+                                componentValues[
+                                  key as keyof typeof componentValues
+                                ][
+                                  slider.component as keyof (
+                                    | typeof componentValues.rgb
+                                    | typeof componentValues.hsl
+                                    | typeof componentValues.hsv
+                                  )
+                                ] as number
+                              }
+                              onChange={(value) =>
+                                handleSliderChange(
+                                  key as "rgb" | "hsl" | "hsv",
+                                  slider.component,
+                                  value
+                                )
+                              }
+                              unit={slider.unit}
+                              gradient={
+                                key === "rgb"
+                                  ? getRgbGradient(
+                                      slider.component as "r" | "g" | "b",
+                                      componentValues.rgb
+                                    )
+                                  : key === "hsl"
+                                  ? getHslGradient(
+                                      slider.component as "h" | "s" | "l",
+                                      componentValues.hsl
+                                    )
+                                  : getHsvGradient(
+                                      slider.component as "h" | "s" | "v",
+                                      componentValues.hsv
+                                    )
+                              }
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
             </div>
           </div>
+        </div>
 
-          {/* Color History */}
+        {/* Color History */}
+        {/* <div className="max-w-4xl mx-auto">
           {colorHistory.length > 1 && (
             <div className="mt-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
@@ -504,7 +499,7 @@ export default function ColorPickerPage() {
               </div>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );
