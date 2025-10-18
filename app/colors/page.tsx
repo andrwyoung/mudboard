@@ -13,6 +13,9 @@ import {
   formatOklch,
   hexToOklch,
   rgbToHex,
+  hexToRgb,
+  rgbToHsl,
+  rgbToHsv,
   getInitialValues,
 } from "./lib/conversions";
 import { toast } from "sonner";
@@ -26,7 +29,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { FaCopy, FaHashtag } from "react-icons/fa6";
 
-const DEFAULT_COLOR = "#3b82f6";
+const DEFAULT_COLOR = "#4cde7e";
 const COLOR_DEBOUNCE_TIME = 500;
 const MAX_HISTORY = 20;
 
@@ -47,11 +50,40 @@ export default function ColorPickerPage() {
   const [masterInput, setMasterInput] = useState<ColorFormat>("hex");
 
   // Individual component values for sliders
-  const [componentValues, setComponentValues] = useState({
-    rgb: { r: 59, g: 130, b: 246 },
-    hsl: { h: 213, s: 91, l: 60 },
-    hsv: { h: 213, s: 76, v: 96 },
+  const [componentValues, setComponentValues] = useState(() => {
+    const rgb = hexToRgb(DEFAULT_COLOR);
+    return {
+      rgb,
+      hsl: rgbToHsl(rgb),
+      hsv: rgbToHsv(rgb),
+    };
   });
+
+  // Color comparison swatches
+  const [swatchColors, setSwatchColors] = useState([
+    "#50f280",
+    DEFAULT_COLOR,
+    "#3ccf8e",
+  ]);
+  const [focusedSwatch, setFocusedSwatch] = useState(1);
+
+  // Handle swatch click - switch focus and update all values
+  const handleSwatchClick = (swatchIndex: number) => {
+    setFocusedSwatch(swatchIndex);
+
+    // Update all values to match the clicked swatch
+    const hex = swatchColors[swatchIndex];
+    updateAllFormats({ input: hex, colorFormat: "hex" });
+  };
+
+  // Update the focused swatch when main color changes
+  const updateFocusedSwatch = useCallback(() => {
+    setSwatchColors((prev) => {
+      const newSwatches = [...prev];
+      newSwatches[focusedSwatch] = rgbToHex(componentValues.rgb);
+      return newSwatches;
+    });
+  }, [componentValues, focusedSwatch]);
 
   // Debounced history update
   const historyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -78,6 +110,11 @@ export default function ColorPickerPage() {
       }
     };
   }, []);
+
+  // Update focused swatch when componentValues change
+  useEffect(() => {
+    updateFocusedSwatch();
+  }, [updateFocusedSwatch]);
 
   const updateAllFormats = useCallback(
     ({
@@ -339,22 +376,49 @@ export default function ColorPickerPage() {
 
       <div className="container mx-auto px-4 pt-20">
         {/* Header */}
-        <div className="text-center mb-18">
-          <h1 className="text-4xl font-bold ">Color Picker!</h1>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold ">Nice Color Picker</h1>
         </div>
 
         <div className="max-w-4xl mx-auto mb-24 grid grid-cols-1 lg:grid-cols-2 gap-8 ">
           {/* Color Picker */}
-          <div className="">
-            <div className="flex justify-center ">
-              <ColorPickerWheel
-                color={colorWheelColor}
-                onChange={handleColorWheelChange}
-                size={320}
-                pickerSize={20}
-                hueHeight={36}
-                selectorBorderSize={4}
-              />
+          <div className="flex flex-col items-center justify-center ">
+            <ColorPickerWheel
+              color={colorWheelColor}
+              onChange={handleColorWheelChange}
+              size={320}
+              pickerSize={20}
+              hueHeight={36}
+              selectorBorderSize={4}
+            />
+            <div className="mt-6 flex items-center">
+              {swatchColors.map((swatch, index) => (
+                <div
+                  className="flex flex-col items-center "
+                  key={`swatch-${index}`}
+                >
+                  <div
+                    key={index}
+                    className={`w-20 h-16 cursor-pointer duration-300  transition-transform hover:scale-110 hover:z-10 ${
+                      index === 0
+                        ? "rounded-l-lg"
+                        : index === swatchColors.length - 1
+                        ? "rounded-r-lg"
+                        : ""
+                    } ${focusedSwatch === index ? "" : ""}`}
+                    style={{
+                      backgroundColor: swatch,
+                    }}
+                    title={`${swatch} - Click to focus`}
+                    onClick={() => handleSwatchClick(index)}
+                  />
+                  <div className="h-10">
+                    {focusedSwatch === index && (
+                      <div className="h-2 w-8 bg-white mt-2 rounded-full" />
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
