@@ -175,7 +175,7 @@ export default function FreeformPreferenceModal() {
               {visiblePicker === "view" && (
                 <div className="mt-2">
                   <ColorPickerWheel
-                    initialColor={viewBgColor ?? DEFAULT_VIEW_BG_COLOR}
+                    color={viewBgColor ?? DEFAULT_VIEW_BG_COLOR}
                     onChange={(color) => {
                       setViewBgColor(color);
                       syncPreferences();
@@ -187,7 +187,7 @@ export default function FreeformPreferenceModal() {
               {visiblePicker === "arrange" && (
                 <div className="mt-2">
                   <ColorPickerWheel
-                    initialColor={arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR}
+                    color={arrangeBgColor ?? DEFAULT_ARRANGE_BG_COLOR}
                     onChange={(color) => {
                       setArrangeBgColor(color);
                       syncPreferences();

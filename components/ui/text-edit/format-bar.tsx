@@ -84,7 +84,7 @@ export default function FormatBar({ editor }: { editor: Editor }) {
         {showColorPicker && (
           <div
             className="absolute top-full mt-1 left-0 bg-popover border border-border 
-          flex flex-col rounded-md shadow-lg p-3 z-50"
+          flex flex-col rounded-md shadow-lg p-3 z-100"
           >
             {!showFullPicker ? (
               <>
@@ -118,9 +118,7 @@ export default function FormatBar({ editor }: { editor: Editor }) {
               <>
                 {/* Full color picker */}
                 <ColorPickerWheel
-                  initialColor={
-                    editor.getAttributes("textStyle").color || "#000000"
-                  }
+                  color={editor.getAttributes("textStyle").color || "#000000"}
                   onChange={(color) => {
                     editor.chain().focus().setColor(color).run();
                   }}
