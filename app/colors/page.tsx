@@ -15,6 +15,11 @@ import { FaCopy, FaHashtag } from "react-icons/fa";
 import { toast } from "sonner";
 import ColorSlider from "./components/color-slider";
 import { colorFormatConfig } from "./lib/colors-config";
+import {
+  getRgbGradient,
+  getHslGradient,
+  getHsvGradient,
+} from "./lib/gradients";
 import { AnimatePresence, motion } from "framer-motion";
 
 const DEFAULT_COLOR = "#3b82f6";
@@ -148,6 +153,19 @@ export default function ColorPickerPage() {
   // Track if a slider interaction is happening to prevent blur from resetting masterInput
   const sliderInteractionRef = useRef<boolean>(false);
 
+  // Refs for each input to enable selection after copy
+  const inputRefs = useRef<{
+    hex: HTMLInputElement | null;
+    rgb: HTMLInputElement | null;
+    hsl: HTMLInputElement | null;
+    hsv: HTMLInputElement | null;
+  }>({
+    hex: null,
+    rgb: null,
+    hsl: null,
+    hsv: null,
+  });
+
   const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
     const target = e.currentTarget;
 
@@ -168,10 +186,27 @@ export default function ColorPickerPage() {
     setMasterInput(format);
   };
 
-  const copyToClipboard = async (value: string) => {
+  const handleInputBlur = () => {
+    // Reset to hex when input loses focus
+    setMasterInput("hex");
+    // Reset last clicked input ref to null
+    lastClickedInputRef.current = null;
+  };
+
+  const copyToClipboard = async (
+    value: string,
+    inputRef?: HTMLInputElement | null
+  ) => {
     try {
       await navigator.clipboard.writeText(value);
       toast.success(`Copied, "${value}" to clipboard`);
+
+      // Select the input text after copying
+      if (inputRef) {
+        inputRef.select();
+        // Update lastClickedInputRef to maintain consistent behavior
+        lastClickedInputRef.current = inputRef;
+      }
     } catch (err) {
       console.error("Failed to copy color:", err);
     }
@@ -264,16 +299,16 @@ export default function ColorPickerPage() {
 
             {/* Color Information */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              {/* <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
                 Color Information
-              </h2>
+              </h2> */}
 
               {/* Color Formats */}
               <div className="space-y-3">
                 {Object.entries(colorFormatConfig).map(([key, config]) => (
-                  <div key={key} className={`${key === "hex" ? "mb-8" : ""}`}>
+                  <div key={key} className={`${key === "hex" ? "mb-12" : ""}`}>
                     <label
-                      className={`block font-medium text-slate-700 dark:text-slate-300 mb-1 ${
+                      className={`block font-header font-medium text-slate-700 dark:text-slate-300 mb-1 ${
                         key === "hex" ? "text-lg font-semibold" : "text-sm"
                       }`}
                     >
@@ -281,6 +316,11 @@ export default function ColorPickerPage() {
                     </label>
                     <div className="relative">
                       <input
+                        ref={(el) => {
+                          inputRefs.current[
+                            key as keyof typeof inputRefs.current
+                          ] = el;
+                        }}
                         type="text"
                         value={inputValues[key as keyof typeof inputValues]}
                         maxLength={key === "hex" ? 7 : undefined}
@@ -293,6 +333,7 @@ export default function ColorPickerPage() {
                         onFocus={() =>
                           handleInputFocus(key as "hex" | "rgb" | "hsl" | "hsv")
                         }
+                        onBlur={handleInputBlur}
                         onClick={handleInputClick}
                         onPaste={(e) => {
                           e.preventDefault();
@@ -311,8 +352,8 @@ export default function ColorPickerPage() {
                           inputErrors[key as keyof typeof inputErrors]
                             ? "border-red-500 focus:ring-red-500"
                             : masterInput === key
-                            ? "border-secondary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
-                            : "border-slate-300 dark:border-slate-600 focus:ring-blue-500"
+                            ? "border-primary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
+                            : "border-slate-300 focus:ring-blue-500"
                         }`}
                         placeholder={config.placeholder}
                       />
@@ -323,7 +364,10 @@ export default function ColorPickerPage() {
                           copyToClipboard(
                             key === "hex"
                               ? inputValues.hex.replace("#", "")
-                              : inputValues[key as keyof typeof inputValues]
+                              : inputValues[key as keyof typeof inputValues],
+                            inputRefs.current[
+                              key as keyof typeof inputRefs.current
+                            ]
                           )
                         }
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1
@@ -344,7 +388,12 @@ export default function ColorPickerPage() {
                       {/* Additional button for HEX with hashtag */}
                       {key === "hex" && (
                         <button
-                          onClick={() => copyToClipboard(inputValues.hex)}
+                          onClick={() =>
+                            copyToClipboard(
+                              inputValues.hex,
+                              inputRefs.current.hex
+                            )
+                          }
                           className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1
                           cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
                           title="Copy HEX with #"
@@ -393,6 +442,22 @@ export default function ColorPickerPage() {
                                     )
                                   }
                                   unit={slider.unit}
+                                  gradient={
+                                    key === "rgb"
+                                      ? getRgbGradient(
+                                          slider.component as "r" | "g" | "b",
+                                          componentValues.rgb
+                                        )
+                                      : key === "hsl"
+                                      ? getHslGradient(
+                                          slider.component as "h" | "s" | "l",
+                                          componentValues.hsl
+                                        )
+                                      : getHsvGradient(
+                                          slider.component as "h" | "s" | "v",
+                                          componentValues.hsv
+                                        )
+                                  }
                                 />
                               ))}
                             </div>
