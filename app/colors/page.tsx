@@ -4,7 +4,7 @@ import ColorPickerWheel from "@/components/modals/color-picker/color-picker";
 import Logo from "@/components/ui/logo";
 import { useState, useCallback, useRef, useEffect } from "react";
 
-type ColorFormat = "hex" | "rgb" | "hsl" | "hsv" | "oklch";
+export type ColorFormat = "hex" | "rgb" | "hsl" | "hsv" | "oklch";
 import {
   parseColor,
   formatRgb,
@@ -12,9 +12,9 @@ import {
   formatHsv,
   formatOklch,
   hexToOklch,
+  rgbToHex,
   getInitialValues,
 } from "./lib/conversions";
-import { FaCopy, FaHashtag } from "react-icons/fa";
 import { toast } from "sonner";
 import ColorSlider from "./components/color-slider";
 import { colorFormatConfig } from "./lib/colors-config";
@@ -24,6 +24,7 @@ import {
   getHsvGradient,
 } from "./lib/gradients";
 import { AnimatePresence, motion } from "framer-motion";
+import { FaCopy, FaHashtag } from "react-icons/fa6";
 
 const DEFAULT_COLOR = "#3b82f6";
 const COLOR_DEBOUNCE_TIME = 500;
@@ -81,15 +82,16 @@ export default function ColorPickerPage() {
   const updateAllFormats = useCallback(
     ({
       input,
+      colorFormat,
       skipMaster = false,
       skipColorWheel = false,
     }: {
       input: string;
-      inputFormat?: ColorFormat; // not because parseColor does it already
+      colorFormat: ColorFormat; // not because parseColor does it already
       skipMaster?: boolean;
       skipColorWheel?: boolean;
     }) => {
-      const parsed = parseColor(input);
+      const parsed = parseColor(input, colorFormat);
       if (parsed) {
         setSelectedColor(parsed.hex);
 
@@ -138,7 +140,7 @@ export default function ColorPickerPage() {
   );
 
   const handleColorWheelChange = (hex: string) => {
-    updateAllFormats({ input: hex, skipColorWheel: true });
+    updateAllFormats({ input: hex, skipColorWheel: true, colorFormat: "hex" });
   };
 
   const handleInputChange = (format: ColorFormat, value: string) => {
@@ -149,19 +151,19 @@ export default function ColorPickerPage() {
 
     setInputValues((prev) => ({ ...prev, [format]: value }));
 
-    const parsed = parseColor(value);
+    const parsed = parseColor(value, format);
     if (parsed) {
       // If this is the master input, update others but don't update this one
       if (masterInput === format) {
         updateAllFormats({
           input: value,
-          inputFormat: format,
+          colorFormat: format,
           skipMaster: true,
         });
       } else {
         // If this is not the master input, only update if master is "hex" (default)
         if (masterInput === "hex") {
-          updateAllFormats({ input: value, inputFormat: format });
+          updateAllFormats({ input: value, colorFormat: format });
         }
       }
     } else if (value.trim() === "") {
@@ -220,10 +222,72 @@ export default function ColorPickerPage() {
     lastClickedInputRef.current = null;
   };
 
-  const copyToClipboard = async (value: string) => {
+  const copyToClipboard = async (
+    format: ColorFormat,
+    pure: boolean = false
+  ) => {
+    let value = "";
+
+    switch (format) {
+      case "hex":
+        if (inputErrors.hex) {
+          toast.error("Invalid HEX code");
+          return;
+        }
+
+        if (pure) {
+          // Use the actual hex value from componentValues to ensure it has #
+          const hexValue = rgbToHex(componentValues.rgb);
+          value = hexValue.replace("#", "");
+        } else {
+          // Use the actual hex value from componentValues
+          value = rgbToHex(componentValues.rgb);
+        }
+        break;
+      case "rgb":
+        if (inputErrors.rgb) {
+          toast.error("Invalid RGB code");
+          return;
+        }
+
+        if (pure) {
+          value = `${componentValues.rgb.r}, ${componentValues.rgb.g}, ${componentValues.rgb.b}`;
+        } else {
+          value = formatRgb(componentValues.rgb);
+        }
+        break;
+      case "hsl":
+        if (inputErrors.hsl) {
+          toast.error("Invalid HSL code");
+          return;
+        }
+
+        if (pure) {
+          value = `${componentValues.hsl.h}, ${componentValues.hsl.s}, ${componentValues.hsl.l}`;
+        } else {
+          value = formatHsl(componentValues.hsl);
+        }
+        break;
+      case "hsv":
+        if (inputErrors.hsv) {
+          toast.error("Invalid HSV code");
+          return;
+        }
+
+        if (pure) {
+          value = `${componentValues.hsv.h}, ${componentValues.hsv.s}, ${componentValues.hsv.v}`;
+        } else {
+          value = formatHsv(componentValues.hsv);
+        }
+        break;
+      case "oklch":
+        value = inputValues.oklch;
+        break;
+    }
+
     try {
       await navigator.clipboard.writeText(value);
-      toast.success(`Copied, "${value}" to clipboard`);
+      toast.success(`Copied "${value}" to clipboard`);
     } catch (err) {
       console.error("Failed to copy color:", err);
     }
@@ -264,7 +328,7 @@ export default function ColorPickerPage() {
       formattedInput = formatHsv(hsv);
     }
 
-    updateAllFormats({ input: formattedInput, inputFormat: format });
+    updateAllFormats({ input: formattedInput, colorFormat: format });
   };
 
   return (
@@ -374,11 +438,7 @@ export default function ColorPickerPage() {
                       {/* Copy button for all formats */}
                       <button
                         onClick={() =>
-                          copyToClipboard(
-                            key === "hex"
-                              ? inputValues.hex.replace("#", "")
-                              : inputValues[key as keyof typeof inputValues]
-                          )
+                          copyToClipboard(key as ColorFormat, key === "hex")
                         }
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1
                           cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
@@ -396,14 +456,26 @@ export default function ColorPickerPage() {
                       </button>
 
                       {/* Additional button for HEX with hashtag */}
-                      {key === "hex" && (
+                      {key !== "oklch" && (
                         <button
-                          onClick={() => copyToClipboard(inputValues.hex)}
-                          className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1
-                          cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
-                          title="Copy HEX with #"
+                          onClick={() =>
+                            copyToClipboard(key as ColorFormat, key !== "hex")
+                          }
+                          className={`absolute top-1/2 transform -translate-y-1/2 p-1
+                          cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text
+                          
+                          ${key === "hex" ? "right-9" : "right-8 opacity-80"}`}
+                          title={
+                            key === "hex"
+                              ? "Copy HEX with #"
+                              : `Copy ${config.label} as CSV `
+                          }
                         >
-                          <FaHashtag className="w-5 h-5 " />
+                          {key === "hex" ? (
+                            <FaHashtag className="w-5 h-5 " />
+                          ) : (
+                            <FaHashtag className="w-4 h-4" />
+                          )}
                         </button>
                       )}
                     </div>

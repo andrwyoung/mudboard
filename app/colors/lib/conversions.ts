@@ -1,4 +1,5 @@
 import { oklch } from "culori";
+import { ColorFormat } from "../page";
 
 // Color conversion utilities
 export type RGB = {
@@ -21,61 +22,147 @@ export type HSV = {
 
 // Parse different color formats
 export function parseColor(
-  input: string
+  input: string,
+  formatType: ColorFormat
 ): { hex: string; rgb: RGB; hsl: HSL; hsv: HSV } | null {
   const trimmed = input.trim();
 
-  // Try HEX first
-  if (trimmed.startsWith("#")) {
-    const hex = parseHex(trimmed);
-    if (hex) {
-      const rgb = hexToRgb(hex);
+  // Try HEX first (with or without #)
+  if (formatType === "hex") {
+    // Try with # prefix first
+    if (trimmed.startsWith("#")) {
+      const hex = parseHex(trimmed);
+      if (hex) {
+        const rgb = hexToRgb(hex);
+        const hsl = rgbToHsl(rgb);
+        const hsv = rgbToHsv(rgb);
+        return { hex, rgb, hsl, hsv };
+      }
+    }
+
+    // Try without # prefix (6-digit hex)
+    if (trimmed.length === 6 && /^[0-9A-Fa-f]{6}$/.test(trimmed)) {
+      const hex = parseHex(`#${trimmed}`);
+      if (hex) {
+        const rgb = hexToRgb(hex);
+        const hsl = rgbToHsl(rgb);
+        const hsv = rgbToHsv(rgb);
+        return { hex, rgb, hsl, hsv };
+      }
+    }
+
+    // Try without # prefix (3-digit hex)
+    if (trimmed.length === 3 && /^[0-9A-Fa-f]{3}$/.test(trimmed)) {
+      const hex = parseHex(`#${trimmed}`);
+      if (hex) {
+        const rgb = hexToRgb(hex);
+        const hsl = rgbToHsl(rgb);
+        const hsv = rgbToHsv(rgb);
+        return { hex, rgb, hsl, hsv };
+      }
+    }
+  }
+
+  // Try RGB (flexible formats)
+  if (formatType === "rgb") {
+    // Try standard rgb(r,g,b) format
+    const rgbMatch = trimmed.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i);
+    if (rgbMatch) {
+      const rgb = {
+        r: parseInt(rgbMatch[1]),
+        g: parseInt(rgbMatch[2]),
+        b: parseInt(rgbMatch[3]),
+      };
+      const hex = rgbToHex(rgb);
       const hsl = rgbToHsl(rgb);
       const hsv = rgbToHsv(rgb);
       return { hex, rgb, hsl, hsv };
     }
+
+    // Try comma-separated values (e.g., "255, 128, 64")
+    const rgbValuesMatch = trimmed.match(/^(\d+),\s*(\d+),\s*(\d+)$/);
+    if (rgbValuesMatch) {
+      const r = parseInt(rgbValuesMatch[1]);
+      const g = parseInt(rgbValuesMatch[2]);
+      const b = parseInt(rgbValuesMatch[3]);
+
+      // Validate RGB range (0-255)
+      if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+        const rgb = { r, g, b };
+        const hex = rgbToHex(rgb);
+        const hsl = rgbToHsl(rgb);
+        const hsv = rgbToHsv(rgb);
+        return { hex, rgb, hsl, hsv };
+      }
+    }
   }
 
-  // Try RGB
-  const rgbMatch = trimmed.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i);
-  if (rgbMatch) {
-    const rgb = {
-      r: parseInt(rgbMatch[1]),
-      g: parseInt(rgbMatch[2]),
-      b: parseInt(rgbMatch[3]),
-    };
-    const hex = rgbToHex(rgb);
-    const hsl = rgbToHsl(rgb);
-    const hsv = rgbToHsv(rgb);
-    return { hex, rgb, hsl, hsv };
+  // Try HSL (flexible formats)
+  if (formatType === "hsl") {
+    // Try standard hsl(h,s%,l%) format
+    const hslMatch = trimmed.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/i);
+    if (hslMatch) {
+      const hsl = {
+        h: parseInt(hslMatch[1]),
+        s: parseInt(hslMatch[2]),
+        l: parseInt(hslMatch[3]),
+      };
+      const rgb = hslToRgb(hsl);
+      const hex = rgbToHex(rgb);
+      const hsv = rgbToHsv(rgb);
+      return { hex, rgb, hsl, hsv };
+    }
+
+    // Try comma-separated values (e.g., "360, 50, 100")
+    const hslValuesMatch = trimmed.match(/^(\d+),\s*(\d+),\s*(\d+)$/);
+    if (hslValuesMatch) {
+      const h = parseInt(hslValuesMatch[1]);
+      const s = parseInt(hslValuesMatch[2]);
+      const l = parseInt(hslValuesMatch[3]);
+
+      // Validate HSL range (h: 0-360, s&l: 0-100)
+      if (h >= 0 && h <= 360 && s >= 0 && s <= 100 && l >= 0 && l <= 100) {
+        const hsl = { h, s, l };
+        const rgb = hslToRgb(hsl);
+        const hex = rgbToHex(rgb);
+        const hsv = rgbToHsv(rgb);
+        return { hex, rgb, hsl, hsv };
+      }
+    }
   }
 
-  // Try HSL
-  const hslMatch = trimmed.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/i);
-  if (hslMatch) {
-    const hsl = {
-      h: parseInt(hslMatch[1]),
-      s: parseInt(hslMatch[2]),
-      l: parseInt(hslMatch[3]),
-    };
-    const rgb = hslToRgb(hsl);
-    const hex = rgbToHex(rgb);
-    const hsv = rgbToHsv(rgb);
-    return { hex, rgb, hsl, hsv };
-  }
+  // Try HSV (flexible formats)
+  if (formatType === "hsv") {
+    // Try standard hsv(h,s%,v%) format
+    const hsvMatch = trimmed.match(/hsv\((\d+),\s*(\d+)%,\s*(\d+)%\)/i);
+    if (hsvMatch) {
+      const hsv = {
+        h: parseInt(hsvMatch[1]),
+        s: parseInt(hsvMatch[2]),
+        v: parseInt(hsvMatch[3]),
+      };
+      const rgb = hsvToRgb(hsv);
+      const hex = rgbToHex(rgb);
+      const hsl = rgbToHsl(rgb);
+      return { hex, rgb, hsl, hsv };
+    }
 
-  // Try HSV
-  const hsvMatch = trimmed.match(/hsv\((\d+),\s*(\d+)%,\s*(\d+)%\)/i);
-  if (hsvMatch) {
-    const hsv = {
-      h: parseInt(hsvMatch[1]),
-      s: parseInt(hsvMatch[2]),
-      v: parseInt(hsvMatch[3]),
-    };
-    const rgb = hsvToRgb(hsv);
-    const hex = rgbToHex(rgb);
-    const hsl = rgbToHsl(rgb);
-    return { hex, rgb, hsl, hsv };
+    // Try comma-separated values (e.g., "360, 50, 100")
+    const hsvValuesMatch = trimmed.match(/^(\d+),\s*(\d+),\s*(\d+)$/);
+    if (hsvValuesMatch) {
+      const h = parseInt(hsvValuesMatch[1]);
+      const s = parseInt(hsvValuesMatch[2]);
+      const v = parseInt(hsvValuesMatch[3]);
+
+      // Validate HSV range (h: 0-360, s&v: 0-100)
+      if (h >= 0 && h <= 360 && s >= 0 && s <= 100 && v >= 0 && v <= 100) {
+        const hsv = { h, s, v };
+        const rgb = hsvToRgb(hsv);
+        const hex = rgbToHex(rgb);
+        const hsl = rgbToHsl(rgb);
+        return { hex, rgb, hsl, hsv };
+      }
+    }
   }
 
   return null;
@@ -289,7 +376,7 @@ export function formatOklch(oklch: OKLCH): string {
 
 // Derive all color format values from a hex color
 export function getInitialValues(hex: string) {
-  const parsed = parseColor(hex);
+  const parsed = parseColor(hex, "hex");
   if (!parsed) return { hex, rgb: "", hsl: "", hsv: "", oklch: "" };
 
   return {
