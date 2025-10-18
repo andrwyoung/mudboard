@@ -1,6 +1,5 @@
 "use client";
 
-import ColorPickerWheel from "@/components/modals/color-picker/color-picker";
 import Logo from "@/components/ui/logo";
 import { useState, useCallback, useRef, useEffect } from "react";
 
@@ -12,24 +11,25 @@ import {
   formatHsv,
   formatOklch,
   hexToOklch,
-  rgbToHex,
   hexToRgb,
   rgbToHsl,
   rgbToHsv,
   getInitialValues,
 } from "./lib/conversions";
-import { toast } from "sonner";
+import { copyToClipboard } from "./lib/copy-to-clipboard";
+import { ComponentValues, InputValues, InputErrors } from "./lib/types/types";
 import ColorSlider from "./components/color-slider";
-import { colorFormatConfig } from "./lib/colors-config";
+import { colorFormatConfig } from "./lib/types/colors-config";
 import {
   getRgbGradient,
   getHslGradient,
   getHsvGradient,
 } from "./lib/gradients";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaCopy, FaHashtag } from "react-icons/fa6";
+import { FaCopy, FaEyeDropper, FaHashtag } from "react-icons/fa6";
+import ColorWheelSection from "./components/sections/color-wheel-section";
 
-const DEFAULT_COLOR = "#4cde7e";
+export const DEFAULT_COLOR = "#4cde7e";
 const COLOR_DEBOUNCE_TIME = 500;
 const MAX_HISTORY = 20;
 
@@ -38,10 +38,10 @@ export default function ColorPickerPage() {
   const [colorWheelColor, setColorWheelColor] = useState(selectedColor);
   const [colorHistory, setColorHistory] = useState<string[]>([]);
 
-  const [inputValues, setInputValues] = useState(
+  const [inputValues, setInputValues] = useState<InputValues>(
     getInitialValues(DEFAULT_COLOR)
   );
-  const [inputErrors, setInputErrors] = useState({
+  const [inputErrors, setInputErrors] = useState<InputErrors>({
     hex: false,
     rgb: false,
     hsl: false,
@@ -50,40 +50,16 @@ export default function ColorPickerPage() {
   const [masterInput, setMasterInput] = useState<ColorFormat>("hex");
 
   // Individual component values for sliders
-  const [componentValues, setComponentValues] = useState(() => {
-    const rgb = hexToRgb(DEFAULT_COLOR);
-    return {
-      rgb,
-      hsl: rgbToHsl(rgb),
-      hsv: rgbToHsv(rgb),
-    };
-  });
-
-  // Color comparison swatches
-  const [swatchColors, setSwatchColors] = useState([
-    "#50f280",
-    DEFAULT_COLOR,
-    "#3ccf8e",
-  ]);
-  const [focusedSwatch, setFocusedSwatch] = useState(1);
-
-  // Handle swatch click - switch focus and update all values
-  const handleSwatchClick = (swatchIndex: number) => {
-    setFocusedSwatch(swatchIndex);
-
-    // Update all values to match the clicked swatch
-    const hex = swatchColors[swatchIndex];
-    updateAllFormats({ input: hex, colorFormat: "hex" });
-  };
-
-  // Update the focused swatch when main color changes
-  const updateFocusedSwatch = useCallback(() => {
-    setSwatchColors((prev) => {
-      const newSwatches = [...prev];
-      newSwatches[focusedSwatch] = rgbToHex(componentValues.rgb);
-      return newSwatches;
-    });
-  }, [componentValues, focusedSwatch]);
+  const [componentValues, setComponentValues] = useState<ComponentValues>(
+    () => {
+      const rgb = hexToRgb(DEFAULT_COLOR);
+      return {
+        rgb,
+        hsl: rgbToHsl(rgb),
+        hsv: rgbToHsv(rgb),
+      };
+    }
+  );
 
   // Debounced history update
   const historyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -110,11 +86,6 @@ export default function ColorPickerPage() {
       }
     };
   }, []);
-
-  // Update focused swatch when componentValues change
-  useEffect(() => {
-    updateFocusedSwatch();
-  }, [updateFocusedSwatch]);
 
   const updateAllFormats = useCallback(
     ({
@@ -175,10 +146,6 @@ export default function ColorPickerPage() {
     },
     [masterInput, updateColorHistory]
   );
-
-  const handleColorWheelChange = (hex: string) => {
-    updateAllFormats({ input: hex, skipColorWheel: true, colorFormat: "hex" });
-  };
 
   const handleInputChange = (format: ColorFormat, value: string) => {
     // OKLCH is read-only, don't allow changes
@@ -259,77 +226,6 @@ export default function ColorPickerPage() {
     lastClickedInputRef.current = null;
   };
 
-  const copyToClipboard = async (
-    format: ColorFormat,
-    pure: boolean = false
-  ) => {
-    let value = "";
-
-    switch (format) {
-      case "hex":
-        if (inputErrors.hex) {
-          toast.error("Invalid HEX code");
-          return;
-        }
-
-        if (pure) {
-          // Use the actual hex value from componentValues to ensure it has #
-          const hexValue = rgbToHex(componentValues.rgb);
-          value = hexValue.replace("#", "");
-        } else {
-          // Use the actual hex value from componentValues
-          value = rgbToHex(componentValues.rgb);
-        }
-        break;
-      case "rgb":
-        if (inputErrors.rgb) {
-          toast.error("Invalid RGB code");
-          return;
-        }
-
-        if (pure) {
-          value = `${componentValues.rgb.r}, ${componentValues.rgb.g}, ${componentValues.rgb.b}`;
-        } else {
-          value = formatRgb(componentValues.rgb);
-        }
-        break;
-      case "hsl":
-        if (inputErrors.hsl) {
-          toast.error("Invalid HSL code");
-          return;
-        }
-
-        if (pure) {
-          value = `${componentValues.hsl.h}, ${componentValues.hsl.s}, ${componentValues.hsl.l}`;
-        } else {
-          value = formatHsl(componentValues.hsl);
-        }
-        break;
-      case "hsv":
-        if (inputErrors.hsv) {
-          toast.error("Invalid HSV code");
-          return;
-        }
-
-        if (pure) {
-          value = `${componentValues.hsv.h}, ${componentValues.hsv.s}, ${componentValues.hsv.v}`;
-        } else {
-          value = formatHsv(componentValues.hsv);
-        }
-        break;
-      case "oklch":
-        value = inputValues.oklch;
-        break;
-    }
-
-    try {
-      await navigator.clipboard.writeText(value);
-      toast.success(`Copied "${value}" to clipboard`);
-    } catch (err) {
-      console.error("Failed to copy color:", err);
-    }
-  };
-
   // Slider handlers for individual components
   const handleSliderChange = (
     format: "rgb" | "hsl" | "hsv",
@@ -382,52 +278,14 @@ export default function ColorPickerPage() {
 
         <div className="max-w-4xl mx-auto mb-24 grid grid-cols-1 lg:grid-cols-2 gap-8 ">
           {/* Color Picker */}
-          <div className="flex flex-col items-center justify-center ">
-            <ColorPickerWheel
-              color={colorWheelColor}
-              onChange={handleColorWheelChange}
-              size={320}
-              pickerSize={20}
-              hueHeight={36}
-              selectorBorderSize={4}
-            />
-            <div className="mt-6 flex items-center">
-              {swatchColors.map((swatch, index) => (
-                <div
-                  className="flex flex-col items-center "
-                  key={`swatch-${index}`}
-                >
-                  <div
-                    key={index}
-                    className={`w-20 h-16 cursor-pointer duration-300  transition-transform hover:scale-110 hover:z-10 ${
-                      index === 0
-                        ? "rounded-l-lg"
-                        : index === swatchColors.length - 1
-                        ? "rounded-r-lg"
-                        : ""
-                    } ${focusedSwatch === index ? "" : ""}`}
-                    style={{
-                      backgroundColor: swatch,
-                    }}
-                    title={`${swatch} - Click to focus`}
-                    onClick={() => handleSwatchClick(index)}
-                  />
-                  <div className="h-10">
-                    {focusedSwatch === index && (
-                      <div className="h-2 w-8 bg-white mt-2 rounded-full" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ColorWheelSection
+            colorWheelColor={colorWheelColor}
+            componentValues={componentValues}
+            updateAllFormats={updateAllFormats}
+          />
 
           {/* Color Information */}
           <div className="px-8">
-            {/* <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-                Color Information
-              </h2> */}
-
             {/* Color Formats */}
             <div className="space-y-3">
               {Object.entries(colorFormatConfig).map(([key, config]) => (
@@ -502,7 +360,13 @@ export default function ColorPickerPage() {
                       {/* Copy button for all formats */}
                       <button
                         onClick={() =>
-                          copyToClipboard(key as ColorFormat, key === "hex")
+                          copyToClipboard({
+                            format: key as ColorFormat,
+                            pure: key === "hex",
+                            componentValues,
+                            inputValues,
+                            inputErrors,
+                          })
                         }
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1
                           cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
@@ -523,7 +387,13 @@ export default function ColorPickerPage() {
                       {key !== "oklch" && (
                         <button
                           onClick={() =>
-                            copyToClipboard(key as ColorFormat, key !== "hex")
+                            copyToClipboard({
+                              format: key as ColorFormat,
+                              pure: key !== "hex",
+                              componentValues,
+                              inputValues,
+                              inputErrors,
+                            })
                           }
                           className={`absolute top-1/2 transform -translate-y-1/2 p-1
                           cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text
@@ -609,32 +479,6 @@ export default function ColorPickerPage() {
             </div>
           </div>
         </div>
-
-        {/* Color History */}
-        {/* <div className="max-w-4xl mx-auto">
-          {colorHistory.length > 1 && (
-            <div className="mt-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-                Recent Colors
-              </h2>
-              <div className="grid grid-cols-5 sm:grid-cols-10 gap-3">
-                {colorHistory.map((color, index) => (
-                  <button
-                    key={index}
-                    onClick={() => updateAllFormats(color)}
-                    className={`w-12 h-12 rounded-lg  transition-all duration-200 hover:scale-105 ${
-                      selectedColor === color
-                        ? "border-accent border-4"
-                        : "border-slate-200 hover:border-slate-300 border-2"
-                    }`}
-                    style={{ backgroundColor: color }}
-                    title={color}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </div> */}
       </div>
     </div>
   );

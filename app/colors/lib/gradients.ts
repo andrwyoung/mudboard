@@ -1,5 +1,7 @@
 // Gradient generation utilities for color sliders
-import { RGB, HSL, HSV, hsvToRgb } from "./conversions";
+
+import { hsvToRgb } from "./conversions";
+import { RGB, HSL, HSV } from "./types/types";
 
 // Generate gradient for RGB sliders
 export const getRgbGradient = (

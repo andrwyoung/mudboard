@@ -1,24 +1,6 @@
 import { oklch } from "culori";
 import { ColorFormat } from "../page";
-
-// Color conversion utilities
-export type RGB = {
-  r: number;
-  g: number;
-  b: number;
-};
-
-export type HSL = {
-  h: number;
-  s: number;
-  l: number;
-};
-
-export type HSV = {
-  h: number;
-  s: number;
-  v: number;
-};
+import { RGB, HSL, HSV } from "./types/types";
 
 // Parse different color formats
 export function parseColor(
