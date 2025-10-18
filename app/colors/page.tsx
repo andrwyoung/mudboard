@@ -12,8 +12,6 @@ import {
   formatHsv,
   formatOklch,
   hexToOklch,
-  hslToRgb,
-  hsvToRgb,
   getInitialValues,
 } from "./lib/conversions";
 import { FaCopy, FaHashtag } from "react-icons/fa";
@@ -33,7 +31,8 @@ const MAX_HISTORY = 20;
 
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
-  const [colorHistory, setColorHistory] = useState<string[]>([DEFAULT_COLOR]);
+  const [colorWheelColor, setColorWheelColor] = useState(selectedColor);
+  const [colorHistory, setColorHistory] = useState<string[]>([]);
 
   const [inputValues, setInputValues] = useState(
     getInitialValues(DEFAULT_COLOR)
@@ -80,10 +79,23 @@ export default function ColorPickerPage() {
   }, []);
 
   const updateAllFormats = useCallback(
-    (hex: string, skipMaster: boolean = false) => {
-      const parsed = parseColor(hex);
+    ({
+      input,
+      skipMaster = false,
+      skipColorWheel = false,
+    }: {
+      input: string;
+      inputFormat?: ColorFormat; // not because parseColor does it already
+      skipMaster?: boolean;
+      skipColorWheel?: boolean;
+    }) => {
+      const parsed = parseColor(input);
       if (parsed) {
-        setSelectedColor(hex);
+        setSelectedColor(parsed.hex);
+
+        if (!skipColorWheel) {
+          setColorWheelColor(parsed.hex);
+        }
 
         // Update all inputs except the master input
         const newValues = {
@@ -91,7 +103,7 @@ export default function ColorPickerPage() {
           rgb: formatRgb(parsed.rgb),
           hsl: formatHsl(parsed.hsl),
           hsv: formatHsv(parsed.hsv),
-          oklch: formatOklch(hexToOklch(hex)),
+          oklch: formatOklch(hexToOklch(parsed.hex)),
         };
 
         if (skipMaster && masterInput) {
@@ -119,14 +131,14 @@ export default function ColorPickerPage() {
         });
 
         // Add to history with debounce
-        updateColorHistory(hex);
+        updateColorHistory(parsed.hex);
       }
     },
     [masterInput, updateColorHistory]
   );
 
-  const handleColorChange = (color: string) => {
-    updateAllFormats(color);
+  const handleColorWheelChange = (hex: string) => {
+    updateAllFormats({ input: hex, skipColorWheel: true });
   };
 
   const handleInputChange = (format: ColorFormat, value: string) => {
@@ -141,11 +153,15 @@ export default function ColorPickerPage() {
     if (parsed) {
       // If this is the master input, update others but don't update this one
       if (masterInput === format) {
-        updateAllFormats(parsed.hex, true);
+        updateAllFormats({
+          input: value,
+          inputFormat: format,
+          skipMaster: true,
+        });
       } else {
         // If this is not the master input, only update if master is "hex" (default)
         if (masterInput === "hex") {
-          updateAllFormats(parsed.hex);
+          updateAllFormats({ input: value, inputFormat: format });
         }
       }
     } else if (value.trim() === "") {
@@ -201,9 +217,6 @@ export default function ColorPickerPage() {
   };
 
   const handleInputBlur = () => {
-    // Reset to hex when input loses focus
-    // setMasterInput("hex");
-    // Reset last clicked input ref to null
     lastClickedInputRef.current = null;
   };
 
@@ -237,35 +250,21 @@ export default function ColorPickerPage() {
       [format]: newComponents,
     }));
 
-    // Convert to hex and update all formats
-    let hex: string;
+    // Convert to formatted string and update all formats
+    let formattedInput: string;
     if (format === "rgb") {
       const rgb = newComponents as { r: number; g: number; b: number };
-      hex = `#${Math.round(rgb.r).toString(16).padStart(2, "0")}${Math.round(
-        rgb.g
-      )
-        .toString(16)
-        .padStart(2, "0")}${Math.round(rgb.b).toString(16).padStart(2, "0")}`;
+      formattedInput = formatRgb(rgb);
     } else if (format === "hsl") {
       const hsl = newComponents as { h: number; s: number; l: number };
-      const rgb = hslToRgb(hsl);
-      hex = `#${Math.round(rgb.r).toString(16).padStart(2, "0")}${Math.round(
-        rgb.g
-      )
-        .toString(16)
-        .padStart(2, "0")}${Math.round(rgb.b).toString(16).padStart(2, "0")}`;
+      formattedInput = formatHsl(hsl);
     } else {
       // hsv
       const hsv = newComponents as { h: number; s: number; v: number };
-      const rgb = hsvToRgb(hsv);
-      hex = `#${Math.round(rgb.r).toString(16).padStart(2, "0")}${Math.round(
-        rgb.g
-      )
-        .toString(16)
-        .padStart(2, "0")}${Math.round(rgb.b).toString(16).padStart(2, "0")}`;
+      formattedInput = formatHsv(hsv);
     }
 
-    updateAllFormats(hex);
+    updateAllFormats({ input: formattedInput, inputFormat: format });
   };
 
   return (
@@ -285,8 +284,8 @@ export default function ColorPickerPage() {
           <div className="">
             <div className="flex justify-center ">
               <ColorPickerWheel
-                color={selectedColor}
-                onChange={handleColorChange}
+                color={colorWheelColor}
+                onChange={handleColorWheelChange}
                 size={320}
                 pickerSize={20}
                 hueHeight={36}

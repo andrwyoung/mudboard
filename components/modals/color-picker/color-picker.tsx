@@ -75,7 +75,8 @@ export default function ColorPickerWheel({
 
     const updateHue = (clientX: number) => {
       const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-      const newHSV = { ...hsv, h: x * 360 };
+      const hue = x * 360;
+      const newHSV = { ...hsv, h: hue };
       setHSV(newHSV);
       onChange(hsvToHex(newHSV));
     };

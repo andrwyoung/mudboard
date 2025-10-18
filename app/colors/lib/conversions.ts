@@ -243,7 +243,7 @@ export function hsvToRgb(hsv: HSV): RGB {
   else if (2 / 6 <= h && h < 3 / 6) [r, g, b] = [0, c, x];
   else if (3 / 6 <= h && h < 4 / 6) [r, g, b] = [0, x, c];
   else if (4 / 6 <= h && h < 5 / 6) [r, g, b] = [x, 0, c];
-  else if (5 / 6 <= h && h < 1) [r, g, b] = [c, 0, x];
+  else if (5 / 6 <= h && h <= 1) [r, g, b] = [c, 0, x]; // Changed < 1 to <= 1
 
   return {
     r: Math.round((r + m) * 255),

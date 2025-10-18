@@ -31,7 +31,7 @@ export function getLuminanceFromHSV({ h, s, v }: HSV): number {
   else if (120 <= h && h < 180) [r, g, b] = [0, c, x];
   else if (180 <= h && h < 240) [r, g, b] = [0, x, c];
   else if (240 <= h && h < 300) [r, g, b] = [x, 0, c];
-  else if (300 <= h && h < 360) [r, g, b] = [c, 0, x];
+  else if (300 <= h && h <= 360) [r, g, b] = [c, 0, x]; // Changed < 360 to <= 360
 
   r += m;
   g += m;
@@ -96,7 +96,8 @@ export function hsvToHex({ h, s, v }: HSV): string {
     [r, g, b] = [0, x, c];
   } else if (240 <= h && h < 300) {
     [r, g, b] = [x, 0, c];
-  } else if (300 <= h && h < 360) {
+  } else if (300 <= h && h <= 360) {
+    // Changed < 360 to <= 360
     [r, g, b] = [c, 0, x];
   }
 
