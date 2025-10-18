@@ -8,19 +8,24 @@ import React, { useState, useEffect } from "react";
 const DEFAULT_COLOR_PICKER_SIZE = 144;
 const DEFAULT_HUE_HEIGHT = 16;
 const DEFAULT_PICKER_SIZE = 12;
+const DEFAULT_BORDER_SIZE = 3;
 
 export default function ColorPickerWheel({
   color,
   onChange,
+
   size = DEFAULT_COLOR_PICKER_SIZE,
   hueHeight = DEFAULT_HUE_HEIGHT,
   pickerSize = DEFAULT_PICKER_SIZE,
+  selectorBorderSize = DEFAULT_BORDER_SIZE,
 }: {
   color: string;
   onChange: (color: string) => void;
+
   size?: number;
   hueHeight?: number;
   pickerSize?: number;
+  selectorBorderSize?: number;
 }) {
   const [hsv, setHSV] = useState(() => hexToHSV(color));
   const isColorLight = getLuminanceFromHSV(hsv) > 0.5;
@@ -115,7 +120,7 @@ export default function ColorPickerWheel({
           }}
         />
         <div
-          className={`absolute rounded-full border-2 shadow-lg ${
+          className={`absolute rounded-full shadow-lg ${
             isColorLight ? "border-stone-800" : "border-white"
           }`}
           style={{
@@ -124,6 +129,7 @@ export default function ColorPickerWheel({
             transform: "translate(-50%, -50%)",
             width: pickerSize,
             height: pickerSize,
+            borderWidth: selectorBorderSize,
           }}
         />
       </div>
@@ -141,7 +147,7 @@ export default function ColorPickerWheel({
           }}
         />
         <div
-          className={`absolute top-1/2 w-[3px] h-4 
+          className={`absolute top-1/2 h-8 
             ${
               hsv.h >= 20 && hsv.h <= 140
                 ? "bg-slate-500"
@@ -151,6 +157,7 @@ export default function ColorPickerWheel({
             left: `${(hsv.h / 360) * 100}%`,
             transform: "translate(-50%, -50%)",
             height: hueHeight,
+            width: selectorBorderSize + 1,
           }}
         />
       </div>

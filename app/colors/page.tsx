@@ -255,8 +255,9 @@ export default function ColorPickerPage() {
                   color={selectedColor}
                   onChange={handleColorChange}
                   size={320}
-                  pickerSize={16}
-                  hueHeight={32}
+                  pickerSize={20}
+                  hueHeight={36}
+                  selectorBorderSize={4}
                 />
               </div>
             </div>
@@ -282,6 +283,7 @@ export default function ColorPickerPage() {
                       <input
                         type="text"
                         value={inputValues[key as keyof typeof inputValues]}
+                        maxLength={key === "hex" ? 7 : undefined}
                         onChange={(e) =>
                           handleInputChange(
                             key as "hex" | "rgb" | "hsl" | "hsv",
@@ -365,7 +367,7 @@ export default function ColorPickerPage() {
                             transition={{ duration: 0.22, ease: "easeInOut" }}
                             className="overflow-hidden"
                           >
-                            <div className="flex flex-col gap-2 mt-4 mb-2">
+                            <div className="flex flex-col gap-2 mt-4 mb-2 mx-2">
                               {config.sliders.map((slider) => (
                                 <ColorSlider
                                   key={slider.component}
@@ -414,10 +416,10 @@ export default function ColorPickerPage() {
                   <button
                     key={index}
                     onClick={() => updateAllFormats(color)}
-                    className={`w-12 h-12 rounded-lg border-2 transition-all duration-200 hover:scale-105 ${
+                    className={`w-12 h-12 rounded-lg  transition-all duration-200 hover:scale-105 ${
                       selectedColor === color
-                        ? "border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800"
-                        : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                        ? "border-accent border-4"
+                        : "border-slate-200 hover:border-slate-300 border-2"
                     }`}
                     style={{ backgroundColor: color }}
                     title={color}
