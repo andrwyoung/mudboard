@@ -89,7 +89,7 @@ export default function ColorWheelSection({
   }, [updateFocusedSwatch]);
 
   return (
-    <div className="flex flex-col px-4 items-center justify-center ">
+    <div className="flex flex-col px-6 items-center justify-center ">
       <ColorPickerWheel
         color={colorWheelColor}
         onChange={handleColorWheelChange}

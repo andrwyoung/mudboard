@@ -292,24 +292,26 @@ export default function ColorPickerPage() {
         <Logo color="brown" />
       </div>
 
-      <div className="mx-auto flex-1 items-center flex mt-24 mb-16 md:my-0">
+      <div className="mx-auto flex-1 items-center flex mt-24 mb-16 lg:my-0">
         {/* Header */}
         {/* <div className="text-center mb-12">
           <h1 className="text-4xl font-bold ">Nice Color Picker</h1>
         </div> */}
 
-        <div className="max-w-4xl mx-auto  grid grid-cols-1 lg:grid-cols-2 gap-6 my-auto">
+        <div className="max-w-4xl mx-auto  grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-6 my-auto">
           {/* Color Picker */}
-          <ColorWheelSection
-            colorWheelColor={colorWheelColor}
-            componentValues={componentValues}
-            updateAllFormats={updateAllFormats}
-            isEyedropperMode={isEyedropperMode}
-            setIsEyedropperMode={setIsEyedropperMode}
-          />
+          <div className="order-2 lg:order-1">
+            <ColorWheelSection
+              colorWheelColor={colorWheelColor}
+              componentValues={componentValues}
+              updateAllFormats={updateAllFormats}
+              isEyedropperMode={isEyedropperMode}
+              setIsEyedropperMode={setIsEyedropperMode}
+            />
+          </div>
 
           {/* Color Information */}
-          <div className="px-8">
+          <div className="px-8 order-1 lg:order-2">
             {/* Color Formats */}
             <div className="space-y-3">
               {Object.entries(colorFormatConfig).map(([key, config]) => (
