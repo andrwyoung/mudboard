@@ -32,4 +32,10 @@ export const colorFormatConfig = {
       { label: "V", component: "v", min: 0, max: 100, unit: "%" },
     ],
   },
+  oklch: {
+    label: "OKLCH",
+    placeholder: "oklch(70% 0.15 180deg)",
+    sliders: null, // OKLCH is read-only, no sliders
+    readonly: true, // Mark as read-only
+  },
 };

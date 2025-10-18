@@ -1,21 +1,23 @@
+import { oklch } from "culori";
+
 // Color conversion utilities
-export interface RGB {
+export type RGB = {
   r: number;
   g: number;
   b: number;
-}
+};
 
-export interface HSL {
+export type HSL = {
   h: number;
   s: number;
   l: number;
-}
+};
 
-export interface HSV {
+export type HSV = {
   h: number;
   s: number;
   v: number;
-}
+};
 
 // Parse different color formats
 export function parseColor(
@@ -261,4 +263,40 @@ export function formatHsl(hsl: HSL): string {
 
 export function formatHsv(hsv: HSV): string {
   return `hsv(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`;
+}
+
+export type OKLCH = {
+  l: number; // Lightness (0-1)
+  c: number; // Chroma (0-0.4)
+  h: number; // Hue (0-360)
+};
+
+export function hexToOklch(hex: string): OKLCH {
+  const oklchColor = oklch(hex);
+  if (!oklchColor) {
+    return { l: 0.7, c: 0.15, h: 180 }; // Default fallback
+  }
+  return {
+    l: Math.round(oklchColor.l * 100) / 100,
+    c: Math.round(oklchColor.c * 1000) / 1000,
+    h: Math.round(oklchColor.h || 0),
+  };
+}
+
+export function formatOklch(oklch: OKLCH): string {
+  return `oklch(${Math.round(oklch.l * 100)}% ${oklch.c} ${oklch.h}deg)`;
+}
+
+// Derive all color format values from a hex color
+export function getInitialValues(hex: string) {
+  const parsed = parseColor(hex);
+  if (!parsed) return { hex, rgb: "", hsl: "", hsv: "", oklch: "" };
+
+  return {
+    hex: parsed.hex,
+    rgb: formatRgb(parsed.rgb),
+    hsl: formatHsl(parsed.hsl),
+    hsv: formatHsv(parsed.hsv),
+    oklch: formatOklch(hexToOklch(hex)),
+  };
 }

@@ -3,13 +3,18 @@
 import ColorPickerWheel from "@/components/modals/color-picker/color-picker";
 import Logo from "@/components/ui/logo";
 import { useState, useCallback, useRef, useEffect } from "react";
+
+type ColorFormat = "hex" | "rgb" | "hsl" | "hsv" | "oklch";
 import {
   parseColor,
   formatRgb,
   formatHsl,
   formatHsv,
+  formatOklch,
+  hexToOklch,
   hslToRgb,
   hsvToRgb,
+  getInitialValues,
 } from "./lib/conversions";
 import { FaCopy, FaHashtag } from "react-icons/fa";
 import { toast } from "sonner";
@@ -29,21 +34,17 @@ const MAX_HISTORY = 20;
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
   const [colorHistory, setColorHistory] = useState<string[]>([DEFAULT_COLOR]);
-  const [inputValues, setInputValues] = useState({
-    hex: DEFAULT_COLOR,
-    rgb: "rgb(59, 130, 246)",
-    hsl: "hsl(213, 91%, 60%)",
-    hsv: "hsv(213, 76%, 96%)",
-  });
+
+  const [inputValues, setInputValues] = useState(
+    getInitialValues(DEFAULT_COLOR)
+  );
   const [inputErrors, setInputErrors] = useState({
     hex: false,
     rgb: false,
     hsl: false,
     hsv: false,
   });
-  const [masterInput, setMasterInput] = useState<"hex" | "rgb" | "hsl" | "hsv">(
-    "hex"
-  );
+  const [masterInput, setMasterInput] = useState<ColorFormat>("hex");
 
   // Individual component values for sliders
   const [componentValues, setComponentValues] = useState({
@@ -90,6 +91,7 @@ export default function ColorPickerPage() {
           rgb: formatRgb(parsed.rgb),
           hsl: formatHsl(parsed.hsl),
           hsv: formatHsv(parsed.hsv),
+          oklch: formatOklch(hexToOklch(hex)),
         };
 
         if (skipMaster && masterInput) {
@@ -102,7 +104,12 @@ export default function ColorPickerPage() {
           setInputValues(newValues);
         }
 
-        setInputErrors({ hex: false, rgb: false, hsl: false, hsv: false });
+        setInputErrors({
+          hex: false,
+          rgb: false,
+          hsl: false,
+          hsv: false,
+        });
 
         // Update component values for sliders
         setComponentValues({
@@ -122,10 +129,12 @@ export default function ColorPickerPage() {
     updateAllFormats(color);
   };
 
-  const handleInputChange = (
-    format: "hex" | "rgb" | "hsl" | "hsv",
-    value: string
-  ) => {
+  const handleInputChange = (format: ColorFormat, value: string) => {
+    // OKLCH is read-only, don't allow changes
+    if (format === "oklch") {
+      return;
+    }
+
     setInputValues((prev) => ({ ...prev, [format]: value }));
 
     const parsed = parseColor(value);
@@ -159,11 +168,13 @@ export default function ColorPickerPage() {
     rgb: HTMLInputElement | null;
     hsl: HTMLInputElement | null;
     hsv: HTMLInputElement | null;
+    oklch: HTMLInputElement | null;
   }>({
     hex: null,
     rgb: null,
     hsl: null,
     hsv: null,
+    oklch: null,
   });
 
   const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -182,31 +193,24 @@ export default function ColorPickerPage() {
     }, 0);
   };
 
-  const handleInputFocus = (format: "hex" | "rgb" | "hsl" | "hsv") => {
-    setMasterInput(format);
+  const handleInputFocus = (format: ColorFormat) => {
+    // OKLCH is read-only, don't set as master input
+    if (format !== "oklch") {
+      setMasterInput(format);
+    }
   };
 
   const handleInputBlur = () => {
     // Reset to hex when input loses focus
-    setMasterInput("hex");
+    // setMasterInput("hex");
     // Reset last clicked input ref to null
     lastClickedInputRef.current = null;
   };
 
-  const copyToClipboard = async (
-    value: string,
-    inputRef?: HTMLInputElement | null
-  ) => {
+  const copyToClipboard = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
       toast.success(`Copied, "${value}" to clipboard`);
-
-      // Select the input text after copying
-      if (inputRef) {
-        inputRef.select();
-        // Update lastClickedInputRef to maintain consistent behavior
-        lastClickedInputRef.current = inputRef;
-      }
     } catch (err) {
       console.error("Failed to copy color:", err);
     }
@@ -265,27 +269,22 @@ export default function ColorPickerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-canvas-background-dark relative">
       <div className="absolute top-4 left-6">
-        <Logo color="brown" />
+        <Logo />
       </div>
 
-      <div className="container mx-auto px-4 py-8 mt-12">
+      <div className="container mx-auto px-4 pt-24">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-            Color Picker
-          </h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Color Picker</h1>
         </div>
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Color Picker */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-                Color Wheel
-              </h2>
-              <div className="flex justify-center">
+            <div className="p-6">
+              <div className="flex justify-center ">
                 <ColorPickerWheel
                   color={selectedColor}
                   onChange={handleColorChange}
@@ -298,7 +297,7 @@ export default function ColorPickerPage() {
             </div>
 
             {/* Color Information */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+            <div className="bg-canvas-background-light-secondary rounded-xl shadow-lg p-6">
               {/* <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
                 Color Information
               </h2> */}
@@ -306,101 +305,113 @@ export default function ColorPickerPage() {
               {/* Color Formats */}
               <div className="space-y-3">
                 {Object.entries(colorFormatConfig).map(([key, config]) => (
-                  <div key={key} className={`${key === "hex" ? "mb-12" : ""}`}>
-                    <label
-                      className={`block font-header font-medium text-slate-700 dark:text-slate-300 mb-1 ${
-                        key === "hex" ? "text-lg font-semibold" : "text-sm"
+                  <div
+                    key={key}
+                    className={`${
+                      key === "hex" ? "mb-12" : "flex flex-col self-end"
+                    }`}
+                  >
+                    <div
+                      className={`${
+                        key === "hex" ? "" : "flex items-center gap-4"
                       }`}
                     >
-                      {config.label}
-                    </label>
-                    <div className="relative">
-                      <input
-                        ref={(el) => {
-                          inputRefs.current[
-                            key as keyof typeof inputRefs.current
-                          ] = el;
-                        }}
-                        type="text"
-                        value={inputValues[key as keyof typeof inputValues]}
-                        maxLength={key === "hex" ? 7 : undefined}
-                        onChange={(e) =>
-                          handleInputChange(
-                            key as "hex" | "rgb" | "hsl" | "hsv",
-                            e.target.value
-                          )
-                        }
-                        onFocus={() =>
-                          handleInputFocus(key as "hex" | "rgb" | "hsl" | "hsv")
-                        }
-                        onBlur={handleInputBlur}
-                        onClick={handleInputClick}
-                        onPaste={(e) => {
-                          e.preventDefault();
-                          const pastedText = e.clipboardData.getData("text");
-                          handleInputChange(
-                            key as "hex" | "rgb" | "hsl" | "hsv",
-                            pastedText
-                          );
-                        }}
-                        className={`w-full justify-center px-4 py-2 bg-slate-50 dark:bg-slate-700 border-2 rounded-md 
+                      <label
+                        className={`block font-header font-medium w-10 text-slate-700 dark:text-slate-300 mb-1 ${
+                          key === "hex" ? "text-lg font-semibold" : "text-sm"
+                        }`}
+                      >
+                        {config.label}:
+                      </label>
+
+                      <div className="relative">
+                        <input
+                          ref={(el) => {
+                            inputRefs.current[
+                              key as keyof typeof inputRefs.current
+                            ] = el;
+                          }}
+                          type="text"
+                          value={inputValues[key as keyof typeof inputValues]}
+                          maxLength={key === "hex" ? 7 : undefined}
+                          readOnly={key === "oklch"}
+                          tabIndex={key === "oklch" ? -1 : 0}
+                          onChange={(e) =>
+                            handleInputChange(
+                              key as ColorFormat,
+                              e.target.value
+                            )
+                          }
+                          onFocus={() => handleInputFocus(key as ColorFormat)}
+                          onBlur={handleInputBlur}
+                          onClick={
+                            key === "oklch" ? undefined : handleInputClick
+                          }
+                          onPaste={(e) => {
+                            // OKLCH is read-only, don't allow paste
+                            if (key === "oklch") {
+                              e.preventDefault();
+                              return;
+                            }
+                            e.preventDefault();
+                            const pastedText = e.clipboardData.getData("text");
+                            handleInputChange(key as ColorFormat, pastedText);
+                          }}
+                          className={`w-full justify-center px-4 py-2 border-2 rounded-md 
                             font-header text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:border-transparent ${
                               key === "hex"
                                 ? "pr-20 text-2xl py-3 font-semibold"
                                 : "pr-10 text-sm py-1.5"
                             } ${
-                          inputErrors[key as keyof typeof inputErrors]
-                            ? "border-red-500 focus:ring-red-500"
-                            : masterInput === key
-                            ? "border-primary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
-                            : "border-slate-300 focus:ring-blue-500"
-                        }`}
-                        placeholder={config.placeholder}
-                      />
-
-                      {/* Copy button for all formats */}
-                      <button
-                        onClick={() =>
-                          copyToClipboard(
-                            key === "hex"
-                              ? inputValues.hex.replace("#", "")
-                              : inputValues[key as keyof typeof inputValues],
-                            inputRefs.current[
-                              key as keyof typeof inputRefs.current
-                            ]
-                          )
-                        }
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1
-                          cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
-                        title={
-                          key === "hex"
-                            ? "Copy HEX without #"
-                            : `Copy ${config.label}`
-                        }
-                      >
-                        <FaCopy
-                          className={` ${
-                            key === "hex" ? "w-5 h-5 " : "w-4 h-4"
+                            key === "oklch"
+                              ? "bg-slate-200 dark:bg-slate-500 cursor-not-allowed opacity-60 pointer-events-none"
+                              : "bg-slate-50 dark:bg-slate-700"
+                          } ${
+                            inputErrors[key as keyof typeof inputErrors]
+                              ? "border-red-500 focus:ring-red-500"
+                              : masterInput === key
+                              ? "border-primary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
+                              : "border-stone-500 focus:ring-blue-500"
                           }`}
+                          placeholder={config.placeholder}
                         />
-                      </button>
 
-                      {/* Additional button for HEX with hashtag */}
-                      {key === "hex" && (
+                        {/* Copy button for all formats */}
                         <button
                           onClick={() =>
                             copyToClipboard(
-                              inputValues.hex,
-                              inputRefs.current.hex
+                              key === "hex"
+                                ? inputValues.hex.replace("#", "")
+                                : inputValues[key as keyof typeof inputValues]
                             )
                           }
-                          className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1
                           cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
-                          title="Copy HEX with #"
+                          title={
+                            key === "hex"
+                              ? "Copy HEX without #"
+                              : `Copy ${config.label}`
+                          }
                         >
-                          <FaHashtag className="w-5 h-5 " />
+                          <FaCopy
+                            className={` ${
+                              key === "hex" ? "w-5 h-5 " : "w-4 h-4"
+                            }`}
+                          />
                         </button>
-                      )}
+
+                        {/* Additional button for HEX with hashtag */}
+                        {key === "hex" && (
+                          <button
+                            onClick={() => copyToClipboard(inputValues.hex)}
+                            className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1
+                          cursor-pointer hover:bg-slate-100 rounded transition-colors duration-200 hover:text-accent text-dark-text"
+                            title="Copy HEX with #"
+                          >
+                            <FaHashtag className="w-5 h-5 " />
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Sliders for RGB, HSL, HSV */}

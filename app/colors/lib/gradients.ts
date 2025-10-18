@@ -1,27 +1,10 @@
 // Gradient generation utilities for color sliders
-
-type RgbValues = {
-  r: number;
-  g: number;
-  b: number;
-};
-
-type HslValues = {
-  h: number;
-  s: number;
-  l: number;
-};
-
-type HsvValues = {
-  h: number;
-  s: number;
-  v: number;
-};
+import { RGB, HSL, HSV } from "./conversions";
 
 // Generate gradient for RGB sliders
 export const getRgbGradient = (
   component: "r" | "g" | "b",
-  rgb: RgbValues
+  rgb: RGB
 ): string => {
   if (component === "r") {
     return `linear-gradient(to right, rgb(0, ${rgb.g}, ${rgb.b}), rgb(255, ${rgb.g}, ${rgb.b}))`;
@@ -35,7 +18,7 @@ export const getRgbGradient = (
 // Generate gradient for HSL sliders
 export const getHslGradient = (
   component: "h" | "s" | "l",
-  hsl: HslValues
+  hsl: HSL
 ): string => {
   if (component === "h") {
     return `linear-gradient(to right, hsl(0, ${hsl.s}%, ${hsl.l}%), hsl(360, ${hsl.s}%, ${hsl.l}%))`;
@@ -49,7 +32,7 @@ export const getHslGradient = (
 // Generate gradient for HSV sliders
 export const getHsvGradient = (
   component: "h" | "s" | "v",
-  hsv: HsvValues
+  hsv: HSV
 ): string => {
   if (component === "h") {
     return `linear-gradient(to right, hsl(0, ${hsv.s}%, ${hsv.v}%), hsl(360, ${hsv.s}%, ${hsv.v}%))`;

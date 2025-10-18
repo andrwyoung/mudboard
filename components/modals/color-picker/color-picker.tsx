@@ -98,9 +98,10 @@ export default function ColorPickerWheel({
   };
 
   return (
-    <div className="flex flex-col items-center rounded-md">
+    // <div className="flex flex-col items-center rounded-lg ring-8 ring-canvas-background-dark-secondary shadow-lg">
+    <div className="flex flex-col items-center ">
       <div
-        className="relative rounded-t-sm overflow-hidden shadow-lg cursor-pointer "
+        className="relative rounded-t-lg overflow-hidden shadow-lg cursor-pointer "
         style={{ width: size, height: size }}
         onMouseDown={handleSVMouseDown}
       >
@@ -135,7 +136,7 @@ export default function ColorPickerWheel({
       </div>
 
       <div
-        className="relative rounded-b-sm overflow-hidden shadow-inner cursor-pointer"
+        className="relative rounded-b-lg overflow-hidden shadow-inner cursor-pointer"
         style={{ width: size, height: hueHeight }}
         onMouseDown={handleHueMouseDown}
       >
