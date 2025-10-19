@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { isImageUrl } from "@/utils/upload-helpers";
 import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
+import { allowedMimeTypes } from "@/types/upload-settings";
 
 export function useSimpleImageImport({
   handleImage,
@@ -29,10 +30,17 @@ export function useSimpleImageImport({
       if (isFile || isLinkOrHtml) {
         dragCounter++;
 
-        // Count the number of files being dragged
-        const files = e.dataTransfer?.files;
-        if (files && files.length > 0) {
-          setDragCount(files.length);
+        // Try to count files using items (more reliable than files during dragenter)
+        const items = e.dataTransfer?.items;
+        if (items && items.length > 0) {
+          let imageCount = 0;
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.kind === "file" && item.type.startsWith("image/")) {
+              imageCount++;
+            }
+          }
+          setDragCount(imageCount > 0 ? imageCount : 1);
         } else {
           setDragCount(1); // For URLs/HTML, assume 1 item
         }
@@ -60,7 +68,25 @@ export function useSimpleImageImport({
 
       // Handle local files first
       if (files && files.length > 0) {
-        handleImage(Array.from(files));
+        // Filter only valid image files
+        const validImageFiles = Array.from(files).filter((file) =>
+          allowedMimeTypes.includes(file.type)
+        );
+
+        if (validImageFiles.length === 0) {
+          toast.error("No valid image files found");
+          return;
+        }
+
+        if (validImageFiles.length < files.length) {
+          toast.warning(
+            `${
+              files.length - validImageFiles.length
+            } non-image files were ignored`
+          );
+        }
+
+        handleImage(validImageFiles);
         return;
       }
 
@@ -98,8 +124,11 @@ export function useSimpleImageImport({
       for (const item of clipboardItems) {
         if (item.kind === "file") {
           const file = item.getAsFile();
-          if (file) {
+          if (file && allowedMimeTypes.includes(file.type)) {
             handleImage([file]);
+            return;
+          } else if (file) {
+            toast.error("Invalid file type - only images are supported");
             return;
           }
         }

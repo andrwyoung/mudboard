@@ -1,21 +1,16 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { Upload, Trash2, Image as ImageIcon } from "lucide-react";
 import Logo from "@/components/ui/logo";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
-
-interface ProcessedImage {
-  id: string;
-  originalFile: File;
-  preview: string;
-}
+import { handleImageFiles } from "@/app/processing/utils/image-handler";
+import { useImageStore } from "@/store/home-page/image-store";
 
 export default function ImageProcessingPage() {
-  const [images, setImages] = useState<ProcessedImage[]>([]);
-  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const { images, selectedImageId, setSelectedImageId, removeImage } =
+    useImageStore();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const selectedImage = images.find((img) => img.id === selectedImageId);
@@ -24,52 +19,14 @@ export default function ImageProcessingPage() {
     inputRef.current?.click();
   }
 
-  const handleImage = useCallback(
-    async (files: File[]) => {
-      const newImages: ProcessedImage[] = [];
-
-      for (const file of files) {
-        if (!file.type.startsWith("image/")) {
-          toast.error(`${file.name} is not an image file`);
-          continue;
-        }
-
-        const id = Math.random().toString(36).substr(2, 9);
-        const preview = URL.createObjectURL(file);
-
-        newImages.push({
-          id,
-          originalFile: file,
-          preview,
-        });
-      }
-
-      setImages((prev) => [...prev, ...newImages]);
-      if (newImages.length > 0 && !selectedImageId) {
-        setSelectedImageId(newImages[0].id);
-      }
-      toast.success(`Added ${newImages.length} image(s)`);
-    },
-    [selectedImageId]
-  );
+  const handleImage = useCallback(async (files: File[]) => {
+    await handleImageFiles(files);
+  }, []);
 
   // Use the simplified image import hook
   const { dragCount } = useSimpleImageImport({
     handleImage,
   });
-
-  const removeImage = useCallback(
-    (imageId: string) => {
-      setImages((prev) => {
-        const newImages = prev.filter((img) => img.id !== imageId);
-        if (selectedImageId === imageId) {
-          setSelectedImageId(newImages.length > 0 ? newImages[0].id : null);
-        }
-        return newImages;
-      });
-    },
-    [selectedImageId]
-  );
 
   const fileInput = (
     <input
