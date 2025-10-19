@@ -7,6 +7,7 @@ import {
   useImageStore,
   ProcessedImage,
 } from "../../../store/home-page/image-store";
+import { getImageDimensions } from "./utils/get-image-dimensions";
 
 export async function handleImageFiles(files: File[]) {
   const { addImages } = useImageStore.getState();
@@ -21,10 +22,15 @@ export async function handleImageFiles(files: File[]) {
     const id = Math.random().toString(36).substr(2, 9);
     const preview = URL.createObjectURL(file);
 
+    // Get image dimensions
+    const dimensions = await getImageDimensions(file);
+
     newImages.push({
       id,
       originalFile: file,
       preview,
+      width: dimensions.width,
+      height: dimensions.height,
     });
   }
 

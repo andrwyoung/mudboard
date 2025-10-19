@@ -7,7 +7,7 @@ import { isImageUrl } from "@/utils/upload-helpers";
 import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 import { allowedMimeTypes } from "@/types/upload-settings";
 import { tryImportImageFromUrl } from "@/lib/upload-images/url-handling/import-image-from-url";
-import { handleImageFiles } from "@/app/processing/utils/image-handler";
+import { handleImageFiles } from "@/app/processing/lib/image-handler";
 
 export function useSimpleImageImport() {
   const [dragCount, setDragCount] = useState<number | null>(null);

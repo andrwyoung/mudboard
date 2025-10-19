@@ -4,10 +4,12 @@ import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, Trash2, Image as ImageIcon } from "lucide-react";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
-import { handleImageFiles } from "@/app/processing/utils/image-handler";
+import { handleImageFiles } from "@/app/processing/lib/image-handler";
 import { useImageStore } from "@/store/home-page/image-store";
 import { DragOverlay } from "@/components/ui/drag-overlay";
 import { Navbar } from "@/components/ui/navbar";
+import Image from "next/image";
+import { formatFileSize } from "./lib/utils/format-file-size";
 
 export default function ImageProcessingPage() {
   const { images, selectedImageId, setSelectedImageId, removeImage } =
@@ -40,21 +42,66 @@ export default function ImageProcessingPage() {
   );
 
   return (
-    <div className="min-h-screen bg-canvas-background-light  flex flex-col relative">
+    <div className="min-h-screen bg-canvas-background-light text-primary flex flex-col relative">
       <Navbar color="brown" />
 
-      <div className="max-w-7xl mx-auto mt-24">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">
-            Image Viewer
-          </h1>
-          <p className="text-slate-600">Upload and view your images</p>
-        </div>
+      <div className="mx-auto flex-1 items-center flex mt-24 mb-16 lg:my-0">
+        <div className="flex flex-col gap-6 items-center">
+          {/* Header */}
+          <div className="mb-2 text-center">
+            <h1 className="text-4xl font-bold ">Image Converter</h1>
+            <p className="">Upload your images and convert them to whatever.</p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Panel - Image List */}
-          <div className="lg:col-span-1">
+          {/* Right Panel - Image Viewer */}
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="p-6 bg-off-white rounded-md mx-auto">
+              {selectedImage ? (
+                <>
+                  <h2 className="text-xl font-semibold text-slate-800 mb-4">
+                    Image Preview
+                  </h2>
+                  <div className="flex flex-col items-center  max-w-md max-h-md">
+                    <Image
+                      src={selectedImage.preview}
+                      alt={selectedImage.originalFile.name}
+                      width={selectedImage.width}
+                      height={selectedImage.height}
+                      className="rounded border"
+                    />
+                    <div className="mt-4 text-center">
+                      <h3 className="text-lg font-medium text-slate-800">
+                        {selectedImage.originalFile.name}
+                      </h3>
+                      <p className="text-sm text-slate-500">
+                        {formatFileSize(selectedImage.originalFile.size)}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center ">
+                  <div
+                    className="w-fit h-fit flex flex-col items-center select-none
+                          opacity-80 z-10 hover:opacity-100 transition-all duration-200 cursor-pointer "
+                    onClick={() => triggerImagePicker()}
+                  >
+                    <Image
+                      src={"/1.png"}
+                      alt="No images yet"
+                      width={375}
+                      height={150}
+                      draggable={false}
+                    />
+                    <h3 className="text-sm">
+                      No Images Yet! Drag one in or click here to add.
+                    </h3>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/*Image List */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-slate-800">Images</h2>
@@ -91,8 +138,7 @@ export default function ImageProcessingPage() {
                           {image.originalFile.name}
                         </p>
                         <p className="text-xs text-slate-500">
-                          {(image.originalFile.size / 1024 / 1024).toFixed(1)}{" "}
-                          MB
+                          {formatFileSize(image.originalFile.size)}
                         </p>
                       </div>
                       <Button
@@ -119,49 +165,9 @@ export default function ImageProcessingPage() {
               )}
             </div>
           </div>
-
-          {/* Right Panel - Image Viewer */}
-          <div className="lg:col-span-2">
-            {selectedImage ? (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">
-                  Image Preview
-                </h2>
-                <div className="flex flex-col items-center">
-                  <img
-                    src={selectedImage.preview}
-                    alt={selectedImage.originalFile.name}
-                    className="max-w-full max-h-96 object-contain rounded border"
-                  />
-                  <div className="mt-4 text-center">
-                    <h3 className="text-lg font-medium text-slate-800">
-                      {selectedImage.originalFile.name}
-                    </h3>
-                    <p className="text-sm text-slate-500">
-                      {(selectedImage.originalFile.size / 1024 / 1024).toFixed(
-                        1
-                      )}{" "}
-                      MB
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
-                <ImageIcon className="w-16 h-16 mx-auto mb-4 text-slate-400" />
-                <h2 className="text-xl font-semibold text-slate-600 mb-2">
-                  No Image Selected
-                </h2>
-                <p className="text-slate-500">
-                  Select an image from the left panel to view it
-                </p>
-              </div>
-            )}
-          </div>
         </div>
-
-        <DragOverlay dragCount={dragCount} />
       </div>
+      <DragOverlay dragCount={dragCount} />
     </div>
   );
 }

@@ -7,6 +7,8 @@ export type ProcessedImage = {
   id: string;
   originalFile: File;
   preview: string;
+  width: number;
+  height: number;
 };
 
 interface ImageStore {

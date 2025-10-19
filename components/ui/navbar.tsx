@@ -56,19 +56,19 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
           <Logo enforceHome={enforceHome} color={color} />
         </div>
         {/* Desktop navigation */}
-        <div className="gap-4 items-center hidden sm:flex">
+        <div className="gap-6 items-center hidden sm:flex">
           <Link
             href="/colors"
             className="font-header font-bold hover:text-accent transition-colors duration-300"
           >
             Color Picker
           </Link>
-          <Link
+          {/* <Link
             href="/processing"
             className="font-header font-bold hover:text-accent transition-colors duration-300"
           >
             Image Converter
-          </Link>
+          </Link> */}
         </div>
 
         {/* Mobile dropdown */}
@@ -94,13 +94,13 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
               >
                 Color Picker
               </Link>
-              <Link
+              {/* <Link
                 href="/processing"
                 className="block px-4 py-2 text-sm font-header text-primary hover:text-accent  hover:bg-gray-50 transition-colors duration-200"
                 onClick={() => setIsDropdownOpen(false)}
               >
                 Image Converter
-              </Link>
+              </Link> */}
             </div>
           )}
         </div>
