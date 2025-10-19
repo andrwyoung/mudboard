@@ -7,6 +7,7 @@ import Logo from "@/components/ui/logo";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
 import { handleImageFiles } from "@/app/processing/utils/image-handler";
 import { useImageStore } from "@/store/home-page/image-store";
+import { DragOverlay } from "@/components/ui/drag-overlay";
 
 export default function ImageProcessingPage() {
   const { images, selectedImageId, setSelectedImageId, removeImage } =
@@ -19,13 +20,9 @@ export default function ImageProcessingPage() {
     inputRef.current?.click();
   }
 
-  const handleImage = useCallback(async (files: File[]) => {
-    await handleImageFiles(files);
-  }, []);
-
   // Use the simplified image import hook
   const { dragCount } = useSimpleImageImport({
-    handleImage,
+    handleImage: handleImageFiles,
   });
 
   const fileInput = (
@@ -38,7 +35,7 @@ export default function ImageProcessingPage() {
       onChange={(e) => {
         const files = e.target.files;
         if (files && files.length > 0) {
-          handleImage(Array.from(files));
+          handleImageFiles(Array.from(files));
         }
       }}
     />
@@ -167,23 +164,7 @@ export default function ImageProcessingPage() {
           </div>
         </div>
 
-        {/* Drag overlay */}
-        {dragCount !== null && (
-          <div className="fixed inset-0 bg-accent/20 backdrop-blur-sm z-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-8 shadow-lg border-2 border-dashed border-accent">
-              <div className="text-center">
-                <Upload className="w-12 h-12 mx-auto mb-4 text-accent" />
-                <h3 className="text-2xl font-semibold text-primary mb-1">
-                  Drop {dragCount} image{dragCount > 1 ? "s" : ""} here
-                </h3>
-                <p className="text-primary text-sm">
-                  Release to add {dragCount > 1 ? "them" : "it"} to your
-                  collection
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        <DragOverlay dragCount={dragCount} />
       </div>
     </div>
   );

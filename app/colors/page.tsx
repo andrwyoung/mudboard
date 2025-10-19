@@ -22,6 +22,9 @@ import ScrollToTop from "@/components/ui/scroll-to-top";
 import { DEFAULT_COLOR } from "./lib/types/color-picker-constants";
 import ColorInputSection from "./components/sections/color-input-section";
 import { useColorHistory } from "@/app/colors/lib/hooks/use-color-history";
+import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
+import { handleImageFiles } from "@/app/processing/utils/image-handler";
+import { DragOverlay } from "@/components/ui/drag-overlay";
 
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
@@ -29,6 +32,11 @@ export default function ColorPickerPage() {
 
   // Use color history hook
   const { updateColorHistory } = useColorHistory();
+
+  // Add drag and drop functionality
+  const { dragCount } = useSimpleImageImport({
+    handleImage: handleImageFiles,
+  });
 
   const [inputValues, setInputValues] = useState<InputValues>(
     getInitialValues(DEFAULT_COLOR)
@@ -177,6 +185,9 @@ export default function ColorPickerPage() {
 
       {/* Mobile-only "Go to Top" button */}
       <ScrollToTop className="lg:hidden" />
+
+      {/* Drag overlay */}
+      <DragOverlay dragCount={dragCount} />
     </div>
   );
 }
