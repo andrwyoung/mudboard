@@ -33,7 +33,7 @@ function Slider({
       min={min}
       max={max}
       className={cn(
-        "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
+        "relative flex w-full touch-none rounded-xl items-center bg-accent/20 select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
         className
       )}
       {...props}
@@ -41,13 +41,13 @@ function Slider({
       <SliderPrimitive.Track
         data-slot="slider-track"
         className={cn(
-          "outline-2 outline-white relative grow overflow-hidden rounded-sm data-[orientation=horizontal]:h-4 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-5"
+          "relative grow overflow-hidden rounded-sm data-[orientation=horizontal]:h-3 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-5"
         )}
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
           className={cn(
-            "outline-2 bg-secondary/30 absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+            "outline-2 bg-accent absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
           )}
         />
       </SliderPrimitive.Track>
@@ -57,7 +57,7 @@ function Slider({
           key={index}
           className={`bg-primary-foreground
          ${isDraggingSlider ? "cursor-grabbing" : "cursor-pointer"}
-          ring-accent block w-6 h-4 shrink-0 rounded-full border shadow-sm 
+          ring-accent block w-5 h-3 shrink-0 rounded-full border shadow-sm ring-4
           transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden 
           disabled:pointer-events-none disabled:opacity-50`}
           onPointerDown={() => setIsDraggingSlider(true)}

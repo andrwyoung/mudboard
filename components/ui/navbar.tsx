@@ -46,7 +46,9 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
   return (
     <div
       className={`z-12 flex flex-row justify-between px-8 py-4 fixed top-0 w-screen h-16 transition-colors duration-500  ${
-        scrolled ? "bg-primary/95 backdrop-blur-md" : "bg-transparent"
+        scrolled && color === "white"
+          ? "bg-primary/95 backdrop-blur-md"
+          : "bg-transparent"
       }
       
       ${color === "white" ? "text-off-white" : "text-primary"}`}
@@ -63,12 +65,12 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
           >
             Color Picker
           </Link>
-          {/* <Link
+          <Link
             href="/processing"
             className="font-header font-bold hover:text-accent transition-colors duration-300"
           >
             Image Converter
-          </Link> */}
+          </Link>
         </div>
 
         {/* Mobile dropdown */}
@@ -94,13 +96,13 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
               >
                 Color Picker
               </Link>
-              {/* <Link
+              <Link
                 href="/processing"
                 className="block px-4 py-2 text-sm font-header text-primary hover:text-accent  hover:bg-gray-50 transition-colors duration-200"
                 onClick={() => setIsDropdownOpen(false)}
               >
                 Image Converter
-              </Link> */}
+              </Link>
             </div>
           )}
         </div>
