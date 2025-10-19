@@ -28,6 +28,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { FaCopy, FaHashtag } from "react-icons/fa6";
 import ColorWheelSection from "./components/sections/color-wheel-section";
+import ScrollToTop from "@/components/ui/scroll-to-top";
 import {
   COLOR_DEBOUNCE_TIME,
   DEFAULT_COLOR,
@@ -289,7 +290,7 @@ export default function ColorPickerPage() {
   return (
     <div className="min-h-screen bg-canvas-background-light text-primary relative flex flex-col">
       <div className="absolute top-4 left-6">
-        <Logo color="brown" />
+        <Logo color="brown" enforceHome={true} />
       </div>
 
       <div className="mx-auto flex-1 items-center flex mt-24 mb-16 lg:my-0">
@@ -510,6 +511,9 @@ export default function ColorPickerPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile-only "Go to Top" button */}
+      <ScrollToTop className="lg:hidden" />
     </div>
   );
 }

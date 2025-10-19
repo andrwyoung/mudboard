@@ -168,7 +168,7 @@ export default function ColorPickerWheel({
 
   return (
     // <div className="flex flex-col items-center rounded-lg ring-8 ring-canvas-background-dark-secondary shadow-lg">
-    <div className="flex flex-col items-center ">
+    <div className="flex flex-col items-center mx-12">
       <div
         className="relative rounded-t-lg overflow-hidden shadow-lg cursor-pointer select-none"
         style={{

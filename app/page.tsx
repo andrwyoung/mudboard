@@ -72,12 +72,12 @@ export default function Home() {
             >
               Color Picker
             </Link>
-            <Link
+            {/* <Link
               href="/compress"
               className="font-header font-bold hover:text-accent transition-colors duration-300"
             >
               Image Compressor
-            </Link>
+            </Link> */}
           </div>
         </div>
         <div className="flex gap-3">
