@@ -128,9 +128,11 @@ export default function ImageProcessingPage() {
                     onClick={() => setSelectedImageId(image.id)}
                   >
                     <div className="flex items-center gap-3">
-                      <img
+                      <Image
                         src={image.preview}
                         alt={image.originalFile.name}
+                        width={image.width}
+                        height={image.height}
                         className="w-12 h-12 object-cover rounded"
                       />
                       <div className="flex-1 min-w-0">

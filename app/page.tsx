@@ -143,9 +143,9 @@ export default function Home() {
                   {/* For illustators that want to use references fast, and
                   don&apos;t like digging through dozens of folders to find
                   something. */}
-                  A place for illustrators to process and manage all their
-                  photos quickly. Whether just to eyedrop an image or manage
-                  their reference library.
+                  A place for illustrators to process and manage all your photos
+                  quickly. Whether just to eyedrop an image or manage your
+                  reference library.
                 </p>
               </div>
 
