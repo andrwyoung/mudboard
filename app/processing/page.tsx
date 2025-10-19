@@ -19,10 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { exportImages, estimateFileSize } from "./lib/utils/export-utils";
+import { estimateFileSize, FileSizeEstimate } from "./lib/utils/export-utils";
+import { FileSizeEstimateDisplay } from "./components/file-size-estimate-display";
 import { generateBlurhashFromImage } from "@/lib/upload-images/processing/blur-hash";
 import { ExportFormat } from "./lib/types/exporter-types";
 import { FORMAT_OPTIONS } from "./lib/types/image-exporter-constants";
+import { exportImages } from "./lib/processing/exporting-helpers";
+import { toast } from "sonner";
 
 export default function ImageProcessingPage() {
   const { images, selectedImageId, setSelectedImageId, removeImage } =
@@ -35,7 +38,7 @@ export default function ImageProcessingPage() {
 
   // Export settings
   const [exportFormat, setExportFormat] = useState<ExportFormat>("webp");
-  const [quality, setQuality] = useState<number[]>([80]);
+  const [quality, setQuality] = useState<number[]>([100]);
   const [isExporting, setIsExporting] = useState(false);
 
   const selectedImage = images.find((img) => img.id === selectedImageId);
@@ -117,10 +120,10 @@ export default function ImageProcessingPage() {
         format: exportFormat,
         quality: quality[0],
       });
-      alert(`Successfully exported ${selectedImageIds.length} images!`);
+      toast.success(`Successfully exported ${selectedImageIds.length} images!`);
     } catch (error) {
       console.error("Export failed:", error);
-      alert("Export failed. Please try again.");
+      toast.error("Export failed. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -165,7 +168,7 @@ export default function ImageProcessingPage() {
     }
   }
 
-  function getEstimatedFileSize(): string {
+  function getEstimatedFileSize(): FileSizeEstimate[] {
     return estimateFileSize(images, selectedImageIds, {
       format: exportFormat,
       quality: quality[0],
@@ -195,7 +198,7 @@ export default function ImageProcessingPage() {
     <div className="min-h-screen bg-canvas-background-light text-primary flex flex-col relative">
       <Navbar color="brown" />
 
-      <div className="mx-auto flex-1  flex mt-28 mb-16 ">
+      <div className="mx-auto flex-1  flex mt-28 mb-16 px-4 ">
         <div className="flex flex-col gap-6 items-center">
           {/* Header */}
           <div className="mb-2 text-center">
@@ -205,7 +208,7 @@ export default function ImageProcessingPage() {
 
           {/*Image List */}
           {images.length !== 0 ? (
-            <div className="flex  flex-col lg:flex-row gap-4 lg:gap-6 bg-off-white rounded-lg shadow-sm border px-4 py-6 max-w-4xl">
+            <div className="flex  flex-col lg:flex-row gap-8 bg-off-white rounded-lg shadow-sm border px-4 lg:px-6 py-6 max-w-4xl">
               <div className="flex flex-col justify-between ">
                 <div>
                   <div className="flex items-start w-64 justify-between mb-16">
@@ -234,80 +237,68 @@ export default function ImageProcessingPage() {
                   </div>
                 </div>
 
-                {selectedImageIds.length !== 0 && (
-                  <div className="flex flex-col ">
-                    {/* Format Selection */}
-                    <div className="flex flex-row items-center gap-4 mb-2">
-                      <label className="text-sm font-medium font-header block">
-                        Format:
-                      </label>
-                      <Select
-                        value={exportFormat}
-                        onValueChange={(value) =>
-                          setExportFormat(value as ExportFormat)
-                        }
-                      >
-                        <SelectTrigger
-                          className="w-full border-accent/60 border-2 hover:bg-accent/20
-                      duration-200 rounded-md py-1"
+                <div>
+                  {selectedImageIds.length !== 0 && (
+                    <div className="flex flex-col ">
+                      {/* Format Selection */}
+                      <div className="flex flex-row items-center gap-4 mb-2">
+                        <label className="text-sm font-medium font-header block">
+                          Format:
+                        </label>
+                        <Select
+                          value={exportFormat}
+                          onValueChange={(value) =>
+                            setExportFormat(value as ExportFormat)
+                          }
                         >
-                          <SelectValue placeholder="Select format" />
-                          {/* <FaCaretDown /> */}
-                        </SelectTrigger>
-                        <SelectContent>
-                          {FORMAT_OPTIONS.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Quality Slider */}
-                    <div className="mb-8">
-                      <label className="text-sm font-header font-medium mb-2 block">
-                        Quality: {quality[0]}%
-                      </label>
-                      <Slider
-                        value={quality}
-                        onValueChange={setQuality}
-                        max={100}
-                        min={10}
-                        step={5}
-                        className="w-full"
-                      />
-                    </div>
-
-                    {/* File Size Estimation */}
-                    <div className="p-3 bg-slate-50 rounded-md">
-                      <div className="text-sm text-slate-600">
-                        <strong>Estimated size:</strong>{" "}
-                        {getEstimatedFileSize()}
+                          <SelectTrigger
+                            className="w-full border-accent/60 border-2 hover:bg-accent/20
+                      duration-200 rounded-md py-1"
+                          >
+                            <SelectValue placeholder="Select format" />
+                            {/* <FaCaretDown /> */}
+                          </SelectTrigger>
+                          <SelectContent>
+                            {FORMAT_OPTIONS.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <div className="text-xs text-slate-500 mt-1">
-                        Based on {selectedImageIds.length} selected image
-                        {selectedImageIds.length !== 1 ? "s" : ""}
+
+                      {/* Quality Slider - Hidden for PNG (lossless format) */}
+                      {exportFormat !== "png" && (
+                        <div className="mb-8">
+                          <label className="text-sm font-header font-medium mb-2 block">
+                            Quality: {quality[0]}%
+                          </label>
+                          <Slider
+                            value={quality}
+                            onValueChange={setQuality}
+                            max={100}
+                            min={10}
+                            step={5}
+                            className="w-full"
+                          />
+                        </div>
+                      )}
+
+                      {/* File Size Estimation */}
+                      <div className="mb-2">
+                        <FileSizeEstimateDisplay
+                          estimates={getEstimatedFileSize()}
+                        />
                       </div>
-                    </div>
 
-                    {/* Export Button */}
-                    <Button
-                      onClick={handleExport}
-                      disabled={selectedImageIds.length === 0 || isExporting}
-                      className="w-full text-xl font-header flex items-center justify-center 
-                      gap-2 bg-accent/90 hover:bg-accent text-primary py-3 mb-2"
-                    >
-                      <FaFileExport />
-                      {isExporting
-                        ? "Exporting..."
-                        : `Export ${selectedImageIds.length} Image${
-                            selectedImageIds.length !== 1 ? "s" : ""
-                          }`}
-                    </Button>
+                      {/* Export Button */}
 
-                    {/* Blurhash Generator */}
-                    {/* <button
+                      {/* Blurhash Generator */}
+                      {/* <button
                       onClick={generateBlurhash}
                       disabled={selectedImageIds.length === 0}
                       className="w-full font-header flex items-center text-sm cursor-pointer hover:underline
@@ -316,11 +307,26 @@ export default function ImageProcessingPage() {
                       <Hash className="w-4 h-4" />
                       Copy Blurhash
                     </button> */}
-                  </div>
-                )}
+                    </div>
+                  )}
+
+                  <Button
+                    onClick={handleExport}
+                    disabled={selectedImageIds.length === 0 || isExporting}
+                    className="w-full text-xl font-header flex items-center justify-center 
+                      gap-2 bg-accent/90 hover:bg-accent text-primary py-3 mb-2"
+                  >
+                    <FaFileExport />
+                    {isExporting
+                      ? "Exporting..."
+                      : `Export ${selectedImageIds.length} Image${
+                          selectedImageIds.length !== 1 ? "s" : ""
+                        }`}
+                  </Button>
+                </div>
               </div>
               <div
-                className={`flex flex-col w-[450px] gap-2 max-h-[500px] overflow-y-auto px-2 ${SCROLLBAR_STYLE}`}
+                className={`flex flex-col w-full  lg:w-[450px] gap-2 max-h-[500px] overflow-y-auto px-2 ${SCROLLBAR_STYLE}`}
               >
                 {images.map((image, index) => (
                   <div
@@ -344,13 +350,13 @@ export default function ImageProcessingPage() {
                         <h4 className="text-lg font-medium text-slate-800 truncate">
                           {image.originalFile.name}
                         </h4>
-                        <div className="flex items-center gap-1 text-xs text-primary">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 text-xs text-primary">
                           <span>{formatFileSize(image.originalFile.size)}</span>
-                          <span>•</span>
+                          <span className="hidden sm:inline">•</span>
                           <span>
                             {image.width}×{image.height}
                           </span>
-                          <span>•</span>
+                          <span className="hidden sm:inline">•</span>
                           <span>
                             {image.originalFile.type
                               .split("/")[1]

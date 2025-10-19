@@ -6,113 +6,115 @@ import {
   ExportSettings,
   ExportFormat,
 } from "../types/exporter-types";
-import { getMimeType } from "../types/image-exporter-constants";
-import { formatFileSize } from "./format-file-size";
 
-// Main export function
-export async function exportImages(
-  images: ProcessedImage[],
-  selectedIds: string[],
-  settings: ExportSettings,
-  onProgress?: (progress: number) => void
-): Promise<void> {
-  if (selectedIds.length === 0) return;
-
-  const selectedImages = images.filter((img) => selectedIds.includes(img.id));
-  const total = selectedImages.length;
-
-  for (let i = 0; i < selectedImages.length; i++) {
-    await convertAndDownloadImage(
-      selectedImages[i],
-      settings.format,
-      settings.quality
-    );
-    onProgress?.(((i + 1) / total) * 100);
-  }
-}
-
-// Convert and download a single image
-export async function convertAndDownloadImage(
-  image: ProcessedImage,
-  format: ExportFormat,
-  quality: number
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const img = new window.Image();
-
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx?.drawImage(img, 0, 0);
-
-      const mimeType = getMimeType(format);
-
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            downloadBlob(blob, image.originalFile.name, format);
-            resolve();
-          } else {
-            reject(new Error("Failed to convert image"));
-          }
-        },
-        mimeType,
-        quality / 100
-      );
-    };
-
-    img.onerror = () => reject(new Error("Failed to load image"));
-    img.src = image.preview;
-  });
-}
-
-// Download blob as file
-function downloadBlob(
-  blob: Blob,
-  originalName: string,
-  format: ExportFormat
-): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${originalName.split(".")[0]}.${format}`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+// File size estimate for individual images
+export type FileSizeEstimate = {
+  filename: string;
+  originalSize: number;
+  estimatedSize: number;
+};
 
 // Estimate file size for selected images
 export function estimateFileSize(
   images: ProcessedImage[],
   selectedIds: string[],
   settings: ExportSettings
-): string {
-  if (selectedIds.length === 0) return "0 B";
+): FileSizeEstimate[] {
+  if (selectedIds.length === 0) return [];
 
   const selectedImages = images.filter((img) => selectedIds.includes(img.id));
-  const totalPixels = selectedImages.reduce(
-    (sum, img) => sum + img.width * img.height,
-    0
-  );
 
-  // Rough estimation based on format and quality
-  let bytesPerPixel = 0.1; // Base estimate
+  return selectedImages.map((image) => {
+    const originalSize = image.originalFile.size;
+    const estimatedSize = calculateEstimatedSize(image, settings);
+
+    return {
+      filename: image.originalFile.name,
+      originalSize,
+      estimatedSize: Math.max(estimatedSize, 1000), // Minimum 1KB
+    };
+  });
+}
+
+// Calculate estimated size for a single image
+function calculateEstimatedSize(
+  image: ProcessedImage,
+  settings: ExportSettings
+): number {
+  const originalSize = image.originalFile.size;
+  const originalFormat = getFileFormat(image.originalFile.name);
+  const pixels = image.width * image.height;
+
+  // If converting to the same format with same/similar quality, use original size as baseline
+  if (originalFormat === settings.format) {
+    if (settings.format === "jpeg" || settings.format === "webp") {
+      // For lossy formats, adjust based on quality difference
+      const qualityRatio = settings.quality / 100;
+      return originalSize * qualityRatio;
+    } else if (settings.format === "png") {
+      // PNG is lossless, so size should be similar
+      return originalSize;
+    }
+  }
+
+  // Cross-format conversion estimation
+  let compressionRatio = 1;
 
   switch (settings.format) {
     case "webp":
-      bytesPerPixel = (settings.quality / 100) * 0.15;
+      // WebP is generally more efficient than JPEG/PNG
+      compressionRatio = originalFormat === "png" ? 0.25 : 0.7;
+      compressionRatio *= settings.quality / 100;
       break;
     case "png":
-      bytesPerPixel = 0.5; // PNG is less compressible
+      // PNG is less compressible, especially from JPEG
+      compressionRatio = originalFormat === "jpeg" ? 2.5 : 1.2;
       break;
     case "jpeg":
-      bytesPerPixel = (settings.quality / 100) * 0.2;
+      // JPEG compression varies significantly with quality
+      compressionRatio = originalFormat === "png" ? 0.4 : 0.8;
+      compressionRatio *= settings.quality / 100;
       break;
   }
 
-  const estimatedBytes = totalPixels * bytesPerPixel;
-  return formatFileSize(Math.max(estimatedBytes, 1000)); // Minimum 1KB
+  // Use pixel-based estimation as fallback for very different formats
+  const pixelBasedEstimate =
+    pixels * getBytesPerPixel(settings.format, settings.quality);
+
+  // Blend original-size-based estimate with pixel-based estimate
+  const sizeBasedEstimate = originalSize * compressionRatio;
+
+  // Weight the estimates based on how reliable each method is
+  const weight = originalFormat === settings.format ? 0.9 : 0.6;
+  return sizeBasedEstimate * weight + pixelBasedEstimate * (1 - weight);
+}
+
+// Get file format from filename
+function getFileFormat(filename: string): ExportFormat | null {
+  const ext = filename.toLowerCase().split(".").pop();
+  switch (ext) {
+    case "jpg":
+    case "jpeg":
+      return "jpeg";
+    case "png":
+      return "png";
+    case "webp":
+      return "webp";
+    default:
+      return null;
+  }
+}
+
+// Get bytes per pixel estimate for different formats
+function getBytesPerPixel(format: ExportFormat, quality: number): number {
+  switch (format) {
+    case "webp":
+      return (quality / 100) * 0.12; // WebP is very efficient
+    case "png":
+      return 0.4; // PNG is less compressible
+    case "jpeg":
+      return (quality / 100) * 0.15; // JPEG compression varies with quality
+    default:
+      return 0.1;
+  }
 }
