@@ -45,20 +45,25 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
 
   return (
     <div
-      className={`z-12 flex flex-row justify-between px-8 py-4 fixed top-0 w-screen h-16 transition-colors duration-500  ${
-        scrolled && color === "white"
-          ? "bg-primary/95 backdrop-blur-md"
-          : "bg-transparent"
-      }
+      className={`z-12 flex flex-row justify-between items-center px-8 pt-3 pb-3 fixed top-0 w-screen  
+        transition-colors duration-500  ${
+          !scrolled
+            ? "bg-transparent"
+            : color === "white"
+            ? "bg-primary/95 backdrop-blur-md"
+            : "bg-off-white/60"
+        }
       
       ${color === "white" ? "text-off-white" : "text-primary"}`}
     >
-      <div className="flex flex-row sm:gap-8 gap-4 items-center justify-center mt-2">
+      <div
+        className={`flex flex-row sm:gap-8 gap-4 items-center justify-center `}
+      >
         <div className="">
           <Logo enforceHome={enforceHome} color={color} />
         </div>
         {/* Desktop navigation */}
-        <div className="gap-6 items-center hidden sm:flex">
+        <div className="gap-6 items-center hidden lg:flex translate-y-1">
           <Link
             href="/colors"
             className="font-header font-bold hover:text-accent transition-colors duration-300"
@@ -74,10 +79,11 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
         </div>
 
         {/* Mobile dropdown */}
-        <div className="relative sm:hidden dropdown-container">
+        <div className="relative lg:hidden dropdown-container">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="font-header text-lg cursor-pointer font-bold hover:text-accent transition-colors duration-300 flex items-center gap-1 pt-1"
+            className="font-header text-lg cursor-pointer font-bold hover:text-accent 
+            transition-colors duration-300 flex items-center gap-1 translate-y-1"
           >
             Tools
             <ChevronDown
@@ -107,13 +113,17 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
           )}
         </div>
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-3 h-fit">
         {!user ? (
           <Link
             href={LOGIN_LINK}
-            className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
-              rounded-md text-off-white text-sm font-header transition-all duration-500
-              hover:text-off-white hover:bg-primary-foreground/30 
+            className={`flex gap-2  cursor-pointer items-center px-2 justify-center
+              rounded-md text-md font-header font-bold transition-all duration-500
+              ${
+                color === "white"
+                  ? "text-off-white   hover:text-accent "
+                  : "text-primary   hover:text-accent  hover:border-accent"
+              }
               `}
             data-umami-event={`Landing page: Login`}
           >
@@ -123,13 +133,13 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
           <Link
             href={DASHBOARD_LINK}
             data-umami-event={`Landing page: Dashboard`}
-            className={`flex gap-2  cursor-pointer items-center px-3 border-2  justify-center
-              rounded-md text-sm font-header transition-all duration-500
+            className={`flex gap-2  cursor-pointer items-center px-2 justify-center
+              rounded-md text-md font-header font-bold transition-all duration-500
             
               ${
                 color === "white"
-                  ? "border-off-white text-off-white   hover:text-off-white hover:bg-primary-foreground/30 "
-                  : "border-primary text-primary   hover:text-accent  hover:border-accent"
+                  ? "text-off-white   hover:text-accent "
+                  : "text-primary   hover:text-accent  hover:border-accent"
               }
               `}
           >

@@ -22,7 +22,7 @@ export default function Logo({
       <Image
         src={color === "white" ? "/full-logo-white.png" : "/full-logo.png"}
         alt="mudboard logo"
-        height={387}
+        height={285}
         width={1267}
         className="w-[150px] hidden sm:block"
         draggable={false}
@@ -32,7 +32,7 @@ export default function Logo({
         alt="mudboard logo"
         height={350}
         width={350}
-        className="w-[40px] sm:hidden"
+        className="w-[32px] sm:hidden"
         draggable={false}
       />
     </Link>
