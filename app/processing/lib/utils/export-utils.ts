@@ -63,7 +63,7 @@ function calculateEstimatedSize(
   switch (settings.format) {
     case "webp":
       // WebP is generally more efficient than JPEG/PNG
-      compressionRatio = originalFormat === "png" ? 0.25 : 0.7;
+      compressionRatio = originalFormat === "png" ? 0.25 : 0.6;
       compressionRatio *= settings.quality / 100;
       break;
     case "png":
@@ -85,7 +85,13 @@ function calculateEstimatedSize(
   const sizeBasedEstimate = originalSize * compressionRatio;
 
   // Weight the estimates based on how reliable each method is
-  const weight = originalFormat === settings.format ? 0.9 : 0.6;
+  let weight = originalFormat === settings.format ? 0.9 : 0.6;
+
+  // Special case: PNG to WebP at small file sizes - weight more towards size-based estimate
+  if (settings.format === "webp" && originalSize < 1024 * 1024) {
+    weight = 0.9; // Heavily favor size-based estimate for small PNG->WebP conversions
+  }
+
   return sizeBasedEstimate * weight + pixelBasedEstimate * (1 - weight);
 }
 

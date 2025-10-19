@@ -28,17 +28,17 @@ export function FileSizeEstimateDisplay({
       </h4>
       <div className="flex flex-col gap-2">
         {estimates.map((estimate, index) => {
-          const reduction =
-            ((estimate.originalSize - estimate.estimatedSize) /
-              estimate.originalSize) *
-            100;
-          const isReduction = reduction > 0;
-          const isSame = Math.abs(reduction) < 0.1; // Consider < 0.1% as "same"
-          const reductionText = isSame
-            ? "same"
-            : isReduction
-            ? `-${reduction.toFixed(1)}%`
-            : `+${Math.abs(reduction).toFixed(1)}%`;
+          //   const reduction =
+          //     ((estimate.originalSize - estimate.estimatedSize) /
+          //       estimate.originalSize) *
+          //     100;
+          //   const isReduction = reduction > 0;
+          //   const isSame = Math.abs(reduction) < 0.1; // Consider < 0.1% as "same"
+          //   const reductionText = isSame
+          //     ? "same"
+          //     : isReduction
+          //     ? `-${reduction.toFixed(1)}%`
+          //     : `+${Math.abs(reduction).toFixed(1)}%`;
 
           return (
             <div

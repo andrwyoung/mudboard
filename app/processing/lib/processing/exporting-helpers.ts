@@ -100,7 +100,7 @@ function generateExportFilename(
   settings: ExportSettings
   // fileCount: number
 ): string {
-  return `mudboard-${settings.format}-export.zip`;
+  return `mudboard-${settings.format}${settings.quality}-export.zip`;
 }
 
 // Generate export filename for individual files

@@ -21,15 +21,13 @@ import {
 } from "@/components/ui/select";
 import { estimateFileSize, FileSizeEstimate } from "./lib/utils/export-utils";
 import { FileSizeEstimateDisplay } from "./components/file-size-estimate-display";
-import { generateBlurhashFromImage } from "@/lib/upload-images/processing/blur-hash";
 import { ExportFormat } from "./lib/types/exporter-types";
 import { FORMAT_OPTIONS } from "./lib/types/image-exporter-constants";
 import { exportImages } from "./lib/processing/exporting-helpers";
 import { toast } from "sonner";
 
 export default function ImageProcessingPage() {
-  const { images, selectedImageId, setSelectedImageId, removeImage } =
-    useImageStore();
+  const { images, setSelectedImageId } = useImageStore();
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Multi-select state
@@ -41,7 +39,7 @@ export default function ImageProcessingPage() {
   const [quality, setQuality] = useState<number[]>([100]);
   const [isExporting, setIsExporting] = useState(false);
 
-  const selectedImage = images.find((img) => img.id === selectedImageId);
+  // const selectedImage = images.find((img) => img.id === selectedImageId);
 
   function triggerImagePicker() {
     inputRef.current?.click();
@@ -83,31 +81,31 @@ export default function ImageProcessingPage() {
     }
   }
 
-  function handleRemoveSelected() {
-    if (selectedImageIds.length === 0) return;
+  // function handleRemoveSelected() {
+  //   if (selectedImageIds.length === 0) return;
 
-    const confirmMessage =
-      selectedImageIds.length === 1
-        ? "Are you sure you want to delete this image?"
-        : `Are you sure you want to delete ${selectedImageIds.length} images?`;
+  //   const confirmMessage =
+  //     selectedImageIds.length === 1
+  //       ? "Are you sure you want to delete this image?"
+  //       : `Are you sure you want to delete ${selectedImageIds.length} images?`;
 
-    if (window.confirm(confirmMessage)) {
-      selectedImageIds.forEach((id) => removeImage(id));
-      setSelectedImageIds([]);
-      setLastSelectedIndex(-1);
+  //   if (window.confirm(confirmMessage)) {
+  //     selectedImageIds.forEach((id) => removeImage(id));
+  //     setSelectedImageIds([]);
+  //     setLastSelectedIndex(-1);
 
-      // Select the first remaining image
-      const remainingImages = images.filter(
-        (img) => !selectedImageIds.includes(img.id)
-      );
-      if (remainingImages.length > 0) {
-        const firstImage = remainingImages[0];
-        setSelectedImageId(firstImage.id);
-        setSelectedImageIds([firstImage.id]);
-        setLastSelectedIndex(0);
-      }
-    }
-  }
+  //     // Select the first remaining image
+  //     const remainingImages = images.filter(
+  //       (img) => !selectedImageIds.includes(img.id)
+  //     );
+  //     if (remainingImages.length > 0) {
+  //       const firstImage = remainingImages[0];
+  //       setSelectedImageId(firstImage.id);
+  //       setSelectedImageIds([firstImage.id]);
+  //       setLastSelectedIndex(0);
+  //     }
+  //   }
+  // }
 
   // Export functions
   async function handleExport() {
@@ -129,44 +127,44 @@ export default function ImageProcessingPage() {
     }
   }
 
-  async function generateBlurhash() {
-    if (selectedImageIds.length === 0) return;
+  // async function generateBlurhash() {
+  //   if (selectedImageIds.length === 0) return;
 
-    try {
-      const selectedImages = images.filter((img) =>
-        selectedImageIds.includes(img.id)
-      );
-      const blurhashes: string[] = [];
+  //   try {
+  //     const selectedImages = images.filter((img) =>
+  //       selectedImageIds.includes(img.id)
+  //     );
+  //     const blurhashes: string[] = [];
 
-      for (const image of selectedImages) {
-        const img = new window.Image();
-        img.crossOrigin = "anonymous";
+  //     for (const image of selectedImages) {
+  //       const img = new window.Image();
+  //       img.crossOrigin = "anonymous";
 
-        await new Promise<void>((resolve, reject) => {
-          img.onload = async () => {
-            try {
-              const blurhash = await generateBlurhashFromImage(img);
-              blurhashes.push(blurhash);
-              resolve();
-            } catch (error) {
-              reject(error);
-            }
-          };
-          img.onerror = () => reject(new Error("Failed to load image"));
-          img.src = image.preview;
-        });
-      }
+  //       await new Promise<void>((resolve, reject) => {
+  //         img.onload = async () => {
+  //           try {
+  //             const blurhash = await generateBlurhashFromImage(img);
+  //             blurhashes.push(blurhash);
+  //             resolve();
+  //           } catch (error) {
+  //             reject(error);
+  //           }
+  //         };
+  //         img.onerror = () => reject(new Error("Failed to load image"));
+  //         img.src = image.preview;
+  //       });
+  //     }
 
-      const result = blurhashes.join("\n");
-      await navigator.clipboard.writeText(result);
-      alert(
-        `Generated blurhashes copied to clipboard!\n\n${blurhashes.join("\n")}`
-      );
-    } catch (error) {
-      console.error("Blurhash generation failed:", error);
-      alert("Blurhash generation failed. Please try again.");
-    }
-  }
+  //     const result = blurhashes.join("\n");
+  //     await navigator.clipboard.writeText(result);
+  //     alert(
+  //       `Generated blurhashes copied to clipboard!\n\n${blurhashes.join("\n")}`
+  //     );
+  //   } catch (error) {
+  //     console.error("Blurhash generation failed:", error);
+  //     alert("Blurhash generation failed. Please try again.");
+  //   }
+  // }
 
   function getEstimatedFileSize(): FileSizeEstimate[] {
     return estimateFileSize(images, selectedImageIds, {
