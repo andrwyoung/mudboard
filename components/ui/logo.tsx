@@ -24,7 +24,15 @@ export default function Logo({
         alt="mudboard logo"
         height={387}
         width={1267}
-        className="w-[150px]"
+        className="w-[150px] hidden sm:block"
+        draggable={false}
+      />
+      <Image
+        src={color === "white" ? "/logo.png" : "/logo-brown.png"}
+        alt="mudboard logo"
+        height={350}
+        width={350}
+        className="w-[40px] sm:hidden"
         draggable={false}
       />
     </Link>

@@ -1,6 +1,5 @@
 "use client";
 
-import Logo from "@/components/ui/logo";
 import { useState, useCallback, useEffect } from "react";
 
 export type ColorFormat = "hex" | "rgb" | "hsl" | "hsv" | "oklch";
@@ -24,6 +23,7 @@ import ColorInputSection from "./components/sections/color-input-section";
 import { useColorHistory } from "@/app/colors/lib/hooks/use-color-history";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
 import { DragOverlay } from "@/components/ui/drag-overlay";
+import { Navbar } from "@/components/ui/navbar";
 
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
@@ -141,9 +141,7 @@ export default function ColorPickerPage() {
 
   return (
     <div className="min-h-screen bg-canvas-background-light text-primary relative flex flex-col">
-      <div className="absolute top-4 left-6">
-        <Logo color="brown" enforceHome={true} />
-      </div>
+      <Navbar color="brown" />
 
       <div className="mx-auto flex-1 items-center flex mt-24 mb-16 lg:my-0">
         {/* Header */}

@@ -1,13 +1,13 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, Trash2, Image as ImageIcon } from "lucide-react";
-import Logo from "@/components/ui/logo";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
 import { handleImageFiles } from "@/app/processing/utils/image-handler";
 import { useImageStore } from "@/store/home-page/image-store";
 import { DragOverlay } from "@/components/ui/drag-overlay";
+import { Navbar } from "@/components/ui/navbar";
 
 export default function ImageProcessingPage() {
   const { images, selectedImageId, setSelectedImageId, removeImage } =
@@ -40,10 +40,8 @@ export default function ImageProcessingPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 relative">
-      <div className="absolute top-4 left-6">
-        <Logo color="brown" enforceHome={true} />
-      </div>
+    <div className="min-h-screen bg-canvas-background-light  flex flex-col relative">
+      <Navbar color="brown" />
 
       <div className="max-w-7xl mx-auto mt-24">
         {/* Header */}

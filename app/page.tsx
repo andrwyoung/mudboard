@@ -2,20 +2,16 @@
 
 "use client";
 
-import Logo from "@/components/ui/logo";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
 import {
-  DASHBOARD_LINK,
   DEMO_BOARD_LINK,
   INTEREST_LINK,
-  LOGIN_LINK,
   NEW_BOARD_LINK,
 } from "@/types/constants";
 import Link from "next/link";
-import { useMetadataStore } from "@/store/metadata-store";
 import {
   GlobalAnnouncement,
   SHOW_GLOBAL_ANNOUNCEMENT,
@@ -28,12 +24,9 @@ import { MarqueBox } from "@/components/board/marque";
 import { useTextMarque } from "@/hooks/gallery/use-landing-marque";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
 import { DragOverlay } from "@/components/ui/drag-overlay";
+import { Navbar } from "@/components/ui/navbar";
 
 export default function Home() {
-  const user = useMetadataStore((s) => s.user);
-
-  const [scrolled, setScrolled] = useState(false);
-
   const [marqueRect, setMarqueRect] = useState<{
     x: number;
     y: number;
@@ -50,77 +43,11 @@ export default function Home() {
   // Add drag and drop functionality
   const { dragCount } = useSimpleImageImport();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <div className="w-full h-full bg-primary">
       {marqueRect && <MarqueBox marqueRect={marqueRect} />}
 
-      <div
-        className={`z-12 flex flex-row justify-between px-8 py-4 fixed top-0 w-screen h-16 transition-colors duration-500 ${
-          scrolled ? "bg-primary/95 backdrop-blur-md" : "bg-transparent"
-        }`}
-      >
-        <div className="flex flex-row gap-8 items-center justify-center">
-          <Logo enforceHome={true} />
-          <div className="gap-4 flex flex-row items-center">
-            <Link
-              href="/colors"
-              className="font-header font-bold hover:text-accent transition-colors duration-300"
-            >
-              Color Picker
-            </Link>
-            <Link
-              href="/processing"
-              className="font-header font-bold hover:text-accent transition-colors duration-300"
-            >
-              Image Compressor
-            </Link>
-          </div>
-        </div>
-        <div className="flex gap-3">
-          {!user ? (
-            <Link
-              href={LOGIN_LINK}
-              className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
-                rounded-md text-off-white text-sm font-header transition-all duration-500
-                hover:text-off-white hover:bg-primary-foreground/30 
-                `}
-              data-umami-event={`Landing page: Login`}
-            >
-              Log In
-            </Link>
-          ) : (
-            <Link
-              href={DASHBOARD_LINK}
-              data-umami-event={`Landing page: Dashboard`}
-              className={`flex gap-2  cursor-pointer items-center px-3 border-2 border-white justify-center
-                rounded-md text-off-white text-sm font-header transition-all duration-500
-                hover:text-off-white hover:bg-primary-foreground/30 
-                `}
-            >
-              Dashboard
-            </Link>
-          )}
-          <Link
-            href={DEMO_BOARD_LINK}
-            data-umami-event={`Landing page: Demo Board Navbar`}
-            className={`hidden sm:flex gap-2  cursor-pointer items-center px-3 border-2 border-accent bg-accent justify-center
-                rounded-md text-primary text-lg font-header transition-all duration-500
-                hover:text-off-white hover:bg-accent/90 
-                `}
-          >
-            Demo
-          </Link>
-        </div>
-      </div>
+      <Navbar enforceHome={true} />
 
       <div className="absolute inset-0 overflow-hidden z-0">
         <Image
@@ -156,7 +83,8 @@ export default function Home() {
                 }`}
               >
                 {/* Draw more. Organize less. */}
-                Organize Your References.
+                {/* Organize Your References. */}
+                Tools for Artists
                 {/* Create More. Organize Less. */}
                 {/* Build Moodboards Fast. */}
                 {/* Get Ideas Out Fast. */}
@@ -165,7 +93,7 @@ export default function Home() {
               </h1>
               <div className="flex flex-col items-center">
                 <p className="max-w-lg text-xs sm:text-sm text-accent font-bold">
-                  Early Testing • Come Check it Out!
+                  Everything&apos;s Free • Come Check it Out!
                 </p>
                 {/* <p className="text-lg mb-14 w-full font-semibold">
                   For illustrators who’d rather draw than organize reference
@@ -212,9 +140,12 @@ export default function Home() {
                   cleanly, and never rebuild the same board twice. */}
                   {/* For illustators that want to organize and use references
                   without digging through dozens of folders to find something. */}
-                  For illustators that want to use references fast, and
+                  {/* For illustators that want to use references fast, and
                   don&apos;t like digging through dozens of folders to find
-                  something.
+                  something. */}
+                  A place for illustrators to process and manage all their
+                  photos quickly. Whether just to eyedrop an image or manage
+                  their reference library.
                 </p>
               </div>
 
