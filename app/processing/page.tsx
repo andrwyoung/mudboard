@@ -21,9 +21,7 @@ export default function ImageProcessingPage() {
   }
 
   // Use the simplified image import hook
-  const { dragCount } = useSimpleImageImport({
-    handleImage: handleImageFiles,
-  });
+  const { dragCount } = useSimpleImageImport();
 
   const fileInput = (
     <input

@@ -129,7 +129,8 @@ export function useImageImport({
       console.log("this is the url we are trying to get: ", imageUrl);
 
       if (imageUrl) {
-        tryImportImageFromUrl(imageUrl, section.section.section_id);
+        const img = await tryImportImageFromUrl(imageUrl);
+        if (img) uploadImages([img], section.section.section_id);
       }
     }
 
@@ -162,7 +163,8 @@ export function useImageImport({
             const imageUrl = maybeImage || text;
 
             if (!isImageUrl(imageUrl)) return;
-            tryImportImageFromUrl(text, selectedSection.section_id);
+            const img = await tryImportImageFromUrl(text);
+            if (img) uploadImages([img], selectedSection.section_id);
           });
         }
       }

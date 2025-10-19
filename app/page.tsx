@@ -26,6 +26,8 @@ import LandingPageDemo from "@/components/landing-page/tools-demo";
 import Testimonials from "@/components/landing-page/testimonials";
 import { MarqueBox } from "@/components/board/marque";
 import { useTextMarque } from "@/hooks/gallery/use-landing-marque";
+import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
+import { DragOverlay } from "@/components/ui/drag-overlay";
 
 export default function Home() {
   const user = useMetadataStore((s) => s.user);
@@ -44,6 +46,9 @@ export default function Home() {
     getMarqueTargets: () =>
       Array.from(document.querySelectorAll("[data-marque-track]")),
   });
+
+  // Add drag and drop functionality
+  const { dragCount } = useSimpleImageImport();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,12 +77,12 @@ export default function Home() {
             >
               Color Picker
             </Link>
-            {/* <Link
-              href="/compress"
+            <Link
+              href="/processing"
               className="font-header font-bold hover:text-accent transition-colors duration-300"
             >
               Image Compressor
-            </Link> */}
+            </Link>
           </div>
         </div>
         <div className="flex gap-3">
@@ -399,6 +404,9 @@ export default function Home() {
           </a>
         </footer>
       </div>
+
+      {/* Drag overlay */}
+      <DragOverlay dragCount={dragCount} />
     </div>
   );
 }

@@ -6,12 +6,10 @@ import { toast } from "sonner";
 import { isImageUrl } from "@/utils/upload-helpers";
 import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 import { allowedMimeTypes } from "@/types/upload-settings";
+import { tryImportImageFromUrl } from "@/lib/upload-images/url-handling/import-image-from-url";
+import { handleImageFiles } from "@/app/processing/utils/image-handler";
 
-export function useSimpleImageImport({
-  handleImage,
-}: {
-  handleImage: (files: File[]) => void;
-}) {
+export function useSimpleImageImport() {
   const [dragCount, setDragCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -86,7 +84,7 @@ export function useSimpleImageImport({
           );
         }
 
-        handleImage(validImageFiles);
+        handleImageFiles(validImageFiles);
         return;
       }
 
@@ -111,9 +109,8 @@ export function useSimpleImageImport({
       }
 
       if (imageUrl) {
-        // For URL imports, we'll need to handle them differently
-        // since we don't have a section to upload to
-        toast.info("URL import not supported in this context");
+        const img = await tryImportImageFromUrl(imageUrl);
+        if (img) handleImageFiles([img]);
       }
     }
 
@@ -125,7 +122,7 @@ export function useSimpleImageImport({
         if (item.kind === "file") {
           const file = item.getAsFile();
           if (file && allowedMimeTypes.includes(file.type)) {
-            handleImage([file]);
+            handleImageFiles([file]);
             return;
           } else if (file) {
             toast.error("Invalid file type - only images are supported");
@@ -139,7 +136,8 @@ export function useSimpleImageImport({
             const imageUrl = maybeImage || text;
 
             if (!isImageUrl(imageUrl)) return;
-            toast.info("URL import not supported in this context");
+            const img = await tryImportImageFromUrl(text);
+            if (img) handleImageFiles([img]);
           });
         }
       }
@@ -158,7 +156,7 @@ export function useSimpleImageImport({
       window.removeEventListener("dragleave", handleDragLeave);
       window.removeEventListener("paste", handlePaste);
     };
-  }, [handleImage]);
+  }, []);
 
   return { dragCount };
 }

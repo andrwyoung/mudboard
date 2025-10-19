@@ -23,7 +23,6 @@ import { DEFAULT_COLOR } from "./lib/types/color-picker-constants";
 import ColorInputSection from "./components/sections/color-input-section";
 import { useColorHistory } from "@/app/colors/lib/hooks/use-color-history";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
-import { handleImageFiles } from "@/app/processing/utils/image-handler";
 import { DragOverlay } from "@/components/ui/drag-overlay";
 
 export default function ColorPickerPage() {
@@ -34,9 +33,7 @@ export default function ColorPickerPage() {
   const { updateColorHistory } = useColorHistory();
 
   // Add drag and drop functionality
-  const { dragCount } = useSimpleImageImport({
-    handleImage: handleImageFiles,
-  });
+  const { dragCount } = useSimpleImageImport();
 
   const [inputValues, setInputValues] = useState<InputValues>(
     getInitialValues(DEFAULT_COLOR)
