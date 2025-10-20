@@ -1,11 +1,11 @@
 import ColorPickerWheel from "@/components/modals/color-picker/color-picker";
 import React, { useCallback, useEffect, useState } from "react";
-import { FaEyeDropper } from "react-icons/fa";
 import { rgbToHex } from "../../lib/conversions";
 import { ColorFormat } from "../../page";
 import { ComponentValues } from "../../lib/types/types";
 import { toast } from "sonner";
 import { DEFAULT_COLOR } from "../../lib/types/color-picker-constants";
+import { FaLocationCrosshairs, FaPlay } from "react-icons/fa6";
 
 interface ColorWheelSectionProps {
   colorWheelColor: string;
@@ -16,16 +16,12 @@ interface ColorWheelSectionProps {
     skipMaster?: boolean;
     skipColorWheel?: boolean;
   }) => void;
-  isEyedropperMode: boolean;
-  setIsEyedropperMode: (value: boolean) => void;
 }
 
 export default function ColorWheelSection({
   colorWheelColor,
   componentValues,
   updateAllFormats,
-  isEyedropperMode,
-  setIsEyedropperMode,
 }: ColorWheelSectionProps) {
   const [swatchColors, setSwatchColors] = useState([
     "#50f280",
@@ -44,34 +40,21 @@ export default function ColorWheelSection({
   // SECTION: Swatches
   //
 
+  const handleSwatchCopyClick = (swatchIndex: number) => {
+    const source = swatchColors[swatchIndex];
+    setSwatchColors((prev) => {
+      const clone = [...prev];
+      clone[focusedSwatch] = source;
+      return clone;
+    });
+    updateAllFormats({ input: source, colorFormat: "hex" });
+    toast.success(`Copied ${source} → Swatch ${focusedSwatch + 1}`);
+  };
+
   const handleSwatchClick = (swatchIndex: number) => {
-    if (isEyedropperMode) {
-      // Don't do anything if clicking on the already focused swatch
-      if (swatchIndex === focusedSwatch) {
-        setIsEyedropperMode(false);
-        return;
-      }
-
-      // Eyedropper mode: copy clicked swatch color to focused swatch
-      const sourceColor = swatchColors[swatchIndex];
-      setSwatchColors((prev) => {
-        const newSwatches = [...prev];
-        newSwatches[focusedSwatch] = sourceColor;
-        return newSwatches;
-      });
-
-      // Update the main color picker to match the copied color
-      updateAllFormats({ input: sourceColor, colorFormat: "hex" });
-
-      // Exit eyedropper mode
-      setIsEyedropperMode(false);
-      toast.success(`Copied ${sourceColor} to Swatch ${focusedSwatch + 1}`);
-    } else {
-      // Normal mode: switch focus and update all values
-      setFocusedSwatch(swatchIndex);
-      const hex = swatchColors[swatchIndex];
-      updateAllFormats({ input: hex, colorFormat: "hex" });
-    }
+    setFocusedSwatch(swatchIndex);
+    const hex = swatchColors[swatchIndex];
+    updateAllFormats({ input: hex, colorFormat: "hex" });
   };
 
   // Update the focused swatch when main color changes
@@ -104,30 +87,31 @@ export default function ColorWheelSection({
             <div
               className="flex flex-col items-center "
               key={`swatch-${index}`}
-              onClick={() => handleSwatchClick(index)}
             >
               <div
-                className={`font-header  text-xs mb-1 ${
+                className={`font-header flex flex-row items-center gap-1 text-xs mb-1 ${
                   focusedSwatch === index ? "font-semibold" : "opacity-60"
                 }`}
               >
                 {swatch}
+                {focusedSwatch !== index && (
+                  <FaLocationCrosshairs
+                    onClick={() => handleSwatchCopyClick(index)}
+                    title="Copy color to focused swatch"
+                    className="opacity-60 text-sm hover:text-accent duration-200 cursor-pointer hover:rotate-12"
+                  />
+                )}
               </div>
               <div
+                onClick={() => handleSwatchClick(index)}
                 key={index}
-                className={`w-20 h-16  ${
+                className={`w-22 h-16  ${
                   index === 0
                     ? "rounded-l-lg"
                     : index === swatchColors.length - 1
                     ? "rounded-r-lg"
                     : ""
-                } ${
-                  focusedSwatch === index
-                    ? ""
-                    : isEyedropperMode
-                    ? "cursor-crosshair"
-                    : "cursor-pointer"
-                } ${
+                } ${focusedSwatch === index ? "" : "cursor-pointer"} ${
                   focusedSwatch === index
                     ? ""
                     : "transition-transform hover:scale-110 hover:z-10"
@@ -135,37 +119,15 @@ export default function ColorWheelSection({
                 style={{
                   backgroundColor: swatch,
                 }}
-                title={
-                  isEyedropperMode
-                    ? `${swatch} - Click to copy to focused swatch`
-                    : `${swatch} - Click to focus`
-                }
+                title={`${swatch} - Click to focus`}
               />
-              <div className="h-10">
-                {focusedSwatch === index && (
-                  <div className="h-1 w-8 bg-primary mt-2 rounded-full" />
-                )}
-              </div>
+
+              {focusedSwatch === index && (
+                // <div className="h-1 w-8 bg-primary mt-2 rounded-full" />
+                <FaPlay className="mt-2 -rotate-90" />
+              )}
             </div>
           ))}
-        </div>
-
-        <div className="mb-6">
-          <button
-            onClick={() => setIsEyedropperMode(!isEyedropperMode)}
-            className={`p-2 rounded-lg transition-all duration-200 cursor-pointer  ${
-              isEyedropperMode
-                ? "bg-accent text-white shadow-lg hover:bg-accent/60"
-                : " text-canvas-background-dark hover:text-accent"
-            }`}
-            title={
-              isEyedropperMode
-                ? "Exit eyedropper mode"
-                : "Enter eyedropper mode"
-            }
-          >
-            <FaEyeDropper />
-          </button>
         </div>
       </div>
     </div>

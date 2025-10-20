@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 
 export type ColorFormat = "hex" | "rgb" | "hsl" | "hsv" | "oklch";
 import {
@@ -45,7 +45,6 @@ export default function ColorPickerPage() {
     hsv: false,
   });
   const [masterInput, setMasterInput] = useState<ColorFormat>("hex");
-  const [isEyedropperMode, setIsEyedropperMode] = useState(false);
 
   // Individual component values for sliders
   const [componentValues, setComponentValues] = useState<ComponentValues>(
@@ -58,26 +57,6 @@ export default function ColorPickerPage() {
       };
     }
   );
-
-  // Global click handler to cancel eyedropper mode
-  useEffect(() => {
-    const handleGlobalClick = (e: MouseEvent) => {
-      if (
-        isEyedropperMode &&
-        !(e.target as HTMLElement).closest("[data-swatch]")
-      ) {
-        setIsEyedropperMode(false);
-      }
-    };
-
-    if (isEyedropperMode) {
-      document.addEventListener("click", handleGlobalClick);
-    }
-
-    return () => {
-      document.removeEventListener("click", handleGlobalClick);
-    };
-  }, [isEyedropperMode]);
 
   const updateAllFormats = useCallback(
     ({
@@ -156,8 +135,6 @@ export default function ColorPickerPage() {
               colorWheelColor={colorWheelColor}
               componentValues={componentValues}
               updateAllFormats={updateAllFormats}
-              isEyedropperMode={isEyedropperMode}
-              setIsEyedropperMode={setIsEyedropperMode}
             />
           </div>
 
