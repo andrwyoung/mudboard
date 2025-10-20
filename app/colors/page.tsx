@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 
 export type ColorFormat = "hex" | "rgb" | "hsl" | "hsv" | "oklch";
 import {
@@ -24,10 +25,14 @@ import { useColorHistory } from "@/app/colors/lib/hooks/use-color-history";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
 import { DragOverlay } from "@/components/ui/drag-overlay";
 import { Navbar } from "@/components/ui/navbar";
+import { useImageStore } from "@/store/home-page/image-store";
+import { SCROLLBAR_STYLE } from "@/types/constants";
 
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
   const [colorWheelColor, setColorWheelColor] = useState(selectedColor);
+
+  const images = useImageStore((s) => s.images);
 
   // Use color history hook
   const { updateColorHistory } = useColorHistory();
@@ -122,37 +127,68 @@ export default function ColorPickerPage() {
     <div className="min-h-screen bg-canvas-background-light text-primary relative flex flex-col">
       <Navbar color="brown" />
 
-      <div className="mx-auto flex-1 items-center flex mt-24 mb-16 lg:my-0">
-        {/* Header */}
-        {/* <div className="text-center mb-12">
+      <div className="flex-1 mx-auto mt-24 mb-16 lg:my-0 flex flex-col justify-center">
+        <div className=" items-center flex ">
+          {/* Header */}
+          {/* <div className="text-center mb-12">
           <h1 className="text-4xl font-bold ">Nice Color Picker</h1>
         </div> */}
 
-        <div className="max-w-4xl mx-auto  grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-6 my-auto">
-          {/* Color Picker */}
-          <div className="order-2 lg:order-1">
-            <ColorWheelSection
-              colorWheelColor={colorWheelColor}
-              componentValues={componentValues}
-              updateAllFormats={updateAllFormats}
-            />
-          </div>
+          <div className="max-w-4xl mx-auto  grid grid-cols-1 lg:grid-cols-2 gap-24 lg:gap-6 my-auto">
+            {/* Color Picker */}
+            <div className="order-2 lg:order-1">
+              <ColorWheelSection
+                colorWheelColor={colorWheelColor}
+                componentValues={componentValues}
+                updateAllFormats={updateAllFormats}
+              />
+            </div>
 
-          {/* Color Information */}
-          <div className="px-8 order-1 lg:order-2">
-            <ColorInputSection
-              inputValues={inputValues}
-              setInputValues={setInputValues}
-              inputErrors={inputErrors}
-              setInputErrors={setInputErrors}
-              masterInput={masterInput}
-              setMasterInput={setMasterInput}
-              componentValues={componentValues}
-              setComponentValues={setComponentValues}
-              updateAllFormats={updateAllFormats}
-            />
+            {/* Color Information */}
+            <div className="px-8 order-1 lg:order-2">
+              <ColorInputSection
+                inputValues={inputValues}
+                setInputValues={setInputValues}
+                inputErrors={inputErrors}
+                setInputErrors={setInputErrors}
+                masterInput={masterInput}
+                setMasterInput={setMasterInput}
+                componentValues={componentValues}
+                setComponentValues={setComponentValues}
+                updateAllFormats={updateAllFormats}
+              />
+            </div>
           </div>
         </div>
+
+        {images.length !== 0 && (
+          <div
+            className={`bg-canvas-background-light-secondary max-w-4xl rounded-md mt-12 p-2
+               `}
+          >
+            <div
+              className={`flex flex-row gap-2 p-1 overflow-x-auto  ${SCROLLBAR_STYLE}`}
+            >
+              {images.map((image) => (
+                <div
+                  key={image.id}
+                  className="flex-shrink-0 border-4 border-transparent rounded-md 
+                  overflow-clip hover:border-accent 
+                  cursor-pointer duration-200 "
+                  title="Eyedrop Image"
+                >
+                  <Image
+                    src={image.preview}
+                    alt={image.originalFile.name}
+                    width={image.width}
+                    height={image.height}
+                    className="w-24 h-24 object-cover hover:scale-105 duration-200"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Mobile-only "Go to Top" button */}

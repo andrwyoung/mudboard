@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
-import { handleImageFiles } from "@/app/processing/lib/image-handler";
+import { useFileInput } from "@/hooks/use-file-input";
 import { useImageStore } from "@/store/home-page/image-store";
 import { DragOverlay } from "@/components/ui/drag-overlay";
 import { Navbar } from "@/components/ui/navbar";
@@ -28,7 +28,7 @@ import { toast } from "sonner";
 
 export default function ImageProcessingPage() {
   const { images, setSelectedImageId } = useImageStore();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { fileInput, triggerFilePicker } = useFileInput();
 
   // Multi-select state
   const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
@@ -42,7 +42,7 @@ export default function ImageProcessingPage() {
   // const selectedImage = images.find((img) => img.id === selectedImageId);
 
   function triggerImagePicker() {
-    inputRef.current?.click();
+    triggerFilePicker();
   }
 
   // Multi-select handlers
@@ -80,32 +80,6 @@ export default function ImageProcessingPage() {
       setSelectedImageId(imageId);
     }
   }
-
-  // function handleRemoveSelected() {
-  //   if (selectedImageIds.length === 0) return;
-
-  //   const confirmMessage =
-  //     selectedImageIds.length === 1
-  //       ? "Are you sure you want to delete this image?"
-  //       : `Are you sure you want to delete ${selectedImageIds.length} images?`;
-
-  //   if (window.confirm(confirmMessage)) {
-  //     selectedImageIds.forEach((id) => removeImage(id));
-  //     setSelectedImageIds([]);
-  //     setLastSelectedIndex(-1);
-
-  //     // Select the first remaining image
-  //     const remainingImages = images.filter(
-  //       (img) => !selectedImageIds.includes(img.id)
-  //     );
-  //     if (remainingImages.length > 0) {
-  //       const firstImage = remainingImages[0];
-  //       setSelectedImageId(firstImage.id);
-  //       setSelectedImageIds([firstImage.id]);
-  //       setLastSelectedIndex(0);
-  //     }
-  //   }
-  // }
 
   // Export functions
   async function handleExport() {
@@ -176,22 +150,6 @@ export default function ImageProcessingPage() {
   // Use the simplified image import hook
   const { dragCount } = useSimpleImageImport();
 
-  const fileInput = (
-    <input
-      ref={inputRef}
-      type="file"
-      accept="image/*"
-      multiple
-      className="hidden"
-      onChange={(e) => {
-        const files = e.target.files;
-        if (files && files.length > 0) {
-          handleImageFiles(Array.from(files));
-        }
-      }}
-    />
-  );
-
   return (
     <div className="min-h-screen bg-canvas-background-light text-primary flex flex-col relative">
       <Navbar color="brown" />
@@ -223,14 +181,6 @@ export default function ImageProcessingPage() {
                         <FaFileImport className="w-4 h-4" />
                         Import
                       </Button>
-                      {/* <button
-                        onClick={handleRemoveSelected}
-                        className="flex items-center font-header font-semibold cursor-pointer gap-1 
-                      hover:text-rose-500 text-sm transition-colors duration-300 mr-1"
-                      >
-                        <FaTrash />
-                        Delete ({selectedImageIds.length})
-                      </button> */}
                     </div>
                   </div>
                 </div>
@@ -369,25 +319,6 @@ export default function ImageProcessingPage() {
             </div>
           ) : (
             <div className="p-6 bg-off-white rounded-md mx-auto">
-              {/* <>
-              <div className="flex flex-col items-center  max-w-md max-h-md">
-                <Image
-                  src={selectedImage.preview}
-                  alt={selectedImage.originalFile.name}
-                  width={selectedImage.width}
-                  height={selectedImage.height}
-                  className="rounded border"
-                />
-                <div className="mt-4 text-center">
-                  <h3 className="text-lg font-medium text-slate-800">
-                    {selectedImage.originalFile.name}
-                  </h3>
-                  <p className="text-sm text-slate-500">
-                    {formatFileSize(selectedImage.originalFile.size)}
-                  </p>
-                </div>
-              </div>
-            </> */}
               <div className="flex flex-col items-center justify-center ">
                 <div
                   className="w-fit h-fit my-8 flex flex-col items-center select-none
