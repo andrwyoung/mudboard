@@ -50,6 +50,11 @@ export default function ColorInputSection({
   setComponentValues,
   updateAllFormats,
 }: ColorInputSectionProps) {
+  // const { fileInput, triggerFilePicker } = useFileInput();
+
+  // function triggerImagePicker() {
+  //   triggerFilePicker();
+  // }
   const handleInputChange = (format: ColorFormat, value: string) => {
     // OKLCH is read-only, don't allow changes
     if (format === "oklch") {
@@ -349,6 +354,20 @@ export default function ColorInputSection({
           </AnimatePresence>
         </div>
       ))}
+
+      {/* Upload Button */}
+      {/* <div className="mt-6 ">
+        <Button
+          onClick={triggerImagePicker}
+          variant={"outline_primary"}
+          className="w-full text-sm font-header font-semibold"
+        >
+          <FaFileImport className="w-4 h-4 mr-2" />
+          Import Images
+        </Button>
+      </div>
+
+      {fileInput} */}
     </div>
   );
 }
