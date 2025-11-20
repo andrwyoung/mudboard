@@ -12,7 +12,7 @@ import {
   TextBlockType,
 } from "@/types/block-types";
 import { supabase } from "../supabase/supabase-client";
-import { SUPABASE_OBJECT_URL } from "@/types/upload-settings";
+import { R2_OBJECT_URL } from "@/types/upload-settings";
 
 export async function fetchSupabaseBlocks(
   sectionIds: string[]
@@ -111,7 +111,7 @@ export async function fetchSupabaseBlocks(
             uploaded_by: image.uploaded_by ?? undefined,
 
             // defined by me
-            fileName: `${SUPABASE_OBJECT_URL}/${image.image_id}/medium.${image.file_ext}`,
+            fileName: `${R2_OBJECT_URL}/${image.image_id}/medium.${image.file_ext}`,
             fileType: "database",
           },
         };

@@ -30,13 +30,38 @@ export async function uploadImageToSupabase(
     { name: `${folder}/thumb.${newImage.file_ext}`, file: thumbnailImage },
   ];
 
+  // DEPRECATED 11/20/25 in favor of R2
+  // for (const { name, file } of uploads) {
+  //   if (!file) continue; // skip if optional
+  //   const { error } = await supabase.storage
+  //     .from("mudboard-photos")
+  //     .upload(name, file);
+  //   if (error) {
+  //     throw new Error(`Upload failed for ${name}: ${error.message}`);
+  //   }
+  // }
+
   for (const { name, file } of uploads) {
-    if (!file) continue; // skip if optional
-    const { error } = await supabase.storage
-      .from("mudboard-photos")
-      .upload(name, file);
-    if (error) {
-      throw new Error(`Upload failed for ${name}: ${error.message}`);
+    if (!file) continue;
+
+    const form = new FormData();
+    form.append("file", file);
+    form.append("name", name);
+
+    try {
+      const res = await fetch("/api/upload-image", {
+        method: "POST",
+        body: form,
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        console.error(`R2 upload failed for ${name}:`, await res.text());
+        // continue without throwing
+      }
+    } catch (err) {
+      console.error(`R2 upload crashed for ${name}:`, err);
+      // continue without throwing
     }
   }
 

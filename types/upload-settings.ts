@@ -1,7 +1,10 @@
 // export const DEMO_BOARD_ID = "2c7a54d8-9770-476a-afce-cf831ebebd29";
 export const DEMO_BOARD_ID = "d6c83b5f-0816-4a0f-a48b-f3c58a213dbc";
 
+// Supbase uploading:
 export const SUPABASE_OBJECT_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-photos`;
+export const R2_OBJECT_URL = `${process.env.NEXT_PUBLIC_R2_URL}`;
+
 export const SUPABASE_THUMBNAIL_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/mudboard-thumbnails`;
 export const IMAGE_PROXY_URL =
   "https://image-proxy-holy-cloud-3487.fly.dev/proxy?url=";
