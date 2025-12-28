@@ -151,7 +151,7 @@ export default function ResizableSidebar({
             </div>
             <div className="mx-6 flex flex-col gap-1 py-4  border-background ">
               <p className="text-sm font-semibold">
-                {freeformOn ? "Move Images around" : "View in Columns"}:
+                {freeformOn ? "Move images around" : "View as Columns"}
               </p>
               <button
                 type="button"
@@ -207,7 +207,7 @@ export default function ResizableSidebar({
             </div>
             Made with Mudboard
             <br />
-            (I made this)
+            (that I coded)
           </a>
         </div>
 
