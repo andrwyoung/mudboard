@@ -10,13 +10,9 @@ import {
   MIN_SIDEBAR_WIDTH,
   SCROLLBAR_STYLE,
 } from "@/types/constants";
-import DarkModeButton from "@/components/sidebar/buttons/dark-mode-button";
 import SectionsSection from "@/components/sidebar/sections/sections-section";
-import Logo from "@/components/ui/logo";
 import { useDemoStore } from "@/store/demo-store";
-import { FaPlus, FaVectorSquare } from "react-icons/fa6";
-import NewBoardButton from "@/components/sidebar/sections/new-board-button";
-import Link from "next/link";
+import { FaVectorSquare } from "react-icons/fa6";
 import Image from "next/image";
 
 export default function ResizableSidebar({
@@ -170,7 +166,7 @@ export default function ResizableSidebar({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Link href="/" className="w-[32px] h-[32px] mb-2" title="Home">
+            <div className="w-[32px] h-[32px] mb-2">
               <Image
                 src={"/logo.png"}
                 alt={"Small Mudboard Logo"}
@@ -178,7 +174,7 @@ export default function ResizableSidebar({
                 height={350}
                 draggable={false}
               />
-            </Link>
+            </div>
             Made with Mudboard
             <br />
             (I coded this!)

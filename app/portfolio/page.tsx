@@ -40,7 +40,7 @@ import Canvas from "../b/[boardId]/canvas";
 import FreeformCanvas from "../b/[boardId]/freeform-canvas";
 import ResizableSidebar from "./sidebar";
 
-const JONADREW_ALLOWED_BOARD_ID = "73bded43-7e4b-497e-ab95-84c17e2a46e4";
+const JONADREW_ALLOWED_BOARD_ID = "410ca1c3-cfe8-479a-a2ec-65d5d896c4f9";
 
 export default function Board() {
   const boardId = JONADREW_ALLOWED_BOARD_ID;
