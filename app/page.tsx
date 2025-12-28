@@ -6,11 +6,7 @@ import { useState } from "react";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
-import {
-  DEMO_BOARD_LINK,
-  INTEREST_LINK,
-  NEW_BOARD_LINK,
-} from "@/types/constants";
+import { DEMO_BOARD_LINK, INTEREST_LINK } from "@/types/constants";
 import Link from "next/link";
 import {
   GlobalAnnouncement,
@@ -168,7 +164,7 @@ export default function Home() {
                   </p>
                 </Link>
 
-                <Link
+                {/* <Link
                   data-id="new_board"
                   data-marque-track
                   href={NEW_BOARD_LINK}
@@ -183,7 +179,26 @@ export default function Home() {
                   title="New board link"
                 >
                   Or Start a Blank Board
-                </Link>
+                </Link> */}
+
+                <a
+                  data-id="new_board"
+                  data-marque-track
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://www.jonadrew.com/"
+                  className={`font-header font-semibold hover:underline hover:text-accent 
+                cursor-pointer select-none transition-all duration-300 text-sm
+                ${
+                  highlightedIndexes.includes("new_board")
+                    ? "text-accent"
+                    : "text-off-white"
+                }`}
+                  data-umami-event={`Landing page: Art Portfolio`}
+                  title="Andrew's Art Portfolio"
+                >
+                  Or View Andrew&apos;s Portfolio Board
+                </a>
               </div>
 
               {SHOW_GLOBAL_ANNOUNCEMENT && (

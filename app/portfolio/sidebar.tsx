@@ -12,8 +12,10 @@ import {
 } from "@/types/constants";
 import SectionsSection from "@/components/sidebar/sections/sections-section";
 import { useDemoStore } from "@/store/demo-store";
-import { FaVectorSquare } from "react-icons/fa6";
+import { FaVectorSquare, FaEnvelope, FaInstagram } from "react-icons/fa6";
 import Image from "next/image";
+import { toast } from "sonner";
+import { fireConfetti } from "@/utils/fire-confetti";
 
 export default function ResizableSidebar({
   sectionRefs,
@@ -102,16 +104,44 @@ export default function ResizableSidebar({
       <div
         className={`flex flex-col h-full w-full relative overflow-y-auto ${SCROLLBAR_STYLE}`}
       >
-        <div className="flex flex-col gap-2 justify-center items-center py-8 px-4 ">
-          {/* <Logo /> */}
-          {/* <h1 className="font-body text-3xl">Jonadrew</h1> */}
+        <div className="flex flex-col gap-4 justify-center items-center py-8 px-4 ">
+          <div>
+            <Image
+              src={"Jonadrew.png"}
+              alt="mudboard logo"
+              height={285}
+              width={1267}
+              className="w-[150px] hidden sm:block hover:scale-105 duration-200 cursor-pointer"
+              draggable={false}
+              onClick={fireConfetti}
+            />
+          </div>
 
-          {/* <div className="flex flex-col items-center gap-1.5 mb-4">
-            <p className="font-header text-center text-xs font-bold">
-              Made with Mudboard
-            </p>
-            <NewBoardButton />
-          </div> */}
+          <div className="flex items-center gap-2 text-">
+            <a
+              href="https://www.instagram.com/jonadrew_/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-off-white hover:text-accent transition-colors duration-200 cursor-pointer"
+              title="Follow on Instagram"
+              aria-label="Follow on Instagram"
+            >
+              <FaInstagram className="size-5" />
+            </a>
+
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText("andrew@jonadrew.com");
+                toast.success("Email copied!");
+              }}
+              className="text-off-white hover:text-accent transition-colors duration-200 cursor-pointer"
+              title="Copy email address"
+              aria-label="Copy email address"
+            >
+              <FaEnvelope className="size-5" />
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col flex-grow justify-center gap-24">
@@ -177,7 +207,7 @@ export default function ResizableSidebar({
             </div>
             Made with Mudboard
             <br />
-            (I coded this!)
+            (I made this)
           </a>
         </div>
 
