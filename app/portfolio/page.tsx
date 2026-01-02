@@ -39,8 +39,7 @@ import { useOffshoreThumbnailGenerator } from "@/hooks/use-offshore-thumbnail-ge
 import Canvas from "../b/[boardId]/canvas";
 import FreeformCanvas from "../b/[boardId]/freeform-canvas";
 import ResizableSidebar from "./sidebar";
-
-const JONADREW_ALLOWED_BOARD_ID = "410ca1c3-cfe8-479a-a2ec-65d5d896c4f9";
+import { JONADREW_ALLOWED_BOARD_ID } from "./settings";
 
 export default function Board() {
   const boardId = JONADREW_ALLOWED_BOARD_ID;

@@ -38,10 +38,10 @@ export const metadata: Metadata = {
   },
 
   description:
-    "A reference board made for Illustrators and Professional Artists. Spend more time drawing, not organizing photos",
+    "Personal reference board and image processing tools made for illustrators and professional artists.",
 
   // Optional but helpful:
-  metadataBase: new URL("https://mudboard.com"), // your real domain
+  metadataBase: new URL("https://mudboard.com"),
 
   alternates: {
     canonical: "https://mudboard.com",
@@ -59,8 +59,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "Mudboard",
-    description:
-      "Ref board for illustrators. Spend more time drawing, not organizing.",
+    description: "Tools to organize and process reference images for artists.",
     url: "https://mudboard.com",
     siteName: "Mudboard",
     images: [
@@ -78,8 +77,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Mudboard",
-    description:
-      "Ref board for illustrators. Spend more time drawing, not organizing.",
+    description: "Tools to organize and process reference images for artists.",
     images: ["https://mudboard.com/og-image.png"],
     creator: "@andrwyoung1",
   },
