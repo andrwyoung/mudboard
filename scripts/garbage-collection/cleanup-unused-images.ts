@@ -1,4 +1,3 @@
-// DEPRECATED 11/20/25
 // delete any images that aren't associated with any blocks
 // this means it's no longer being used
 
@@ -7,11 +6,8 @@
 import "dotenv/config";
 import promptSync from "prompt-sync";
 import { createClient } from "@supabase/supabase-js";
-import {
-  DEFAULT_FILE_EXT,
-  IMAGE_VARIANT_MAP,
-} from "../types/upload-settings.ts";
 import * as fs from "fs";
+import { IMAGE_VARIANT_MAP, DEFAULT_FILE_EXT } from "@/types/upload-settings";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;

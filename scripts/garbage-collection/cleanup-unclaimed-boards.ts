@@ -1,3 +1,6 @@
+// remove any boards that people no longer used
+// probably DONT use this
+
 import "dotenv/config";
 import promptSync from "prompt-sync";
 import { createClient } from "@supabase/supabase-js";

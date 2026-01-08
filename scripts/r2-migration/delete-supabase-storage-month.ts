@@ -1,10 +1,13 @@
+// this is when we migrated from supabase storage to r2
+// basically just delete things month by month
+
 import "dotenv/config";
 import promptSync from "prompt-sync";
 import { createClient } from "@supabase/supabase-js";
 import {
   DEFAULT_FILE_EXT,
   IMAGE_VARIANT_MAP,
-} from "../types/upload-settings.ts";
+} from "../../types/upload-settings.ts";
 import * as fs from "fs";
 
 const supabase = createClient(

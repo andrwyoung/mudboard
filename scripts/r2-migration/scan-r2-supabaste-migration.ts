@@ -1,3 +1,5 @@
+// this was a one time script used for migration from r2 to check whether it migrated ok
+
 import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 
