@@ -10,7 +10,7 @@ const key = STRIPE_IS_PROD
   : process.env.STRIPE_SANDBOX_SECRET_KEY!;
 
 export const stripeClient = new Stripe(key, {
-  apiVersion: "2025-05-28.basil",
+  apiVersion: "2025-05-27.basil",
 });
 
 export function getTierLevel(tier: StripeProduct): UserTier {
