@@ -214,7 +214,7 @@ export default function PricingTable() {
                 {plan.badge}
               </div>
             )}
-            <div className="flex-grow mb-6">
+            <div className="grow mb-6">
               <h3 className="text-md font-bold mt-4 mb-2">{plan.name}</h3>
               <div className="flex flex-col mb-8 h-12">
                 <p className="font-header text-2xl font-bold ">{plan.price}</p>

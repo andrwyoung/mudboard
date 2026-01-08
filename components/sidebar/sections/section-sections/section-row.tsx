@@ -196,7 +196,7 @@ export default function SectionRow({
                 }}
               >
                 <div
-                  className=" select-none flex gap-2 items-center cursor-pointer py-[1px] min-w-0"
+                  className=" select-none flex gap-2 items-center cursor-pointer py-px min-w-0"
                   onDoubleClick={() => {
                     if (canSectionEdit) {
                       setEditValue(thisBoardSection.section.title ?? "");

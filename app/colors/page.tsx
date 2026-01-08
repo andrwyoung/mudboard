@@ -172,7 +172,7 @@ export default function ColorPickerPage() {
               {images.map((image) => (
                 <div
                   key={image.id}
-                  className="flex-shrink-0 border-4 border-transparent rounded-md 
+                  className="shrink-0 border-4 border-transparent rounded-md 
                   overflow-clip hover:border-accent 
                   cursor-pointer duration-200 "
                   title="Eyedrop Image"
