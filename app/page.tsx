@@ -18,9 +18,9 @@ import LandingPageDemo from "@/components/landing-page/tools-demo";
 import Testimonials from "@/components/landing-page/testimonials";
 import { MarqueBox } from "@/components/board/marque";
 import { useTextMarque } from "@/hooks/gallery/use-landing-marque";
-import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
 import { DragOverlay } from "@/components/ui/drag-overlay";
 import { Navbar } from "@/components/ui/navbar";
+import { useSimpleImageImport } from "./compressor/hooks/use-simple-image-import";
 
 export default function Home() {
   const [marqueRect, setMarqueRect] = useState<{

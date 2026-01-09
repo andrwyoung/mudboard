@@ -21,12 +21,12 @@ import ColorWheelSection from "./components/sections/color-wheel-section";
 import ScrollToTop from "@/components/ui/scroll-to-top";
 import { DEFAULT_COLOR } from "./lib/types/color-picker-constants";
 import ColorInputSection from "./components/sections/color-input-section";
-import { useColorHistory } from "@/app/colors/lib/hooks/use-color-history";
-import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
 import { DragOverlay } from "@/components/ui/drag-overlay";
 import { Navbar } from "@/components/ui/navbar";
 import { useImageStore } from "@/store/home-page/image-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
+import { useColorHistory } from "./lib/hooks/use-color-history";
+import { useSimpleImageImport } from "../compressor/hooks/use-simple-image-import";
 
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);

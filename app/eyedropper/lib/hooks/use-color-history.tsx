@@ -1,8 +1,8 @@
 "use client";
 
-import { MAX_HISTORY } from "@/app/colors/lib/types/color-picker-constants";
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
+import { MAX_HISTORY } from "../types/color-picker-constants";
 
 interface ColorHistoryItem {
   hex: string;

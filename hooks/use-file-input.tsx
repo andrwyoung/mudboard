@@ -1,5 +1,5 @@
+import { handleImageFiles } from "@/app/compressor/lib/image-handler";
 import { useRef } from "react";
-import { handleImageFiles } from "@/app/processing/lib/image-handler";
 
 export function useFileInput() {
   const inputRef = useRef<HTMLInputElement>(null);

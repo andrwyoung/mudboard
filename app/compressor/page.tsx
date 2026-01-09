@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useSimpleImageImport } from "@/app/processing/hooks/use-simple-image-import";
 import { useFileInput } from "@/hooks/use-file-input";
 import { useImageStore } from "@/store/home-page/image-store";
 import { DragOverlay } from "@/components/ui/drag-overlay";
@@ -25,6 +24,7 @@ import { ExportFormat } from "./lib/types/exporter-types";
 import { FORMAT_OPTIONS } from "./lib/types/image-exporter-constants";
 import { exportImages } from "./lib/processing/exporting-helpers";
 import { toast } from "sonner";
+import { useSimpleImageImport } from "./hooks/use-simple-image-import";
 
 export default function ImageProcessingPage() {
   const { images, setSelectedImageId } = useImageStore();
