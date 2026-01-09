@@ -107,7 +107,7 @@ export default function ResizableSidebar({
         <div className="flex flex-col gap-4 justify-center items-center py-8 px-4 ">
           <div>
             <Image
-              src={"Jonadrew.png"}
+              src={"/logos/jonadrew-logo.png"}
               alt="mudboard logo"
               height={285}
               width={1267}
