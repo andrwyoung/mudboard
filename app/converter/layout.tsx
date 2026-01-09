@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
-import { metadata as layoutMetadata } from "@/app/layout";
 
 export const metadata: Metadata = {
-  ...layoutMetadata,
-  title: "Nice Image Compressor",
+  title: "Image Converter (PNG, JPG, WEBP)",
   description:
-    "A simple image compressor to convert images between PNG, WEBP and JPG.",
+    "Free online image converter to convert images between PNG, JPG, and WEBP formats quickly and securely.",
+
+  alternates: {
+    canonical: "https://mudboard.com/converter",
+  },
+
   openGraph: {
-    ...layoutMetadata.openGraph,
     title: "Image Converter",
+    description:
+      "Convert images between PNG, JPG, and WEBP formats directly in your browser.",
     images: [
       {
         url: "/metadata/compressor-og.png",
@@ -18,8 +22,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+
   twitter: {
-    ...layoutMetadata.twitter,
+    card: "summary_large_image",
     title: "Image Converter",
     images: ["/metadata/compressor-og.png"],
   },

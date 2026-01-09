@@ -26,7 +26,7 @@ import { Navbar } from "@/components/ui/navbar";
 import { useImageStore } from "@/store/home-page/image-store";
 import { SCROLLBAR_STYLE } from "@/types/constants";
 import { useColorHistory } from "./lib/hooks/use-color-history";
-import { useSimpleImageImport } from "../compressor/hooks/use-simple-image-import";
+import { useSimpleImageImport } from "../converter/hooks/use-simple-image-import";
 
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);

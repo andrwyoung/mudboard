@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
-import { metadata as layoutMetadata } from "@/app/layout";
 
 export const metadata: Metadata = {
-  ...layoutMetadata,
-  title: "Nice Color Picker",
+  title: "Eyedropper & Color Picker (HEX, RGB, HSL, OKLCH)",
   description:
-    "A simple color picker with support for multiple color formats including HEX, RGB, HSL, HSV, and OKLCH.",
+    "Free online eyedropper and color picker for artists and designers. Pick colors from images and convert between HEX, RGB, HSL, HSV, and OKLCH.",
+
+  alternates: {
+    canonical: "https://mudboard.com/eyedropper",
+  },
+
   openGraph: {
-    ...layoutMetadata.openGraph,
-    title: "Eyedropper and Color Picker",
+    title: "Eyedropper & Color Picker",
+    description:
+      "Pick colors from images and convert between HEX, RGB, HSL, HSV, and OKLCH.",
     images: [
       {
         url: "/metadata/colors-og.png",
@@ -18,9 +22,10 @@ export const metadata: Metadata = {
       },
     ],
   },
+
   twitter: {
-    ...layoutMetadata.twitter,
-    title: "Eyedropper and Color Picker",
+    card: "summary_large_image",
+    title: "Eyedropper & Color Picker",
     images: ["/metadata/colors-og.png"],
   },
 };
