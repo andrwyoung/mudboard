@@ -144,7 +144,7 @@ export default function ResizableSidebar({
           </div>
         </div>
 
-        <div className="flex flex-col flex-grow justify-center gap-24">
+        <div className="flex flex-col grow justify-center gap-24">
           <div className="flex flex-col gap-14">
             <div className="px-4">
               <SectionsSection sectionRefs={sectionRefs} />

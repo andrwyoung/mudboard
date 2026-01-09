@@ -6,7 +6,7 @@ import { useState } from "react";
 import Features from "@/components/landing-page/features";
 import { FaPlay } from "react-icons/fa";
 import Image from "next/image";
-import { DEMO_BOARD_LINK, INTEREST_LINK } from "@/types/constants";
+import { DEMO_BOARD_LINK } from "@/types/constants";
 import Link from "next/link";
 import {
   GlobalAnnouncement,
@@ -52,7 +52,7 @@ export default function Home() {
           fill
           className="w-full h-full object-cover opacity-20"
         />
-        <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-primary via-primary/90 via-30% to-transparent to-90% z-10 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-full h-64 bg-linear-to-t from-primary via-primary/90 via-30% to-transparent to-90% z-10 pointer-events-none" />
       </div>
 
       <div className=" flex flex-col items-center">
@@ -156,7 +156,7 @@ export default function Home() {
                   data-umami-event={`Landing page: Demo Board CTA`}
                 >
                   <div className="flex gap-2 items-center">
-                    <FaPlay className="size-4 translate-y-[1px]" />
+                    <FaPlay className="size-4 translate-y-px" />
                     <h1>Try Demo Board</h1>
                   </div>
                   <p className="text-xs font-semibold -translate-y-[2px]">
@@ -303,7 +303,7 @@ export default function Home() {
               >
                 Try Demo Board
               </Link>
-              <p className="font-regular text-sm">- or -</p>
+              {/* <p className="font-regular text-sm">- or -</p>
               <Link
                 target="_blank"
                 rel="noopener noreferrer"
@@ -312,7 +312,7 @@ export default function Home() {
                 title="Mudboard interest form"
               >
                 Follow along for the journey
-              </Link>
+              </Link> */}
             </div>
           </section>
 

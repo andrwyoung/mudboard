@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { INTEREST_LINK } from "@/types/constants";
 import { useState } from "react";
 import FillingDot from "@/components/ui/filling-dot";
 
@@ -103,7 +101,7 @@ export default function FAQ() {
           No.
         </FAQItem>
 
-        <FAQItem question="Will you add [that feature I’m hoping for]?">
+        {/* <FAQItem question="Will you add [that feature I’m hoping for]?">
           Probably! You can check out this{" "}
           <Link
             href="/roadmap"
@@ -129,7 +127,7 @@ export default function FAQ() {
             sign up here
           </a>{" "}
           to get updates or even become a tester!
-        </FAQItem>
+        </FAQItem> */}
       </div>
     </div>
   );
