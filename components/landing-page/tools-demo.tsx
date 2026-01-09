@@ -17,7 +17,7 @@ export default function LandingPageDemo() {
   const imageRef = useRef<HTMLImageElement>(null);
   const [displayedSize, setDisplayedSize] = useState({ width: 0, height: 0 });
 
-  const imageUrl = "/screeny4.png";
+  const imageUrl = "/landing/screeny.png";
   const [eyedropperPos, setEyedropperPos] = useState<{
     x: number;
     y: number;

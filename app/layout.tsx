@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     siteName: "Mudboard",
     images: [
       {
-        url: "https://mudboard.com/og-image.png",
+        url: "/metadata/og-image.png",
         width: 1200,
         height: 630,
         alt: "Screenshot of Mudboard Landing Page",
@@ -78,14 +78,14 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Mudboard",
     description: "Tools to organize and process reference images for artists.",
-    images: ["https://mudboard.com/og-image.png"],
+    images: ["/metadata/og-image.png"],
     creator: "@andrwyoung1",
   },
 
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    apple: "/metadata/apple-touch-icon.png",
   },
 
   category: "design",

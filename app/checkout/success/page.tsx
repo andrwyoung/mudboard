@@ -59,7 +59,7 @@ export default function CheckoutSuccessPage() {
         <div className="flex flex-col items-center">
           {status !== "error" && (
             <Image
-              src={"/yay2.png"}
+              src={"/yay.png"}
               alt="Success illustration"
               width={125}
               height={125}

@@ -25,7 +25,7 @@ export function CollapsedSidebar({
       <div className="flex flex-col pt-2 gap-2 items-center">
         <Link href="/" className="w-[32px] h-[32px]" title="Home">
           <Image
-            src={"/logo.png"}
+            src={"/logos/small-logo.png"}
             alt={"Small Mudboard Logo"}
             width={350}
             height={350}

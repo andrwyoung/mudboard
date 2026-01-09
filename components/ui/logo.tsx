@@ -20,7 +20,11 @@ export default function Logo({
       title="Home Page"
     >
       <Image
-        src={color === "white" ? "/full-logo-white.png" : "/full-logo.png"}
+        src={
+          color === "white"
+            ? "/logos/full-logo-white.png"
+            : "/logos/full-logo.png"
+        }
         alt="mudboard logo"
         height={285}
         width={1267}
@@ -28,7 +32,11 @@ export default function Logo({
         draggable={false}
       />
       <Image
-        src={color === "white" ? "/logo.png" : "/logo-brown.png"}
+        src={
+          color === "white"
+            ? "/logos/small-logo.png"
+            : "/logos/small-logo-brown.png"
+        }
         alt="mudboard logo"
         height={350}
         width={350}

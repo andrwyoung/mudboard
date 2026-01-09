@@ -66,7 +66,7 @@ export default function OLDExternalThumbnail({
         }}
       >
         <Image
-          src="/logo.png"
+          src="/logos/small-logo.png"
           alt="Mudboard Small Logo"
           width={96}
           height={96}

@@ -47,7 +47,7 @@ export default function Home() {
 
       <div className="absolute inset-0 overflow-hidden z-0">
         <Image
-          src="/hero4.png"
+          src="/landing/hero.png"
           alt="Gallery of images"
           fill
           className="w-full h-full object-cover opacity-20"
@@ -228,18 +228,6 @@ export default function Home() {
             <Features highlightedIndexes={highlightedIndexes} />
           </div>
 
-          {/* <div className="flex flex-col items-center gap-2 mb-32">
-            <h1 className="font-semibold text-lg">A Mudboard in the wild</h1>
-            <div className="max-w-4xl rounded-lg overflow-hidden border-3 border-secondary">
-              <Image
-                src={"/screeny3.png"}
-                alt={"Mudboard Screenshot"}
-                width={1685}
-                height={943}
-              />
-            </div>
-          </div> */}
-
           <LandingPageDemo />
           <ComparisonTable />
 
@@ -251,7 +239,7 @@ export default function Home() {
             <div className="flex flex-col items-center">
               <h1 className="font-semibold mb-4">Grid Layout </h1>
               <Image
-                src="/section_002.webp"
+                src="/landing/export-grid.webp"
                 alt="Grid Export Example"
                 width={1600}
                 height={1529}
@@ -261,7 +249,7 @@ export default function Home() {
             <div className="flex flex-col items-center">
               <h1 className="font-semibold ">Freeform Layout</h1>
               <Image
-                src="/section_001.webp"
+                src="/landing/export-freeform.webp"
                 alt="Freeform Export Example"
                 width={1600}
                 height={1025}

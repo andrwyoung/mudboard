@@ -55,7 +55,7 @@ export default function ComparisonTable() {
           title="PureRef"
           icon={
             <Image
-              src="/purref.png"
+              src="/landing/logo-pureref.png"
               alt="PureRef logo"
               height={18}
               width={18}
@@ -82,7 +82,7 @@ export default function ComparisonTable() {
           highlight
           icon={
             <Image
-              src="/M.png"
+              src="/landing/logo-mudboard.png"
               alt="Mudboard M"
               height={22}
               width={22}

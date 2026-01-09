@@ -198,7 +198,7 @@ export default function ResizableSidebar({
           >
             <div className="w-[32px] h-[32px] mb-2">
               <Image
-                src={"/logo.png"}
+                src={"/logos/small-logo.png"}
                 alt={"Small Mudboard Logo"}
                 width={350}
                 height={350}
