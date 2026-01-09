@@ -7,12 +7,16 @@ import { useMetadataStore } from "@/store/metadata-store";
 import { DASHBOARD_LINK, DEMO_BOARD_LINK, LOGIN_LINK } from "@/types/constants";
 import { ChevronDown } from "lucide-react";
 
-interface NavbarProps {
+const EYEDROPPER_LABEL = "Eyedropper";
+const CONVERTER_LABEL = "Image Converter";
+
+export function Navbar({
+  enforceHome = true,
+  color = "white",
+}: {
   enforceHome?: boolean;
   color?: "white" | "brown";
-}
-
-export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
+}) {
   const user = useMetadataStore((s) => s.user);
   const [scrolled, setScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -65,16 +69,16 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
         {/* Desktop navigation */}
         <div className="gap-6 items-center hidden lg:flex translate-y-1">
           <Link
-            href="/colors"
+            href="/eyedropper"
             className="font-header font-bold hover:text-accent transition-colors duration-300"
           >
-            Color Picker
+            {EYEDROPPER_LABEL}
           </Link>
           <Link
-            href="/processing"
+            href="/converter"
             className="font-header font-bold hover:text-accent transition-colors duration-300"
           >
-            Image Converter
+            {CONVERTER_LABEL}
           </Link>
         </div>
 
@@ -100,14 +104,14 @@ export function Navbar({ enforceHome = true, color = "white" }: NavbarProps) {
                 className="block px-4 py-2 text-sm text-primary font-header  hover:text-accent hover:bg-gray-50 transition-colors duration-200"
                 onClick={() => setIsDropdownOpen(false)}
               >
-                Color Picker
+                {EYEDROPPER_LABEL}
               </Link>
               <Link
                 href="/processing"
                 className="block px-4 py-2 text-sm font-header text-primary hover:text-accent  hover:bg-gray-50 transition-colors duration-200"
                 onClick={() => setIsDropdownOpen(false)}
               >
-                Image Converter
+                {CONVERTER_LABEL}
               </Link>
             </div>
           )}
