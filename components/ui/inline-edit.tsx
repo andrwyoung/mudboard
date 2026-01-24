@@ -53,8 +53,8 @@ export default function InlineEditText({
     <div
       className={`overflow-x-auto border py-1 px-3 rounded-md whitespace-nowrap 
         font-header ${className} w-full ${
-        isEditing ? "border-input shadow-sm" : "border-transparent"
-      }`}
+          isEditing ? "border-input shadow-sm" : "border-transparent"
+        }`}
       onDoubleClick={() => {
         if (!isEditable || isEditing) return;
         setDraft(value ?? "");

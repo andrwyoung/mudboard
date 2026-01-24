@@ -54,8 +54,8 @@ export function Navbar({
           !scrolled
             ? "bg-transparent"
             : color === "white"
-            ? "bg-primary/95 backdrop-blur-md"
-            : "bg-off-white/60"
+              ? "bg-primary/95 backdrop-blur-md"
+              : "bg-off-white/60"
         }
       
       ${color === "white" ? "text-off-white" : "text-primary"}`}

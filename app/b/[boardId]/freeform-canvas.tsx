@@ -50,8 +50,8 @@ export default function FreeformCanvas({
       ? "bg-canvas-background-dark"
       : "bg-canvas-background-dark-secondary"
     : editMode
-    ? "bg-canvas-background-light"
-    : "bg-canvas-background-light-secondary";
+      ? "bg-canvas-background-light"
+      : "bg-canvas-background-light-secondary";
 
   const camera = useFreeformStore((s) => s.cameraMap[section.section_id]);
 
@@ -229,8 +229,8 @@ export default function FreeformCanvas({
                 isDragging
                   ? "cursor-grabbing"
                   : cursorMovementsIsActive
-                  ? "cursor-grab"
-                  : "cursor-default"
+                    ? "cursor-grab"
+                    : "cursor-default"
               }`}
               // style={{
               //   backgroundColor: editMode

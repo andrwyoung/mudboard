@@ -51,8 +51,8 @@ export default function SyncButton() {
         {isSpinning
           ? "Syncing..."
           : anythingDirty
-          ? "Unsaved Changes"
-          : "Synced!"}
+            ? "Unsaved Changes"
+            : "Synced!"}
       </p>
     </button>
   );

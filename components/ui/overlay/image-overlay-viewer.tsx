@@ -199,10 +199,10 @@ export default function ImageOverlayViewer({
                     !showOverlayUI
                       ? "cursor-none"
                       : overlayMode === "eyedropper"
-                      ? "cursor-crosshair"
-                      : isDragging
-                      ? "cursor-grabbing"
-                      : "cursor-grab"
+                        ? "cursor-crosshair"
+                        : isDragging
+                          ? "cursor-grabbing"
+                          : "cursor-grab"
                   } 
                 ${isGreyscale ? "grayscale" : ""}
                 ${isFlipped ? "transform scale-x-[-1]" : ""}`}

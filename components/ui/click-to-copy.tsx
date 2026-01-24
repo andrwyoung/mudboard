@@ -31,7 +31,7 @@ export function CopyToClipboard({ textToCopy, children, title, link }: Props) {
         link ? "hover:text-accent" : "hover:text-secondary"
       }`}
       onClick={handleCopy}
-      title={copied ? "Copied!" : title ?? "Click to copy"}
+      title={copied ? "Copied!" : (title ?? "Click to copy")}
       onContextMenu={(e) => {
         if (!e.metaKey && !e.ctrlKey && link) {
           e.preventDefault();

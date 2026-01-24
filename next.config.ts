@@ -5,11 +5,10 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'wfdkjamusyofrhbcjtba.supabase.co',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "wfdkjamusyofrhbcjtba.supabase.co",
+        pathname: "/**",
       },
-      
     ],
   },
 };

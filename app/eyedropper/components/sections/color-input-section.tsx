@@ -220,18 +220,18 @@ export default function ColorInputSection({
                                   ? "pr-20 text-2xl py-3 font-semibold"
                                   : "pr-10 text-sm py-1.5"
                               } ${
-                  key === "oklch"
-                    ? "bg-slate-200 dark:bg-slate-500 cursor-not-allowed opacity-60 pointer-events-none"
-                    : key === "hex"
-                    ? "bg-slate-50"
-                    : "bg-slate-50 opacity-95"
-                } ${
-                  inputErrors[key as keyof typeof inputErrors]
-                    ? "border-red-500 focus:ring-red-500"
-                    : masterInput === key
-                    ? "border-primary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
-                    : "border-stone-500 focus:ring-blue-500"
-                }`}
+                                key === "oklch"
+                                  ? "bg-slate-200 dark:bg-slate-500 cursor-not-allowed opacity-60 pointer-events-none"
+                                  : key === "hex"
+                                    ? "bg-slate-50"
+                                    : "bg-slate-50 opacity-95"
+                              } ${
+                                inputErrors[key as keyof typeof inputErrors]
+                                  ? "border-red-500 focus:ring-red-500"
+                                  : masterInput === key
+                                    ? "border-primary focus:ring-secondary bg-card-foreground dark:bg-blue-900/20"
+                                    : "border-stone-500 focus:ring-blue-500"
+                              }`}
                 style={{
                   fontSize: key === "hex" ? "1.5rem" : "16px", // Prevent mobile zoom
                   touchAction: "manipulation", // Prevent double-tap zoom
@@ -337,14 +337,14 @@ export default function ColorInputSection({
                               componentValues.rgb
                             )
                           : key === "hsl"
-                          ? getHslGradient(
-                              slider.component as "h" | "s" | "l",
-                              componentValues.hsl
-                            )
-                          : getHsvGradient(
-                              slider.component as "h" | "s" | "v",
-                              componentValues.hsv
-                            )
+                            ? getHslGradient(
+                                slider.component as "h" | "s" | "l",
+                                componentValues.hsl
+                              )
+                            : getHsvGradient(
+                                slider.component as "h" | "s" | "v",
+                                componentValues.hsv
+                              )
                       }
                     />
                   ))}

@@ -1,0 +1,19 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.next
+out
+dist
+build
+
+# Misc
+.DS_Store
+*.log
+*.lock
+pnpm-lock.yaml
+
+# Generated
+.turbo
+.vercel

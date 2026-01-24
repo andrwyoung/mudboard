@@ -170,7 +170,7 @@ export default function SectionShareModal() {
                     <div className="flex flex-col" key={field + label}>
                       <CheckField
                         isChecked={
-                          flip ? !section[field] : section[field] ?? false
+                          flip ? !section[field] : (section[field] ?? false)
                         }
                         onChange={(val) =>
                           updateField(field, flip ? !val : val, {

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Image from "next/image";
 
 export type ColorFormat = "hex" | "rgb" | "hsl" | "hsv" | "oklch";
 import {
@@ -21,24 +20,18 @@ import ColorWheelSection from "./components/sections/color-wheel-section";
 import ScrollToTop from "@/components/ui/scroll-to-top";
 import { DEFAULT_COLOR } from "./lib/types/color-picker-constants";
 import ColorInputSection from "./components/sections/color-input-section";
-import { DragOverlay } from "@/components/ui/drag-overlay";
 import { Navbar } from "@/components/ui/navbar";
-import { useImageStore } from "@/store/home-page/image-store";
-import { SCROLLBAR_STYLE } from "@/types/constants";
 import { useColorHistory } from "./lib/hooks/use-color-history";
-import { useSimpleImageImport } from "../converter/hooks/use-simple-image-import";
 
 export default function ColorPickerPage() {
   const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
   const [colorWheelColor, setColorWheelColor] = useState(selectedColor);
 
-  const images = useImageStore((s) => s.images);
-
   // Use color history hook
   const { updateColorHistory } = useColorHistory();
 
   // Add drag and drop functionality
-  const { dragCount } = useSimpleImageImport();
+  // const { dragCount } = useSimpleImageImport();
 
   const [inputValues, setInputValues] = useState<InputValues>(
     getInitialValues(DEFAULT_COLOR)
@@ -160,42 +153,13 @@ export default function ColorPickerPage() {
             </div>
           </div>
         </div>
-
-        {images.length !== 0 && (
-          <div
-            className={`bg-canvas-background-light-secondary max-w-4xl rounded-md mt-12 p-2
-               `}
-          >
-            <div
-              className={`flex flex-row gap-2 p-1 overflow-x-auto  ${SCROLLBAR_STYLE}`}
-            >
-              {images.map((image) => (
-                <div
-                  key={image.id}
-                  className="shrink-0 border-4 border-transparent rounded-md 
-                  overflow-clip hover:border-accent 
-                  cursor-pointer duration-200 "
-                  title="Eyedrop Image"
-                >
-                  <Image
-                    src={image.preview}
-                    alt={image.originalFile.name}
-                    width={image.width}
-                    height={image.height}
-                    className="w-24 h-24 object-cover hover:scale-105 duration-200"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Mobile-only "Go to Top" button */}
       <ScrollToTop className="lg:hidden" />
 
       {/* Drag overlay */}
-      <DragOverlay dragCount={dragCount} />
+      {/* <DragOverlay dragCount={dragCount} /> */}
     </div>
   );
 }

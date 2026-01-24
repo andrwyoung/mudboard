@@ -97,8 +97,8 @@ export default function ResizableSidebar({
         }}
         className={`absolute top-0 right-0 w-1.5 h-full z-50  transition-all duration-200 select-none
           ${sidebarCollapsed ? "cursor-e-resize" : "cursor-col-resize"} ${
-          dragging ? "bg-accent" : "hover:bg-accent"
-        }`}
+            dragging ? "bg-accent" : "hover:bg-accent"
+          }`}
         onMouseDown={(e) => {
           if (sidebarCollapsed) {
             setSidebarCollapsed(false);

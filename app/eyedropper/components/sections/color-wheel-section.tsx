@@ -109,8 +109,8 @@ export default function ColorWheelSection({
                   index === 0
                     ? "rounded-l-lg"
                     : index === swatchColors.length - 1
-                    ? "rounded-r-lg"
-                    : ""
+                      ? "rounded-r-lg"
+                      : ""
                 } ${focusedSwatch === index ? "" : "cursor-pointer"} ${
                   focusedSwatch === index
                     ? ""

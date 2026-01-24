@@ -18,9 +18,7 @@ import LandingPageDemo from "@/components/landing-page/tools-demo";
 import Testimonials from "@/components/landing-page/testimonials";
 import { MarqueBox } from "@/components/board/marque";
 import { useTextMarque } from "@/hooks/gallery/use-landing-marque";
-import { DragOverlay } from "@/components/ui/drag-overlay";
 import { Navbar } from "@/components/ui/navbar";
-import { useSimpleImageImport } from "./converter/hooks/use-simple-image-import";
 
 export default function Home() {
   const [marqueRect, setMarqueRect] = useState<{
@@ -35,9 +33,6 @@ export default function Home() {
     getMarqueTargets: () =>
       Array.from(document.querySelectorAll("[data-marque-track]")),
   });
-
-  // Add drag and drop functionality
-  const { dragCount } = useSimpleImageImport();
 
   return (
     <div className="w-full h-full bg-primary">
@@ -338,9 +333,6 @@ export default function Home() {
           </a>
         </footer>
       </div>
-
-      {/* Drag overlay */}
-      <DragOverlay dragCount={dragCount} />
     </div>
   );
 }

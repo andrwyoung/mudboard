@@ -1,16 +1,21 @@
 // Utility function for handling image file processing
-// Can be reused across different components that need image handling
+// Returns processed images instead of mutating global state
 
 import { toast } from "sonner";
 import { allowedMimeTypes } from "@/types/upload-settings";
-import {
-  useImageStore,
-  ProcessedImage,
-} from "../../../store/home-page/image-store";
 import { getImageDimensions } from "./utils/get-image-dimensions";
 
-export async function handleImageFiles(files: File[]) {
-  const { addImages } = useImageStore.getState();
+export type ProcessedImage = {
+  id: string;
+  originalFile: File;
+  preview: string;
+  width: number;
+  height: number;
+};
+
+export async function processImageFiles(
+  files: File[]
+): Promise<ProcessedImage[]> {
   const newImages: ProcessedImage[] = [];
 
   for (const file of files) {
@@ -36,9 +41,9 @@ export async function handleImageFiles(files: File[]) {
 
   if (newImages.length === 0) {
     toast.error("No valid image files found");
-    return;
+    return [];
   }
 
-  addImages(newImages);
   toast.success(`Added ${newImages.length} image(s)`);
+  return newImages;
 }

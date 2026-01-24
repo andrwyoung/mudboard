@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useFileInput } from "@/hooks/use-file-input";
-import { useImageStore } from "@/store/home-page/image-store";
+import { useFileInput } from "@/app/converter/lib/hooks/use-file-input";
 import { DragOverlay } from "@/components/ui/drag-overlay";
 import { Navbar } from "@/components/ui/navbar";
 import Image from "next/image";
@@ -25,12 +24,11 @@ import { FORMAT_OPTIONS } from "./lib/types/image-exporter-constants";
 import { exportImages } from "./lib/processing/exporting-helpers";
 import { toast } from "sonner";
 import { useSimpleImageImport } from "./hooks/use-simple-image-import";
+import { processImageFiles, ProcessedImage } from "./lib/image-handler";
 
 export default function ImageProcessingPage() {
-  const { images, setSelectedImageId } = useImageStore();
-  const { fileInput, triggerFilePicker } = useFileInput();
-
-  // Multi-select state
+  // Local state - no Zustand needed!
+  const [images, setImages] = useState<ProcessedImage[]>([]);
   const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(-1);
 
@@ -39,11 +37,34 @@ export default function ImageProcessingPage() {
   const [quality, setQuality] = useState<number[]>([100]);
   const [isExporting, setIsExporting] = useState(false);
 
-  // const selectedImage = images.find((img) => img.id === selectedImageId);
+  // File input hook
+  const { fileInput, triggerFilePicker } = useFileInput({
+    onChange: async (files) => {
+      const processedImages = await processImageFiles(files);
+      setImages((prev) => {
+        const newImages = [...prev, ...processedImages];
+        // Auto-select first image if none selected
+        if (prev.length === 0 && processedImages.length > 0) {
+          setSelectedImageIds([processedImages[0].id]);
+        }
+        return newImages;
+      });
+    },
+  });
 
-  function triggerImagePicker() {
-    triggerFilePicker();
-  }
+  // Drag & drop hook with callback
+  const { dragCount } = useSimpleImageImport({
+    onImagesProcessed: (processedImages) => {
+      setImages((prev) => {
+        const newImages = [...prev, ...processedImages];
+        // Auto-select first image if none selected
+        if (prev.length === 0 && processedImages.length > 0) {
+          setSelectedImageIds([processedImages[0].id]);
+        }
+        return newImages;
+      });
+    },
+  });
 
   // Multi-select handlers
   function handleImageClick(
@@ -77,7 +98,6 @@ export default function ImageProcessingPage() {
       // Regular click: single selection
       setSelectedImageIds([imageId]);
       setLastSelectedIndex(index);
-      setSelectedImageId(imageId);
     }
   }
 
@@ -147,9 +167,6 @@ export default function ImageProcessingPage() {
     });
   }
 
-  // Use the simplified image import hook
-  const { dragCount } = useSimpleImageImport();
-
   return (
     <div className="min-h-screen bg-canvas-background-light text-primary flex flex-col relative">
       <Navbar color="brown" />
@@ -174,7 +191,7 @@ export default function ImageProcessingPage() {
 
                     <div className="flex flex-col gap-2 items-end">
                       <Button
-                        onClick={triggerImagePicker}
+                        onClick={triggerFilePicker}
                         variant={"outline_primary"}
                         className="text-sm font-header font-semibold"
                       >
@@ -323,7 +340,7 @@ export default function ImageProcessingPage() {
                 <div
                   className="w-fit h-fit my-8 flex flex-col items-center select-none
                       opacity-80 z-10 hover:opacity-100 transition-all duration-200 cursor-pointer "
-                  onClick={() => triggerImagePicker()}
+                  onClick={() => triggerFilePicker()}
                 >
                   <Image
                     src={"/1.png"}

@@ -113,7 +113,7 @@ export const useExploreStore = create<ExploreStore>((set) => ({
               section_count: number;
               mudkit_count: number;
             },
-            SectionWithStatsAndBoardInfo[]
+            SectionWithStatsAndBoardInfo[],
           ]
       );
 

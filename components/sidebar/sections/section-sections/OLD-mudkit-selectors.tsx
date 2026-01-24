@@ -39,8 +39,8 @@ export function MudkitSelectButton({
         disabled
           ? "text-primary opacity-40 cursor-not-allowed"
           : isSelected
-          ? "bg-accent/80 text-primary"
-          : "bg-transparent text-primary hover:bg-accent/30 hover:border-accent/50 cursor-pointer"
+            ? "bg-accent/80 text-primary"
+            : "bg-transparent text-primary hover:bg-accent/30 hover:border-accent/50 cursor-pointer"
       )}
       onClick={() => {
         if (disabled) return;

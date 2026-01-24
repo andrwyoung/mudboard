@@ -1,7 +1,16 @@
-import { handleImageFiles } from "@/app/converter/lib/image-handler";
 import { useRef } from "react";
 
-export function useFileInput() {
+type UseFileInputProps = {
+  onChange: (files: File[]) => void;
+  accept?: string;
+  multiple?: boolean;
+};
+
+export function useFileInput({
+  onChange,
+  accept = "image/*",
+  multiple = true,
+}: UseFileInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const triggerFilePicker = () => {
@@ -12,13 +21,15 @@ export function useFileInput() {
     <input
       ref={inputRef}
       type="file"
-      accept="image/*"
-      multiple
+      accept={accept}
+      multiple={multiple}
       className="hidden"
       onChange={(e) => {
         const files = e.target.files;
         if (files && files.length > 0) {
-          handleImageFiles(Array.from(files));
+          onChange(Array.from(files));
+          // Reset input so the same file can be selected again
+          e.target.value = "";
         }
       }}
     />

@@ -112,8 +112,8 @@ export function FileSizeEstimateDisplay({
                 isTotalSame
                   ? "text-slate-500"
                   : isTotalReduction
-                  ? "text-green-600"
-                  : "text-red-600"
+                    ? "text-green-600"
+                    : "text-red-600"
               }`}
             >
               {formatFileSize(
@@ -123,8 +123,8 @@ export function FileSizeEstimateDisplay({
               {isTotalSame
                 ? "same"
                 : isTotalReduction
-                ? `-${totalReduction.toFixed(1)}%`
-                : `+${Math.abs(totalReduction).toFixed(1)}%`}
+                  ? `-${totalReduction.toFixed(1)}%`
+                  : `+${Math.abs(totalReduction).toFixed(1)}%`}
               )
             </span>
           </div>

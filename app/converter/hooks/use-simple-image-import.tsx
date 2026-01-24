@@ -7,9 +7,13 @@ import { isImageUrl } from "@/utils/upload-helpers";
 import { resolveProxiedImageUrl } from "@/lib/upload-images/url-handling/resolve-image-links";
 import { allowedMimeTypes } from "@/types/upload-settings";
 import { tryImportImageFromUrl } from "@/lib/upload-images/url-handling/import-image-from-url";
-import { handleImageFiles } from "../lib/image-handler";
+import { processImageFiles, ProcessedImage } from "../lib/image-handler";
 
-export function useSimpleImageImport() {
+export function useSimpleImageImport({
+  onImagesProcessed,
+}: {
+  onImagesProcessed: (images: ProcessedImage[]) => void;
+}) {
   const [dragCount, setDragCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -84,7 +88,8 @@ export function useSimpleImageImport() {
           );
         }
 
-        handleImageFiles(validImageFiles);
+        const processedImages = await processImageFiles(validImageFiles);
+        onImagesProcessed(processedImages);
         return;
       }
 
@@ -110,11 +115,14 @@ export function useSimpleImageImport() {
 
       if (imageUrl) {
         const img = await tryImportImageFromUrl(imageUrl);
-        if (img) handleImageFiles([img]);
+        if (img) {
+          const processedImages = await processImageFiles([img]);
+          onImagesProcessed(processedImages);
+        }
       }
     }
 
-    function handlePaste(e: ClipboardEvent) {
+    async function handlePaste(e: ClipboardEvent) {
       const clipboardItems = e.clipboardData?.items;
       if (!clipboardItems) return;
 
@@ -122,7 +130,8 @@ export function useSimpleImageImport() {
         if (item.kind === "file") {
           const file = item.getAsFile();
           if (file && allowedMimeTypes.includes(file.type)) {
-            handleImageFiles([file]);
+            const processedImages = await processImageFiles([file]);
+            onImagesProcessed(processedImages);
             return;
           } else if (file) {
             toast.error("Invalid file type - only images are supported");
@@ -137,7 +146,10 @@ export function useSimpleImageImport() {
 
             if (!isImageUrl(imageUrl)) return;
             const img = await tryImportImageFromUrl(text);
-            if (img) handleImageFiles([img]);
+            if (img) {
+              const processedImages = await processImageFiles([img]);
+              onImagesProcessed(processedImages);
+            }
           });
         }
       }
@@ -156,7 +168,7 @@ export function useSimpleImageImport() {
       window.removeEventListener("dragleave", handleDragLeave);
       window.removeEventListener("paste", handlePaste);
     };
-  }, []);
+  }, [onImagesProcessed]);
 
   return { dragCount };
 }
