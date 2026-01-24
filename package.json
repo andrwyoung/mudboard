@@ -2,7 +2,7 @@
   "name": "jonadrew-v5",
   "version": "0.1.0",
   "private": true,
-  "packageMangaer": "pnpm@10.26.2",
+  "packageManager": "pnpm@10.26.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
