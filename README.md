@@ -1,6 +1,6 @@
 Hi. This is Mudboard's repo! The drag and drop reference organizer for artists.
 
-![Mudboard Screenshot](./public/screenshot.png)
+![Mudboard Screenshot](./public/landing/screenshot.png)
 
 ### Directions
 
