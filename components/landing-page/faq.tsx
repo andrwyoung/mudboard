@@ -101,6 +101,37 @@ export default function FAQ() {
           No.
         </FAQItem>
 
+        <FAQItem question="How often is this app updated?">
+          I built Mudboard as an online reference organizer, and it&apos;s
+          gotten to a point where the feature set really satisfies my own
+          personal art needs. So these days I&apos;m using it daily for{" "}
+          <a
+            href="https://www.instagram.com/jonadrew_/"
+            className="text-accent underline hover:text-off-white transition-all duration-200 font-bold"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            my art
+          </a>
+          , and not really updating it unless there&apos;s a bug or a feature I
+          find myself wanting.
+          <br />
+          <br />
+          That said, I made Mudboard free to use, so I want to hear your
+          feedback! You can check out the{" "}
+          <a
+            href="https://github.com/andrwyoung/mudboard"
+            className="text-accent underline hover:text-off-white transition-all duration-200 font-bold"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            codebase here
+          </a>{" "}
+          or just reach out to me (andrew@jonadrew.com)
+        </FAQItem>
+
         {/* <FAQItem question="Will you add [that feature I’m hoping for]?">
           Probably! You can check out this{" "}
           <Link
